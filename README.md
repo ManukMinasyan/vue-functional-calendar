@@ -4,7 +4,7 @@
 * Small memory usage, good performance, good style, and high scalability
 * Native js development, no third-party library introduced
 
-<img width="286" height="528" src="https://zwhgithub.github.io/vue-calendar/dist/WechatIMG4885.jpeg"/>
+<img src="https://manukminasyan.github.io/vue-functional-calendar/public/vue-functional-calendar.png"/>
 
 ## Why
 
