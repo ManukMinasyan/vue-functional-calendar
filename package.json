@@ -1,10 +1,18 @@
 {
+  "author": {
+    "name": "Manuk Minasyan",
+    "email": "manuk.minasyan1@gmail.com",
+    "url": "https://github.com/ManukMinasyan"
+  },
+  "license": "ISC",
   "name": "vue-functional-calendar",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.2",
+  "private": false,
+  "main": "./dist/vueFunctionalCalendar.common.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "build-bundle": "vue-cli-service build --target lib --name vueFunctionalCalendar ./src/main.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
