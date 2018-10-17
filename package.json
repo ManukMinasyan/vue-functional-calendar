@@ -4,9 +4,14 @@
     "email": "manuk.minasyan1@gmail.com",
     "url": "https://github.com/ManukMinasyan"
   },
-  "license": "ISC",
   "name": "vue-functional-calendar",
+  "description": "A style-uninstallable datepicker component for Vue.js",
   "version": "0.1.4",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ManukMinasyan/vue-functional-calendar.git"
+  },
   "private": false,
   "main": "./dist/vueFunctionalCalendar.common.js",
   "scripts": {
