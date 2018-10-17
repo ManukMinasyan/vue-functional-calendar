@@ -17,7 +17,9 @@
 
 ## Demo
 
-https://github.com/ManukMinasyan
+https://9z7q7pw83y.codesandbox.io/
+
+[![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/9z7q7pw83y?hidenavigation=1)
 
 ## Install
 
