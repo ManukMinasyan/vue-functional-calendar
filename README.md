@@ -1,25 +1,25 @@
-# VueJS Functional Calendar
+# VueJS Functional Calendar (DatePicker)
 
 [![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Downloads](https://img.shields.io/npm/dm/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
-
-* Lightweight, high performance calendar component based on vue 2.0
-* Small memory usage, good performance, good style, and high scalability
-* Native js development, no third-party library introduced
-
-<img src="https://manukminasyan.github.io/vue-functional-calendar/public/vue-functional-calendar.png"/>
-
-## Why
-
-* Many clicks on Github pop-up calendar to select components for a certain time, but did not find a component that simply displays the calendar and can click to get time.
-* A small number of calendar components take up too much memory, which is obviously not reasonable for a simple function like a calendar.
 
 ## Demo
 
 https://9z7q7pw83y.codesandbox.io/
 
 [![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/9z7q7pw83y?hidenavigation=1)
+
+<img src="https://manukminasyan.github.io/vue-functional-calendar/public/vue-functional-calendar.png"/>
+
+* Lightweight, high performance calendar component based on vue 2.0
+* Small memory usage, good performance, good style, and high scalability
+* Native js development, no third-party library introduced
+
+## Why
+
+* Many clicks on Github pop-up calendar to select components for a certain time, but did not find a component that simply displays the calendar and can click to get time.
+* A small number of calendar components take up too much memory, which is obviously not reasonable for a simple function like a calendar.
 
 ## Install
 
