@@ -13,7 +13,7 @@
     "url": "https://github.com/ManukMinasyan/vue-functional-calendar.git"
   },
   "private": false,
-  "main": "./dist/vueFunctionalCalendar.common.js",
+  "main": "./src/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -27,6 +27,7 @@
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-eslint": "^3.0.5",
     "@vue/cli-service": "^3.0.5",
+    "grunt-coveralls": "^2.0.0",
     "vue-template-compiler": "^2.5.17"
   },
   "eslintConfig": {

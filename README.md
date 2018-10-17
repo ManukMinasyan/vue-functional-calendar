@@ -1,8 +1,7 @@
 # VueJS Functional Calendar
 
-[![Travis Build](https://img.shields.io/travis/charliekassel/vue-functional-calendar.svg)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
+[![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
-[![Coverage Status](https://coveralls.io/repos/github/ManukMinasyan/vue-functional-calendar/badge.svg?branch=master)](https://coveralls.io/github/ManukMinasyan/vue-functional-calendar?branch=master)
 [![Downloads](https://img.shields.io/npm/dm/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 
 * Lightweight, high performance calendar component based on vue 2.0
