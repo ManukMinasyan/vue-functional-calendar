@@ -6,7 +6,7 @@
   },
   "license": "ISC",
   "name": "vue-functional-calendar",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "private": false,
   "main": "./dist/vueFunctionalCalendar.common.js",
   "scripts": {
