@@ -2,33 +2,34 @@
     <div class="main-container">
         <div class="input" v-if="isModal">
             <input type="text" v-model="inputStartDate" @click="showCalendar = !showCalendar" readonly>
-            <input type="text" v-model="inputEndDate"   @click="showCalendar = !showCalendar" readonly>
+            <input type="text" v-model="inputEndDate" @click="showCalendar = !showCalendar" readonly>
         </div>
 
         <div class="calendar" :class="{'modal': isModal}" v-if="showCalendar">
             <div class="wh_top_changge_buttons">
-                <li @click="PreMonth(myDate,false)">
+                <button @click="PreMonth(myDate,false)">
                     <div class="wh_jiantou1"></div>
-                </li>
+                </button>
                 <li @click="NextMonth(myDate,false)">
                     <div class="wh_jiantou2"></div>
                 </li>
             </div>
-            <div v-for="calendar in calendars.slice(0,calendarsCount)" class="calendar-for">
+            <div v-for="(calendar, key) in calendars.slice(0,calendarsCount)" :key="key" class="calendar-for">
                 <section class="wh_container">
                     <div class="wh_content_all">
                         <div class="wh_top_changge">
                             <li class="wh_content_li">{{ calendar.dateTop }}</li>
                         </div>
                         <div class="wh_content">
-                            <div class="wh_content_item" v-for="tag in textTop">
+                            <div class="wh_content_item" v-for="(name, key) in dayNames" :key="key">
                                 <div class="wh_top_tag">
-                                    {{tag}}
+                                    {{ name }}
                                 </div>
                             </div>
                         </div>
                         <div class="wh_content">
-                            <div class="wh_content_item" v-for="(item,index) in calendar.list"
+                            <div class="wh_content_item"
+                                 v-for="(item,index) in calendar.list" :key="index"
                                  @click="clickDay(item,index)">
                                 <div class="wh_item_date"
                                      @mouseover="dateMouseOver(item.date)"
@@ -53,10 +54,6 @@
                 myDate: [],
                 list: [],
                 dateTop: '',
-                monthNames: [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ],
                 calendars: [],
 
                 showCalendar: true,
@@ -94,16 +91,29 @@
                 type: Array,
                 default: () => []
             },
-            textTop: {
+            dayNames: {
                 type: Array,
                 default: () => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+            },
+            monthNames: {
+                type: Array,
+                default: () => [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ]
             },
             sundayStart: {
                 type: Boolean,
                 default: () => false
             },
-            agoDayHide: {type: String, default: `0`},
-            futureDayHide: {type: String, default: `2554387200`}
+            agoDayHide: {
+                type: Number,
+                default: 0
+            },
+            futureDayHide: {
+                type: Number,
+                default: 2554387200
+            }
         },
         watch: {
             isModal: {
@@ -161,12 +171,14 @@
 
             let self = this;
 
-            window.addEventListener('click', function(e){
-                // close dropdown when clicked outside
-                if (!self.$el.contains(e.target)){
-                    self.showCalendar = false
-                }
-            })
+            if(this.isModal) {
+                window.addEventListener('click', function (e) {
+                    // close dropdown when clicked outside
+                    if (!self.$el.contains(e.target)) {
+                        self.showCalendar = false
+                    }
+                });
+            }
 
             this.setIsModal(this.isModal);
         },
@@ -188,11 +200,11 @@
 
 
             },
-            listRendering(date = false, chooseDay = false, isChosedDay = true) {
+            listRendering(date = this.myDate, chooseDay = true) {
                 let vm = this;
                 this.calendars.forEach(function (calendar, key) {
                     calendar.date = new Date(date.getFullYear(), date.getMonth() + key, date.getDay());
-                    vm.getList(calendar.date, chooseDay, isChosedDay, key);
+                    vm.getList(calendar.date, chooseDay, key);
                 });
             },
             dateMouseOver(date) {
@@ -274,17 +286,17 @@
                 let clickDate = new Date(item.date).getTime();
                 let startDate = new Date(this.startDate).getTime();
 
-                // Երկու Date-ներն էլ լրացված են
+                // Two dates is not empty
                 if (this.startDate !== false && this.endDate !== false) {
                     this.startDate = item.date;
                     this.endDate = false;
-                    // Ոչ մի Date նշած չի
+                // Not date selected
                 } else if (this.startDate === false && this.endDate === false) {
                     this.startDate = item.date;
-                    // StartDate-ը դատարկ չի, նշվող date-ը մեծ է startDate-ից․
+                // Start Date not empty, chose date > start date
                 } else if (this.endDate === false && (clickDate > startDate)) {
                     this.endDate = item.date;
-                    // StartDate-ը դատարկ չի, նշվող date-ը փոքր է startDate-ից․
+                // Start date not empty, chose date < start date
                 } else if (this.startDate !== false && (clickDate < startDate)) {
                     this.endDate = this.startDate;
                     this.startDate = item.date;
@@ -302,27 +314,28 @@
                 this.myDate = new Date(date);
                 this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
                 if (isChosedDay) {
-                    this.listRendering(this.myDate, date, isChosedDay);
+                    this.listRendering(this.myDate, date);
                 } else {
                     this.listRendering(this.myDate);
                 }
             },
-            PreMonth: function (date, isChosedDay = true) {
+            PreMonth: function (date = this.myDate, isChosedDay = true) {
                 date = timeUtil.dateFormat(date);
                 this.myDate = timeUtil.getOtherMonth(this.myDate, 'preMonth');
                 this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
                 if (isChosedDay) {
-                    this.listRendering(this.myDate, date, isChosedDay);
+                    this.listRendering(this.myDate, date);
                 } else {
                     this.listRendering(this.myDate);
                 }
             },
-            NextMonth: function (date, isChosedDay = true) {
-                date = timeUtil.dateFormat(date);
+            NextMonth: function (date = this.myDate, isChosedDay = true) {
+                let dateFormat = timeUtil.dateFormat(date);
                 this.myDate = timeUtil.getOtherMonth(this.myDate, 'nextMonth');
                 this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
+
                 if (isChosedDay) {
-                    this.listRendering(this.myDate, date, isChosedDay);
+                    this.listRendering(this.myDate, dateFormat);
                 } else {
                     this.listRendering(this.myDate);
                 }
@@ -332,11 +345,11 @@
                 let markDateMore = this.markDateMore;
                 markDate = markDate.map((k) => {
                     return timeUtil.dateFormat(k);
-                })
+                });
                 markDateMore = markDateMore.map((k) => {
-                    k.date = timeUtil.dateFormat(k.date)
+                    k.date = timeUtil.dateFormat(k.date);
                     return k;
-                })
+                });
                 return [markDate, markDateMore];
             },
             markChooseDays() {
@@ -358,7 +371,7 @@
                     }
                 }
             },
-            getList: function (date, chooseDay, isChosedDay = true, calendar_index) {
+            getList: function (date, chooseDay, calendar_index) {
                 const [markDate, markDateMore] = this.forMatArgs();
                 this.calendars[calendar_index].dateTop = `${this.monthNames[date.getMonth()]} ${date.getFullYear()}`;
                 let arr = timeUtil.getMonthList(date);
@@ -399,7 +412,7 @@
                 this.calendars[calendar_index].list = arr;
             },
             setIsModal(val = false) {
-                if(val) {
+                if (val) {
                     this.showCalendar = false;
                 }
             }
@@ -408,26 +421,32 @@
 </script>
 
 <style scoped>
-    .calendar.modal{
+    .calendar.modal {
+        position: absolute;
         margin-top: 5px;
         will-change: transform, opacity;
-        position: relative;
         background-color: #ffffff;
         background-clip: padding-box;
-        box-shadow: 0 2px 15px 0 rgba(0,0,0,0.25);
+        box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
         transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
     .input input {
-        margin-right: 0;
         font-size: inherit;
         transition: width 200ms;
-        padding-top: 5px;
-        padding-left: 5px;
-        padding-bottom: 5px;
+        padding: 7px;
         width: 120px;
         color: #aaa;
         border: 1px solid #eee;
+        text-align: center;
+    }
+
+    .input input:first-child {
+        border-radius: 10px 0 0 10px;
+    }
+
+    .input input:last-child {
+        border-radius: 0 10px 10px 0;
     }
 
     @media screen and (min-width: 460px) {

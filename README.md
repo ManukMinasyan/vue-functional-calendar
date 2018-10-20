@@ -1,4 +1,4 @@
-# VueJS Functional Calendar (DatePicker)
+# VueJS Functional Calendar (Date Picker)
 
 [![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
@@ -42,6 +42,7 @@ import FunctionalCalendar from 'vue-functional-calendar';
       // v-on:changeMonth="changeDate"
       // v-on:isToday="clickToday"
       // :sundayStart="true"
+      // :is-modal="false"
       // :is-date-picker="true"
       // :is-multiple="true"
       // :calendars-count="3"
