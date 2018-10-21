@@ -16,11 +16,11 @@ new Vue({
         // v-on:choseDay="clickDay"
         // v-on:changeMonth="changeDate"
         // v-on:isToday="clickToday"
-        // ':sundayStart="true"'+
-        // ':is-date-picker="true"'+
-        // ':is-multiple="true"'+
+        ':sundayStart="true"'+
+        ':is-date-picker="true"'+
+        ':is-multiple="true"'+
+        ':calendars-count="2"'+
         // ':is-modal="true"'+
-        // ':calendars-count="2"'+
         // ':markDate="arr"'+ // arr=['2018/4/1','2018/4/3'] Mark April 1st and April 3rd Simple Mark
 
         // ':day-names="dayNames"'+

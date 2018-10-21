@@ -200,10 +200,10 @@
 
 
             },
-            listRendering(date = this.myDate, chooseDay = true) {
+            listRendering(date = false, chooseDay = true) {
                 let vm = this;
                 this.calendars.forEach(function (calendar, key) {
-                    calendar.date = new Date(date.getFullYear(), date.getMonth() + key, date.getDay());
+                    calendar.date = new Date(date.getFullYear(), date.getMonth() + key);
                     vm.getList(calendar.date, chooseDay, key);
                 });
             },
@@ -329,13 +329,13 @@
                     this.listRendering(this.myDate);
                 }
             },
-            NextMonth: function (date = this.myDate, isChosedDay = true) {
-                let dateFormat = timeUtil.dateFormat(date);
+            NextMonth: function (date, isChosedDay = true) {
+                date = timeUtil.dateFormat(date);
                 this.myDate = timeUtil.getOtherMonth(this.myDate, 'nextMonth');
                 this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
 
                 if (isChosedDay) {
-                    this.listRendering(this.myDate, dateFormat);
+                    this.listRendering(this.myDate, date);
                 } else {
                     this.listRendering(this.myDate);
                 }
