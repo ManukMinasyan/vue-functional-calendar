@@ -10,7 +10,7 @@ https://9z7q7pw83y.codesandbox.io/
 
 [![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/9z7q7pw83y?hidenavigation=1)
 
-<img src="https://manukminasyan.github.io/vue-functional-calendar/public/vue-functional-calendar.png"/>
+<img src="https://manukminasyan.github.io/vue-functional-calendar/public/demo.png"/>
 
 * Lightweight, high performance calendar component based on vue 2.0
 * Small memory usage, good performance, good style, and high scalability
