@@ -1,21 +1,38 @@
 <template>
     <div>
         <functional-calendar ref='calendar'
-        :sundayStart="true"
+                             v-on:choseDay="clickDay"
+                             v-model="calendar"
+                             :sundayStart="true"
+                             :is-date-picker="true"
+                             :markDate="arr"
+                             :is-modal="true"
+                             :is-multiple="true"
+                             :calendars-count="3"
         ></functional-calendar>
 
         <!--Available Functions-->
-        <!--:is-date-picker="true"-->
-        <!--:is-multiple="true"-->
-        <!--:calendars-count="2"-->
-        <!--:is-modal="true"-->
-        <!--:markDate="arr"-->
+        <!--// v-model="calendar"-->
 
-        <!--:day-names="dayNames"-->
-        <!--:month-names="monthNames"-->
+        <!--// :day-names="dayNames" //dayNames=['Su','Mo','Tu','We','Th','Fr','Sa']-->
+        <!--// :month-names="monthNames" //monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"]-->
 
-        <!--:agoDayHide='1539714127'-->
-        <!--:futureDayHide='1539714127'-->
+        <!--// v-on:choseDay="clickDay"-->
+        <!--// v-on:changeMonth="changeDate"-->
+        <!--// v-on:isToday="clickToday"-->
+
+        <!--// :sundayStart="true"-->
+
+        <!--// :is-date-range="true"-->
+        <!--// :is-date-picker="true"-->
+        <!--// :is-modal="false"-->
+
+        <!--// :is-multiple="true"-->
+        <!--// :calendars-count="3"-->
+
+        <!--// :markDate=arr // arr=['2018/10/20','2018/10/28', '2018/10/16']-->
+        <!--// :agoDayHide='1514937600' //Do not click before a date. Timestamp 10 digits-->
+        <!--// :futureDayHide='1525104000' //Do not click after a date Timestamp 10 digits-->
     </div>
 </template>
 
@@ -25,6 +42,17 @@
     export default {
         components: {
             FunctionalCalendar
+        },
+        data() {
+            return {
+                calendar: {},
+                arr: ['2018/10/10', '2018-10-11']
+            }
+        },
+        methods: {
+            clickDay(date) {
+                console.log(date);
+            }
         }
     }
 </script>

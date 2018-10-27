@@ -1,8 +1,11 @@
 <template>
     <div class="main-container">
-        <div class="input" v-if="isModal">
+        <div class="input" v-if="isModal && isDateRange">
             <input type="text" v-model="inputStartDate" @click="showCalendar = !showCalendar" readonly>
             <input type="text" v-model="inputEndDate" @click="showCalendar = !showCalendar" readonly>
+        </div>
+        <div class="input" v-else-if="isModal && isDatePicker">
+            <input type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar" readonly>
         </div>
 
         <div class="calendar" :class="{'modal': isModal}" v-if="showCalendar">
@@ -57,6 +60,8 @@
                 calendars: [],
 
                 showCalendar: true,
+                inputSelectedDate: 'yyyy/mm/dd',
+                selectedDate: '',
                 inputStartDate: 'yyyy/mm/dd',
                 inputEndDate: 'yyyy/mm/dd',
                 startDate: false,
@@ -73,6 +78,10 @@
                 default: () => false
             },
             isDatePicker: {
+                type: Boolean,
+                default: () => false
+            },
+            isDateRange: {
                 type: Boolean,
                 default: () => false
             },
@@ -119,6 +128,11 @@
             isModal: {
                 handler(val) {
                     this.setIsModal(val)
+                }
+            },
+            selectedDate: {
+                handler(val) {
+                    this.inputSelectedDate = val ? val : 'yyyy/mm/dd';
                 }
             },
             startDate: {
@@ -171,7 +185,7 @@
 
             let self = this;
 
-            if(this.isModal) {
+            if (this.isModal) {
                 window.addEventListener('click', function (e) {
                     // close dropdown when clicked outside
                     if (!self.$el.contains(e.target)) {
@@ -208,7 +222,7 @@
                 });
             },
             dateMouseOver(date) {
-                if (!this.isDatePicker) {
+                if (!this.isDateRange) {
                     return false;
                 }
 
@@ -270,7 +284,7 @@
                 return classNames;
             },
             clickDay: function (item) {
-                if (!this.isDatePicker) {
+                if (!this.isDateRange && !this.isDatePicker) {
                     return false;
                 }
 
@@ -283,29 +297,37 @@
                         : this.NextMonth(item.date);
                 }
 
-                let clickDate = new Date(item.date).getTime();
-                let startDate = new Date(this.startDate).getTime();
+                if (this.isDateRange) {
+                    let clickDate = new Date(item.date).getTime();
+                    let startDate = new Date(this.startDate).getTime();
 
-                // Two dates is not empty
-                if (this.startDate !== false && this.endDate !== false) {
-                    this.startDate = item.date;
-                    this.endDate = false;
-                // Not date selected
-                } else if (this.startDate === false && this.endDate === false) {
-                    this.startDate = item.date;
-                // Start Date not empty, chose date > start date
-                } else if (this.endDate === false && (clickDate > startDate)) {
-                    this.endDate = item.date;
-                // Start date not empty, chose date < start date
-                } else if (this.startDate !== false && (clickDate < startDate)) {
-                    this.endDate = this.startDate;
-                    this.startDate = item.date;
+                    // Two dates is not empty
+                    if (this.startDate !== false && this.endDate !== false) {
+                        this.startDate = item.date;
+                        this.endDate = false;
+                        // Not date selected
+                    } else if (this.startDate === false && this.endDate === false) {
+                        this.startDate = item.date;
+                        // Start Date not empty, chose date > start date
+                    } else if (this.endDate === false && (clickDate > startDate)) {
+                        this.endDate = item.date;
+                        // Start date not empty, chose date < start date
+                    } else if (this.startDate !== false && (clickDate < startDate)) {
+                        this.endDate = this.startDate;
+                        this.startDate = item.date;
+                    }
+
+                    this.$emit('input', {
+                        startDate: this.startDate,
+                        endDate: this.endDate
+                    });
+                } else if (this.isDatePicker) {
+                    this.selectedDate = item.date;
+
+                    this.$emit('input', {
+                        selectedDate: item.date
+                    });
                 }
-
-                this.$emit('input', {
-                    startDate: this.startDate,
-                    endDate: this.endDate
-                });
 
                 this.markChooseDays();
             },
