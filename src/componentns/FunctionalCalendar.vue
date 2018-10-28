@@ -534,19 +534,17 @@
 <style scoped>
     .functional-calendar {
         position: relative;
+        border-radius: 0 0 .28571429rem .28571429rem;
+        box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
     }
 
     .date-popover {
         position: absolute;
         width: 100%;
-        height: 100%;
-        border-radius: 0 0 .28571429rem .28571429rem;
-        box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
-        background: #fff;
+        background: #FFF;
         transition: opacity .1s ease;
         margin: auto;
         z-index: 10;
-        border: 1px solid #d4d4d4;
         font-size: 1rem;
         font-weight: 200;
     }
@@ -592,7 +590,7 @@
         -ms-flex: 1;
         flex: 1;
         flex-basis: 30%;
-        height: 84px;
+        height: 83px;
         display: flex;
         justify-content: center;
         flex-direction: column;
