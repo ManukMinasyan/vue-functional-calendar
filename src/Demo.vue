@@ -58,3 +58,9 @@
         }
     }
 </script>
+
+<style>
+    body {
+        background-color: #fec928;
+    }
+</style>

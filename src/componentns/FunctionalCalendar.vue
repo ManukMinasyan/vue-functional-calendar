@@ -534,7 +534,8 @@
 <style scoped>
     .functional-calendar {
         position: relative;
-        border-radius: 0 0 .28571429rem .28571429rem;
+        border: 1px solid #FFF;
+        border-radius: .28571429rem;
         box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
     }
 
@@ -709,7 +710,7 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px 20px 0;
-        margin-bottom: -25px;
+        margin-bottom: -24px;
     }
 
     .wh_top_changge_buttons li {
@@ -838,6 +839,5 @@
 
     .calendar-for {
         display: inline-block;
-        margin-bottom: 5px;
     }
 </style>

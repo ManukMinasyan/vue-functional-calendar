@@ -6,7 +6,7 @@
   },
   "name": "vue-functional-calendar",
   "description": "A style-uninstallable datepicker component for Vue.js",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "ISC",
   "repository": {
     "type": "git",
@@ -27,6 +27,8 @@
     "modal",
     "inline",
     "date",
+    "change month",
+    "change year",
     "picker",
     "day",
     "month",
