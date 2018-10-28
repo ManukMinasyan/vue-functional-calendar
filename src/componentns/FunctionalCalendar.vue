@@ -8,20 +8,70 @@
             <input type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar" readonly>
         </div>
 
-        <div class="calendar" :class="{'modal': isModal}" v-if="showCalendar">
+        <div class="functional-calendar" :class="{'functional-modal': isModal}" v-if="showCalendar">
+
+            <div class="date-popover" v-if="showChangeMonth && changeMonthFunction">
+                <div class="picker" style="text-align: center;">
+                    <div class="flexbox header">
+                        <span class="prev">
+                            <li @click="PreYear(myDate,false)">
+                                <div class="wh_jiantou1"></div>
+                            </li>
+                        </span>
+                        <div class="year"
+                             @click="showChangeYear = true"
+                            :class="{pointer: !showChangeYear && changeYearFunction}"
+                        >
+                            {{ this.myDate.getFullYear() }}
+                        </div>
+                        <span class="next">
+                            <li @click="NextYear(myDate,false)">
+                                <div class="wh_jiantou2"></div>
+                            </li>
+                        </span>
+                    </div>
+                    <div class="flexbox monthItem" v-if="showChangeYear && changeYearFunction">
+                        <div class="item"
+                             v-for="i in 12"
+                             :key="i"
+                             @click="changeYear(i)"
+                             :class="{selected: myDate.getFullYear()-8+i===myDate.getFullYear()}"
+                        >
+                            {{ myDate.getFullYear()-8+i }}
+                        </div>
+                    </div>
+                    <div class="flexbox monthItem" v-else>
+                        <div class="item"
+                             v-for="(month, key) in monthNames"
+                             :key="key"
+                             @click="changeMonth(key)"
+                             :class="{selected: myDate.getMonth()===key}"
+                        >
+                            {{ month }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="wh_top_changge_buttons">
-                <button @click="PreMonth(myDate,false)">
+                <li @click="PreMonth(myDate,false)">
                     <div class="wh_jiantou1"></div>
-                </button>
+                </li>
                 <li @click="NextMonth(myDate,false)">
                     <div class="wh_jiantou2"></div>
                 </li>
             </div>
-            <div v-for="(calendar, key) in calendars.slice(0,calendarsCount)" :key="key" class="calendar-for">
+            <div class="calendar-for"
+                 v-for="(calendar, key) in calendars.slice(0,calendarsCount)"
+                 :key="key">
                 <section class="wh_container">
                     <div class="wh_content_all">
                         <div class="wh_top_changge">
-                            <li class="wh_content_li">{{ calendar.dateTop }}</li>
+                            <li class="wh_content_li"
+                                :class="{changeMonthClass: changeMonthFunction}"
+                                @click="showChangeMonth = true">
+                                {{ calendar.dateTop }}
+                            </li>
                         </div>
                         <div class="wh_content">
                             <div class="wh_content_item" v-for="(name, key) in dayNames" :key="key">
@@ -32,7 +82,8 @@
                         </div>
                         <div class="wh_content">
                             <div class="wh_content_item"
-                                 v-for="(item,index) in calendar.list" :key="index"
+                                 v-for="(item,index) in calendar.list"
+                                 :key="index"
                                  @click="clickDay(item,index)">
                                 <div class="wh_item_date"
                                      @mouseover="dateMouseOver(item.date)"
@@ -60,6 +111,9 @@
                 calendars: [],
 
                 showCalendar: true,
+                showChangeMonth: false,
+                showChangeYear: false,
+
                 inputSelectedDate: 'yyyy/mm/dd',
                 selectedDate: '',
                 inputStartDate: 'yyyy/mm/dd',
@@ -110,6 +164,14 @@
                     "January", "February", "March", "April", "May", "June",
                     "July", "August", "September", "October", "November", "December"
                 ]
+            },
+            changeMonthFunction: {
+                type: Boolean,
+                default: false
+            },
+            changeYearFunction: {
+                type: Boolean,
+                default: false
             },
             sundayStart: {
                 type: Boolean,
@@ -437,13 +499,125 @@
                 if (val) {
                     this.showCalendar = false;
                 }
+            },
+            changeMonth(month_key) {
+                this.showChangeMonth = !this.showChangeMonth;
+
+                if (month_key !== null) {
+                    let date = new Date(this.myDate.getFullYear(), month_key);
+                    this.ChoseMonth(date);
+                    this.listRendering(this.myDate);
+                }
+            },
+            PreYear() {
+                let date = new Date(this.myDate.getFullYear() - 1, this.myDate.getMonth());
+                this.ChoseMonth(date);
+                this.listRendering(this.myDate);
+            },
+            NextYear() {
+                let date = new Date(this.myDate.getFullYear() + 1, this.myDate.getMonth());
+                this.ChoseMonth(date);
+                this.listRendering(this.myDate);
+            },
+            changeYear(key) {
+                this.showChangeYear = false;
+
+                let year = this.myDate.getFullYear() - 8 + key;
+                let date = new Date(year, this.myDate.getMonth());
+                this.ChoseMonth(date);
+                this.listRendering(this.myDate);
             }
         }
     };
 </script>
 
 <style scoped>
-    .calendar.modal {
+    .functional-calendar {
+        position: relative;
+    }
+
+    .date-popover {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 0 0 .28571429rem .28571429rem;
+        box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
+        background: #fff;
+        transition: opacity .1s ease;
+        margin: auto;
+        z-index: 10;
+        border: 1px solid #d4d4d4;
+        font-size: 1rem;
+        font-weight: 200;
+    }
+
+    .date-popover .picker .flexbox {
+        padding: 0;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .date-popover .flexbox.header {
+        height: 50px;
+    }
+
+    .date-popover .flexbox.header .year {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+    }
+
+    .date-popover .flexbox.header .year.pointer {
+        cursor: pointer;
+    }
+
+    .date-popover .next, .prev {
+        display: flex;
+        text-indent: -10000px;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        margin: 10px;
+    }
+
+    .date-popover .picker .flexbox .item {
+        -webkit-box-flex: 1;
+        -ms-flex: 1;
+        flex: 1;
+        flex-basis: 30%;
+        height: 84px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .date-popover .picker .flexbox .item:hover {
+        background-color: rgba(113, 113, 113, 0.3);
+        transition: background-color 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    .date-popover .picker .monthItem .item {
+        border-top: 1px solid #d4d4d4;
+    }
+
+    .date-popover .selected {
+        background: #007bff;
+        color: #fff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, .25);
+        font-weight: 700;
+    }
+
+    .functional-calendar.functional-modal {
+        z-index: 1000;
         position: absolute;
         margin-top: 5px;
         will-change: transform, opacity;
@@ -504,7 +678,9 @@
     }
 
     .wh_top_changge {
-        display: flex;
+        position: relative;
+        width: 200px;
+        margin: 0 auto;
     }
 
     .wh_top_changge li {
@@ -521,6 +697,13 @@
     .wh_top_changge .wh_content_li {
         cursor: auto;
         flex: 2.5;
+    }
+
+    .wh_top_changge .wh_content_li.changeMonthClass {
+        cursor: pointer;
+        margin: 0 auto;
+        flex-basis: 200px;
+        flex-grow: inherit;
     }
 
     .wh_top_changge_buttons {

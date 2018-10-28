@@ -6,9 +6,11 @@
                              :sundayStart="true"
                              :is-date-picker="true"
                              :markDate="arr"
-                             :is-modal="true"
-                             :is-multiple="true"
+                             :is-multiple="false"
                              :calendars-count="3"
+
+                             :change-month-function="true"
+                             :change-year-function="true"
         ></functional-calendar>
 
         <!--Available Functions-->
