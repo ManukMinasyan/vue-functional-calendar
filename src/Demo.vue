@@ -5,9 +5,11 @@
                              v-model="calendar"
                              :sundayStart="true"
                              :is-date-picker="true"
+                             :is-date-range="true"
                              :markDate="arr"
                              :is-multiple="false"
                              :calendars-count="3"
+                             :is-modal="false"
 
                              :change-month-function="true"
                              :change-year-function="true"

@@ -19,8 +19,8 @@
                             </li>
                         </span>
                         <div class="year"
-                             @click="showChangeYear = true"
-                            :class="{pointer: !showChangeYear && changeYearFunction}"
+                             @click="showChangeYearFunction"
+                             :class="{pointer: !showChangeYear && changeYearFunction}"
                         >
                             {{ this.myDate.getFullYear() }}
                         </div>
@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <div class="wh_top_changge_buttons">
+            <div class="wh_top_changge_buttons" v-if="showMainCalendar">
                 <li @click="PreMonth(myDate,false)">
                     <div class="wh_jiantou1"></div>
                 </li>
@@ -61,15 +61,17 @@
                     <div class="wh_jiantou2"></div>
                 </li>
             </div>
+
             <div class="calendar-for"
                  v-for="(calendar, key) in calendars.slice(0,calendarsCount)"
-                 :key="key">
+                 :key="key"
+                v-if="showMainCalendar">
                 <section class="wh_container">
                     <div class="wh_content_all">
                         <div class="wh_top_changge">
                             <li class="wh_content_li"
                                 :class="{changeMonthClass: changeMonthFunction}"
-                                @click="showChangeMonth = true">
+                                @click="showChangeMonthFunction">
                                 {{ calendar.dateTop }}
                             </li>
                         </div>
@@ -111,6 +113,7 @@
                 calendars: [],
 
                 showCalendar: true,
+                showMainCalendar: true,
                 showChangeMonth: false,
                 showChangeYear: false,
 
@@ -500,8 +503,16 @@
                     this.showCalendar = false;
                 }
             },
+            showChangeMonthFunction() {
+                this.showChangeMonth = !this.showChangeMonth;
+                this.showMainCalendar = !this.showMainCalendar
+            },
+            showChangeYearFunction() {
+                this.showChangeYear = !this.showChangeYear;
+            },
             changeMonth(month_key) {
                 this.showChangeMonth = !this.showChangeMonth;
+                this.showMainCalendar = true;
 
                 if (month_key !== null) {
                     let date = new Date(this.myDate.getFullYear(), month_key);
@@ -534,20 +545,28 @@
 <style scoped>
     .functional-calendar {
         position: relative;
-        border: 1px solid #FFF;
         border-radius: .28571429rem;
         box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
+        background-color: #FFFFFF;
+        min-width: 475px;
+    }
+
+
+    .calendar-for {
+        display: inline-block;
+        max-width: 475px;
+        min-width: 475px;
     }
 
     .date-popover {
-        position: absolute;
-        width: 100%;
-        background: #FFF;
+        position: relative;
         transition: opacity .1s ease;
         margin: auto;
         z-index: 10;
         font-size: 1rem;
         font-weight: 200;
+        max-width: 475px;
+        min-width: 475px;
     }
 
     .date-popover .picker .flexbox {
@@ -596,6 +615,7 @@
         justify-content: center;
         flex-direction: column;
         text-align: center;
+        outline-style: none;
     }
 
     .date-popover .picker .flexbox .item:hover {
@@ -668,7 +688,6 @@
 
     .wh_container {
         display: flex;
-        max-width: 475px;
         margin: auto;
     }
 
@@ -709,8 +728,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 20px 0;
-        margin-bottom: -24px;
+        padding: 20px 20px 0;
+        margin-bottom: -40px;
     }
 
     .wh_top_changge_buttons li {
@@ -727,11 +746,9 @@
     .wh_content_all {
         font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
         "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
-        background-color: #FFFFFF;
         width: 100%;
-        min-height: 377px;
         overflow: hidden;
-        padding-bottom: 8px;
+        padding: 10px;
     }
 
     .wh_content {
@@ -803,9 +820,7 @@
     .wh_content_item > .wh_isMark {
         margin: auto;
         background-color: rgb(102, 179, 204);
-        border-width: 0px;
-        border-style: solid;
-        border-radius: 0px;
+        border-radius: 50%;
         opacity: 1;
         z-index: 2;
     }
@@ -835,9 +850,5 @@
         border-style: solid;
         border-radius: 50%;
         opacity: 1;
-    }
-
-    .calendar-for {
-        display: inline-block;
     }
 </style>
