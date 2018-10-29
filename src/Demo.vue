@@ -12,7 +12,22 @@
                              :is-modal="false"
 
                              :change-month-function="true"
-                             :change-year-function="true"
+                             :change-year-function="false"
+        ></functional-calendar>
+
+        <functional-calendar ref='calendar'
+                             v-on:choseDay="clickDay"
+                             v-model="calendar"
+                             :sundayStart="true"
+                             :is-date-picker="true"
+                             :is-date-range="true"
+                             :markDate="arr"
+                             :is-multiple="false"
+                             :calendars-count="3"
+                             :is-modal="false"
+
+                             :change-month-function="false"
+                             :change-year-function="false"
         ></functional-calendar>
 
         <!--Available Functions-->

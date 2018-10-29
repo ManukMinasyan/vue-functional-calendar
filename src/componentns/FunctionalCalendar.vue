@@ -504,11 +504,15 @@
                 }
             },
             showChangeMonthFunction() {
-                this.showChangeMonth = !this.showChangeMonth;
-                this.showMainCalendar = !this.showMainCalendar
+                if(this.changeMonthFunction) {
+                    this.showChangeMonth = !this.showChangeMonth;
+                    this.showMainCalendar = !this.showMainCalendar
+                }
             },
             showChangeYearFunction() {
-                this.showChangeYear = !this.showChangeYear;
+                if(this.changeYearFunction) {
+                    this.showChangeYear = !this.showChangeYear;
+                }
             },
             changeMonth(month_key) {
                 this.showChangeMonth = !this.showChangeMonth;
