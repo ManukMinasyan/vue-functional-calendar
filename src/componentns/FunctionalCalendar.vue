@@ -1,11 +1,11 @@
 <template>
     <div class="main-container">
-        <div class="input" v-if="isModal && isDateRange">
+        <div class="multiple-input" v-if="isModal && isDateRange">
             <input type="text" v-model="inputStartDate" @click="showCalendar = !showCalendar" readonly>
             <input type="text" v-model="inputEndDate" @click="showCalendar = !showCalendar" readonly>
         </div>
-        <div class="input" v-else-if="isModal && isDatePicker">
-            <input type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar" readonly>
+        <div v-else-if="isModal && isDatePicker">
+            <input class="single-input" type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar" readonly>
         </div>
 
         <div class="functional-calendar" :class="{'functional-modal': isModal}" v-if="showCalendar">
@@ -583,9 +583,6 @@
         justify-content: space-between;
     }
 
-    .date-popover .flexbox.header {
-        height: 50px;
-    }
 
     .date-popover .flexbox.header .year {
         display: flex;
@@ -598,6 +595,7 @@
 
     .date-popover .flexbox.header .year.pointer {
         cursor: pointer;
+        text-decoration: underline dotted #007bff;
     }
 
     .date-popover .next, .prev {
@@ -606,7 +604,7 @@
         justify-content: center;
         flex-direction: column;
         text-align: center;
-        margin: 10px;
+        margin: 20px;
     }
 
     .date-popover .picker .flexbox .item {
@@ -614,7 +612,7 @@
         -ms-flex: 1;
         flex: 1;
         flex-basis: 30%;
-        height: 83px;
+        height: 69px;
         display: flex;
         justify-content: center;
         flex-direction: column;
@@ -639,6 +637,14 @@
         font-weight: 700;
     }
 
+    .date-popover .selected:nth-last-child(3) {
+        border-radius: 0 0 0 5px;
+    }
+
+    .date-popover .selected:last-child {
+        border-radius: 0 0 5px;
+    }
+
     .functional-calendar.functional-modal {
         z-index: 1000;
         position: absolute;
@@ -650,7 +656,7 @@
         transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
-    .input input {
+    input.single-input, .multiple-input input {
         font-size: inherit;
         transition: width 200ms;
         padding: 7px;
@@ -660,11 +666,15 @@
         text-align: center;
     }
 
-    .input input:first-child {
+    input.single-input {
+        border-radius: 10px;
+    }
+
+    .multiple-input input:first-child {
         border-radius: 10px 0 0 10px;
     }
 
-    .input input:last-child {
+    .multiple-input input:last-child {
         border-radius: 0 10px 10px 0;
     }
 
@@ -758,8 +768,8 @@
     .wh_content {
         display: flex;
         flex-wrap: wrap;
-        padding: 0 3% 0 3%;
         width: 100%;
+        justify-content: center;
     }
 
     .wh_content:first-child .wh_content_item_tag,
