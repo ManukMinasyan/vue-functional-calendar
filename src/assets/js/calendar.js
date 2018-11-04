@@ -1,12 +1,12 @@
 export default {
-  // 当某月的天数
+  // When the number of days in a month
   getDaysInOneMonth(date) {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const d = new Date(year, month, 0);
     return d.getDate();
   },
-  // 向前空几个
+  // a few forward
   getMonthweek(date) {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
@@ -16,8 +16,8 @@ export default {
       dateFirstOne.getDay() == 0 ? 6 : dateFirstOne.getDay() - 1;
   },
   /**
-   * 获取当前日期上个月或者下个月
-  */
+   * Get the current date last month or next month
+   */
   getOtherMonth(date, str = 'nextMonth') {
     const timeArray = this.dateFormat(date).split('/');
     const year = timeArray[0];
@@ -52,13 +52,13 @@ export default {
     const t2 = year2 + '/' + month2 + '/' + day2;
     return new Date(t2);
   },
-  // 上个月末尾的一些日期
+  // Some dates at the end of last month
   getLeftArr(date) {
     const arr = [];
     const leftNum = this.getMonthweek(date);
     const num = this.getDaysInOneMonth(this.getOtherMonth(date, 'preMonth')) - leftNum + 1;
     const preDate = this.getOtherMonth(date, 'preMonth');
-    // 上个月多少开始
+    // How much started last month
     for (let i = 0; i < leftNum; i++) {
       const nowTime = preDate.getFullYear() + '/' + (preDate.getMonth() + 1) + '/' + (num + i);
       arr.push({
@@ -70,7 +70,7 @@ export default {
     }
     return arr;
   },
-  // 下个月末尾的一些日期
+  // Some dates at the end of next month
   getRightArr(date) {
     const arr = [];
     const nextDate = this.getOtherMonth(date, 'nextMonth');
@@ -87,13 +87,13 @@ export default {
     }
     return arr;
   },
-  // format日期
+  // Format date
   dateFormat(date) {
     date = typeof date === 'string' ? new Date(date.replace(/\-/g, '/')) : date;
     return date.getFullYear() + '/' + (date.getMonth() + 1) + '/'
       + date.getDate();
   },
-  // 获取某月的列表不包括上月和下月
+  // Get a list of months does not include last month and next month
   getMonthListNoOther(date) {
     const arr = [];
     const num = this.getDaysInOneMonth(date);
@@ -112,10 +112,10 @@ export default {
     }
     return arr;
   },
-  // 获取某月的列表 用于渲染
+  // Get a list of months for rendering
   getMonthList(date) {
     return [ ...this.getLeftArr(date), ...this.getMonthListNoOther(date), ...this.getRightArr(date) ];
   },
-  // 默认是周一开始
+  // The default is Monday.
   sundayStart: false,
 };

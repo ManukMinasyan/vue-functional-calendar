@@ -1,5 +1,8 @@
 <template>
     <div>
+        <button @click="prevMonth">Prev Month</button>
+        <button @click="nextMonth">Next Month</button>
+
         <functional-calendar ref='calendar'
                              v-on:choseDay="clickDay"
                              v-model="calendar"
@@ -13,9 +16,11 @@
 
                              :change-month-function="true"
                              :change-year-function="true"
+
+                             :apply-stylesheet="true"
         ></functional-calendar>
 
-        <functional-calendar ref='calendar'
+        <functional-calendar
                              v-on:choseDay="clickDay"
                              v-model="calendar"
                              :sundayStart="true"
@@ -71,6 +76,12 @@
         methods: {
             clickDay(date) {
                 console.log(date);
+            },
+            prevMonth() {
+                this.$refs.calendar.PreMonth();
+            },
+            nextMonth() {
+                this.$refs.calendar.NextMonth();
             }
         }
     }

@@ -87,6 +87,8 @@ export default {
       // :markDate=arr // arr=['2018/10/20','2018/10/28', '2018/10/16']
       // :agoDayHide='1514937600' //Do not click before a date. Timestamp 10 digits
       // :futureDayHide='1525104000' //Do not click after a date Timestamp 10 digits
+      
+      // :apply-stylesheet="true"  
 ></FunctionalCalendar>
 ````
 

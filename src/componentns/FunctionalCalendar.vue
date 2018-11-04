@@ -1,17 +1,17 @@
 <template>
-    <div class="main-container">
+    <div :class="{ 'styles-conditional-class': applyStylesheet }" class="main-container">
         <div class="multiple-input" v-if="isModal && isDateRange">
             <input type="text" v-model="inputStartDate" @click="showCalendar = !showCalendar" readonly>
             <input type="text" v-model="inputEndDate" @click="showCalendar = !showCalendar" readonly>
         </div>
         <div v-else-if="isModal && isDatePicker">
-            <input class="single-input" type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar" readonly>
+            <input class="single-input" type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar"
+                   readonly>
         </div>
 
         <div class="functional-calendar" :class="{'functional-modal': isModal}" v-if="showCalendar">
-
             <div class="date-popover" v-if="showChangeMonth && changeMonthFunction">
-                <div class="picker" style="text-align: center;">
+                <div class="picker">
                     <div class="flexbox header">
                         <span class="prev">
                             <li @click="PreYear(myDate,false)">
@@ -65,16 +65,20 @@
             <div class="calendar-for"
                  v-for="(calendar, key) in calendars.slice(0,calendarsCount)"
                  :key="key"
-                v-if="showMainCalendar">
+                 v-if="showMainCalendar">
                 <section class="wh_container">
+
                     <div class="wh_content_all">
                         <div class="wh_top_changge">
+
                             <li class="wh_content_li"
                                 :class="{changeMonthClass: changeMonthFunction}"
                                 @click="showChangeMonthFunction">
                                 {{ calendar.dateTop }}
                             </li>
+
                         </div>
+
                         <div class="wh_content">
                             <div class="wh_content_item" v-for="(name, key) in dayNames" :key="key">
                                 <div class="wh_top_tag">
@@ -82,12 +86,13 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="wh_content">
+                        <div class="wh_content" v-if="true">
                             <div class="wh_content_item"
                                  v-for="(item,index) in calendar.list"
-                                 :key="index"
+                                 :key="index+'day'"
                                  @click="clickDay(item,index)">
-                                <div class="wh_item_date"
+
+                                <div class="wh_item_date" :key="index+'day1'"
                                      @mouseover="dateMouseOver(item.date)"
                                      v-bind:class="[getClassNames(item),setClass(item)]">
                                     {{item.id}}
@@ -95,14 +100,17 @@
                             </div>
                         </div>
                     </div>
+
                 </section>
             </div>
+
+
         </div>
     </div>
 </template>
 
 <script>
-    import timeUtil from '../assets/calendar';
+    import timeUtil from '../assets/js/calendar';
 
     export default {
         data() {
@@ -122,7 +130,7 @@
                 inputStartDate: 'yyyy/mm/dd',
                 inputEndDate: 'yyyy/mm/dd',
                 startDate: false,
-                endDate: false
+                endDate: false,
             };
         },
         props: {
@@ -187,6 +195,10 @@
             futureDayHide: {
                 type: Number,
                 default: 2554387200
+            },
+            applyStylesheet: {
+                type: Boolean,
+                default: true
             }
         },
         watch: {
@@ -416,7 +428,7 @@
                     this.listRendering(this.myDate);
                 }
             },
-            NextMonth: function (date, isChosedDay = true) {
+            NextMonth: function (date = this.myDate, isChosedDay = true) {
                 date = timeUtil.dateFormat(date);
                 this.myDate = timeUtil.getOtherMonth(this.myDate, 'nextMonth');
                 this.$emit('changeMonth', timeUtil.dateFormat(this.myDate));
@@ -462,9 +474,11 @@
                 const [markDate, markDateMore] = this.forMatArgs();
                 this.calendars[calendar_index].dateTop = `${this.monthNames[date.getMonth()]} ${date.getFullYear()}`;
                 let arr = timeUtil.getMonthList(date);
+
                 for (let i = 0; i < arr.length; i++) {
                     let markClassName = '';
                     let k = arr[i];
+
                     k.chooseDay = false;
                     const nowTime = k.date;
                     const t = new Date(nowTime).getTime() / 1000;
@@ -504,13 +518,13 @@
                 }
             },
             showChangeMonthFunction() {
-                if(this.changeMonthFunction) {
+                if (this.changeMonthFunction) {
                     this.showChangeMonth = !this.showChangeMonth;
                     this.showMainCalendar = !this.showMainCalendar
                 }
             },
             showChangeYearFunction() {
-                if(this.changeYearFunction) {
+                if (this.changeYearFunction) {
                     this.showChangeYear = !this.showChangeYear;
                 }
             },
@@ -546,323 +560,33 @@
     };
 </script>
 
-<style scoped>
-    .functional-calendar {
-        position: relative;
-        border-radius: .28571429rem;
-        box-shadow: 0 2px 3px 0 rgba(34, 36, 38, .15);
-        background-color: #FFFFFF;
-        min-width: 475px;
-    }
-
-
-    .calendar-for {
-        display: inline-block;
-        max-width: 475px;
-        min-width: 475px;
-    }
-
-    .date-popover {
-        position: relative;
-        transition: opacity .1s ease;
-        margin: auto;
-        z-index: 10;
-        font-size: 1rem;
-        font-weight: 200;
-        max-width: 475px;
-        min-width: 475px;
-    }
-
-    .date-popover .picker .flexbox {
-        padding: 0;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        justify-content: space-between;
-    }
-
-
-    .date-popover .flexbox.header .year {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-        font-size: 21px;
-        font-weight: bold;
-    }
-
-    .date-popover .flexbox.header .year.pointer {
-        cursor: pointer;
-        text-decoration: underline dotted #007bff;
-    }
-
-    .date-popover .next, .prev {
-        display: flex;
-        text-indent: -10000px;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-        margin: 20px;
-    }
-
-    .date-popover .picker .flexbox .item {
-        -webkit-box-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
-        flex-basis: 30%;
-        height: 69px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-        outline-style: none;
-    }
-
-    .date-popover .picker .flexbox .item:hover {
-        background-color: rgba(113, 113, 113, 0.3);
-        transition: background-color 0.2s ease-in-out;
-        cursor: pointer;
-    }
-
-    .date-popover .picker .monthItem .item {
-        border-top: 1px solid #d4d4d4;
-    }
-
-    .date-popover .selected {
-        background: #007bff;
-        color: #fff;
-        text-shadow: 0 -1px 0 rgba(0, 0, 0, .25);
-        font-weight: 700;
-    }
-
-    .date-popover .selected:nth-last-child(3) {
-        border-radius: 0 0 0 5px;
-    }
-
-    .date-popover .selected:last-child {
-        border-radius: 0 0 5px;
-    }
-
-    .functional-calendar.functional-modal {
-        z-index: 1000;
-        position: absolute;
-        margin-top: 5px;
-        will-change: transform, opacity;
-        background-color: #ffffff;
-        background-clip: padding-box;
-        box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
-        transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-
-    input.single-input, .multiple-input input {
-        font-size: inherit;
-        transition: width 200ms;
-        padding: 7px;
-        width: 120px;
-        color: #aaa;
-        border: 1px solid #eee;
-        text-align: center;
-    }
-
-    input.single-input {
-        border-radius: 10px;
-    }
-
-    .multiple-input input:first-child {
-        border-radius: 10px 0 0 10px;
-    }
-
-    .multiple-input input:last-child {
-        border-radius: 0 10px 10px 0;
-    }
-
-    @media screen and (min-width: 460px) {
-        .wh_item_date:hover {
-            background-color: rgb(218, 218, 218);
-            border: 0;
-            border-radius: 50%;
-            cursor: pointer;
+<style scoped lang="scss">
+    .styles-conditional-class {
+        &.main-container {
+            width: -moz-fit-content;
+            width: fit-content;
+            margin: 50px 0 15px 0;
         }
 
-        .wh_item_date:hover.wh_isToday {
-            background-color: rgb(218, 218, 218);
-            border: 0;
-            border-radius: 50%;
-            cursor: pointer;
+        @import "../assets/scss/styles";
+    }
+
+    .shift-in-enter-active {
+        animation: shift-in 1s;
+    }
+
+    .shift-in-leave-active {
+        animation: shift-in 1s reverse;
+    }
+
+    @keyframes shift-in {
+        0% {
+            transform: translateX(10px);
+            opacity: 0.5;
         }
-    }
-
-    .main-container {
-        width: -moz-fit-content;
-        width: fit-content;
-        margin: 50px 0 15px 0;
-    }
-
-    .wh_container {
-        display: flex;
-        margin: auto;
-    }
-
-    li {
-        list-style-type: none;
-    }
-
-    .wh_top_changge {
-        position: relative;
-        width: 200px;
-        margin: 0 auto;
-    }
-
-    .wh_top_changge li {
-        cursor: pointer;
-        display: flex;
-        color: #000000;
-        font-size: 18px;
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-        height: 47px;
-    }
-
-    .wh_top_changge .wh_content_li {
-        cursor: auto;
-        flex: 2.5;
-    }
-
-    .wh_top_changge .wh_content_li.changeMonthClass {
-        cursor: pointer;
-        margin: 0 auto;
-        flex-basis: 200px;
-        flex-grow: inherit;
-    }
-
-    .wh_top_changge_buttons {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 20px 0;
-        margin-bottom: -40px;
-    }
-
-    .wh_top_changge_buttons li {
-        cursor: pointer;
-        display: flex;
-        color: #000000;
-        font-size: 18px;
-    }
-
-    .wh_top_changge_buttons .wh_content_li {
-        cursor: auto;
-    }
-
-    .wh_content_all {
-        font-family: -apple-system, BlinkMacSystemFont, "PingFang SC",
-        "Helvetica Neue", STHeiti, "Microsoft Yahei", Tahoma, Simsun, sans-serif;
-        width: 100%;
-        overflow: hidden;
-        padding: 10px;
-    }
-
-    .wh_content {
-        display: flex;
-        flex-wrap: wrap;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .wh_content:first-child .wh_content_item_tag,
-    .wh_content:first-child .wh_content_item {
-        color: #ddd;
-        font-size: 16px;
-    }
-
-    .wh_content_item,
-    wh_content_item_tag {
-        font-size: 15px;
-        width: 13.4%;
-        text-align: center;
-        color: #000000;
-        position: relative;
-    }
-
-    .wh_content_item {
-        height: 40px;
-        margin-bottom: 5px;
-    }
-
-    .wh_top_tag {
-        line-height: 40px;
-        margin: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .wh_item_date {
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-        margin: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .wh_jiantou1 {
-        width: 12px;
-        height: 12px;
-        border-top: 2px solid #0a0c19;
-        border-left: 2px solid #0a0c19;
-        transform: rotate(-45deg);
-    }
-
-    .wh_jiantou1:active,
-    .wh_jiantou2:active {
-        border-color: #ddd;
-    }
-
-    .wh_jiantou2 {
-        width: 12px;
-        height: 12px;
-        border-top: 2px solid #0a0c19;
-        border-right: 2px solid #0a0c19;
-        transform: rotate(45deg);
-    }
-
-    .wh_content_item > .wh_isMark {
-        margin: auto;
-        background-color: rgb(102, 179, 204);
-        border-radius: 50%;
-        opacity: 1;
-        z-index: 2;
-    }
-
-    .wh_content_item .wh_other_dayhide {
-        color: #bfbfbf;
-    }
-
-    .wh_content_item .wh_other_dayhide.wh_isMark {
-        color: rgb(250, 250, 250);
-        background-color: rgba(102, 179, 204, 0.5);
-    }
-
-    .wh_content_item .wh_want_dayhide {
-        color: #bfbfbf;
-    }
-
-    .wh_content_item .wh_isToday {
-        background: #ff8080;
-        border-radius: 50%;
-    }
-
-    .wh_content_item .wh_chose_day {
-        background-color: rgb(250, 250, 250);
-        border-color: rgb(102, 179, 204);
-        border-width: 2px;
-        border-style: solid;
-        border-radius: 50%;
-        opacity: 1;
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
     }
 </style>
