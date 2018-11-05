@@ -60,7 +60,7 @@ export default {
 }
 ````
 
-###Template Usage
+### Template Usage
 ````html
 <FunctionalCalendar
       // v-model="calendar"
@@ -92,14 +92,14 @@ export default {
 ></FunctionalCalendar>
 ````
 
-###Multiple tag examples
+### Multiple tag examples
 The className of the April 1 tag is mark 1 and some markup styles are made according to the class.
 ````javascript
 arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
 ``````
 
-##Usage With Configs
-###Component Settings
+## Usage With Configs
+### Component Settings
    ````javascript
    export default {
        components: {
@@ -126,7 +126,7 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
        },
    }
    ````
-###Template Usage   
+### Template Usage   
 ````html
 <FunctionalCalendar
       // v-model="calendar"
