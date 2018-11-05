@@ -3,21 +3,12 @@
         <button @click="prevMonth">Prev Month</button>
         <button @click="nextMonth">Next Month</button>
 
+
+
         <functional-calendar ref='calendar'
                              v-on:choseDay="clickDay"
                              v-model="calendar"
-                             :sundayStart="true"
-                             :is-date-picker="true"
-                             :is-date-range="true"
-                             :markDate="arr"
-                             :is-multiple="false"
-                             :calendars-count="3"
-                             :is-modal="false"
-
-                             :change-month-function="true"
-                             :change-year-function="true"
-
-                             :apply-stylesheet="true"
+                             :configs="configs"
         ></functional-calendar>
 
         <functional-calendar
@@ -25,14 +16,14 @@
                              v-model="calendar"
                              :sundayStart="true"
                              :is-date-picker="true"
-                             :is-date-range="false"
+                             :is-date-range="true"
                              :markDate="arr"
-                             :is-multiple="false"
+                             :is-multiple="true"
                              :calendars-count="3"
                              :is-modal="true"
 
-                             :change-month-function="false"
-                             :change-year-function="false"
+                             :change-month-function="true"
+                             :change-year-function="true"
         ></functional-calendar>
 
         <!--Available Functions-->
@@ -70,6 +61,26 @@
         data() {
             return {
                 calendar: {},
+                configs: {
+                    sundayStart: true,
+
+                    isDatePicker: false,
+                    isDateRange: true,
+
+                    isMultiple: true,
+                    calendarsCount: 3,
+
+                    isModal: false,
+
+                    changeMonthFunction: true,
+                    changeYearFunction: true,
+
+                    applyStylesheet: true,
+
+                    dayNames: ['Su','Mo','Tu','We','Th','Fr','Sa'],
+
+                    monthNames: ["January","February","March","April","May","June","July","August","September","October","November","December"]
+                },
                 arr: ['2018/10/10', '2018-10-11']
             }
         },

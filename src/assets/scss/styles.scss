@@ -5,6 +5,10 @@
   background-color: #FFFFFF;
   min-width: 475px;
 
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
   &.functional-modal {
     z-index: 1000;
     position: absolute;
@@ -117,7 +121,6 @@
       width: 200px;
       margin: 0 auto;
       li {
-        cursor: pointer;
         display: flex;
         color: #000000;
         font-size: 18px;
@@ -125,15 +128,15 @@
         justify-content: center;
         align-items: center;
         height: 47px;
-        .wh_content_li {
+        &.wh_content_li {
           cursor: auto;
           flex: 2.5;
-          &.changeMonthClass {
-            cursor: pointer;
-            margin: 0 auto;
-            flex-basis: 200px;
-            flex-grow: inherit;
-          }
+        }
+        &.changeMonthClass {
+          cursor: pointer;
+          margin: 0 auto;
+          flex-basis: 200px;
+          flex-grow: inherit;
         }
       }
 
@@ -288,13 +291,11 @@ input.single-input {
     background-color: rgb(218, 218, 218);
     border: 0;
     border-radius: 50%;
-    cursor: pointer;
   }
 
   .wh_item_date:hover.wh_isToday {
     background-color: rgb(218, 218, 218);
     border: 0;
     border-radius: 50%;
-    cursor: pointer;
   }
 }

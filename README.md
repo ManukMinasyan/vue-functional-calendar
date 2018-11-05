@@ -98,6 +98,52 @@ The className of the April 1 tag is mark 1 and some markup styles are made accor
 arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
 ``````
 
+##Usage With Configs
+###Component Settings
+   ````javascript
+   export default {
+       components: {
+           FunctionalCalendar
+       },
+       data() {
+           return {
+               calendar: {
+                   configs: {
+                       sundayStart: false,
+                       isDatePicker: false,
+                       isDateRange: false,
+                       isMultiple: false,
+                       calendarsCount: 3,
+                       changeMonthFunction: false,
+                       changeYearFunction: false,
+                       dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                       monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                       isModal: false,
+                       applyStylesheet: true,
+                   }
+               }
+           }
+       },
+   }
+   ````
+###Template Usage   
+````html
+<FunctionalCalendar
+      // v-model="calendar"
+      
+      // :configs="calendar.configs"
+      
+      // v-on:choseDay="clickDay"
+      // v-on:changeMonth="changeDate"
+      // v-on:isToday="clickToday"
+      
+      
+      // :markDate=arr // arr=['2018/10/20','2018/10/28', '2018/10/16']
+      // :agoDayHide='1514937600' //Do not click before a date. Timestamp 10 digits
+      // :futureDayHide='1525104000' //Do not click after a date Timestamp 10 digits
+></FunctionalCalendar>
+````
+
 
 ### API
 

@@ -1,16 +1,16 @@
 <template>
-    <div :class="{ 'styles-conditional-class': applyStylesheet }" class="main-container">
-        <div class="multiple-input" v-if="isModal && isDateRange">
+    <div :class="{ 'styles-conditional-class': fConfigs.applyStylesheet }" class="main-container">
+        <div class="multiple-input" v-if="fConfigs.isModal && fConfigs.isDateRange">
             <input type="text" v-model="inputStartDate" @click="showCalendar = !showCalendar" readonly>
             <input type="text" v-model="inputEndDate" @click="showCalendar = !showCalendar" readonly>
         </div>
-        <div v-else-if="isModal && isDatePicker">
+        <div v-else-if="fConfigs.isModal && fConfigs.isDatePicker">
             <input class="single-input" type="text" v-model="inputSelectedDate" @click="showCalendar = !showCalendar"
                    readonly>
         </div>
 
-        <div class="functional-calendar" :class="{'functional-modal': isModal}" v-if="showCalendar">
-            <div class="date-popover" v-if="showChangeMonth && changeMonthFunction">
+        <div class="functional-calendar" :class="{'functional-modal': fConfigs.isModal}" v-if="showCalendar">
+            <div class="date-popover" v-if="showChangeMonth && fConfigs.changeMonthFunction">
                 <div class="picker">
                     <div class="flexbox header">
                         <span class="prev">
@@ -20,7 +20,7 @@
                         </span>
                         <div class="year"
                              @click="showChangeYearFunction"
-                             :class="{pointer: !showChangeYear && changeYearFunction}"
+                             :class="{pointer: !showChangeYear && fConfigs.changeYearFunction}"
                         >
                             {{ this.myDate.getFullYear() }}
                         </div>
@@ -30,7 +30,7 @@
                             </li>
                         </span>
                     </div>
-                    <div class="flexbox monthItem" v-if="showChangeYear && changeYearFunction">
+                    <div class="flexbox monthItem" v-if="showChangeYear && fConfigs.changeYearFunction">
                         <div class="item"
                              v-for="i in 12"
                              :key="i"
@@ -42,7 +42,7 @@
                     </div>
                     <div class="flexbox monthItem" v-else>
                         <div class="item"
-                             v-for="(month, key) in monthNames"
+                             v-for="(month, key) in fConfigs.monthNames"
                              :key="key"
                              @click="changeMonth(key)"
                              :class="{selected: myDate.getMonth()===key}"
@@ -63,7 +63,7 @@
             </div>
 
             <div class="calendar-for"
-                 v-for="(calendar, key) in calendars.slice(0,calendarsCount)"
+                 v-for="(calendar, key) in calendars.slice(0,fConfigs.calendarsCount)"
                  :key="key"
                  v-if="showMainCalendar">
                 <section class="wh_container">
@@ -72,7 +72,7 @@
                         <div class="wh_top_changge">
 
                             <li class="wh_content_li"
-                                :class="{changeMonthClass: changeMonthFunction}"
+                                :class="{changeMonthClass: fConfigs.changeMonthFunction}"
                                 @click="showChangeMonthFunction">
                                 {{ calendar.dateTop }}
                             </li>
@@ -80,7 +80,7 @@
                         </div>
 
                         <div class="wh_content">
-                            <div class="wh_content_item" v-for="(name, key) in dayNames" :key="key">
+                            <div class="wh_content_item" v-for="(name, key) in fConfigs.dayNames" :key="key">
                                 <div class="wh_top_tag">
                                     {{ name }}
                                 </div>
@@ -92,9 +92,10 @@
                                  :key="index+'day'"
                                  @click="clickDay(item,index)">
 
-                                <div class="wh_item_date" :key="index+'day1'"
+                                <div class="wh_item_date"
+                                     :key="index+'day1'"
                                      @mouseover="dateMouseOver(item.date)"
-                                     v-bind:class="[getClassNames(item),setClass(item)]">
+                                     :class="[getClassNames(item),setClass(item)]">
                                     {{item.id}}
                                 </div>
                             </div>
@@ -131,9 +132,32 @@
                 inputEndDate: 'yyyy/mm/dd',
                 startDate: false,
                 endDate: false,
+
+                fConfigs: {
+                    sundayStart: false,
+                    isDatePicker: false,
+                    isDateRange: false,
+                    isMultiple: false,
+                    calendarsCount: 1,
+                    isModal: false,
+                    changeMonthFunction: false,
+                    changeYearFunction: false,
+                    applyStylesheet: true,
+                    dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                    monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                }
             };
         },
         props: {
+            configs: {
+                type: Object,
+                default: () => {
+                }
+            },
+            sundayStart: {
+                type: Boolean,
+                default: () => false
+            },
             isModal: {
                 type: Boolean,
                 default: () => false
@@ -154,6 +178,26 @@
                 type: Number,
                 default: () => 1
             },
+            dayNames: {
+                type: Array,
+                default: () => []
+            },
+            monthNames: {
+                type: Array,
+                default: () => []
+            },
+            changeMonthFunction: {
+                type: Boolean,
+                default: false
+            },
+            changeYearFunction: {
+                type: Boolean,
+                default: false
+            },
+            applyStylesheet: {
+                type: Boolean,
+                default: true
+            },
             newDate: {
                 default: () => new Date()
             },
@@ -165,29 +209,6 @@
                 type: Array,
                 default: () => []
             },
-            dayNames: {
-                type: Array,
-                default: () => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
-            },
-            monthNames: {
-                type: Array,
-                default: () => [
-                    "January", "February", "March", "April", "May", "June",
-                    "July", "August", "September", "October", "November", "December"
-                ]
-            },
-            changeMonthFunction: {
-                type: Boolean,
-                default: false
-            },
-            changeYearFunction: {
-                type: Boolean,
-                default: false
-            },
-            sundayStart: {
-                type: Boolean,
-                default: () => false
-            },
             agoDayHide: {
                 type: Number,
                 default: 0
@@ -195,18 +216,9 @@
             futureDayHide: {
                 type: Number,
                 default: 2554387200
-            },
-            applyStylesheet: {
-                type: Boolean,
-                default: true
             }
         },
         watch: {
-            isModal: {
-                handler(val) {
-                    this.setIsModal(val)
-                }
-            },
             selectedDate: {
                 handler(val) {
                     this.inputSelectedDate = val ? val : 'yyyy/mm/dd';
@@ -256,13 +268,13 @@
             }
         },
         created() {
-            this.intStart();
             this.myDate = new Date();
 
+            this.setConfigs();
+            this.intStart();
 
             let self = this;
-
-            if (this.isModal) {
+            if (this.fConfigs.isModal) {
                 window.addEventListener('click', function (e) {
                     // close dropdown when clicked outside
                     if (!self.$el.contains(e.target)) {
@@ -270,21 +282,19 @@
                     }
                 });
             }
-
-            this.setIsModal(this.isModal);
         },
         mounted() {
             this.listRendering(this.myDate);
         },
         methods: {
             intStart() {
-                timeUtil.sundayStart = this.sundayStart;
+                timeUtil.sundayStart = this.fConfigs.sundayStart;
 
-                for (let i = 0; i < this.calendarsCount; i++) {
+                for (let i = 0; i < this.fConfigs.calendarsCount; i++) {
                     let calendar = {date: new Date(), dateTop: '', list: []};
                     this.calendars.push(calendar);
 
-                    if (!this.isMultiple) {
+                    if (!this.fConfigs.isMultiple) {
                         break;
                     }
                 }
@@ -299,7 +309,7 @@
                 });
             },
             dateMouseOver(date) {
-                if (!this.isDateRange) {
+                if (!this.fConfigs.isDateRange) {
                     return false;
                 }
 
@@ -357,11 +367,14 @@
                     classNames.push('wh_want_dayhide');
                 }
 
+                if (this.fConfigs.isDatePicker || this.fConfigs.isDateRange) {
+                    classNames.push('cursor-pointer');
+                }
 
                 return classNames;
             },
             clickDay: function (item) {
-                if (!this.isDateRange && !this.isDatePicker) {
+                if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker) {
                     return false;
                 }
 
@@ -374,7 +387,7 @@
                         : this.NextMonth(item.date);
                 }
 
-                if (this.isDateRange) {
+                if (this.fConfigs.isDateRange) {
                     let clickDate = new Date(item.date).getTime();
                     let startDate = new Date(this.startDate).getTime();
 
@@ -398,7 +411,7 @@
                         startDate: this.startDate,
                         endDate: this.endDate
                     });
-                } else if (this.isDatePicker) {
+                } else if (this.fConfigs.isDatePicker) {
                     this.selectedDate = item.date;
 
                     this.$emit('input', {
@@ -472,7 +485,7 @@
             },
             getList: function (date, chooseDay, calendar_index) {
                 const [markDate, markDateMore] = this.forMatArgs();
-                this.calendars[calendar_index].dateTop = `${this.monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                this.calendars[calendar_index].dateTop = `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`;
                 let arr = timeUtil.getMonthList(date);
 
                 for (let i = 0; i < arr.length; i++) {
@@ -512,30 +525,15 @@
 
                 this.calendars[calendar_index].list = arr;
             },
-            setIsModal(val = false) {
-                if (val) {
-                    this.showCalendar = false;
-                }
-            },
             showChangeMonthFunction() {
-                if (this.changeMonthFunction) {
+                if (this.fConfigs.changeMonthFunction) {
                     this.showChangeMonth = !this.showChangeMonth;
                     this.showMainCalendar = !this.showMainCalendar
                 }
             },
             showChangeYearFunction() {
-                if (this.changeYearFunction) {
-                    this.showChangeYear = !this.showChangeYear;
-                }
-            },
-            changeMonth(month_key) {
-                this.showChangeMonth = !this.showChangeMonth;
-                this.showMainCalendar = true;
-
-                if (month_key !== null) {
-                    let date = new Date(this.myDate.getFullYear(), month_key);
-                    this.ChoseMonth(date);
-                    this.listRendering(this.myDate);
+                if (this.fConfigs.changeYearFunction && !this.showChangeYear) {
+                    this.showChangeYear = true;
                 }
             },
             PreYear() {
@@ -555,6 +553,43 @@
                 let date = new Date(year, this.myDate.getMonth());
                 this.ChoseMonth(date);
                 this.listRendering(this.myDate);
+            },
+            changeMonth(month_key) {
+                this.showChangeMonth = !this.showChangeMonth;
+                this.showMainCalendar = true;
+
+                if (month_key !== null) {
+                    let date = new Date(this.myDate.getFullYear(), month_key);
+                    this.ChoseMonth(date);
+                    this.listRendering(this.myDate);
+                }
+            },
+            setConfigs() {
+                if (typeof (this.configs) !== "undefined") {
+                    this.fConfigs = this.configs;
+                } else {
+                    this.fConfigs.sundayStart = this.sundayStart;
+
+                    this.fConfigs.isDatePicker = this.isDatePicker;
+                    this.fConfigs.isDateRange = this.isDateRange;
+
+                    this.fConfigs.isMultiple = this.isMultiple;
+                    this.fConfigs.calendarsCount = this.calendarsCount;
+
+                    this.fConfigs.changeMonthFunction = this.changeMonthFunction;
+                    this.fConfigs.changeYearFunction = this.changeYearFunction;
+
+                    this.fConfigs.dayNames = this.dayNames.length ? this.dayNames : this.fConfigs.dayNames;
+                    this.fConfigs.monthNames = this.monthNames.length ? this.monthNames : this.fConfigs.monthNames;
+
+                    this.fConfigs.isModal = this.isModal;
+
+                    this.fConfigs.applyStylesheet = this.applyStylesheet;
+                }
+
+
+                // Is Modal
+                if (this.fConfigs.isModal) this.showCalendar = false;
             }
         }
     };
