@@ -64,15 +64,15 @@
                 configs: {
                     sundayStart: true,
 
-                    isDatePicker: false,
-                    isDateRange: true,
+                    isDatePicker: true,
+                    isDateRange: false,
 
-                    isMultiple: true,
+                    isMultiple: false,
                     calendarsCount: 3,
 
                     isModal: false,
 
-                    changeMonthFunction: true,
+                    changeMonthFunction: false,
                     changeYearFunction: true,
 
                     applyStylesheet: true,

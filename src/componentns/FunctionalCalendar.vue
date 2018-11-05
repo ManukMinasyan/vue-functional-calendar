@@ -566,7 +566,12 @@
             },
             setConfigs() {
                 if (typeof (this.configs) !== "undefined") {
-                    this.fConfigs = this.configs;
+                    let vm = this;
+                    Object.keys(this.configs).map(function (objectKey) {
+                        if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
+                            vm.$set(vm.fConfigs, objectKey,  vm.configs[objectKey]);
+                        }
+                    });
                 } else {
                     this.fConfigs.sundayStart = this.sundayStart;
 
