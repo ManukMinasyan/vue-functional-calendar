@@ -155,7 +155,7 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
 | markDate      | If you need to be marked for a few days of the month, pass the date array of the month. Such as [2,6,8], the second month, the 6th, the 6th, the 8th is marked (the same mark) | Empty array |    No    |
 | markDateMore   | Need different tags as above, the last line of sample code for Usage                     | Empty Array |    No    |
 | agoDayHide     | Do not click before a date. The timestamp length is 10 digits.                 |   0    |    No    |
-| futureDayHide  | Do not click after a date. The timestamp length is 10 digits.                  |  Very large  |    No    |
+| futureDayHide  | Do not click after a date. The timestamp length is 10 digits.                  |  2554387200  |    No    |
 
 
 ##### Add the ref attribute to the Calendar tab, exposing three methods to switch the month directly
