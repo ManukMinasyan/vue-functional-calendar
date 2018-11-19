@@ -45,7 +45,7 @@ export default {
     },
     data() {
         return {
-            calendar: {}
+            calendarData: {}
         }
     },
     clickDay(data) {
@@ -56,6 +56,9 @@ export default {
     },
     clickToday(data) {
       console.log(data); //Jumped to this month
+    },
+    getSelectedDaysCount(data){
+        console.log(data); // Get Selected Days Count
     }
 }
 ````
@@ -63,10 +66,7 @@ export default {
 ### Template Usage
 ````html
 <FunctionalCalendar
-      // v-model="calendar"
-      
-      // :day-names="dayNames" //dayNames=['Su','Mo','Tu','We','Th','Fr','Sa']
-      // :month-names="monthNames" //monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"]
+      // v-model="calendarData"
       
       // v-on:choseDay="clickDay"
       // v-on:changeMonth="changeDate"
@@ -90,6 +90,9 @@ export default {
       // :agoDayHide="1514937600" //Do not click before a date. Timestamp 10 digits
       // :futureDayHide="1525104000" //Do not click after a date Timestamp 10 digits
       
+      // :day-names="dayNames" //dayNames=['Su','Mo','Tu','We','Th','Fr','Sa']
+      // :month-names="monthNames" //monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"]
+      
       // :apply-stylesheet="true"  
 ></FunctionalCalendar>
 ````
@@ -101,43 +104,12 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
 ``````
 
 ## Usage With Configs
-### Component Settings
-   ````javascript
-   export default {
-       components: {
-           FunctionalCalendar
-       },
-       data() {
-           return {
-               calendar: {
-                   configs: {
-                       sundayStart: false,
-                       isDatePicker: false,
-                       isDateRange: false,
-                       isMultiple: false,
-                       calendarsCount: 3,
-                       changeMonthFunction: false,
-                       changeYearFunction: false,
-                       markDate: ['2018/10/20','2018/10/28', '2018/10/16'],
-                       markDateMore: [{date:'2018/11/20',className:"mark1"}, {date:'2018/11/21',className:"mark2"}],
-                       agoDayHide: 0,
-                       futureDayHide: 2554387200,
-                       dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                       monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-                       isModal: false,
-                       applyStylesheet: true,
-                   }
-               }
-           }
-       },
-   }
-   ````
 ### Template Usage   
 ````html
 <FunctionalCalendar
-      // v-model="calendar"
+      // v-model="calendarData"
       
-      // :configs="calendar.configs"
+      // :configs="calendarConfigs"
       
       // v-on:choseDay="clickDay"
       // v-on:changeMonth="changeDate"
@@ -145,7 +117,36 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
       // v-on:selectedDaysCount="getSelectedDaysCount" // Works only with a date range.
 ></FunctionalCalendar>
 ````
-
+### Component Settings
+````javascript
+export default {
+    components: {
+        FunctionalCalendar
+    },
+    data() {
+        return {
+            calendarData: {},
+            calendarConfigs: {
+                sundayStart: false,
+                isDatePicker: false,
+                isDateRange: false,
+                isMultiple: false,
+                calendarsCount: 3,
+                changeMonthFunction: false,
+                changeYearFunction: false,
+                markDate: ['2018/10/20','2018/10/28', '2018/10/16'],
+                markDateMore: [{date:'2018/11/20',className:"mark1"}, {date:'2018/11/21',className:"mark2"}],
+                agoDayHide: 0,
+                futureDayHide: 2554387200,
+                dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                isModal: false,
+                applyStylesheet: true
+            }
+        }
+    },
+}
+````
 
 ### API
 
@@ -154,7 +155,7 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
 | choseDay       | Check the method called on a certain day to return the selected date YY-MM-DD                    |    No    |
 | changeMonth    | Switch the method called by the month, return the date to switch to a certain month YY-MM-DD            |   No  
 | isToday        | When switching the month, if you cut to the current month, call this method and return to the current month today. | No
-| selectedDaysCount | Get number of days between date range dates | 
+| selectedDaysCount | Get number of days between date range dates | No
 ##### Add the ref attribute to the Calendar tab, exposing three methods to switch the month directly
 ````javascript
 For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
