@@ -142,9 +142,13 @@
                     isModal: false,
                     changeMonthFunction: false,
                     changeYearFunction: false,
+                    markDate: [],
+                    markDateMore: [],
+                    agoDayHide: 0,
+                    futureDayHide: 2554387200,
                     applyStylesheet: true,
                     dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-                    monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                    monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
                 }
             };
         },
@@ -407,6 +411,16 @@
                         this.startDate = item.date;
                     }
 
+                    //Get number of days between date range dates
+                    if(this.startDate !== false && this.endDate !== false) {
+                        let oneDay = 24*60*60*1000;
+                        let firstDate = new Date(this.startDate);
+                        let secondDate = new Date(this.endDate);
+                        let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+
+                        this.$emit('selectedDaysCount', diffDays);
+                    }
+
                     this.$emit('input', {
                         startDate: this.startDate,
                         endDate: this.endDate
@@ -453,8 +467,8 @@
                 }
             },
             forMatArgs: function () {
-                let markDate = this.markDate;
-                let markDateMore = this.markDateMore;
+                let markDate = this.fConfigs.markDate;
+                let markDateMore = this.fConfigs.markDateMore;
                 markDate = markDate.map((k) => {
                     return timeUtil.dateFormat(k);
                 });
@@ -505,7 +519,7 @@
                     k.markClassName = markClassName;
                     k.isMark = markDate.indexOf(nowTime) > -1;
                     //Unable to select a day
-                    k.dayHide = t < this.agoDayHide || t > this.futureDayHide;
+                    k.dayHide = t < this.fConfigs.agoDayHide || t > this.fConfigs.futureDayHide;
                     if (k.isToday) {
                         this.$emit('isToday', nowTime);
                     }
@@ -586,6 +600,11 @@
 
                     this.fConfigs.dayNames = this.dayNames.length ? this.dayNames : this.fConfigs.dayNames;
                     this.fConfigs.monthNames = this.monthNames.length ? this.monthNames : this.fConfigs.monthNames;
+
+                    this.fConfigs.markDate = this.markDate;
+                    this.fConfigs.markDateMore = this.markDateMore;
+                    this.fConfigs.agoDayHide = this.agoDayHide;
+                    this.fConfigs.futureDayHide = this.futureDayHide;
 
                     this.fConfigs.isModal = this.isModal;
 

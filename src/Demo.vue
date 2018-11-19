@@ -7,6 +7,7 @@
 
         <functional-calendar ref='calendar'
                              v-on:choseDay="clickDay"
+                             v-on:selectedDaysCount="count"
                              v-model="calendar"
                              :configs="configs"
         ></functional-calendar>
@@ -19,9 +20,9 @@
                              :is-date-range="true"
                              :markDate="arr"
                              :is-multiple="true"
-                             :calendars-count="3"
+                             :calendars-count="1"
                              :is-modal="true"
-
+                             :mark-date-more="configs.markDateMore"
                              :change-month-function="true"
                              :change-year-function="true"
         ></functional-calendar>
@@ -65,13 +66,13 @@
                     sundayStart: true,
 
                     isDatePicker: true,
-                    isDateRange: false,
+                    isDateRange: true,
 
                     isMultiple: false,
                     calendarsCount: 3,
 
                     isModal: false,
-
+                    markDateMore: [{date:'2018/11/20',className:'mark1'}],
                     changeMonthFunction: false,
                     changeYearFunction: true,
 
@@ -86,7 +87,10 @@
         },
         methods: {
             clickDay(date) {
-                console.log(date);
+                // console.log(date);
+            },
+            count(count){
+              console.log(count);
             },
             prevMonth() {
                 this.$refs.calendar.PreMonth();

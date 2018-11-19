@@ -71,6 +71,7 @@ export default {
       // v-on:choseDay="clickDay"
       // v-on:changeMonth="changeDate"
       // v-on:isToday="clickToday"
+      // v-on:selectedDaysCount="getSelectedDaysCount" // Works only with a date range.
       
       // :sundayStart="true"
       
@@ -84,9 +85,10 @@ export default {
       // :change-month-function="true"
       // :change-year-function="true"
       
-      // :markDate=arr // arr=['2018/10/20','2018/10/28', '2018/10/16']
-      // :agoDayHide='1514937600' //Do not click before a date. Timestamp 10 digits
-      // :futureDayHide='1525104000' //Do not click after a date Timestamp 10 digits
+      // :mark-date="['2018/10/20','2018/10/28', '2018/10/16']"
+      // :mark-date-more="arr"
+      // :agoDayHide="1514937600" //Do not click before a date. Timestamp 10 digits
+      // :futureDayHide="1525104000" //Do not click after a date Timestamp 10 digits
       
       // :apply-stylesheet="true"  
 ></FunctionalCalendar>
@@ -116,6 +118,10 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
                        calendarsCount: 3,
                        changeMonthFunction: false,
                        changeYearFunction: false,
+                       markDate: ['2018/10/20','2018/10/28', '2018/10/16'],
+                       markDateMore: [{date:'2018/11/20',className:"mark1"}, {date:'2018/11/21',className:"mark2"}],
+                       agoDayHide: 0,
+                       futureDayHide: 2554387200,
                        dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
                        monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
                        isModal: false,
@@ -136,28 +142,19 @@ arr=[{date:'2018/4/1',className:"mark1"}, {date:'2018/4/13',className:"mark2"}];
       // v-on:choseDay="clickDay"
       // v-on:changeMonth="changeDate"
       // v-on:isToday="clickToday"
-      
-      
-      // :markDate=arr // arr=['2018/10/20','2018/10/28', '2018/10/16']
-      // :agoDayHide='1514937600' //Do not click before a date. Timestamp 10 digits
-      // :futureDayHide='1525104000' //Do not click after a date Timestamp 10 digits
+      // v-on:selectedDaysCount="getSelectedDaysCount" // Works only with a date range.
 ></FunctionalCalendar>
 ````
 
 
 ### API
 
-| Attributes           | Description                                                         |  Default  | Whether it must pass |
-| :------------- | :----------------------------------------------------------- | :----: | :------: |
-| choseDay       | Check the method called on a certain day to return the selected date YY-MM-DD                  |   No   |    No    |
-| changeMonth    | Switch the method called by the month, return the date to switch to a certain month YY-MM-DD            |   No   |    No    |
-| isToday        | When switching the month, if you cut to the current month, call this method and return to the current month today. |   No   |    No    |
-| markDate      | If you need to be marked for a few days of the month, pass the date array of the month. Such as [2,6,8], the second month, the 6th, the 6th, the 8th is marked (the same mark) | Empty array |    No    |
-| markDateMore   | Need different tags as above, the last line of sample code for Usage                     | Empty Array |    No    |
-| agoDayHide     | Do not click before a date. The timestamp length is 10 digits.                 |   0    |    No    |
-| futureDayHide  | Do not click after a date. The timestamp length is 10 digits.                  |  2554387200  |    No    |
-
-
+| Attributes           | Description                                                        | Whether it must pass |
+| :------------- | :----------------------------------------------------------- | :----: 
+| choseDay       | Check the method called on a certain day to return the selected date YY-MM-DD                    |    No    |
+| changeMonth    | Switch the method called by the month, return the date to switch to a certain month YY-MM-DD            |   No  
+| isToday        | When switching the month, if you cut to the current month, call this method and return to the current month today. | No
+| selectedDaysCount | Get number of days between date range dates | 
 ##### Add the ref attribute to the Calendar tab, exposing three methods to switch the month directly
 ````javascript
 For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
