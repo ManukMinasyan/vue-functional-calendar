@@ -172,3 +172,8 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
 * If there are other issues or versions, functionally incompatible mail communication manuk.minasyan1@gmail.com
 
 To develop this package, I used the component vue-calendar-component.
+
+## Support on Beerpay
+Hey dude! Help me out for a couple of :beers:!
+
+[![Beerpay](https://beerpay.io/ManukMinasyan/vue-functional-calendar/badge.svg?style=beer-square)](https://beerpay.io/ManukMinasyan/vue-functional-calendar)  [![Beerpay](https://beerpay.io/ManukMinasyan/vue-functional-calendar/make-wish.svg?style=flat-square)](https://beerpay.io/ManukMinasyan/vue-functional-calendar?focus=wish)
