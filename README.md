@@ -4,11 +4,6 @@
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Downloads](https://img.shields.io/npm/dm/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 
-## Support on Beerpay
-Hey dude! Help me out for a couple of :beers:!
-
-[![Beerpay](https://beerpay.io/ManukMinasyan/vue-functional-calendar/badge.svg?style=beer-square)](https://beerpay.io/ManukMinasyan/vue-functional-calendar)  [![Beerpay](https://beerpay.io/ManukMinasyan/vue-functional-calendar/make-wish.svg?style=flat-square)](https://beerpay.io/ManukMinasyan/vue-functional-calendar?focus=wish)
-
 ## Demo
 
 Demo: https://y3jnxov469.codesandbox.io/
