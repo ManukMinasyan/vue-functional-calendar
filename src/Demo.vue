@@ -53,6 +53,7 @@
 </template>
 
 <script>
+    /* eslint-disable */
     import FunctionalCalendar from './components/FunctionalCalendar';
 
     export default {
