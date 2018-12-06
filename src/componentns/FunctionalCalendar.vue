@@ -246,6 +246,7 @@
             },
             markDateMore: {
                 handler() {
+                    this.fConfigs.markDateMore = data;
                     this.listRendering(this.myDate);
                 },
                 deep: true
