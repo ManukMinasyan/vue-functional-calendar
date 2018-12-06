@@ -53,7 +53,7 @@
 </template>
 
 <script>
-    import FunctionalCalendar from './componentns/FunctionalCalendar';
+    import FunctionalCalendar from './components/FunctionalCalendar';
 
     export default {
         components: {
