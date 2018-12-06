@@ -88,7 +88,7 @@
         },
         methods: {
             clickDay(date) {
-                // console.log(date);
+                console.log(date);
             },
             count(count){
               console.log(count);
