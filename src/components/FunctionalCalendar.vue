@@ -393,6 +393,10 @@
                 let dayOfWeekString = this.fConfigs.dayNames[dayOfWeek];
 
                 if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
+                    this.$emit('disabledDayClicked', {
+                        'dayOfWeekString': dayOfWeekString,
+                        'dayOfWeek': dayOfWeek,
+                    });
                     return false;
                 }
 
