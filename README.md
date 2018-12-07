@@ -150,6 +150,13 @@ export default {
 }
 ````
 
+### A note on markDates
+
+The `markDates` and `markDatesMore` properties **must** be in JavaScript Date format, e.g, no leading zeroes on month and days. 
+
+✅ Correct: 2019/1/16
+❎ Incorrect: 2019/01/16
+
 ### API
 
 | Attributes           | Description                                                        | Whether it must pass |
@@ -171,6 +178,6 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
 
 ## Other
 * The following Demo.vue has a demo for reference.
-* If there are other issues or versions, functionally incompatible mail communication manuk.minasyan1@gmail.com
+* If there are other issues or versions, or functionally incompatible issues, please email manuk.minasyan1@gmail.com
 
 To develop this package, I used the component vue-calendar-component.
