@@ -53,7 +53,8 @@
 </template>
 
 <script>
-    import FunctionalCalendar from './componentns/FunctionalCalendar';
+    /* eslint-disable */
+    import FunctionalCalendar from './components/FunctionalCalendar';
 
     export default {
         components: {
@@ -87,7 +88,7 @@
         },
         methods: {
             clickDay(date) {
-                // console.log(date);
+                console.log(date);
             },
             count(count){
               console.log(count);

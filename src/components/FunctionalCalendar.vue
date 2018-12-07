@@ -149,6 +149,8 @@
                     applyStylesheet: true,
                     dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
                     monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                    disabledDayNames: [],
+                    disableMarkDates: false
                 }
             };
         },
@@ -246,7 +248,7 @@
             },
             markDateMore: {
                 handler() {
-                    this.fConfigs.markDateMore = data;
+                    this.fConfigs.markDateMore = this.data;
                     this.listRendering(this.myDate);
                 },
                 deep: true
@@ -376,9 +378,29 @@
                     classNames.push('cursor-pointer');
                 }
 
+                // Disable marked dates
+                if (this.fConfigs.disableMarkDates && this.fConfigs.markDate.includes(item.date)) {
+                    classNames.push('cursor-disallowed');
+                    classNames.push('wh_isMark_disabled');
+                }
+
                 return classNames;
             },
             clickDay: function (item) {
+
+                // Disable days of week if set in configuration
+                let dayOfWeek = new Date(item.date).getDay();
+                let dayOfWeekString = this.fConfigs.dayNames[dayOfWeek];
+
+                if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
+                    return false;
+                }
+
+                // Disable days if they are marked.
+                if (this.fConfigs.disableMarkDates && this.fConfigs.markDate.includes(item.date)) {
+                    return false;
+                }
+                
                 if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker) {
                     return false;
                 }

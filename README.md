@@ -139,9 +139,11 @@ export default {
                 agoDayHide: 0,
                 futureDayHide: 2554387200,
                 dayNames: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                disabledDayNames: ['Su'], // These values must match their respective key within the dayNames array in order to work correctly.
+                disableMarkDates: false,
                 monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
                 isModal: false,
-                applyStylesheet: true
+                applyStylesheet: true,
             }
         }
     },
