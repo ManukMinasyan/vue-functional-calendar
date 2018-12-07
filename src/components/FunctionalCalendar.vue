@@ -632,6 +632,9 @@
                     this.fConfigs.isModal = this.isModal;
 
                     this.fConfigs.applyStylesheet = this.applyStylesheet;
+
+                    this.fConfigs.disabledDayNames = this.disabledDayNames;
+                    this.fConfigs.disableMarkDates = this.disableMarkDates;
                 }
 
 
