@@ -384,19 +384,22 @@
                     classNames.push('wh_isMark_disabled');
                 }
 
+                // Disable days of week if set in configuration
+                let dayOfWeekString = this.fConfigs.dayNames[new Date(item.date).getDay()];
+
+                if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
+                    classNames.push('cursor-disallowed');
+                    classNames.push('wh_other_dayhide');
+                }
+
                 return classNames;
             },
             clickDay: function (item) {
 
                 // Disable days of week if set in configuration
-                let dayOfWeek = new Date(item.date).getDay();
-                let dayOfWeekString = this.fConfigs.dayNames[dayOfWeek];
+                let dayOfWeekString = this.fConfigs.dayNames[new Date(item.date).getDay()];
 
                 if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
-                    this.$emit('disabledDayClicked', {
-                        'dayOfWeekString': dayOfWeekString,
-                        'dayOfWeek': dayOfWeek,
-                    });
                     return false;
                 }
 
