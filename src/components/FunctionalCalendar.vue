@@ -280,12 +280,10 @@
             this.setConfigs();
             this.intStart();
 
-            let self = this;
             if (this.fConfigs.isModal) {
-                window.addEventListener('click', function (e) {
-                    // close dropdown when clicked outside
-                    if (!self.$el.contains(e.target)) {
-                        self.showCalendar = false
+                window.addEventListener('click', (e) => {
+                    if (!this.$el.contains(e.target)) {
+                        this.showCalendar = false
                     }
                 });
             }
