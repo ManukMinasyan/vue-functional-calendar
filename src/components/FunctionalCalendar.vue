@@ -222,6 +222,9 @@
             futureDayHide: {
                 type: Number,
                 default: 2554387200
+            },
+            value: {
+                type: Object
             }
         },
         watch: {
@@ -272,6 +275,18 @@
                     this.intStart();
                     this.listRendering(this.myDate);
                 }, deep: true
+            },
+            value: {
+                handler(value) {
+                    if (this.isDateRange) {
+                        this.startDate = value.startDate || false
+                        this.endDate = value.endDate || false
+                    } else {
+                        this.selectedDate = value.selectedDate || false
+                    }
+                },
+                immediate: true,
+                deep: true
             }
         },
         created() {
