@@ -357,9 +357,9 @@
                             let startDate = new Date(this.startDate).getTime();
 
                             if (
-                                (itemDate > startDate && itemDate < thisDate)
+                                (itemDate >= startDate && itemDate <= thisDate)
                                 ||
-                                (itemDate < startDate && itemDate > thisDate)
+                                (itemDate <= startDate && itemDate >= thisDate)
                             ) {
                                 this.calendars[e].list[f].isMark = true;
                             }
