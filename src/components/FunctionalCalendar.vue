@@ -305,6 +305,12 @@
         },
         mounted() {
             this.listRendering(this.myDate);
+
+            const referenceDate = this.isDateRange ? this.startDate : this.selectedDate
+
+            if (referenceDate) {
+                this.ChoseMonth(referenceDate, false)
+            }
         },
         methods: {
             intStart() {
