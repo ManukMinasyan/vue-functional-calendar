@@ -472,6 +472,8 @@
                 } else {
                     this.listRendering(this.myDate);
                 }
+
+                this.markChooseDays()
             },
             PreMonth: function (date = this.myDate, isChosedDay = true) {
                 date = timeUtil.dateFormat(date);
@@ -482,6 +484,8 @@
                 } else {
                     this.listRendering(this.myDate);
                 }
+
+                this.markChooseDays()
             },
             NextMonth: function (date = this.myDate, isChosedDay = true) {
                 date = timeUtil.dateFormat(date);
@@ -493,6 +497,8 @@
                 } else {
                     this.listRendering(this.myDate);
                 }
+
+                this.markChooseDays()
             },
             forMatArgs: function () {
                 let markDate = this.fConfigs.markDate;
@@ -517,10 +523,16 @@
                         let item = calendar.list[f];
 
                         this.calendars[e].list[f].isMark = false;
+                        this.calendars[e].list[f].chooseDay = false;
 
                         if (new Date(item.date).getTime() >= new Date(this.startDate).getTime() &&
                             new Date(item.date).getTime() <= new Date(endDate).getTime()) {
                             this.calendars[e].list[f].isMark = true;
+                        }
+
+                        if (this.selectedDate &&
+                        new Date(item.date).getTime() == new Date(this.selectedDate).getTime()) {
+                            this.calendars[e].list[f].chooseDay = true;
                         }
                     }
                 }
