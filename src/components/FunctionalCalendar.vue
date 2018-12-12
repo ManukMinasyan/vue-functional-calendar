@@ -222,6 +222,9 @@
             futureDayHide: {
                 type: Number,
                 default: 2554387200
+            },
+            value: {
+                type: Object
             }
         },
         watch: {
@@ -272,6 +275,18 @@
                     this.intStart();
                     this.listRendering(this.myDate);
                 }, deep: true
+            },
+            value: {
+                handler(value) {
+                    if (this.isDateRange) {
+                        this.startDate = value.startDate || false
+                        this.endDate = value.endDate || false
+                    } else {
+                        this.selectedDate = value.selectedDate || false
+                    }
+                },
+                immediate: true,
+                deep: true
             }
         },
         created() {
@@ -280,18 +295,22 @@
             this.setConfigs();
             this.intStart();
 
-            let self = this;
             if (this.fConfigs.isModal) {
-                window.addEventListener('click', function (e) {
-                    // close dropdown when clicked outside
-                    if (!self.$el.contains(e.target)) {
-                        self.showCalendar = false
+                window.addEventListener('click', (e) => {
+                    if (!this.$el.contains(e.target)) {
+                        this.showCalendar = false
                     }
                 });
             }
         },
         mounted() {
             this.listRendering(this.myDate);
+
+            const referenceDate = this.isDateRange ? this.startDate : this.selectedDate
+
+            if (referenceDate) {
+                this.ChoseMonth(referenceDate, false)
+            }
         },
         methods: {
             intStart() {
@@ -338,9 +357,9 @@
                             let startDate = new Date(this.startDate).getTime();
 
                             if (
-                                (itemDate > startDate && itemDate < thisDate)
+                                (itemDate >= startDate && itemDate <= thisDate)
                                 ||
-                                (itemDate < startDate && itemDate > thisDate)
+                                (itemDate <= startDate && itemDate >= thisDate)
                             ) {
                                 this.calendars[e].list[f].isMark = true;
                             }
@@ -474,6 +493,8 @@
                 } else {
                     this.listRendering(this.myDate);
                 }
+
+                this.markChooseDays()
             },
             PreMonth: function (date = this.myDate, isChosedDay = true) {
                 date = timeUtil.dateFormat(date);
@@ -484,6 +505,8 @@
                 } else {
                     this.listRendering(this.myDate);
                 }
+
+                this.markChooseDays()
             },
             NextMonth: function (date = this.myDate, isChosedDay = true) {
                 date = timeUtil.dateFormat(date);
@@ -495,6 +518,8 @@
                 } else {
                     this.listRendering(this.myDate);
                 }
+
+                this.markChooseDays()
             },
             forMatArgs: function () {
                 let markDate = this.fConfigs.markDate;
@@ -519,10 +544,16 @@
                         let item = calendar.list[f];
 
                         this.calendars[e].list[f].isMark = false;
+                        this.calendars[e].list[f].chooseDay = false;
 
                         if (new Date(item.date).getTime() >= new Date(this.startDate).getTime() &&
                             new Date(item.date).getTime() <= new Date(endDate).getTime()) {
                             this.calendars[e].list[f].isMark = true;
+                        }
+
+                        if (this.selectedDate &&
+                        new Date(item.date).getTime() == new Date(this.selectedDate).getTime()) {
+                            this.calendars[e].list[f].chooseDay = true;
                         }
                     }
                 }
@@ -640,7 +671,7 @@
 
                     this.fConfigs.applyStylesheet = this.applyStylesheet;
 
-                    this.fConfigs.disabledDayNames = this.disabledDayNames;
+                    this.fConfigs.disabledDayNames = this.disabledDayNames || [];
                     this.fConfigs.disableMarkDates = this.disableMarkDates;
                 }
 
