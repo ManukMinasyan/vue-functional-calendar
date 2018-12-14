@@ -250,8 +250,8 @@
                 deep: true
             },
             markDateMore: {
-                handler() {
-                    this.fConfigs.markDateMore = this.data;
+                handler(data) {
+                    this.fConfigs.markDateMore = data;
                     this.listRendering(this.myDate);
                 },
                 deep: true
@@ -278,11 +278,13 @@
             },
             value: {
                 handler(value) {
-                    if (this.isDateRange) {
-                        this.startDate = value.startDate || false
-                        this.endDate = value.endDate || false
-                    } else {
-                        this.selectedDate = value.selectedDate || false
+                    if(value){
+                        if (this.isDateRange) {
+                            this.startDate = value.startDate || false
+                            this.endDate = value.endDate || false
+                        } else {
+                            this.selectedDate = value.selectedDate || false
+                        }
                     }
                 },
                 immediate: true,
