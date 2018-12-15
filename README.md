@@ -3,8 +3,10 @@
 [![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Downloads](https://img.shields.io/npm/dm/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
+![gzip size](https://img.shields.io/badge/gzip%20size-5.73%20kB-44cc11.svg)
 
 ## Demo
+
 
 Demo: https://y3jnxov469.codesandbox.io/
 
