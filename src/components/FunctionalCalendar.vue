@@ -32,9 +32,7 @@
                         </div>
                         <h2 class="top-date"
                             @click="openYearPicker"
-                            :class="{underline: !showYearPicker && fConfigs.changeYearFunction}">
-                            {{ currentDate.getFullYear() }}
-                        </h2>
+                            :class="{underline: !showYearPicker && fConfigs.changeYearFunction}">{{ calendar.currentDate.getFullYear() }}</h2>
                         <div @click="NextYear">
                             <div class="arrow-right"></div>
                         </div>
@@ -42,7 +40,7 @@
                     <template v-if="!showYearPicker">
                         <div class="item" v-for="(month,key) in fConfigs.monthNames"
                              :key="key"
-                             :class="{selected: currentDate.getMonth()===key}"
+                             :class="{selected: calendar.currentDate.getMonth()===key}"
                              @click="pickMonth(key)">
                             {{ month }}
                         </div>
