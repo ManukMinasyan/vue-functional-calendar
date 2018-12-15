@@ -1,8 +1,6 @@
 <template>
     <div>
         <functional-calendar class="demo-calendar"
-                             v-model="calendar"
-                             :sunday-start="false"
                              :is-date-picker="true"
                              :is-modal="true"
                              ref="calendar"

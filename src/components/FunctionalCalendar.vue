@@ -117,12 +117,12 @@
             // Reacts to external selected dates
             this.$watch('value', function (value) {
                 if (this.fConfigs.isDateRange) {
-                    this.calendar.dateRange.start = value.calendar.dateRange.start || false;
-                    this.calendar.dateRange.end = value.calendar.dateRange.end || false
+                    this.calendar.dateRange.start = value.dateRange.start || false;
+                    this.calendar.dateRange.end = value.dateRange.end || false
                 } else {
-                    this.calendar.selectedDate = value.calendar.selectedDate || false
+                    this.calendar.selectedDate = value.selectedDate || false
                 }
-            }, {immediate: true, deep: true});
+            }, {deep: true});
 
             this.$watch('showCalendar', function (value) {
                 if(value)

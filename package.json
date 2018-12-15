@@ -7,7 +7,7 @@
   "name": "vue-functional-calendar",
   "description": "A style-uninstallable datepicker component for Vue.js",
   "version": "2.0.3",
-  "license": "ISC",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ManukMinasyan/vue-functional-calendar.git"
