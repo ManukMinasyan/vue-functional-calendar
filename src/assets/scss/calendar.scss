@@ -1,0 +1,271 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  height: 100%
+}
+
+input.single-input, .multiple-input input {
+  font-size: inherit;
+  transition: width 200ms;
+  padding: 7px;
+  width: 120px;
+  color: #aaa;
+  border: 1px solid #eee;
+  text-align: center;
+  outline: none;
+}
+
+input.single-input {
+  border-radius: 10px;
+}
+
+.multiple-input input:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.multiple-input input:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.main-container {
+  border-radius: .28571429rem;
+  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
+  background-color: #FFFFFF;
+
+  &.modal {
+    position: absolute;
+    width: inherit;
+  }
+
+  .months {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    div.item {
+      border-top: 1px solid #d4d4d4;
+      flex: 1;
+      flex-basis: 30%;
+      height: 69px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      outline-style: none;
+      &:hover {
+        background-color: rgba(113, 113, 113, 0.3);
+        transition: background-color 0.2s ease-in-out;
+        cursor: pointer;
+      }
+      &.selected {
+        background: #007bff;
+        color: #fff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+        font-weight: 700;
+        &:nth-last-child(3) {
+          border-radius: 0 0 0 5px;
+        }
+        &:last-child {
+          border-radius: 0 0 5px;
+        }
+      }
+    }
+    .navigation-buttons {
+      width: 100%;
+      margin-bottom: -8px;
+      margin-top: -11px;
+      padding: 0 20px;
+      .top-date {
+        text-align: center;
+        margin: 25px;
+        font-size: 21px;
+        font-weight: bold;
+        &.underline {
+          cursor: pointer;
+          text-decoration: underline dotted #007bff;
+        }
+      }
+    }
+  }
+
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 0;
+    margin-bottom: -50px;
+    div {
+      display: flex;
+      color: #000000;
+      font-size: 18px;
+
+      &.cursor-pointer {
+        cursor: pointer;
+      };
+
+      .arrow-left {
+        width: 12px;
+        height: 12px;
+        border-top: 2px solid #0a0c19;
+        border-left: 2px solid #0a0c19;
+        transform: rotate(-45deg);
+      }
+
+      .arrow-left:active,
+      .arrow-right:active {
+        border-color: #ddd;
+      }
+
+      .arrow-left, .arrow-right {
+        &.disabled {
+          border-color: #dddddd;
+        }
+      }
+
+      .arrow-right {
+        width: 12px;
+        height: 12px;
+        border-top: 2px solid #0a0c19;
+        border-right: 2px solid #0a0c19;
+        transform: rotate(45deg);
+      }
+    }
+
+  }
+
+  /* Calendar 100% height */
+  .calendar {
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
+
+    div {
+      &.content {
+        margin: 10px 20px;
+
+        h2 {
+          &.top-date {
+            text-align: center;
+            margin: 25px;
+            font-size: 18px;
+            font-weight: normal;
+            &.cursor-pointer {
+              cursor: pointer;
+            }
+            &.underline {
+              cursor: pointer;
+              text-decoration: underline dotted #007bff;
+            }
+          }
+        }
+
+        /* Calendar rows */
+        .dayNames, .week {
+          display: flex;
+        }
+
+        .dayNames {
+          flex: 30px 0 0;
+          margin-bottom: 10px;
+
+          span {
+            width: 100%;
+            margin-right: 5px;
+            color: #333;
+            text-align: center;
+
+            &:last-child {
+              margin-right: 0
+            }
+          }
+        }
+
+        .week {
+          div {
+            &.day {
+              position: relative;
+              width: 100%;
+
+              display: flex;
+              flex-direction: column;
+              background-color: #fff;
+
+              span {
+                display: block;
+                width: 65%;
+                padding-top: 65%;
+                border: 1px solid #FFFFFF;
+                border-radius: 50%;
+                margin: 0 auto;
+
+                &.today {
+                  background-color: #ff8498;
+                  &:after {
+                    color: #FFFFFF;
+                  }
+                }
+
+                &.cursor-not-allowed {
+                  cursor: not-allowed
+                }
+
+                &.marked {
+                  margin: auto;
+                  background-color: rgb(102, 179, 204);
+                  border-radius: 50%;
+                  opacity: 1;
+                  z-index: 2;
+                  &:after {
+                    color: #FFFFFF;
+                  }
+                }
+
+                &.hide {
+                  &:after {
+                    color: #bfbfbf;
+                  }
+                }
+
+                &.disabled {
+                  margin: auto;
+                  background-color: rgba(0, 0, 0, 0.2);
+                  border-radius: 50%;
+                  opacity: 1;
+                  z-index: 2;
+                  color: #FFFFFF;
+                }
+
+                &:after {
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  bottom: 0;
+                  right: 0;
+                  content: attr(data-date);
+                  color: #000000;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+
+                &.hover:hover {
+                  background-color: #dadada;
+                }
+              }
+
+              /* Weekends */
+              &:last-child {
+                color: #000;
+              }
+
+            }
+          }
+        }
+      }
+    }
+  }
+}
