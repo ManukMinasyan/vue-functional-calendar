@@ -38,6 +38,7 @@ input.vfc-single-input {
   &.vfc-modal {
     position: absolute;
     width: inherit;
+    z-index: 1000;
   }
 
   .vfc-months {
@@ -60,7 +61,7 @@ input.vfc-single-input {
         transition: background-color 0.2s ease-in-out;
         cursor: pointer;
       }
-      &.selected {
+      &.vfc-selected {
         background: #007bff;
         color: #fff;
         text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);

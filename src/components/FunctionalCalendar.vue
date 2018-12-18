@@ -33,8 +33,7 @@
                         </div>
                         <h2 class="vfc-top-date"
                             @click="openYearPicker"
-                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{
-                            calendar.currentDate.getFullYear() }}</h2>
+                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{ calendar.currentDate.getFullYear() }}</h2>
                         <div @click="NextYear">
                             <div class="vfc-arrow-right"></div>
                         </div>
@@ -76,9 +75,9 @@
                                 {{ calendar.dateTop }}
                             </h2>
                             <section class="vfc-dayNames">
-                    <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
-                        {{ dayName }}
-                    </span>
+                                <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
+                                    {{ dayName }}
+                                </span>
                             </section>
                             <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key">
                                 <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
