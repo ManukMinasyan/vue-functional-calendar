@@ -1,6 +1,6 @@
 <template>
-    <div :class="{ 'styles-conditional-class': fConfigs.applyStylesheet }">
-        <div class="multiple-input" v-if="fConfigs.isModal && fConfigs.isDateRange">
+    <div :class="{'vfc-styles-conditional-class': fConfigs.applyStylesheet }">
+        <div class="vfc-multiple-input" v-if="fConfigs.isModal && fConfigs.isDateRange">
             <input type="text" title="Start Date"
                    v-model="input.dateRange.start"
                    :placeholder="fConfigs.placeholder"
@@ -15,7 +15,7 @@
                    @click="showCalendar = !showCalendar">
         </div>
         <div v-else-if="fConfigs.isModal && fConfigs.isDatePicker">
-            <input class="single-input" type="text" title="Date"
+            <input class="vfc-single-input" type="text" title="Date"
                    v-model="input.selectedDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
@@ -23,33 +23,33 @@
                    @click="showCalendar = !showCalendar">
         </div>
 
-        <div class="main-container" v-if="showCalendar" :class="{modal: fConfigs.isModal && fConfigs.isDatePicker}">
+        <div class="vfc-main-container" v-if="showCalendar" :class="{'vfc-modal': fConfigs.isModal && fConfigs.isDatePicker}">
             <template v-if="showMonthPicker">
-                <div class="months">
-                    <div class="navigation-buttons" v-if="true">
+                <div class="vfc-months">
+                    <div class="vfc-navigation-buttons" v-if="true">
                         <div @click="PreYear">
-                            <div class="arrow-left"></div>
+                            <div class="vfc-arrow-left"></div>
                         </div>
-                        <h2 class="top-date"
+                        <h2 class="vfc-top-date"
                             @click="openYearPicker"
-                            :class="{underline: !showYearPicker && fConfigs.changeYearFunction}">{{ calendar.currentDate.getFullYear() }}</h2>
+                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{ calendar.currentDate.getFullYear() }}</h2>
                         <div @click="NextYear">
-                            <div class="arrow-right"></div>
+                            <div class="vfc-arrow-right"></div>
                         </div>
                     </div>
                     <template v-if="!showYearPicker">
-                        <div class="item" v-for="(month,key) in fConfigs.monthNames"
+                        <div class="vfc-item" v-for="(month,key) in fConfigs.monthNames"
                              :key="key"
-                             :class="{selected: calendar.currentDate.getMonth()===key}"
+                             :class="{'vfc-selected': calendar.currentDate.getMonth()===key}"
                              @click="pickMonth(key)">
                             {{ month }}
                         </div>
                     </template>
                     <template v-else>
-                        <div class="item"
+                        <div class="vfc-item"
                              v-for="(year,key) in yearList"
                              :key="key"
-                             :class="{selected: year.selected}"
+                             :class="{'vfc-selected': year.selected}"
                              @click="pickYear(year.year)">
                             {{ year.year }}
                         </div>
@@ -57,28 +57,28 @@
                 </div>
             </template>
             <template v-else>
-                <div class="navigation-buttons" v-if="true">
-                    <div @click="PreMonth" :class="{'cursor-pointer': allowPreDate}">
-                        <div class="arrow-left" :class="{disabled: !allowPreDate}"></div>
+                <div class="vfc-navigation-buttons" v-if="true">
+                    <div @click="PreMonth" :class="{'vfc-cursor-pointer': allowPreDate}">
+                        <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
                     </div>
-                    <div @click="NextMonth" :class="{'cursor-pointer': allowNextDate}">
-                        <div class="arrow-right" :class="{disabled: !allowNextDate}"></div>
+                    <div @click="NextMonth" :class="{'vfc-cursor-pointer': allowNextDate}">
+                        <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
                     </div>
                 </div>
-                <div class="calendar" v-for="(calendar, key) in listCalendars" :key="key">
-                    <div class="content">
-                        <h2 class="top-date"
-                            :class="{'cursor-pointer':changeMonthFunction}"
+                <div class="vfc-calendar" v-for="(calendar, key) in listCalendars" :key="key">
+                    <div class="vfc-content">
+                        <h2 class="vfc-top-date"
+                            :class="{'vfc-cursor-pointer':changeMonthFunction}"
                             @click="openMonthPicker(key)">
                             {{ calendar.dateTop }}
                         </h2>
-                        <section class="dayNames">
+                        <section class="vfc-dayNames">
                     <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
                         {{ dayName }}
                     </span>
                         </section>
-                        <div class="week" v-for="(week, week_key) in calendar.weeks" :key="week_key">
-                            <div class="day" v-for="(day, day_key) in week.days" :key="day_key">
+                        <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key">
+                            <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
                                 <span :data-date="day.day"
                                       :class="getClassNames(day)"
                                       @click="clickDay(day)"
@@ -591,53 +591,53 @@
                 let dayOfWeekString = this.fConfigs.dayNames[dateDay];
                 if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
                     day.hide = true;
-                    classes.push('cursor-not-allowed');
+                    classes.push('vfc-cursor-not-allowed');
                 }
 
                 // Disabled dates
                 if (this.fConfigs.disabledDates.includes(day.date)) {
-                    classes.push('disabled');
-                    classes.push('cursor-not-allowed');
+                    classes.push('vfc-disabled');
+                    classes.push('vfc-cursor-not-allowed');
                 }
 
                 if (day.hide) {
-                    classes.push('hide');
+                    classes.push('vfc-hide');
                 }
 
                 // Today date
                 if (day.isToday) {
-                    classes.push('today');
+                    classes.push('vfc-today');
                 }
 
                 if (!day.hideLeftAndRightDays && !this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
 
                     // Mark Date
                     if (day.isMarked) {
-                        classes.push('marked');
+                        classes.push('vfc-marked');
                     }
 
                     // Date Range Marked
                     if (this.fConfigs.markedDateRange.start && this.fConfigs.markedDateRange.end) {
                         if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date)
                             && helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= helpCalendar.getDateFromFormat(day.date)) {
-                            classes.push('marked');
+                            classes.push('vfc-marked');
                         }
                     } else {
 
                         // Only After Start Marked
                         if (this.fConfigs.markedDateRange.start) {
                             if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date))
-                                classes.push('marked');
+                                classes.push('vfc-marked');
                         }
 
                         // Only Before End Marked
                         if (this.fConfigs.markedDateRange.end) {
                             if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= helpCalendar.getDateFromFormat(day.date))
-                                classes.push('marked');
+                                classes.push('vfc-marked');
                         }
                     }
 
-                    classes.push('hover');
+                    classes.push('vfc-hover');
                 }
 
 
@@ -659,7 +659,7 @@
 </script>
 
 <style scoped lang="scss">
-    .styles-conditional-class {
+    .vfc-styles-conditional-class {
         @import "../assets/scss/calendar.scss";
     }
 </style>

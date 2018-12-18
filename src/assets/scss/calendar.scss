@@ -6,7 +6,7 @@ html, body {
   height: 100%
 }
 
-input.single-input, .multiple-input input {
+input.vfc-single-input, .vfc-multiple-input input {
   font-size: inherit;
   transition: width 200ms;
   padding: 7px;
@@ -17,35 +17,35 @@ input.single-input, .multiple-input input {
   outline: none;
 }
 
-input.single-input {
+input.vfc-single-input {
   border-radius: 10px;
 }
 
-.multiple-input input:first-child {
+.vfc-multiple-input input:first-child {
   border-radius: 10px 0 0 10px;
 }
 
-.multiple-input input:last-child {
+.vfc-multiple-input input:last-child {
   border-radius: 0 10px 10px 0;
 }
 
-.main-container {
+.vfc-main-container {
   border-radius: .28571429rem;
   box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
   background-color: #FFFFFF;
 
-  &.modal {
+  &.vfc-modal {
     position: absolute;
     width: inherit;
   }
 
-  .months {
+  .vfc-months {
     padding: 0;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    div.item {
+    div.vfc-item {
       border-top: 1px solid #d4d4d4;
       flex: 1;
       flex-basis: 30%;
@@ -73,17 +73,17 @@ input.single-input {
         }
       }
     }
-    .navigation-buttons {
+    .vfc-navigation-buttons {
       width: 100%;
       margin-bottom: -8px;
       margin-top: -11px;
       padding: 0 20px;
-      .top-date {
+      .vfc-top-date {
         text-align: center;
         margin: 25px;
         font-size: 21px;
         font-weight: bold;
-        &.underline {
+        &.vfc-underline {
           cursor: pointer;
           text-decoration: underline dotted #007bff;
         }
@@ -91,7 +91,7 @@ input.single-input {
     }
   }
 
-  .navigation-buttons {
+  .vfc-navigation-buttons {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -102,11 +102,11 @@ input.single-input {
       color: #000000;
       font-size: 18px;
 
-      &.cursor-pointer {
+      &.vfc-cursor-pointer {
         cursor: pointer;
       };
 
-      .arrow-left {
+      .vfc-arrow-left {
         width: 12px;
         height: 12px;
         border-top: 2px solid #0a0c19;
@@ -114,18 +114,18 @@ input.single-input {
         transform: rotate(-45deg);
       }
 
-      .arrow-left:active,
-      .arrow-right:active {
+      .vfc-arrow-left:active,
+      .vfc-arrow-right:active {
         border-color: #ddd;
       }
 
-      .arrow-left, .arrow-right {
-        &.disabled {
+      .vfc-arrow-left, .vfc-arrow-right {
+        &.vfc-disabled {
           border-color: #dddddd;
         }
       }
 
-      .arrow-right {
+      .vfc-arrow-right {
         width: 12px;
         height: 12px;
         border-top: 2px solid #0a0c19;
@@ -137,26 +137,26 @@ input.single-input {
   }
 
   /* Calendar 100% height */
-  .calendar {
+  .vfc-calendar {
     height: 100%;
     display: flex;
     flex-flow: column nowrap;
     align-items: stretch;
 
     div {
-      &.content {
+      &.vfc-content {
         margin: 10px 20px;
 
         h2 {
-          &.top-date {
+          &.vfc-top-date {
             text-align: center;
             margin: 25px;
             font-size: 18px;
             font-weight: normal;
-            &.cursor-pointer {
+            &.vfc-cursor-pointer {
               cursor: pointer;
             }
-            &.underline {
+            &.vfc-underline {
               cursor: pointer;
               text-decoration: underline dotted #007bff;
             }
@@ -164,11 +164,11 @@ input.single-input {
         }
 
         /* Calendar rows */
-        .dayNames, .week {
+        .vfc-dayNames, .vfc-week {
           display: flex;
         }
 
-        .dayNames {
+        .vfc-dayNames {
           flex: 30px 0 0;
           margin-bottom: 10px;
 
@@ -184,9 +184,9 @@ input.single-input {
           }
         }
 
-        .week {
+        .vfc-week {
           div {
-            &.day {
+            &.vfc-day {
               position: relative;
               width: 100%;
 
@@ -202,18 +202,18 @@ input.single-input {
                 border-radius: 50%;
                 margin: 0 auto;
 
-                &.today {
+                &.vfc-today {
                   background-color: #ff8498;
                   &:after {
                     color: #FFFFFF;
                   }
                 }
 
-                &.cursor-not-allowed {
+                &.vfc-cursor-not-allowed {
                   cursor: not-allowed
                 }
 
-                &.marked {
+                &.vfc-marked {
                   margin: auto;
                   background-color: rgb(102, 179, 204);
                   border-radius: 50%;
@@ -224,13 +224,13 @@ input.single-input {
                   }
                 }
 
-                &.hide {
+                &.vfc-hide {
                   &:after {
                     color: #bfbfbf;
                   }
                 }
 
-                &.disabled {
+                &.vfc-disabled {
                   margin: auto;
                   background-color: rgba(0, 0, 0, 0.2);
                   border-radius: 50%;
