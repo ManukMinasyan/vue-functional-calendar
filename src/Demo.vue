@@ -1,8 +1,10 @@
 <template>
     <div>
         <functional-calendar class="demo-calendar"
-                             :is-date-picker="true"
+                             :is-date-range="true"
+                             :is-multiple="true"
                              :is-modal="true"
+                             :calendars-count="2"
                              ref="calendar"
         ></functional-calendar>
         <button @click="preYear">Pre Year</button>
@@ -75,7 +77,7 @@
 
     .demo-calendar {
         margin: 80px 50px;
-        width: 475px
+        width: 575px
     }
 
     pre {

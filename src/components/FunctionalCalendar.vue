@@ -23,7 +23,8 @@
                    @click="showCalendar = !showCalendar">
         </div>
 
-        <div class="vfc-main-container" v-if="showCalendar" :class="{'vfc-modal': fConfigs.isModal && fConfigs.isDatePicker}">
+        <div class="vfc-main-container" v-if="showCalendar"
+             :class="{'vfc-modal': fConfigs.isModal && (fConfigs.isDatePicker || fConfigs.isDateRange)}">
             <template v-if="showMonthPicker">
                 <div class="vfc-months">
                     <div class="vfc-navigation-buttons" v-if="true">
@@ -32,7 +33,8 @@
                         </div>
                         <h2 class="vfc-top-date"
                             @click="openYearPicker"
-                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{ calendar.currentDate.getFullYear() }}</h2>
+                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{
+                            calendar.currentDate.getFullYear() }}</h2>
                         <div @click="NextYear">
                             <div class="vfc-arrow-right"></div>
                         </div>
@@ -65,25 +67,27 @@
                         <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
                     </div>
                 </div>
-                <div class="vfc-calendar" v-for="(calendar, key) in listCalendars" :key="key">
-                    <div class="vfc-content">
-                        <h2 class="vfc-top-date"
-                            :class="{'vfc-cursor-pointer':changeMonthFunction}"
-                            @click="openMonthPicker(key)">
-                            {{ calendar.dateTop }}
-                        </h2>
-                        <section class="vfc-dayNames">
+                <div class="vfc-calendars">
+                    <div class="vfc-calendar" v-for="(calendar, key) in listCalendars" :key="key">
+                        <div class="vfc-content">
+                            <h2 class="vfc-top-date"
+                                :class="{'vfc-cursor-pointer':changeMonthFunction}"
+                                @click="openMonthPicker(key)">
+                                {{ calendar.dateTop }}
+                            </h2>
+                            <section class="vfc-dayNames">
                     <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
                         {{ dayName }}
                     </span>
-                        </section>
-                        <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key">
-                            <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
+                            </section>
+                            <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key">
+                                <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
                                 <span :data-date="day.day"
                                       :class="getClassNames(day)"
                                       @click="clickDay(day)"
                                       @mouseover="dateMouseOver(week_key, day.date)">
                                 </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -125,7 +129,7 @@
             }, {deep: true});
 
             this.$watch('showCalendar', function (value) {
-                if(value)
+                if (value)
                     this.$emit('opened');
                 else
                     this.$emit('closed');
@@ -162,7 +166,7 @@
             'calendar.currentDate': {
                 handler(value) {
                     this.$emit('input', this.calendar);
-                    if(this.fConfigs.limits) {
+                    if (this.fConfigs.limits) {
                         let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
                         let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
 
@@ -170,11 +174,11 @@
                         this.allowPreDate = true;
                         this.allowNextDate = true;
 
-                        if(current <= min) {
+                        if (current <= min) {
                             this.allowPreDate = false;
                         }
 
-                        if(current >= max) {
+                        if (current >= max) {
                             this.allowNextDate = false;
                         }
                     }
@@ -195,7 +199,7 @@
             'input.selectedDate': {
                 handler(val) {
                     this.input.selectedDate = val = helpCalendar.mask(val);
-                    if(helpCalendar.getDateFromFormat(val).getMonth()) {
+                    if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.selectedDate = val;
                         this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
                         this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
@@ -206,7 +210,7 @@
             'input.dateRange.start': {
                 handler(val) {
                     this.input.dateRange.start = val = helpCalendar.mask(val);
-                    if(helpCalendar.getDateFromFormat(val).getMonth()) {
+                    if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.start = val;
                         this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
                         this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
@@ -217,7 +221,7 @@
             'input.dateRange.end': {
                 handler(val) {
                     this.input.dateRange.end = val = helpCalendar.mask(val);
-                    if(helpCalendar.getDateFromFormat(val).getMonth()) {
+                    if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.end = val;
                         this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
                         this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
@@ -293,9 +297,9 @@
 
 
                 // Limits
-                if(this.fConfigs.limits) {
+                if (this.fConfigs.limits) {
                     this.calendar.currentDate = helpCalendar.getDateFromFormat(this.fConfigs.limits.min);
-                }else {
+                } else {
                     // New Date
                     this.calendar.currentDate = this.newCurrentDate;
                 }
@@ -468,7 +472,7 @@
                 if (!this.fConfigs.isDateRange) {
                     return false;
                 }
-            
+
                 if ((this.calendar.dateRange.start === false || this.calendar.dateRange.end === false)
                     && (this.calendar.dateRange.start !== false || this.calendar.dateRange.end !== false)) {
                     for (let e = 0; e < this.listCalendars.length; e++) {
@@ -515,7 +519,7 @@
              * @return {boolean}
              */
             PreMonth() {
-                if(!this.allowPreDate)
+                if (!this.allowPreDate)
                     return false;
 
                 this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() - 1);
@@ -526,7 +530,7 @@
              * @return {boolean}
              */
             NextMonth() {
-                if(!this.allowNextDate)
+                if (!this.allowNextDate)
                     return false;
 
                 this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() + 1);
@@ -537,7 +541,7 @@
              * @return {boolean}
              */
             PreYear() {
-                if(!this.allowPreDate)
+                if (!this.allowPreDate)
                     return false;
 
                 this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() - 1, this.calendar.currentDate.getMonth());
@@ -548,7 +552,7 @@
              * @return {boolean}
              */
             NextYear() {
-                if(!this.allowNextDate)
+                if (!this.allowNextDate)
                     return false;
 
                 this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() + 1, this.calendar.currentDate.getMonth());
@@ -556,16 +560,16 @@
                 this.$emit('changedYear', this.calendar.currentDate);
             },
             ChooseDate(date) {
-                  this.calendar.currentDate = helpCalendar.getDateFromFormat(date);
-                  this.initCalendar();
+                this.calendar.currentDate = helpCalendar.getDateFromFormat(date);
+                this.initCalendar();
             },
             openMonthPicker() {
-                if(this.fConfigs.changeMonthFunction)
+                if (this.fConfigs.changeMonthFunction)
                     this.showMonthPicker = true;
             }
             ,
             openYearPicker() {
-                if(this.fConfigs.changeYearFunction)
+                if (this.fConfigs.changeYearFunction)
                     this.showYearPicker = true;
             },
             pickMonth(key) {

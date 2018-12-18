@@ -136,132 +136,134 @@ input.vfc-single-input {
 
   }
 
-  /* Calendar 100% height */
-  .vfc-calendar {
-    height: 100%;
+  .vfc-calendars {
     display: flex;
-    flex-flow: column nowrap;
-    align-items: stretch;
+    .vfc-calendar {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: stretch;
 
-    div {
-      &.vfc-content {
-        margin: 10px 20px;
+      div {
+        &.vfc-content {
+          margin: 10px 20px;
 
-        h2 {
-          &.vfc-top-date {
-            text-align: center;
-            margin: 25px;
-            font-size: 18px;
-            font-weight: normal;
-            &.vfc-cursor-pointer {
-              cursor: pointer;
-            }
-            &.vfc-underline {
-              cursor: pointer;
-              text-decoration: underline dotted #007bff;
-            }
-          }
-        }
-
-        /* Calendar rows */
-        .vfc-dayNames, .vfc-week {
-          display: flex;
-        }
-
-        .vfc-dayNames {
-          flex: 30px 0 0;
-          margin-bottom: 10px;
-
-          span {
-            width: 100%;
-            margin-right: 5px;
-            color: #333;
-            text-align: center;
-
-            &:last-child {
-              margin-right: 0
+          h2 {
+            &.vfc-top-date {
+              text-align: center;
+              margin: 25px;
+              font-size: 18px;
+              font-weight: normal;
+              &.vfc-cursor-pointer {
+                cursor: pointer;
+              }
+              &.vfc-underline {
+                cursor: pointer;
+                text-decoration: underline dotted #007bff;
+              }
             }
           }
-        }
 
-        .vfc-week {
-          div {
-            &.vfc-day {
-              position: relative;
+          /* Calendar rows */
+          .vfc-dayNames, .vfc-week {
+            display: flex;
+          }
+
+          .vfc-dayNames {
+            flex: 30px 0 0;
+            margin-bottom: 10px;
+
+            span {
               width: 100%;
+              margin-right: 5px;
+              color: #333;
+              text-align: center;
 
-              display: flex;
-              flex-direction: column;
-              background-color: #fff;
-
-              span {
-                display: block;
-                width: 65%;
-                padding-top: 65%;
-                border: 1px solid #FFFFFF;
-                border-radius: 50%;
-                margin: 0 auto;
-
-                &.vfc-today {
-                  background-color: #ff8498;
-                  &:after {
-                    color: #FFFFFF;
-                  }
-                }
-
-                &.vfc-cursor-not-allowed {
-                  cursor: not-allowed
-                }
-
-                &.vfc-marked {
-                  margin: auto;
-                  background-color: rgb(102, 179, 204);
-                  border-radius: 50%;
-                  opacity: 1;
-                  z-index: 2;
-                  &:after {
-                    color: #FFFFFF;
-                  }
-                }
-
-                &.vfc-hide {
-                  &:after {
-                    color: #bfbfbf;
-                  }
-                }
-
-                &.vfc-disabled {
-                  margin: auto;
-                  background-color: rgba(0, 0, 0, 0.2);
-                  border-radius: 50%;
-                  opacity: 1;
-                  z-index: 2;
-                  color: #FFFFFF;
-                }
-
-                &:after {
-                  position: absolute;
-                  top: 0;
-                  left: 0;
-                  bottom: 0;
-                  right: 0;
-                  content: attr(data-date);
-                  color: #000000;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                }
-
-                &.vfc-hover:hover {
-                  background-color: #dadada;
-                }
-              }
-
-              /* Weekends */
               &:last-child {
-                color: #000;
+                margin-right: 0
               }
+            }
+          }
 
+          .vfc-week {
+            div {
+              &.vfc-day {
+                position: relative;
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                background-color: #fff;
+
+                span {
+                  display: block;
+                  width: 65%;
+                  padding-top: 65%;
+                  border: 1px solid #FFFFFF;
+                  border-radius: 50%;
+                  margin: 0 auto;
+
+                  &.vfc-today {
+                    background-color: #ff8498;
+                    &:after {
+                      color: #FFFFFF;
+                    }
+                  }
+
+                  &.vfc-cursor-not-allowed {
+                    cursor: not-allowed
+                  }
+
+                  &.vfc-marked {
+                    margin: auto;
+                    background-color: rgb(102, 179, 204);
+                    border-radius: 50%;
+                    opacity: 1;
+                    z-index: 2;
+                    &:after {
+                      color: #FFFFFF;
+                    }
+                  }
+
+                  &.vfc-hide {
+                    &:after {
+                      color: #bfbfbf;
+                    }
+                  }
+
+                  &.vfc-disabled {
+                    margin: auto;
+                    background-color: rgba(0, 0, 0, 0.2);
+                    border-radius: 50%;
+                    opacity: 1;
+                    z-index: 2;
+                    color: #FFFFFF;
+                  }
+
+                  &:after {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    bottom: 0;
+                    right: 0;
+                    content: attr(data-date);
+                    color: #000000;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  }
+
+                  &.vfc-hover:hover {
+                    background-color: #dadada;
+                  }
+                }
+
+                /* Weekends */
+                &:last-child {
+                  color: #000;
+                }
+
+              }
             }
           }
         }
