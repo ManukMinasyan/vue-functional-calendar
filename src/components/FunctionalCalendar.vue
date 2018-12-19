@@ -33,7 +33,8 @@
                         </div>
                         <h2 class="vfc-top-date"
                             @click="openYearPicker"
-                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{ calendar.currentDate.getFullYear() }}</h2>
+                            :class="{'vfc-underline': !showYearPicker && fConfigs.changeYearFunction}">{{
+                            calendar.currentDate.getFullYear() }}</h2>
                         <div @click="NextYear">
                             <div class="vfc-arrow-right"></div>
                         </div>
