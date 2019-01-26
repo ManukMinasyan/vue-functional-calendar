@@ -124,6 +124,7 @@ The `markedDates` property **must** be in JavaScript Date format, e.g, no leadin
 | disabledDates                   | Array         | []     | ['24/12/2018','27/12/2018']        | Disabled Dates                   |
 | dayNames                   | Array         | ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']       | ['Monday', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sunday']        | Week Day Names                   |
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
+| transition                    | Boolean         | true      | false | Calendar animations               |
 
 ### Events
 
