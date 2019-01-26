@@ -1,4 +1,4 @@
-# VueJS Functional Calendar (Date Picker, Date Range) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Get%20over%20170%20free%20design%20blocks%20based%20on%20Bootstrap%204&url=https://github.com/ManukMinasyan/vue-functional-calendar&via=github&hashtags=vue,calendar,design,developers)
+# VueJS Functional Calendar (Date Picker, Date Range) [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Lightweight,%20high%20performance%20calendar%20component%20based%20on%20Vue.js&url=https://github.com/ManukMinasyan/vue-functional-calendar&via=github&hashtags=vue,calendar,design,developers)
 
 [![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
