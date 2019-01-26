@@ -67,7 +67,7 @@
                         <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
                     </div>
                 </div>
-                <div class="vfc-calendars">
+                <div class="vfc-calendars" :key="calendarsKey">
                     <div class="vfc-calendar" v-for="(calendar, key) in listCalendars" :key="key">
                         <div class="vfc-content">
                             <h2 class="vfc-top-date"
@@ -80,15 +80,22 @@
                                     {{ dayName }}
                                 </span>
                             </section>
-                            <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key">
-                                <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
-                                <span :data-date="day.day"
-                                      :class="getClassNames(day)"
-                                      @click="clickDay(day)"
-                                      @mouseover="dateMouseOver(week_key, day.date)">
-                                </span>
+                            <transition-group
+                                    tag='div'
+                                    class='c-title-anchor'
+                                    :name='getTransition_()' appear>
+                                <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key+0">
+
+                                    <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
+                                        <span :data-date="day.day" :key="day_key"
+                                              :class="getClassNames(day)"
+                                              @click="clickDay(day)"
+                                              @mouseover="dateMouseOver(week_key, day.date)">
+                                        </span>
+                                    </div>
+
                                 </div>
-                            </div>
+                            </transition-group>
                         </div>
                     </div>
                 </div>
@@ -308,7 +315,7 @@
                 let vm = this;
 
                 // Each Calendars
-                this.listCalendars.forEach(function (calendar) {
+                vm.listCalendars.forEach(function (calendar) {
                     // Set Calendar Weeks
                     calendar.weeks.forEach(function (week) {
 
@@ -360,9 +367,9 @@
                         });
 
                         week.days = finalizedDays;
-
                     });
-                })
+                });
+
             },
             clickDay(item) {
                 if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker) {
@@ -522,6 +529,10 @@
                 if (!this.allowPreDate)
                     return false;
 
+                this.transitionPrefix = 'right';
+
+                this.calendarsKey -= 1;
+
                 this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() - 1);
                 this.initCalendar();
                 this.$emit('changedMonth', this.calendar.currentDate);
@@ -532,6 +543,10 @@
             NextMonth() {
                 if (!this.allowNextDate)
                     return false;
+
+                this.transitionPrefix = 'left';
+
+                this.calendarsKey += 1;
 
                 this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() + 1);
                 this.initCalendar();
@@ -566,8 +581,7 @@
             openMonthPicker() {
                 if (this.fConfigs.changeMonthFunction)
                     this.showMonthPicker = true;
-            }
-            ,
+            },
             openYearPicker() {
                 if (this.fConfigs.changeYearFunction)
                     this.showYearPicker = true;
@@ -657,7 +671,19 @@
                 }
 
                 return classes;
-            }
+            },
+            getTransition_() {
+                if(!this.fConfigs.transition)
+                    return '';
+
+                let name = '';
+                if(this.transitionPrefix === 'left'){
+                    name = 'vfc-calendar-slide-left';
+                }else if(this.transitionPrefix === 'right') {
+                    name = 'vfc-calendar-slide-right';
+                }
+                return name;
+            },
         }
     }
 </script>

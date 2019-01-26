@@ -46,6 +46,7 @@ input.vfc-single-input {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+
     div.vfc-item {
       border-top: 1px solid #d4d4d4;
       flex: 1;
@@ -56,34 +57,41 @@ input.vfc-single-input {
       flex-direction: column;
       text-align: center;
       outline-style: none;
+
       &:hover {
         background-color: rgba(113, 113, 113, 0.3);
         transition: background-color 0.2s ease-in-out;
         cursor: pointer;
       }
+
       &.vfc-selected {
         background: #007bff;
         color: #fff;
         text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
         font-weight: 700;
+
         &:nth-last-child(3) {
           border-radius: 0 0 0 5px;
         }
+
         &:last-child {
           border-radius: 0 0 5px;
         }
       }
     }
+
     .vfc-navigation-buttons {
       width: 100%;
       margin-bottom: -8px;
       margin-top: -11px;
       padding: 0 20px;
+
       .vfc-top-date {
         text-align: center;
         margin: 25px;
         font-size: 21px;
         font-weight: bold;
+
         &.vfc-underline {
           cursor: pointer;
           text-decoration: underline dotted #007bff;
@@ -98,6 +106,7 @@ input.vfc-single-input {
     align-items: center;
     padding: 20px 20px 0;
     margin-bottom: -50px;
+
     div {
       display: flex;
       color: #000000;
@@ -105,7 +114,8 @@ input.vfc-single-input {
 
       &.vfc-cursor-pointer {
         cursor: pointer;
-      };
+      }
+    ;
 
       .vfc-arrow-left {
         width: 12px;
@@ -139,6 +149,7 @@ input.vfc-single-input {
 
   .vfc-calendars {
     display: flex;
+
     .vfc-calendar {
       flex: 1;
       height: 100%;
@@ -156,9 +167,11 @@ input.vfc-single-input {
               margin: 25px;
               font-size: 18px;
               font-weight: normal;
+
               &.vfc-cursor-pointer {
                 cursor: pointer;
               }
+
               &.vfc-underline {
                 cursor: pointer;
                 text-decoration: underline dotted #007bff;
@@ -206,6 +219,7 @@ input.vfc-single-input {
 
                   &.vfc-today {
                     background-color: #ff8498;
+
                     &:after {
                       color: #FFFFFF;
                     }
@@ -221,6 +235,7 @@ input.vfc-single-input {
                     border-radius: 50%;
                     opacity: 1;
                     z-index: 2;
+
                     &:after {
                       color: #FFFFFF;
                     }
@@ -266,6 +281,61 @@ input.vfc-single-input {
 
               }
             }
+          }
+
+          .vfc-calendar-fade-enter-active,
+          .vfc-calendar-fade-leave-active,
+          .vfc-calendar-slide-down-enter-active,
+          .vfc-calendar-slide-down-leave-active,
+          .vfc-calendar-slide-left-enter-active,
+          .vfc-calendar-slide-left-leave-active,
+          .vfc-calendar-slide-right-enter-active,
+          .vfc-calendar-slide-right-leave-active,
+          .vfc-calendar-slide-up-enter-active,
+          .vfc-calendar-slide-up-leave-active {
+            transition: all 0.25s ease-in-out
+          }
+
+          .vfc-calendar-fade-leave-active,
+          .vfc-calendar-none-leave-active,
+          .vfc-calendar-slide-down-leave-active,
+          .vfc-calendar-slide-left-leave-active,
+          .vfc-calendar-slide-right-leave-active,
+          .vfc-calendar-slide-up-leave-active {
+            position: absolute
+          }
+
+          .vfc-calendar-none-enter-active,
+          .vfc-calendar-none-leave-active {
+            transition-duration: 0s
+          }
+
+          .vfc-calendar-slide-left-enter,
+          .vfc-calendar-slide-right-leave-to {
+            opacity: 0;
+            -webkit-transform: translateX(25px);
+            transform: translateX(25px)
+          }
+
+          .vfc-calendar-slide-left-leave-to,
+          .vfc-calendar-slide-right-enter {
+            opacity: 0;
+            -webkit-transform: translateX(-25px);
+            transform: translateX(-25px)
+          }
+
+          .vfc-calendar-slide-down-leave-to,
+          .vfc-calendar-slide-up-enter {
+            opacity: 0;
+            -webkit-transform: translateY(20px);
+            transform: translateY(20px)
+          }
+
+          .vfc-calendar-slide-down-enter,
+          .vfc-calendar-slide-up-leave-to {
+            opacity: 0;
+            -webkit-transform: translateY(-20px);
+            transform: translateY(-20px)
           }
         }
       }

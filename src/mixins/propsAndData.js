@@ -96,6 +96,10 @@ export const propsAndData = {
         },
         value: {
             type: Object
+        },
+        transition: {
+            type: Boolean,
+            default: () => true
         }
     },
     data() {
@@ -108,6 +112,8 @@ export const propsAndData = {
                     end: false
                 }
             },
+            calendarsKey: 0,
+            transitionPrefix: 'left',
             showCalendar: true,
             showMonthPicker: false,
             showYearPicker: false,
@@ -158,6 +164,8 @@ export const propsAndData = {
 
                 dayNames: [],
                 monthNames: [],
+
+                transition: true
             }
         }
     }
