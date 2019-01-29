@@ -16,7 +16,7 @@ Demo: https://y3jnxov469.codesandbox.io/
 <img src="https://manukminasyan.github.io/vue-functional-calendar/public/demo.png"/>
 
 #
-* Lightweight, high performance calendar component based on Vue.js
+* Lightweight, high-performance calendar component based on Vue.js
 * Small memory usage, good performance, good style, and high scalability
 * Native js development, no third-party library introduced
 * Date Picker, Date Range, Multiple Calendars, Modal Calendar
