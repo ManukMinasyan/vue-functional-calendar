@@ -178,7 +178,6 @@ export default {
         return monthWeeks.weeks;
     },
     mask(value) {
-        console.log(value);
         let dayLength = this.getDateFromFormat(value).getDate().toString().length;
         let monthLength = this.getDateFromFormat(value).getMonth().toString().length;
 

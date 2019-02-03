@@ -1,5 +1,5 @@
 module.exports = {
     runtimeCompiler: true,
-    baseUrl: ''
+    publicPath: ''
 };
 
