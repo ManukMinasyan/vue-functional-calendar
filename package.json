@@ -79,7 +79,8 @@
     "thread-loader": "^1.2.0",
     "vue-loader": "^15.4.2",
     "vue-style-loader": "^4.1.2",
-    "vue-template-compiler": "^2.5.21"
+    "vue-template-compiler": "^2.5.21",
+    "terser": "3.14.1"
   },
   "resolutions": {
 	"terser": "3.14.1"
