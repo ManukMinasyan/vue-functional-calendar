@@ -239,6 +239,12 @@ input.vfc-single-input {
                     &:after {
                       color: #FFFFFF;
                     }
+
+                    &.vfc-hide {
+                      &:after {
+                        color: #d9d9d9
+                      }
+                    }
                   }
 
                   &.vfc-hide {

@@ -178,18 +178,20 @@ export default {
         return monthWeeks.weeks;
     },
     mask(value) {
+        // console.log(value);
         let dayLength = this.getDateFromFormat(value).getDate().toString().length;
-        let monthLength = this.getDateFromFormat(value).getMonth().toString().length;
+        let month = this.getDateFromFormat(value).getMonth();
 
         let dayMask = '00';
         if(dayLength===1){
-            dayMask = 0;
+            dayMask = '0';
         }
 
         let monthMask = '00';
-        if(monthLength===1){
-            monthMask = 0;
+        if(month+1 <= 9){
+            monthMask = '0';
         }
+        console.log(month);
 
         let mask = this.configs.dateFormat.replace('dd', dayMask).replace('mm', monthMask).replace('yyyy', '0000');
         let literalPattern = /[0\*]/;
@@ -213,9 +215,11 @@ export default {
             }
 
             newValue += value[vId++];
+
             mId++;
         }
+        // console.log('newValue', newValue)
 
-       return newValue;
+        return newValue;
     }
 };
