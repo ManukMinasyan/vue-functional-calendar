@@ -670,6 +670,10 @@
                     }
                 }
 
+                if(day.date === this.calendar.dateRange.start || day.date === this.calendar.dateRange.end){
+                    classes.push('borderd');
+                }
+
                 return classes;
             },
             getTransition_() {

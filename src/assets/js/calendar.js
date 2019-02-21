@@ -178,7 +178,6 @@ export default {
         return monthWeeks.weeks;
     },
     mask(value) {
-        // console.log(value);
         let dayLength = this.getDateFromFormat(value).getDate().toString().length;
         let month = this.getDateFromFormat(value).getMonth();
 
@@ -191,9 +190,9 @@ export default {
         if(month+1 <= 9){
             monthMask = '0';
         }
-        console.log(month);
 
         let mask = this.configs.dateFormat.replace('dd', dayMask).replace('mm', monthMask).replace('yyyy', '0000');
+        // eslint-disable-next-line
         let literalPattern = /[0\*]/;
         let numberPattern = /[0-9]/;
         let newValue = "";
@@ -218,7 +217,6 @@ export default {
 
             mId++;
         }
-        // console.log('newValue', newValue)
 
         return newValue;
     }

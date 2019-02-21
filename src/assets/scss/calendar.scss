@@ -217,6 +217,10 @@ input.vfc-single-input {
                   border-radius: 50%;
                   margin: 0 auto;
 
+                  &.borderd {
+
+                  }
+
                   &.vfc-today {
                     background-color: #ff8498;
 
@@ -230,6 +234,22 @@ input.vfc-single-input {
                   }
 
                   &.vfc-marked {
+                    &.borderd {
+                      &:before {
+                        background: transparent;
+                      }
+                    }
+                    &:before {
+                      top: 0;
+                      left: 0;
+                      content: "";
+                      position: absolute;
+                      background: #66b3cc;
+                      width: 100%;
+                      height: 100%;
+                      z-index: 1;
+                    }
+
                     margin: auto;
                     background-color: rgb(102, 179, 204);
                     border-radius: 50%;
@@ -263,6 +283,7 @@ input.vfc-single-input {
                   }
 
                   &:after {
+                    z-index: 2;
                     position: absolute;
                     top: 0;
                     left: 0;
@@ -279,6 +300,8 @@ input.vfc-single-input {
                     background-color: #dadada;
                   }
                 }
+
+
 
                 /* Weekends */
                 &:last-child {

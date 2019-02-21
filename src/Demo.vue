@@ -3,9 +3,7 @@
         <functional-calendar class="demo-calendar"
                              :change-month-function="true"
                              :change-year-function="true"
-                             :is-modal="true"
-                             :is-date-picker="true"
-                             :is-typeable="true"
+                             :is-date-range="true"
                              ref="calendar"
         ></functional-calendar>
         <button @click="preYear">Pre Year</button>
