@@ -2,6 +2,8 @@
     <div>
         <functional-calendar class="demo-calendar"
                              :sunday-start="true"
+                             :is-modal="true"
+                             :date-format="'dd.mm.yyyy'"
                              :change-month-function="true"
                              :change-year-function="true"
                              :is-date-picker="true"
