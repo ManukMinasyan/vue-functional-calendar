@@ -1,9 +1,10 @@
 <template>
     <div>
         <functional-calendar class="demo-calendar"
+                             :sunday-start="true"
                              :change-month-function="true"
                              :change-year-function="true"
-                             :is-date-range="true"
+                             :is-date-picker="true"
                              ref="calendar"
         ></functional-calendar>
         <button @click="preYear">Pre Year</button>

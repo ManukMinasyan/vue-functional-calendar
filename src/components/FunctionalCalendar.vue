@@ -250,8 +250,9 @@
                 // Sunday Start
                 if (this.fConfigs.sundayStart) {
                     let dayNames = this.fConfigs.dayNames;
+                    console.log(dayNames);
                     let sundayName = dayNames[dayNames.length - 1];
-
+                    console.log(sundayName);
                     dayNames.splice(dayNames.length - 1, 1);
                     dayNames.unshift(sundayName);
                 }
@@ -670,7 +671,7 @@
                     }
                 }
 
-                if(day.date === this.calendar.dateRange.start || day.date === this.calendar.dateRange.end){
+                if(day.date === this.calendar.dateRange.start || day.date === this.calendar.dateRange.end || day.date === this.calendar.selectedDate){
                     classes.push('borderd');
                 }
 

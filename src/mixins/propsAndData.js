@@ -88,7 +88,7 @@ export const propsAndData = {
         },
         dayNames: {
             type: Array,
-            default: () => ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+            default: () => ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
         },
         monthNames: {
             type: Array,
