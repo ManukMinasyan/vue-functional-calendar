@@ -2,17 +2,15 @@
     <div>
         <functional-calendar class="demo-calendar"
                              :sunday-start="true"
-                             :is-modal="true"
+                             :is-modal="false"
                              :date-format="'dd.mm.yyyy'"
                              :change-month-function="true"
                              :change-year-function="true"
-                             :is-date-picker="true"
+                             :is-date-range="true"
+                             :is-multiple="true"
+                             :calendars-count="2"
                              ref="calendar"
         ></functional-calendar>
-        <button @click="preYear">Pre Year</button>
-        <button @click="nextYear">Next Year</button>
-        <button @click="preMonth">Pre Month</button>
-        <button @click="nextMonth">Next Month</button>
         <blockquote>
           <pre>
             <code>
@@ -79,7 +77,7 @@
 
     .demo-calendar {
         margin: 80px 50px;
-        width: 435px
+        width: 635px
     }
 
     pre {

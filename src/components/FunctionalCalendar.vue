@@ -85,7 +85,6 @@
                                     class='c-title-anchor'
                                     :name='getTransition_()' appear>
                                 <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key+0">
-
                                     <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
                                         <span :data-date="day.day" :key="day_key"
                                               :class="getClassNames(day)"
@@ -93,7 +92,6 @@
                                               @mouseover="dateMouseOver(week_key, day.date)">
                                         </span>
                                     </div>
-
                                 </div>
                             </transition-group>
                         </div>
@@ -219,8 +217,8 @@
                     this.input.dateRange.start = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.start = val;
-                        this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
-                        this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
+                        // this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
+                        // this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
                         this.markChooseDays();
                     }
                 }
@@ -230,8 +228,8 @@
                     this.input.dateRange.end = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.end = val;
-                        this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
-                        this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
+                        // this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
+                        // this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
                         this.markChooseDays();
                     }
                 }
@@ -250,9 +248,7 @@
                 // Sunday Start
                 if (this.fConfigs.sundayStart) {
                     let dayNames = this.fConfigs.dayNames;
-                    console.log(dayNames);
                     let sundayName = dayNames[dayNames.length - 1];
-                    console.log(sundayName);
                     dayNames.splice(dayNames.length - 1, 1);
                     dayNames.unshift(sundayName);
                 }
@@ -382,6 +378,7 @@
                 if (dateDay === -1) {
                     dateDay = 6;
                 }
+
                 let dayOfWeekString = this.fConfigs.dayNames[dateDay];
                 if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
                     return false;
@@ -433,7 +430,6 @@
                     });
                 } else if (this.fConfigs.isDatePicker) {
                     this.calendar.selectedDate = item.date;
-
                     this.$emit('input', this.calendar);
                 }
 

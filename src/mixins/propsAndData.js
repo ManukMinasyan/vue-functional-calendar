@@ -146,12 +146,7 @@ export const propsAndData = {
 
                 applyStylesheet: true,
 
-                // markedDates: ['10/12/2018', '12/12/2018'], // Simple
-                // With Custom Classes
-                markedDates: [
-                    {date: '10/1/2019', class: 'marked-class'},
-                    {date: '12/1/2019', class: 'marked-class-2'}
-                ],
+                markedDates: [],
                 markedDateRange: {
                     start: false,
                     end: false
@@ -159,7 +154,7 @@ export const propsAndData = {
 
                 limits: false,
 
-                disabledDates: ['10/12/2018'],
+                disabledDates: [],
                 disabledDayNames: [],
 
                 dayNames: [],
