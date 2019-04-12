@@ -667,6 +667,14 @@
                     }
                 }
 
+                if(day.date === this.calendar.dateRange.start){
+                    classes.push('vfc-start-date')
+                }
+
+                if(day.date === this.calendar.dateRange.end){
+                    classes.push('vfc-end-date')
+                }
+
                 if(day.date === this.calendar.dateRange.start || day.date === this.calendar.dateRange.end || day.date === this.calendar.selectedDate){
                     classes.push('borderd');
                 }
