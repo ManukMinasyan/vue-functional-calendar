@@ -1,6 +1,7 @@
 <template>
     <div>
         <functional-calendar class="demo-calendar"
+                             v-model="calendarData"
                              :sunday-start="true"
                              :is-modal="false"
                              :date-format="'dd.mm.yyyy'"
@@ -34,6 +35,7 @@
         },
         data() {
             return {
+                calendarData: {},
                 calendar: {
                     dateRange: {
 

@@ -206,8 +206,6 @@
                     this.input.selectedDate = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.selectedDate = val;
-                        this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
-                        this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
                         this.markChooseDays();
                     }
                 }
@@ -217,8 +215,6 @@
                     this.input.dateRange.start = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.start = val;
-                        // this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
-                        // this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
                         this.markChooseDays();
                     }
                 }
@@ -228,8 +224,6 @@
                     this.input.dateRange.end = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.end = val;
-                        // this.pickYear(helpCalendar.getDateFromFormat(val).getFullYear());
-                        // this.pickMonth(helpCalendar.getDateFromFormat(val).getMonth());
                         this.markChooseDays();
                     }
                 }
@@ -425,9 +419,7 @@
                         this.$emit('selectedDaysCount', diffDays);
                     }
 
-                    this.$emit('input', {
-                        dateRange: this.calendar
-                    });
+                    this.$emit('input', this.calendar);
                 } else if (this.fConfigs.isDatePicker) {
                     this.calendar.selectedDate = item.date;
                     this.$emit('input', this.calendar);
