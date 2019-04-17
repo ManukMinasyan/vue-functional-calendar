@@ -5,6 +5,7 @@
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Downloads](https://img.shields.io/npm/dm/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 ![gzip size](https://img.shields.io/badge/gzip%20size-5.73%20kB-44cc11.svg)
+___
 
 ## Demo
 
@@ -15,7 +16,8 @@ Demo: https://y3jnxov469.codesandbox.io/
 
 <img src="https://manukminasyan.github.io/vue-functional-calendar/public/demo.png"/>
 
-#
+___
+
 * Lightweight, high-performance calendar component based on Vue.js
 * Small memory usage, good performance, good style, and high scalability
 * Native js development, no third-party library introduced
@@ -36,6 +38,7 @@ ___
 ```
 npm i vue-functional-calendar --save
 ```
+___
 
 ## Usage
 
@@ -74,6 +77,7 @@ export default {
        :...:
 ></FunctionalCalendar>
 ````
+___
 
 ## Usage With Configs
 ### Component Settings
@@ -103,12 +107,14 @@ export default {
       // :configs="calendarConfigs"
 ></FunctionalCalendar>
 ````
+___
 
 ### A note on markDates
 The `markedDates` property **must** be in JavaScript Date format, e.g, no leading zeroes on month and days. 
 
 ✅ Correct: 1/12/2019
 ❎ Incorrect: 01/12/2019
+___
 
 ## Available props
 | Prop                          | Type            | Default     | Example     | Description                              |
@@ -135,6 +141,7 @@ The `markedDates` property **must** be in JavaScript Date format, e.g, no leadin
 | dayNames                   | Array         | ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']       | ['Monday', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sunday']        | Week Day Names                   |
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
 | transition                    | Boolean         | true      | false | Calendar animations               |
+___
 
 ### Events
 
@@ -155,6 +162,7 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
     ✅ this.$refs.Calendar.NextYear(); //Call method implementation to go to next year
     ✅ this.$refs.Calendar.ChooseDate('2018-12-12'); //Call method implementation to go to a date
 ````
+___
 
 ## Other
 * The following Demo.vue has a demo for reference.
