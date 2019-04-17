@@ -11,7 +11,7 @@
 
 Demo: https://y3jnxov469.codesandbox.io/
 
-[![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/y3jnxov469?hidenavigation=1)
+[![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/980jov4m4p?fontsize=14&hidenavigation=1)
 
 <img src="https://manukminasyan.github.io/vue-functional-calendar/public/demo.png"/>
 
