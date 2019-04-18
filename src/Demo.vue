@@ -10,6 +10,7 @@
                              :is-date-range="true"
                              :is-multiple="true"
                              :calendars-count="2"
+                             :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
                              ref="calendar"
         ></functional-calendar>
         <blockquote>
@@ -79,7 +80,7 @@
 
     .demo-calendar {
         margin: 80px 50px;
-        width: 635px
+        width: 735px
     }
 
     pre {

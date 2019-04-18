@@ -623,11 +623,21 @@
                         classes.push('vfc-marked');
                     }
 
+                    if(this.fConfigs.markedDates.includes(day.date)){
+                        classes.push('vfc-borderd');
+                    }
+
                     // Date Range Marked
                     if (this.fConfigs.markedDateRange.start && this.fConfigs.markedDateRange.end) {
                         if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date)
                             && helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= helpCalendar.getDateFromFormat(day.date)) {
                             classes.push('vfc-marked');
+                        }
+
+                        if(day.date === this.fConfigs.markedDateRange.start){
+                            classes.push('vfc-start-marked');
+                        }else if(day.date === this.fConfigs.markedDateRange.end){
+                            classes.push('vfc-end-marked');
                         }
                     } else {
 
@@ -660,15 +670,15 @@
                 }
 
                 if(day.date === this.calendar.dateRange.start){
-                    classes.push('vfc-start-date')
+                    classes.push('vfc-start-marked');
                 }
 
                 if(day.date === this.calendar.dateRange.end){
-                    classes.push('vfc-end-date')
+                    classes.push('vfc-end-marked');
                 }
 
-                if(day.date === this.calendar.dateRange.start || day.date === this.calendar.dateRange.end || day.date === this.calendar.selectedDate){
-                    classes.push('borderd');
+                if(day.date === this.calendar.selectedDate){
+                    classes.push('vfc-borderd')
                 }
 
                 return classes;

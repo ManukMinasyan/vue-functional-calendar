@@ -230,7 +230,7 @@ input.vfc-single-input {
                   }
 
                   &.vfc-marked {
-                    &.borderd {
+                    &.vfc-borderd, &.vfc-start-marked, &.vfc-end-marked {
                       &:before {
                         background: transparent;
                       }
