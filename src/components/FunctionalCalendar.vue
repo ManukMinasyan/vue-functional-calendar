@@ -68,12 +68,12 @@
                     </div>
                 </div>
                 <div class="vfc-calendars" :key="calendarsKey">
-                    <div class="vfc-calendar" v-for="(calendar, key) in listCalendars" :key="key">
+                    <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="key">
                         <div class="vfc-content">
                             <h2 class="vfc-top-date"
                                 :class="{'vfc-cursor-pointer':changeMonthFunction}"
                                 @click="openMonthPicker(key)">
-                                {{ calendar.dateTop }}
+                                {{ calendarItem.dateTop }}
                             </h2>
                             <section class="vfc-dayNames">
                                 <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
@@ -82,14 +82,18 @@
                             </section>
                             <transition-group
                                     tag='div'
-                                    class='c-title-anchor'
                                     :name='getTransition_()' appear>
-                                <div class="vfc-week" v-for="(week, week_key) in calendar.weeks" :key="week_key+0">
+                                <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks" :key="week_key+0">
                                     <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
-                                        <span :data-date="day.day" :key="day_key"
+                                        <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
+                                             class="vfc-base-start"></div>
+                                        <div v-else-if="(day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays"
+                                             class="vfc-base-end"></div>
+                                        <span v-if="!day.hideLeftAndRightDays"
+                                              :data-date="day.day" :key="day_key"
                                               :class="getClassNames(day)"
                                               @click="clickDay(day)"
-                                              @mouseover="dateMouseOver(week_key, day.date)">
+                                              @mouseover="dayMouseOver(week_key, day.date)">
                                         </span>
                                     </div>
                                 </div>
@@ -351,6 +355,10 @@
                                 day: day.day,
                                 date: helpCalendar.formatDate(date),
                                 hide: day.hide,
+                                isMouseToLeft: false,
+                                isMouseToRight: false,
+                                isDateRangeStart: vm.checkDateRangeStart(helpCalendar.formatDate(date)),
+                                isDateRangeEnd: vm.checkDateRangeEnd(helpCalendar.formatDate(date)),
                                 hideLeftAndRightDays: day.hideLeftAndRightDays,
                                 isToday: isToday,
                                 isMarked: isMarked
@@ -443,12 +451,19 @@
                                 if (this.calendar.selectedDate === day.date)
                                     day.isMarked = true;
                             } else {
-                                // Date Range
-                                if (startDate === day.date)
-                                    day.isMarked = true;
+                                day.isMouseToLeft = false;
+                                day.isMouseToRight = false;
 
-                                if (endDate === day.date)
+                                // Date Range
+                                if (startDate === day.date) {
+                                    day.isMouseToLeft = !!endDate;
                                     day.isMarked = true;
+                                }
+
+                                if (endDate === day.date) {
+                                    day.isMouseToRight = !!endDate;
+                                    day.isMarked = true;
+                                }
 
                                 if (startDate && endDate) {
                                     if (helpCalendar.getDateFromFormat(day.date).getTime() > helpCalendar.getDateFromFormat(startDate)
@@ -464,13 +479,14 @@
                     })
                 })
             },
-            dateMouseOver(week_key, date) {
+            dayMouseOver(week_key, date) {
                 if (!this.fConfigs.isDateRange) {
                     return false;
                 }
 
                 if ((this.calendar.dateRange.start === false || this.calendar.dateRange.end === false)
                     && (this.calendar.dateRange.start !== false || this.calendar.dateRange.end !== false)) {
+
                     for (let e = 0; e < this.listCalendars.length; e++) {
                         let calendar = this.listCalendars[e];
 
@@ -490,6 +506,9 @@
                                     let thisDate = helpCalendar.getDateFromFormat(date).getTime();
                                     let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start).getTime();
 
+                                    this.listCalendars[e].weeks[f].days[i].isMouseToLeft = itemDate === startDate && thisDate > startDate;
+                                    this.listCalendars[e].weeks[f].days[i].isMouseToRight = itemDate === startDate && thisDate < startDate;
+
                                     let dateDay = helpCalendar.getDateFromFormat(item.date).getDay() - 1;
                                     if (dateDay === -1) {
                                         dateDay = 6;
@@ -505,6 +524,7 @@
                                     }
 
                                 }
+
                             }
 
                         }
@@ -623,7 +643,7 @@
                         classes.push('vfc-marked');
                     }
 
-                    if(this.fConfigs.markedDates.includes(day.date)){
+                    if (this.fConfigs.markedDates.includes(day.date)) {
                         classes.push('vfc-borderd');
                     }
 
@@ -634,9 +654,9 @@
                             classes.push('vfc-marked');
                         }
 
-                        if(day.date === this.fConfigs.markedDateRange.start){
+                        if (day.date === this.fConfigs.markedDateRange.start) {
                             classes.push('vfc-start-marked');
-                        }else if(day.date === this.fConfigs.markedDateRange.end){
+                        } else if (day.date === this.fConfigs.markedDateRange.end) {
                             classes.push('vfc-end-marked');
                         }
                     } else {
@@ -669,28 +689,34 @@
                     }
                 }
 
-                if(day.date === this.calendar.dateRange.start){
+                if (day.date === this.calendar.dateRange.start) {
                     classes.push('vfc-start-marked');
                 }
 
-                if(day.date === this.calendar.dateRange.end){
+                if (day.date === this.calendar.dateRange.end) {
                     classes.push('vfc-end-marked');
                 }
 
-                if(day.date === this.calendar.selectedDate){
+                if (day.date === this.calendar.selectedDate) {
                     classes.push('vfc-borderd')
                 }
 
                 return classes;
             },
+            checkDateRangeStart(date) {
+                return date === this.calendar.dateRange.start || date === this.fConfigs.markedDateRange.start;
+            },
+            checkDateRangeEnd(date) {
+                return date === this.calendar.dateRange.end || date === this.fConfigs.markedDateRange.end;
+            },
             getTransition_() {
-                if(!this.fConfigs.transition)
+                if (!this.fConfigs.transition)
                     return '';
 
                 let name = '';
-                if(this.transitionPrefix === 'left'){
+                if (this.transitionPrefix === 'left') {
                     name = 'vfc-calendar-slide-left';
-                }else if(this.transitionPrefix === 'right') {
+                } else if (this.transitionPrefix === 'right') {
                     name = 'vfc-calendar-slide-right';
                 }
                 return name;

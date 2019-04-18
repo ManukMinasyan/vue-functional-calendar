@@ -11,8 +11,11 @@
                              :is-multiple="true"
                              :calendars-count="2"
                              :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
+                             :left-and-right-days="false"
                              ref="calendar"
         ></functional-calendar>
+        <!--:disabledDates="['27.4.2019','29.4.2019']"-->
+        <!--:disabledDayNames="['Su']"-->
         <blockquote>
           <pre>
             <code>

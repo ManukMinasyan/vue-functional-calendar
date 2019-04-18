@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 html, body {
   margin: 0;
   padding: 0;
@@ -33,7 +35,7 @@ input.vfc-single-input {
   border-radius: .28571429rem;
   box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
-  background-color: #FFFFFF;
+  background-color: $white;
 
   &.vfc-modal {
     position: absolute;
@@ -109,7 +111,7 @@ input.vfc-single-input {
 
     div {
       display: flex;
-      color: #000000;
+      color: $black;
       font-size: 18px;
 
       &.vfc-cursor-pointer {
@@ -210,6 +212,23 @@ input.vfc-single-input {
                 background-color: #fff;
                 margin-top: 3px;
 
+                .vfc-base-start, .vfc-base-end {
+                  position: absolute;
+                  background: $lightskyblue;
+                  width: 50% !important;
+                  border-radius: 0 !important;
+                  border-right-width: 0 !important;
+                  height: 100%;
+                }
+
+                .vfc-base-start {
+                  right: 0;
+                }
+
+                .vfc-base-end {
+                  left: 0;
+                }
+
                 span {
                   display: block;
                   width: 65%;
@@ -221,7 +240,7 @@ input.vfc-single-input {
                     background-color: #ff8498;
 
                     &:after {
-                      color: #FFFFFF;
+                      color: $white;
                     }
                   }
 
@@ -230,30 +249,35 @@ input.vfc-single-input {
                   }
 
                   &.vfc-marked {
+                    margin: auto;
+                    background-color: $royalblue;
+                    border-radius: 50%;
+                    opacity: 1;
+                    z-index: 2;
+
                     &.vfc-borderd, &.vfc-start-marked, &.vfc-end-marked {
+                      &:after {
+                        color: $white;
+                      }
+
                       &:before {
                         background: transparent;
                       }
                     }
+
                     &:before {
                       top: 0;
                       left: 0;
                       content: "";
                       position: absolute;
-                      background: #66b3cc;
+                      background-color: $lightskyblue;
                       width: 100%;
                       height: 100%;
                       z-index: 1;
                     }
 
-                    margin: auto;
-                    background-color: rgb(102, 179, 204);
-                    border-radius: 50%;
-                    opacity: 1;
-                    z-index: 2;
-
                     &:after {
-                      color: #FFFFFF;
+                      color: $black;
                     }
 
                     &.vfc-hide {
@@ -265,7 +289,7 @@ input.vfc-single-input {
 
                   &.vfc-hide {
                     &:after {
-                      color: #bfbfbf;
+                      color: $gainsboro;
                     }
                   }
 
@@ -275,7 +299,7 @@ input.vfc-single-input {
                     border-radius: 50%;
                     opacity: 1;
                     z-index: 2;
-                    color: #FFFFFF;
+                    color: $white;
                   }
 
                   &:after {
@@ -286,7 +310,7 @@ input.vfc-single-input {
                     bottom: 0;
                     right: 0;
                     content: attr(data-date);
-                    color: #000000;
+                    color: $black;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -298,10 +322,9 @@ input.vfc-single-input {
                 }
 
 
-
                 /* Weekends */
                 &:last-child {
-                  color: #000;
+                  color: $black;
                 }
 
               }
