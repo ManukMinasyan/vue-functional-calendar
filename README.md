@@ -7,7 +7,7 @@
 ![gzip size](https://img.shields.io/badge/gzip%20size-5.73%20kB-44cc11.svg)
 ___
 
-## Demo
+## Demo [![GitHub stars](https://img.shields.io/github/stars/ManukMinasyan/vue-functional-calendar.svg?label=Star&style=social)](https://github.com/ManukMinasyan/vue-functional-calendar)
 
 
 Demo: https://y3jnxov469.codesandbox.io/
