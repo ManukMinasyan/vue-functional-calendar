@@ -506,8 +506,8 @@
                                     let thisDate = helpCalendar.getDateFromFormat(date).getTime();
                                     let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start).getTime();
 
-                                    this.listCalendars[e].weeks[f].days[i].isMouseToLeft = itemDate === startDate && thisDate > startDate;
-                                    this.listCalendars[e].weeks[f].days[i].isMouseToRight = itemDate === startDate && thisDate < startDate;
+                                    this.listCalendars[e].weeks[f].days[i].isMouseToLeft = (itemDate === startDate && thisDate > startDate) || (itemDate === thisDate && thisDate < startDate);
+                                    this.listCalendars[e].weeks[f].days[i].isMouseToRight = (itemDate === startDate && thisDate < startDate) || (itemDate === thisDate && thisDate > startDate);
 
                                     let dateDay = helpCalendar.getDateFromFormat(item.date).getDay() - 1;
                                     if (dateDay === -1) {
