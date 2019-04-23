@@ -23,10 +23,10 @@
                    @click="showCalendar = !showCalendar">
         </div>
 
-        <div class="vfc-main-container" v-if="showCalendar"
+        <div class="vfc-main-container" v-if="showCalendar" ref="mainContainer"
              :class="{'vfc-modal': fConfigs.isModal && (fConfigs.isDatePicker || fConfigs.isDateRange)}">
             <template v-if="showMonthPicker">
-                <div class="vfc-months">
+                <div class="vfc-months-container">
                     <div class="vfc-navigation-buttons" v-if="true">
                         <div @click="PreYear">
                             <div class="vfc-arrow-left"></div>
@@ -39,65 +39,70 @@
                             <div class="vfc-arrow-right"></div>
                         </div>
                     </div>
-                    <template v-if="!showYearPicker">
-                        <div class="vfc-item" v-for="(month,key) in fConfigs.monthNames"
-                             :key="key"
-                             :class="{'vfc-selected': calendar.currentDate.getMonth()===key}"
-                             @click="pickMonth(key)">
-                            {{ month }}
-                        </div>
-                    </template>
-                    <template v-else>
-                        <div class="vfc-item"
-                             v-for="(year,key) in yearList"
-                             :key="key"
-                             :class="{'vfc-selected': year.selected}"
-                             @click="pickYear(year.year)">
-                            {{ year.year }}
-                        </div>
-                    </template>
+                    <div class="vfc-months">
+                        <template v-if="!showYearPicker">
+                            <div class="vfc-item" v-for="(month,key) in fConfigs.monthNames"
+                                 :key="key"
+                                 :class="{'vfc-selected': calendar.currentDate.getMonth()===key}"
+                                 @click="pickMonth(key)">
+                                {{ month }}
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div class="vfc-item"
+                                 v-for="(year,key) in yearList"
+                                 :key="key"
+                                 :class="{'vfc-selected': year.selected}"
+                                 @click="pickYear(year.year)">
+                                {{ year.year }}
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </template>
             <template v-else>
-                <div class="vfc-navigation-buttons" v-if="true">
-                    <div @click="PreMonth" :class="{'vfc-cursor-pointer': allowPreDate}">
-                        <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                <div class="vfc-calendars-container">
+                    <div class="vfc-navigation-buttons" ref="navigationButtons" v-if="true">
+                        <div @click="PreMonth" :class="{'vfc-cursor-pointer': allowPreDate}">
+                            <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                        </div>
+                        <div @click="NextMonth" :class="{'vfc-cursor-pointer': allowNextDate}">
+                            <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
+                        </div>
                     </div>
-                    <div @click="NextMonth" :class="{'vfc-cursor-pointer': allowNextDate}">
-                        <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
-                    </div>
-                </div>
-                <div class="vfc-calendars" :key="calendarsKey">
-                    <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="key">
-                        <div class="vfc-content">
-                            <h2 class="vfc-top-date"
-                                :class="{'vfc-cursor-pointer':changeMonthFunction}"
-                                @click="openMonthPicker(key)">
-                                {{ calendarItem.dateTop }}
-                            </h2>
-                            <section class="vfc-dayNames">
+                    <div class="vfc-calendars" :key="calendarsKey" ref="calendars">
+                        <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="key">
+                            <div class="vfc-content">
+                                <h2 class="vfc-top-date"
+                                    :class="{'vfc-cursor-pointer vfc-underline':changeMonthFunction}"
+                                    @click="openMonthPicker(key)">
+                                    {{ calendarItem.dateTop }}
+                                </h2>
+                                <section class="vfc-dayNames">
                                 <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
                                     {{ dayName }}
                                 </span>
-                            </section>
-                            <transition-group
-                                    tag='div'
-                                    :name='getTransition_()' appear>
-                                <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks" :key="week_key+0">
-                                    <div class="vfc-day" v-for="(day, day_key) in week.days" :key="day_key">
-                                        <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
-                                             class="vfc-base-start"></div>
-                                        <div v-else-if="(day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays"
-                                             class="vfc-base-end"></div>
-                                        <span v-if="!day.hideLeftAndRightDays"
-                                              :data-date="day.day" :key="day_key"
-                                              :class="getClassNames(day)"
-                                              @click="clickDay(day)"
-                                              @mouseover="dayMouseOver(week_key, day.date)">
+                                </section>
+                                <transition-group
+                                        tag='div'
+                                        :name='getTransition_()' appear>
+                                    <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks"
+                                         :key="week_key+0">
+                                        <div class="vfc-day" ref="day" v-for="(day, day_key) in week.days" :key="day_key">
+                                            <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
+                                                 class="vfc-base-start"></div>
+                                            <div v-else-if="(day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays"
+                                                 class="vfc-base-end"></div>
+                                            <span v-if="!day.hideLeftAndRightDays"
+                                                  :data-date="day.day" :key="day_key"
+                                                  :class="getClassNames(day)"
+                                                  @click="clickDay(day)"
+                                                  @mouseover="dayMouseOver(week_key, day.date)">
                                         </span>
+                                        </div>
                                     </div>
-                                </div>
-                            </transition-group>
+                                </transition-group>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -143,6 +148,8 @@
                 else
                     this.$emit('closed');
             }, {immediate: true, deep: true})
+
+            this.setCalendarStyles();
         },
         computed: {
             yearList() {
@@ -721,6 +728,12 @@
                 }
                 return name;
             },
+            setCalendarStyles() {
+                let day = this.$refs.day[0];
+                let container = this.$refs.mainContainer;
+                let height =  container.clientHeight + day.clientHeight;
+                container.style.height = height + "px";
+            }
         }
     }
 </script>

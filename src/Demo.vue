@@ -1,6 +1,20 @@
 <template>
     <div>
         <functional-calendar class="demo-calendar"
+                             v-model="calendarData2"
+                             :sunday-start="true"
+                             :is-modal="false"
+                             :date-format="'dd.mm.yyyy'"
+                             :change-month-function="true"
+                             :change-year-function="true"
+                             :is-date-range="true"
+                             :is-multiple="false"
+                             :calendars-count="2"
+                             :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
+                             :left-and-right-days="true"
+        ></functional-calendar>
+
+        <functional-calendar class="demo-calendar2"
                              v-model="calendarData"
                              :sunday-start="true"
                              :is-modal="false"
@@ -8,12 +22,13 @@
                              :change-month-function="true"
                              :change-year-function="true"
                              :is-date-range="true"
-                             :is-multiple="true"
+                             :is-multiple="false"
                              :calendars-count="2"
                              :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
-                             :left-and-right-days="false"
-                             ref="calendar"
+                             :left-and-right-days="true"
         ></functional-calendar>
+
+
         <!--:disabledDates="['27.4.2019','29.4.2019']"-->
         <!--:disabledDayNames="['Su']"-->
         <blockquote>
@@ -40,6 +55,7 @@
         data() {
             return {
                 calendarData: {},
+                calendarData2: {},
                 calendar: {
                     dateRange: {
 
@@ -77,13 +93,18 @@
 </script>
 
 <style>
-    body {
+    html, body {
         background-color: #fec928;
+        padding: 0;
+        margin: 0;
     }
 
     .demo-calendar {
-        margin: 80px 50px;
-        width: 735px
+        width: 20%
+    }
+
+    .demo-calendar2 {
+        width: 635px
     }
 
     pre {
