@@ -8,7 +8,7 @@
                              :change-month-function="true"
                              :change-year-function="true"
                              :is-date-range="true"
-                             :is-multiple="false"
+                             :is-multiple="true"
                              :calendars-count="2"
                              :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
                              :left-and-right-days="true"
@@ -100,7 +100,7 @@
     }
 
     .demo-calendar {
-        width: 20%
+        width: 30%
     }
 
     .demo-calendar2 {
