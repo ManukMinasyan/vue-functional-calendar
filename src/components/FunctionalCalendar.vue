@@ -23,7 +23,7 @@
                    @click="showCalendar = !showCalendar">
         </div>
 
-        <div class="vfc-main-container" v-if="showCalendar" ref="mainContainer"
+        <div class="vfc-main-container" v-show="showCalendar" ref="mainContainer"
              :class="{'vfc-modal': fConfigs.isModal && (fConfigs.isDatePicker || fConfigs.isDateRange)}">
             <template v-if="showMonthPicker">
                 <div class="vfc-months-container">
@@ -731,8 +731,13 @@
             setCalendarStyles() {
                 let day = this.$refs.day[0];
                 let container = this.$refs.mainContainer;
+                container.style.display = "";
                 let height =  container.clientHeight + day.clientHeight;
                 container.style.height = height + "px";
+
+                if(this.fConfigs.isModal){
+                    container.style.display = "none"
+                }
             }
         }
     }
