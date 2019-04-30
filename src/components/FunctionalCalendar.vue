@@ -711,10 +711,10 @@
                 return classes;
             },
             checkDateRangeStart(date) {
-                return date === date === this.fConfigs.markedDateRange.start;
+                return date === this.fConfigs.markedDateRange.start;
             },
             checkDateRangeEnd(date) {
-                return date === date === this.fConfigs.markedDateRange.end;
+                return date === this.fConfigs.markedDateRange.end;
             },
             getTransition_() {
                 if (!this.fConfigs.transition)
