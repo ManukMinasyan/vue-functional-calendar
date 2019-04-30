@@ -62,7 +62,7 @@
             </template>
             <template v-else>
                 <div class="vfc-calendars-container">
-                    <div class="vfc-navigation-buttons" ref="navigationButtons" v-if="true">
+                    <div class="vfc-navigation-buttons" ref="navigationButtons" v-if="checkHiddenElement('navigationArrows')">
                         <div @click="PreMonth" :class="{'vfc-cursor-pointer': allowPreDate}">
                             <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
                         </div>
@@ -74,12 +74,13 @@
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="key">
                             <div class="vfc-content">
                                 <h2 class="vfc-top-date"
+                                    v-if="checkHiddenElement('month')"
                                     :class="{'vfc-cursor-pointer vfc-underline':changeMonthFunction}"
                                     @click="openMonthPicker(key)">
                                     {{ calendarItem.dateTop }}
                                 </h2>
                                 <section class="vfc-dayNames">
-                                <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
+                                <span v-for="(dayName, key) in fConfigs.dayNames" v-if="checkHiddenElement('dayNames')" :key="key">
                                     {{ dayName }}
                                 </span>
                                 </section>
@@ -244,7 +245,7 @@
             initCalendar() {
                 // Set Help Calendar Configs
                 helpCalendar.configs.sundayStart = this.fConfigs.sundayStart;
-                helpCalendar.configs.leftAndRightDays = this.fConfigs.leftAndRightDays;
+                helpCalendar.configs.leftAndRightDays = this.checkHiddenElement('leftAndRightDays');
                 helpCalendar.configs.dateFormat = this.fConfigs.dateFormat;
                 helpCalendar.configs.dayNames = this.fConfigs.dayNames;
                 helpCalendar.configs.monthNames = this.fConfigs.monthNames;
@@ -732,12 +733,15 @@
                 let day = this.$refs.day[0];
                 let container = this.$refs.mainContainer;
                 container.style.display = "";
-                let height =  container.clientHeight + day.clientHeight;
+                let height =  container.clientHeight + (day.clientHeight + (day.clientHeight/2.5));
                 container.style.height = height + "px";
 
                 if(this.fConfigs.isModal){
                     container.style.display = "none"
                 }
+            },
+            checkHiddenElement(elementName) {
+                return !this.fConfigs.hiddenElements.includes(elementName);
             }
         }
     }

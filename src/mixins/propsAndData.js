@@ -17,10 +17,6 @@ export const propsAndData = {
             type: String,
             default: () => 'dd/mm/yyyy'
         },
-        leftAndRightDays: {
-            type: Boolean,
-            default: () => true
-        },
         isMultiple: {
             type: Boolean,
             default: () => false
@@ -100,6 +96,10 @@ export const propsAndData = {
         transition: {
             type: Boolean,
             default: () => true
+        },
+        hiddenElements: {
+            type: Array,
+            default: () => []
         }
     },
     data() {
@@ -131,7 +131,6 @@ export const propsAndData = {
                 sundayStart: false,
                 placeholder: false,
                 dateFormat: 'dd/mm/yyyy',
-                leftAndRightDays: true,
 
                 isDatePicker: false,
                 isDateRange: false,
@@ -160,7 +159,8 @@ export const propsAndData = {
                 dayNames: [],
                 monthNames: [],
 
-                transition: true
+                transition: true,
+                hiddenElements: []
             }
         }
     }

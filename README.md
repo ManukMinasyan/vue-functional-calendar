@@ -123,7 +123,6 @@ ___
 | limits                   | [Object, Boolean]         | false       | {min: '31/10/2019', max: '31/12/2019'}        | Set calendar show, and marked dates limits.                       |
 | placeholder                   | [String, Boolean]         | false       | 'yyyy/mm/dd'        | Date input placeholder                       |
 | dateFormat                   | String         | 'dd/mm/yyyy'       | 'yyyy/mm/dd'        | Date formatting string                       |
-| leftAndRightDays                   | Boolean         | true       | false        | Show or hide left and right days, prev or next months                       |
 | isDatePicker                   | Boolean         | false       | true        | Enable or disable date picker                     |
 | isDateRange                   | Boolean         | false       | true        | Enable or disable date range                     |
 | isMultiple                   | Boolean         | false       | true        | Enable multiple calendar function                     |
@@ -140,6 +139,7 @@ ___
 | dayNames                   | Array         | ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']       | ['Monday', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sunday']        | Week Day Names                   |
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
 | transition                    | Boolean         | true      | false | Calendar animations               |
+| hiddenElements                   | Array         | []       | ['dayNames', 'navigationArrows', 'leftAndRightDays', 'month']        | Hide calendar elements                       |
 ___
 
 ### Events
