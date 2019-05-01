@@ -220,6 +220,11 @@
                         this.calendar.selectedDate = val;
                         this.markChooseDays();
                     }
+
+                    // Typeable
+                    if(helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                        this.ChooseDate(val);
+                    }
                 }
             },
             'input.dateRange.start': {
@@ -229,6 +234,11 @@
                         this.calendar.dateRange.start = val;
                         this.markChooseDays();
                     }
+
+                    // Typeable
+                    if(helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                        this.ChooseDate(val);
+                    }
                 }
             },
             'input.dateRange.end': {
@@ -237,6 +247,11 @@
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.end = val;
                         this.markChooseDays();
+                    }
+
+                    // Typeable
+                    if(helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                        this.ChooseDate(val);
                     }
                 }
             }
@@ -249,15 +264,6 @@
                 helpCalendar.configs.dateFormat = this.fConfigs.dateFormat;
                 helpCalendar.configs.dayNames = this.fConfigs.dayNames;
                 helpCalendar.configs.monthNames = this.fConfigs.monthNames;
-
-
-                // Sunday Start
-                if (this.fConfigs.sundayStart) {
-                    let dayNames = this.fConfigs.dayNames;
-                    let sundayName = dayNames[dayNames.length - 1];
-                    dayNames.splice(dayNames.length - 1, 1);
-                    dayNames.unshift(sundayName);
-                }
 
                 this.setCalendarData();
                 this.listRendering();
@@ -312,6 +318,14 @@
                 } else {
                     // New Date
                     this.calendar.currentDate = this.newCurrentDate;
+                }
+
+                // Sunday Start
+                if (this.fConfigs.sundayStart) {
+                    let dayNames = this.fConfigs.dayNames;
+                    let sundayName = dayNames[dayNames.length - 1];
+                    dayNames.splice(dayNames.length - 1, 1);
+                    dayNames.unshift(sundayName);
                 }
             },
             listRendering() {

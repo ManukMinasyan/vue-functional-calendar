@@ -39,6 +39,15 @@ export default {
 
         return new Date(date[year], date[month] - 1, date[day]);
     },
+    checkValidDate(val){
+        val = this.getDateFromFormat(val);
+
+        if(val != "Invalid Date"){
+            return true;
+        }
+
+        return false;
+    },
     getWeeksInMonth(month, year) {
         let weeks = [],
             firstDate = new Date(year, month, 1),

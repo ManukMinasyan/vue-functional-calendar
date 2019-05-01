@@ -8,6 +8,7 @@
                              :change-month-function="true"
                              :is-typeable="true"
                              :change-year-function="true"
+                             :is-date-picker="false"
                              :is-date-range="true"
                              :is-multiple="false"
                              :calendars-count="2"
@@ -56,7 +57,12 @@
         data() {
             return {
                 calendarData: {},
-                calendarData2: {},
+                calendarData2: {
+                    dateRange: {
+                        start: '19.4.2019',
+                        end: '25.4.2019'
+                    }
+                },
                 calendar: {
                     dateRange: {
 
