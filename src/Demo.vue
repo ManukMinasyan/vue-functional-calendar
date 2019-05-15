@@ -1,9 +1,10 @@
 <template>
     <div>
         <functional-calendar class="demo-calendar"
+                             ref="Calendar"
                              v-model="calendarData2"
                              :sunday-start="true"
-                             :is-modal="true"
+                             :is-modal="false"
                              :date-format="'dd.mm.yyyy'"
                              :change-month-function="true"
                              :is-typeable="true"
@@ -16,6 +17,7 @@
                              :hidden-elements="['leftAndRightDays']"
         ></functional-calendar>
 
+        <button @click="$refs.Calendar.ChooseDate('today')">Today</button>
         <!--<functional-calendar class="demo-calendar2"-->
                              <!--v-model="calendarData"-->
                              <!--:sunday-start="true"-->

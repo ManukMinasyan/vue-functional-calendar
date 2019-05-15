@@ -159,6 +159,7 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
     ✅ this.$refs.Calendar.NextMonth(); //Call method implementation to go to next month
     ✅ this.$refs.Calendar.PreYear(); //Call method implementation to go to previous year
     ✅ this.$refs.Calendar.NextYear(); //Call method implementation to go to next year
+    ✅ this.$refs.Calendar.ChooseDate('today'); //Call method implementation to go to today
     ✅ this.$refs.Calendar.ChooseDate('2018-12-12'); //Call method implementation to go to a date
 ````
 ___

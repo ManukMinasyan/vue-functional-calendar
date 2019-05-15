@@ -606,7 +606,13 @@
                 this.$emit('changedYear', this.calendar.currentDate);
             },
             ChooseDate(date) {
-                this.calendar.currentDate = helpCalendar.getDateFromFormat(date);
+                let newDate = helpCalendar.getDateFromFormat(date);
+
+                if(date === 'today'){
+                    newDate = new Date();
+                }
+
+                this.calendar.currentDate = newDate;
                 this.initCalendar();
             },
             openMonthPicker() {
