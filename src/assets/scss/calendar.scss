@@ -37,6 +37,7 @@ input.vfc-single-input {
   box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
   background-color: $white;
+  user-select: none;
 
   &.vfc-modal {
     position: absolute;

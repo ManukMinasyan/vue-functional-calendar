@@ -3,7 +3,7 @@
         <functional-calendar class="demo-calendar"
                              ref="Calendar"
                              v-model="calendarData2"
-                             :sunday-start="true"
+                             :sunday-start="false"
                              :is-modal="false"
                              :date-format="'dd.mm.yyyy'"
                              :change-month-function="true"
