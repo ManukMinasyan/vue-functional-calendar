@@ -4,13 +4,14 @@
                              ref="Calendar"
                              v-model="calendarData2"
                              :sunday-start="false"
-                             :is-modal="false"
-                             :date-format="'dd.mm.yyyy'"
+                             :is-modal="true"
+                             :date-format="'yyyy-mm-dd'"
                              :change-month-function="true"
                              :is-typeable="true"
                              :change-year-function="true"
-                             :is-date-picker="false"
-                             :is-date-range="true"
+                             :is-date-picker="true"
+                             :is-date-range="false"
+                             :with-time-picker="true"
                              :is-multiple="false"
                              :calendars-count="2"
                              :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
@@ -109,7 +110,7 @@
     }
 
     .demo-calendar {
-        width: 30%
+        width: 20%
     }
 
     .demo-calendar2 {

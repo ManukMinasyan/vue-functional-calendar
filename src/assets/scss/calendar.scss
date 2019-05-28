@@ -70,7 +70,7 @@ input.vfc-single-input {
     }
 
     .vfc-months {
-      flex:1 1 75%;
+      flex: 1 1 75%;
       padding: 0;
       display: flex;
       flex-wrap: wrap;
@@ -107,6 +107,101 @@ input.vfc-single-input {
             border-radius: 0 0 5px;
           }
         }
+      }
+    }
+  }
+
+  .vfc-time-picker-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .vfc-close {
+      position: absolute;
+      right: 32px;
+      top: 32px;
+      width: 32px;
+      height: 32px;
+      opacity: 0.3;
+    }
+    .vfc-close:hover {
+      opacity: 1;
+    }
+    .vfc-close:before, .vfc-close:after {
+      position: absolute;
+      left: 15px;
+      content: ' ';
+      height: 33px;
+      width: 2px;
+      background-color: #333;
+    }
+    .vfc-close:before {
+      transform: rotate(45deg);
+    }
+    .vfc-close:after {
+      transform: rotate(-45deg);
+    }
+
+    .vfc-modal-time-mechanic {
+      position: relative;
+      width: 40%;
+      margin: 0 auto;
+      .vfc-modal-time-line {
+        text-align: center;
+        color: #7d7d7d;
+        font-size: 20px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+      }
+    }
+
+    .vfc-modal-append {
+      color: #7d7d7d;
+      font-weight: normal;
+      display: flex;
+      justify-content: space-between;
+      .vfc-arrow {
+        opacity: 0.3;
+        transition: 0.2s;
+      }
+      .vfc-arrow:hover {
+        opacity: 1;
+      }
+      .vfc-arrow-up {
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 20px solid #333333;
+      }
+      .vfc-arrow-down {
+        width: 0;
+        height: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 20px solid #333333;
+      }
+    }
+
+    .vfc-modal-midle {
+      display: inline-block;
+    }
+
+    .vfc-modal-midle-dig {
+      display: inline-block;
+      text-align: center;
+    }
+
+    .vfc-modal-digits {
+      display: flex;
+      justify-content: space-between;
+      font-size: 50px;
+      select {
+        margin: 5px 0;
+        width: 100%;
+        text-align: center;
+        text-align-last:center;
       }
     }
   }
@@ -171,7 +266,7 @@ input.vfc-single-input {
     }
 
     .vfc-calendars {
-      flex:1 1 75%;
+      flex: 1 1 75%;
       display: flex;
 
       .vfc-calendar {
@@ -185,6 +280,7 @@ input.vfc-single-input {
           &.vfc-content {
             margin: 0 20px;
             z-index: 100;
+
             h2 {
               &.vfc-top-date {
                 text-align: center;

@@ -29,6 +29,10 @@ export const propsAndData = {
             type: Boolean,
             default: () => false
         },
+        withTimePicker: {
+            type: Boolean,
+            default: () => false
+        },
         calendarsCount: {
             type: Number,
             default: () => 1
@@ -107,9 +111,39 @@ export const propsAndData = {
             calendar: {
                 currentDate: new Date(),
                 selectedDate: false,
+                selectedDateTime: false,
+                selectedHour: '00',
+                selectedMinute: '00',
                 dateRange: {
-                    start: false,
-                    end: false
+                    start: {
+                        date: false,
+                        dateTime: false,
+                        hour: '00',
+                        minute: '00',
+                    },
+                    end: {
+                        date: false,
+                        dateTime: false,
+                        hour: '00',
+                        minute: '00',
+                    }
+                }
+            },
+            input: {
+                selectedDate: '',
+                dateRange: {
+                    start: {
+                        date: '',
+                        dateTime: '',
+                        hour: '',
+                        minute: ''
+                    },
+                    end: {
+                        date: '',
+                        dateTime: '',
+                        hour: '',
+                        minute: ''
+                    }
                 }
             },
             calendarsKey: 0,
@@ -117,15 +151,9 @@ export const propsAndData = {
             showCalendar: true,
             showMonthPicker: false,
             showYearPicker: false,
+            showTimePicker: false,
             allowPreDate: true,
             allowNextDate: true,
-            input: {
-                selectedDate: '',
-                dateRange: {
-                    start: '',
-                    end: ''
-                }
-            },
             listCalendars: [],
             fConfigs: {
                 sundayStart: false,
@@ -134,6 +162,7 @@ export const propsAndData = {
 
                 isDatePicker: false,
                 isDateRange: false,
+                withTimePicker: false,
                 isMultiple: false,
                 calendarsCount: 3,
 

@@ -125,6 +125,7 @@ ___
 | dateFormat                   | String         | 'dd/mm/yyyy'       | 'yyyy/mm/dd'        | Date formatting string                       |
 | isDatePicker                   | Boolean         | false       | true        | Enable or disable date picker                     |
 | isDateRange                   | Boolean         | false       | true        | Enable or disable date range                     |
+| withTimePicker                   | Boolean         | false       | true        | Enable or disable time picker, working only with isDatePicker                     |
 | isMultiple                   | Boolean         | false       | true        | Enable multiple calendar function                     |
 | calendarsCount                   | Number         | 1       | 3        | Count of calendars, working only is prop isMultiple                    |
 | isModal                   | Boolean         | false       | true        | Enable modal calendar function                    |

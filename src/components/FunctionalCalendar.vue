@@ -2,13 +2,13 @@
     <div :class="{'vfc-styles-conditional-class': fConfigs.applyStylesheet }">
         <div class="vfc-multiple-input" v-if="fConfigs.isModal && fConfigs.isDateRange">
             <input type="text" title="Start Date"
-                   v-model="input.dateRange.start"
+                   v-model="input.dateRange.start.date"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
                    :maxlength="fConfigs.dateFormat.length"
                    @click="showCalendar = !showCalendar">
             <input type="text" title="End Date"
-                   v-model="input.dateRange.end"
+                   v-model="input.dateRange.end.date"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
                    :maxlength="fConfigs.dateFormat.length"
@@ -60,9 +60,45 @@
                     </div>
                 </div>
             </template>
+            <template v-else-if="showTimePicker">
+                <div class="vfc-time-picker-container">
+                    <div class="vfc-close" @click="openCloseTimePicker()"></div>
+                    <div class="vfc-modal-time-mechanic">
+                        <div id="time-line" class="vfc-modal-time-line">
+                            {{ calendar.selectedDateTime }}
+                        </div>
+                        <div class="vfc-modal-append">
+                            <div class="vfc-arrow vfc-arrow-up"></div>
+                            <span class="vfc-modal-midle"></span>
+                            <div class="vfc-arrow vfc-arrow-up"></div>
+                        </div>
+                        <div class="vfc-modal-digits">
+                            <select class="vfc-modal-digit" @change="changedHour" v-model="calendar.selectedHour">
+                                <option value="00">00</option>
+                                <option :value="i < 10 ? '0'+i : i" v-for="i in 23">
+                                    {{ i < 10 ? '0'+i : i}}
+                                </option>
+                            </select>
+                            <span class="vfc-modal-midle-dig">:</span>
+                            <select class="vfc-modal-digit" @change="changedMinute" v-model="calendar.selectedMinute">
+                                <option value="00">00</option>
+                                <option :value="i < 10 ? '0'+i : i" v-for="i in 59">
+                                    {{ i < 10 ? '0'+i : i}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="vfc-modal-append">
+                            <div class="vfc-arrow vfc-arrow-down"></div>
+                            <span class="vfc-modal-midle"></span>
+                            <div class="vfc-arrow vfc-arrow-down"></div>
+                        </div>
+                    </div>
+                </div>
+            </template>
             <template v-else>
                 <div class="vfc-calendars-container">
-                    <div class="vfc-navigation-buttons" ref="navigationButtons" v-if="checkHiddenElement('navigationArrows')">
+                    <div class="vfc-navigation-buttons" ref="navigationButtons"
+                         v-if="checkHiddenElement('navigationArrows')">
                         <div @click="PreMonth" :class="{'vfc-cursor-pointer': allowPreDate}">
                             <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
                         </div>
@@ -80,7 +116,8 @@
                                     {{ calendarItem.dateTop }}
                                 </h2>
                                 <section class="vfc-dayNames">
-                                <span v-for="(dayName, key) in fConfigs.dayNames" v-if="checkHiddenElement('dayNames')" :key="key">
+                                <span v-for="(dayName, key) in fConfigs.dayNames" v-if="checkHiddenElement('dayNames')"
+                                      :key="key">
                                     {{ dayName }}
                                 </span>
                                 </section>
@@ -89,7 +126,8 @@
                                         :name='getTransition_()' appear>
                                     <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks"
                                          :key="week_key+0">
-                                        <div class="vfc-day" ref="day" v-for="(day, day_key) in week.days" :key="day_key">
+                                        <div class="vfc-day" ref="day" v-for="(day, day_key) in week.days"
+                                             :key="day_key">
                                             <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
                                                  class="vfc-base-start"></div>
                                             <div v-else-if="(day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays"
@@ -123,7 +161,7 @@
             this.setConfigs();
             this.initCalendar();
 
-            if (this.fConfigs.isModal) {
+            if (this.fConfigs.isModal && !this.fConfigs.withTimePicker) {
                 // Event
                 window.addEventListener('click', (e) => {
                     if (!this.$el.contains(e.target)) {
@@ -136,8 +174,8 @@
             // Reacts to external selected dates
             this.$watch('value', function (value) {
                 if (this.fConfigs.isDateRange) {
-                    this.calendar.dateRange.start = value.dateRange.start || false;
-                    this.calendar.dateRange.end = value.dateRange.end || false
+                    this.calendar.dateRange.start.date = value.dateRange.start.date || false;
+                    this.calendar.dateRange.end.date = value.dateRange.end.date || false
                 } else {
                     this.calendar.selectedDate = value.selectedDate || false
                 }
@@ -201,15 +239,15 @@
                     }
                 }
             },
-            'calendar.dateRange.start': {
+            'calendar.dateRange.start.date': {
                 handler(val) {
-                    this.input.dateRange.start = val || '';
+                    this.input.dateRange.start.date = val || '';
                     this.markChooseDays();
                 }
             },
-            'calendar.dateRange.end': {
+            'calendar.dateRange.end.date': {
                 handler(val) {
-                    this.input.dateRange.end = val || '';
+                    this.input.dateRange.end.date = val || '';
                     this.markChooseDays();
                 }
             },
@@ -222,35 +260,36 @@
                     }
 
                     // Typeable
-                    if(helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                    if (helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
                         this.ChooseDate(val);
                     }
                 }
             },
-            'input.dateRange.start': {
+            'input.dateRange.start.date': {
                 handler(val) {
-                    this.input.dateRange.start = val = helpCalendar.mask(val);
+                    console.log(val);
+                    this.input.dateRange.start.date = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.dateRange.start = val;
+                        this.calendar.dateRange.start.date = val;
                         this.markChooseDays();
                     }
 
                     // Typeable
-                    if(helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                    if (helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
                         this.ChooseDate(val);
                     }
                 }
             },
-            'input.dateRange.end': {
+            'input.dateRange.end.date': {
                 handler(val) {
-                    this.input.dateRange.end = val = helpCalendar.mask(val);
+                    this.input.dateRange.end.date = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.dateRange.end = val;
+                        this.calendar.dateRange.end.date = val;
                         this.markChooseDays();
                     }
 
                     // Typeable
-                    if(helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                    if (helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
                         this.ChooseDate(val);
                     }
                 }
@@ -364,7 +403,7 @@
                                 });
                             }
 
-                            if (vm.calendar.dateRange.start === helpCalendar.formatDate(date)) {
+                            if (vm.calendar.dateRange.start.date === helpCalendar.formatDate(date)) {
                                 checkMarked = true;
                             }
 
@@ -418,32 +457,32 @@
                     let clickDate = helpCalendar.getDateFromFormat(item.date).getTime();
 
                     let startDate = false;
-                    if (this.calendar.dateRange.start) {
-                        startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start).getTime();
+                    if (this.calendar.dateRange.start.date) {
+                        startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date).getTime();
                     }
 
                     // Two dates is not empty
-                    if (this.calendar.dateRange.start !== false && this.calendar.dateRange.end !== false) {
-                        this.calendar.dateRange.start = item.date;
-                        this.calendar.dateRange.end = false;
+                    if (this.calendar.dateRange.start.date !== false && this.calendar.dateRange.end.date !== false) {
+                        this.calendar.dateRange.start.date = item.date;
+                        this.calendar.dateRange.end.date = false;
                         // Not date selected
-                    } else if (this.calendar.dateRange.start === false && this.calendar.dateRange.end === false) {
-                        this.calendar.dateRange.start = item.date;
+                    } else if (this.calendar.dateRange.start.date === false && this.calendar.dateRange.end.date === false) {
+                        this.calendar.dateRange.start.date = item.date;
                         // Start Date not empty, chose date > start date
-                    } else if (this.calendar.dateRange.end === false && (clickDate > startDate)) {
-                        this.calendar.dateRange.end = item.date;
+                    } else if (this.calendar.dateRange.end.date === false && (clickDate > startDate)) {
+                        this.calendar.dateRange.end.date = item.date;
                         // Start date not empty, chose date < start date
-                    } else if (this.calendar.dateRange.start !== false && (clickDate < startDate)) {
-                        this.calendar.dateRange.end = this.calendar.dateRange.start;
-                        this.calendar.dateRange.start = item.date;
+                    } else if (this.calendar.dateRange.start.date !== false && (clickDate < startDate)) {
+                        this.calendar.dateRange.end.date = this.calendar.dateRange.start.date;
+                        this.calendar.dateRange.start.date = item.date;
                     }
 
 
                     //Get number of days between date range dates
-                    if (this.calendar.dateRange.start !== false && this.calendar.dateRange.end !== false) {
+                    if (this.calendar.dateRange.start.date !== false && this.calendar.dateRange.end.date !== false) {
                         let oneDay = 24 * 60 * 60 * 1000;
-                        let firstDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start);
-                        let secondDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.end);
+                        let firstDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
+                        let secondDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.end.date);
                         let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
 
                         this.$emit('selectedDaysCount', diffDays);
@@ -456,11 +495,20 @@
                 }
 
                 this.markChooseDays();
+
+                // Time Picker
+                if (this.fConfigs.withTimePicker) {
+                    if (this.fConfigs.isDateRange && this.calendar.dateRange.end.date) {
+                        this.openCloseTimePicker();
+                    } else if (this.fConfigs.isDatePicker) {
+                        this.openCloseTimePicker();
+                    }
+                }
             },
             markChooseDays() {
                 let vm = this;
-                let startDate = vm.calendar.dateRange.start;
-                let endDate = vm.calendar.dateRange.end;
+                let startDate = vm.calendar.dateRange.start.date;
+                let endDate = vm.calendar.dateRange.end.date;
 
                 this.listCalendars.forEach((calendar) => {
                     calendar.weeks.forEach((week) => {
@@ -506,8 +554,8 @@
                     return false;
                 }
 
-                if ((this.calendar.dateRange.start === false || this.calendar.dateRange.end === false)
-                    && (this.calendar.dateRange.start !== false || this.calendar.dateRange.end !== false)) {
+                if ((this.calendar.dateRange.start.date === false || this.calendar.dateRange.end.date === false)
+                    && (this.calendar.dateRange.start.date !== false || this.calendar.dateRange.end.date !== false)) {
 
                     for (let e = 0; e < this.listCalendars.length; e++) {
                         let calendar = this.listCalendars[e];
@@ -519,14 +567,14 @@
 
                                 let item = week.days[i];
 
-                                if (item.date !== this.calendar.dateRange.start && !this.fConfigs.markedDates.includes(item.date)) {
+                                if (item.date !== this.calendar.dateRange.start.date && !this.fConfigs.markedDates.includes(item.date)) {
                                     this.listCalendars[e].weeks[f].days[i].isMarked = false;
                                 }
 
-                                if (this.calendar.dateRange.start) {
+                                if (this.calendar.dateRange.start.date) {
                                     let itemDate = helpCalendar.getDateFromFormat(item.date).getTime();
                                     let thisDate = helpCalendar.getDateFromFormat(date).getTime();
-                                    let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start).getTime();
+                                    let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date).getTime();
 
                                     this.listCalendars[e].weeks[f].days[i].isMouseToLeft = (itemDate === startDate && thisDate > startDate) || (itemDate === thisDate && thisDate < startDate);
                                     this.listCalendars[e].weeks[f].days[i].isMouseToRight = (itemDate === startDate && thisDate < startDate) || (itemDate === thisDate && thisDate > startDate);
@@ -608,12 +656,23 @@
             ChooseDate(date) {
                 let newDate = helpCalendar.getDateFromFormat(date);
 
-                if(date === 'today'){
+                if (date === 'today') {
                     newDate = new Date();
                 }
 
                 this.calendar.currentDate = newDate;
                 this.initCalendar();
+            },
+            changedHour(e) {
+                this.calendar.selectedHour = e.target.value;
+                this.setSelectedDateTime();
+            },
+            changedMinute(e) {
+                this.calendar.selectedMinute = e.target.value;
+                this.setSelectedDateTime();
+            },
+            setSelectedDateTime() {
+                this.calendar.selectedDateTime = this.calendar.selectedDate + " " + this.calendar.selectedHour + ':' + this.calendar.selectedMinute;
             },
             openMonthPicker() {
                 if (this.fConfigs.changeMonthFunction)
@@ -622,6 +681,10 @@
             openYearPicker() {
                 if (this.fConfigs.changeYearFunction)
                     this.showYearPicker = true;
+            },
+            openCloseTimePicker() {
+                this.setSelectedDateTime();
+                this.showTimePicker = !this.showTimePicker;
             },
             pickMonth(key) {
                 this.showMonthPicker = false;
@@ -717,11 +780,11 @@
                     }
                 }
 
-                if (day.date === this.calendar.dateRange.start) {
+                if (day.date === this.calendar.dateRange.start.date) {
                     classes.push('vfc-start-marked');
                 }
 
-                if (day.date === this.calendar.dateRange.end) {
+                if (day.date === this.calendar.dateRange.end.date) {
                     classes.push('vfc-end-marked');
                 }
 
@@ -753,10 +816,10 @@
                 let day = this.$refs.day[0];
                 let container = this.$refs.mainContainer;
                 container.style.display = "";
-                let height =  container.clientHeight + (day.clientHeight + (day.clientHeight/2.5));
+                let height = container.clientHeight + (day.clientHeight + (day.clientHeight / 2.5));
                 container.style.height = height + "px";
 
-                if(this.fConfigs.isModal){
+                if (this.fConfigs.isModal) {
                     container.style.display = "none"
                 }
             },
