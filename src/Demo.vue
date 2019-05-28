@@ -4,7 +4,7 @@
                              ref="Calendar"
                              v-model="calendarData2"
                              :sunday-start="false"
-                             :is-modal="true"
+                             :is-modal="false"
                              :date-format="'yyyy-mm-dd'"
                              :change-month-function="true"
                              :is-typeable="true"

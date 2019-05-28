@@ -60,41 +60,9 @@
                     </div>
                 </div>
             </template>
-            <template v-else-if="showTimePicker">
-                <div class="vfc-time-picker-container">
-                    <div class="vfc-close" @click="openCloseTimePicker()"></div>
-                    <div class="vfc-modal-time-mechanic">
-                        <div id="time-line" class="vfc-modal-time-line">
-                            {{ calendar.selectedDateTime }}
-                        </div>
-                        <div class="vfc-modal-append">
-                            <div class="vfc-arrow vfc-arrow-up"></div>
-                            <span class="vfc-modal-midle"></span>
-                            <div class="vfc-arrow vfc-arrow-up"></div>
-                        </div>
-                        <div class="vfc-modal-digits">
-                            <select class="vfc-modal-digit" @change="changedHour" v-model="calendar.selectedHour">
-                                <option value="00">00</option>
-                                <option :value="i < 10 ? '0'+i : i" v-for="i in 23">
-                                    {{ i < 10 ? '0'+i : i}}
-                                </option>
-                            </select>
-                            <span class="vfc-modal-midle-dig">:</span>
-                            <select class="vfc-modal-digit" @change="changedMinute" v-model="calendar.selectedMinute">
-                                <option value="00">00</option>
-                                <option :value="i < 10 ? '0'+i : i" v-for="i in 59">
-                                    {{ i < 10 ? '0'+i : i}}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="vfc-modal-append">
-                            <div class="vfc-arrow vfc-arrow-down"></div>
-                            <span class="vfc-modal-midle"></span>
-                            <div class="vfc-arrow vfc-arrow-down"></div>
-                        </div>
-                    </div>
-                </div>
-            </template>
+            <div v-else-if="showTimePicker">
+                <time-picker></time-picker>
+            </div>
             <template v-else>
                 <div class="vfc-calendars-container">
                     <div class="vfc-navigation-buttons" ref="navigationButtons"
@@ -153,9 +121,11 @@
 <script>
     import helpCalendar from '../assets/js/calendar'
     import {propsAndData} from "../mixins/propsAndData";
+    import TimePicker from "./TimePicker";
 
     export default {
         name: "FunctionalCalendar",
+        components: {TimePicker},
         mixins: [propsAndData],
         created() {
             this.setConfigs();
@@ -186,7 +156,7 @@
                     this.$emit('opened');
                 else
                     this.$emit('closed');
-            }, {immediate: true, deep: true})
+            }, {immediate: true, deep: true});
 
             this.setCalendarStyles();
         },
@@ -499,9 +469,9 @@
                 // Time Picker
                 if (this.fConfigs.withTimePicker) {
                     if (this.fConfigs.isDateRange && this.calendar.dateRange.end.date) {
-                        this.openCloseTimePicker();
+                        this.openTimePicker();
                     } else if (this.fConfigs.isDatePicker) {
-                        this.openCloseTimePicker();
+                        this.openTimePicker();
                     }
                 }
             },
@@ -663,17 +633,6 @@
                 this.calendar.currentDate = newDate;
                 this.initCalendar();
             },
-            changedHour(e) {
-                this.calendar.selectedHour = e.target.value;
-                this.setSelectedDateTime();
-            },
-            changedMinute(e) {
-                this.calendar.selectedMinute = e.target.value;
-                this.setSelectedDateTime();
-            },
-            setSelectedDateTime() {
-                this.calendar.selectedDateTime = this.calendar.selectedDate + " " + this.calendar.selectedHour + ':' + this.calendar.selectedMinute;
-            },
             openMonthPicker() {
                 if (this.fConfigs.changeMonthFunction)
                     this.showMonthPicker = true;
@@ -682,9 +641,8 @@
                 if (this.fConfigs.changeYearFunction)
                     this.showYearPicker = true;
             },
-            openCloseTimePicker() {
-                this.setSelectedDateTime();
-                this.showTimePicker = !this.showTimePicker;
+            openTimePicker() {
+                this.showTimePicker = true;
             },
             pickMonth(key) {
                 this.showMonthPicker = false;
@@ -830,7 +788,7 @@
     }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
     .vfc-styles-conditional-class {
         @import "../assets/scss/calendar.scss";
     }

@@ -112,18 +112,67 @@ input.vfc-single-input {
   }
 
   .vfc-time-picker-container {
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
 
+    .vfc-time-picker {
+      box-sizing: border-box;
+      &::after {
+        content: '';
+        display: table;
+        clear: both;
+      }
+      & * {
+        box-sizing: border-box;
+      }
+    }
+    .vfc-time-picker__list {
+      float: left;
+      width: 50%;
+      height: 200px;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        width: 3px;
+      }
+      &::-webkit-scrollbar-track {
+        background: #efefef;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: #ccc;
+      }
+    }
+    .vfc-time-picker__with-suffix .vfc-time-picker__list {
+      width: 33.3%;
+    }
+    .vfc-time-picker__item {
+      padding: 10px 0;
+      font-size: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: font-size .3s;
+    }
+    .vfc-time-picker__item:hover {
+      font-size: 32px;
+    }
+    .vfc-time-picker__item--selected {
+      color: $royalblue;
+      font-size: 32px;
+    }
+    .vfc-time-picker__item--disabled {
+      opacity: 0.4;
+      cursor: default;
+      font-size: 20px !important;
+    }
+    
     .vfc-close {
       position: absolute;
-      right: 32px;
-      top: 32px;
+      right: 12px;
+      top: 16px;
       width: 32px;
       height: 32px;
       opacity: 0.3;
+      z-index: 10000;
     }
     .vfc-close:hover {
       opacity: 1;
@@ -132,9 +181,9 @@ input.vfc-single-input {
       position: absolute;
       left: 15px;
       content: ' ';
-      height: 33px;
+      height: 26px;
       width: 2px;
-      background-color: #333;
+      background-color: #FFFFFF;
     }
     .vfc-close:before {
       transform: rotate(45deg);
@@ -145,14 +194,20 @@ input.vfc-single-input {
 
     .vfc-modal-time-mechanic {
       position: relative;
-      width: 40%;
       margin: 0 auto;
+      width: 100%;
       .vfc-modal-time-line {
-        text-align: center;
-        color: #7d7d7d;
+        width: 100%;
+        background-color: $royalblue;
+        text-align: left;
+        color: #FFFFFF;
         font-size: 20px;
         padding-top: 15px;
         padding-bottom: 15px;
+        border-radius: .28571429rem .28571429rem 0 0;
+        span {
+          margin-left: 15px;
+        }
       }
     }
 
