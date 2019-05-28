@@ -237,7 +237,6 @@
             },
             'input.dateRange.start.date': {
                 handler(val) {
-                    console.log(val);
                     this.input.dateRange.start.date = val = helpCalendar.mask(val);
                     if (helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.start.date = val;
@@ -468,9 +467,7 @@
 
                 // Time Picker
                 if (this.fConfigs.withTimePicker) {
-                    if (this.fConfigs.isDateRange && this.calendar.dateRange.end.date) {
-                        this.openTimePicker();
-                    } else if (this.fConfigs.isDatePicker) {
+                    if (this.fConfigs.isDateRange || this.fConfigs.isDatePicker) {
                         this.openTimePicker();
                     }
                 }

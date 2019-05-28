@@ -207,6 +207,9 @@ input.vfc-single-input {
         border-radius: .28571429rem .28571429rem 0 0;
         span {
           margin-left: 15px;
+          span.vfc-active {
+            text-decoration: underline;
+          }
         }
       }
     }
