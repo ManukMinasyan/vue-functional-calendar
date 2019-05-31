@@ -300,9 +300,13 @@
             setConfigs() {
                 let vm = this;
                 if (typeof (this.configs) !== "undefined") {
-                    Object.keys(this.configs).map(function (objectKey) {
-                        if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
+                    Object.keys(this.fConfigs).map(function (objectKey) {
+                        if (typeof (vm.configs[objectKey]) !== "undefined") {
+                            // Get From Configs
                             vm.$set(vm.fConfigs, objectKey, vm.configs[objectKey]);
+                        }else{
+                            // Get From Props
+                            vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
                         }
                     });
                 } else {
@@ -401,7 +405,7 @@
 
             },
             clickDay(item) {
-                if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker) {
+                if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker && !this.fConfigs.isMultipleDatePicker) {
                     return false;
                 }
 
@@ -421,6 +425,7 @@
                     return false;
                 }
 
+                // Date Range
                 if (this.fConfigs.isDateRange) {
 
                     let clickDate = helpCalendar.getDateFromFormat(item.date).getTime();
@@ -461,6 +466,17 @@
                 } else if (this.fConfigs.isDatePicker) {
                     this.calendar.selectedDate = item.date;
                     this.$emit('input', this.calendar);
+                } else if (this.fConfigs.isMultipleDatePicker){
+                    if(this.calendar.selectedDates.find(date => date.date === item.date)){
+                        let dateIndex = this.calendar.selectedDates.findIndex(date => date.date === item.date);
+                        this.calendar.selectedDates.splice(dateIndex, 1);
+                    }else{
+                        let date = Object.assign({}, this.defaultDateFormat);
+                        date.date = item.date;
+                        this.calendar.selectedDates.push(date);
+                    }
+
+                    this.$emit('input', this.calendar);
                 }
 
                 this.markChooseDays();
@@ -468,6 +484,10 @@
                 // Time Picker
                 if (this.fConfigs.withTimePicker) {
                     if (this.fConfigs.isDateRange || this.fConfigs.isDatePicker) {
+                        this.openTimePicker();
+                    }
+
+                    if(this.calendar.selectedDates.find(date => date.date === item.date) && this.fConfigs.isMultipleDatePicker){
                         this.openTimePicker();
                     }
                 }
@@ -486,6 +506,9 @@
                             // Date Picker
                             if (vm.fConfigs.isDatePicker) {
                                 if (this.calendar.selectedDate === day.date)
+                                    day.isMarked = true;
+                            } else if(vm.fConfigs.isMultipleDatePicker){
+                                if(vm.calendar.selectedDates.find(date => date.date === day.date))
                                     day.isMarked = true;
                             } else {
                                 day.isMouseToLeft = false;
@@ -743,7 +766,7 @@
                     classes.push('vfc-end-marked');
                 }
 
-                if (day.date === this.calendar.selectedDate) {
+                if (day.date === this.calendar.selectedDate || this.calendar.selectedDates.find(date => date.date === day.date)) {
                     classes.push('vfc-borderd')
                 }
 

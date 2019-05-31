@@ -25,6 +25,10 @@ export const propsAndData = {
             type: Boolean,
             default: () => false
         },
+        isMultipleDatePicker: {
+            type: Boolean,
+            default: () => false
+        },
         isDateRange: {
             type: Boolean,
             default: () => false
@@ -108,12 +112,19 @@ export const propsAndData = {
     },
     data() {
         return {
+            defaultDateFormat: {
+                date: false,
+                dateTime: false,
+                hour: '00',
+                minute: '00',
+            },
             calendar: {
                 currentDate: new Date(),
                 selectedDate: false,
                 selectedDateTime: false,
                 selectedHour: '00',
                 selectedMinute: '00',
+                selectedDates: [],
                 dateRange: {
                     start: {
                         date: false,
@@ -161,6 +172,7 @@ export const propsAndData = {
                 dateFormat: 'dd/mm/yyyy',
 
                 isDatePicker: false,
+                isMultipleDatePicker: false,
                 isDateRange: false,
                 withTimePicker: false,
                 isMultiple: false,

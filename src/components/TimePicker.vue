@@ -9,6 +9,9 @@
                             v-if="$parent.calendar.dateRange.end.date"> -<span @click="startDateActive = false"
                                                                                :class="{'vfc-active': !startDateActive}">{{ this.$parent.calendar.dateRange.end.dateTime }}</span></template>
                     </template>
+                    <template v-else="$parent.fConfigs.isMultipleDatePicker">
+                        {{ getCurrentDateTime }}
+                    </template>
                     <template v-else>
                         {{ $parent.calendar.selectedDateTime }}
                     </template>
@@ -37,15 +40,28 @@
         name: "TimePicker",
         data() {
             return {
-                startDateActive: true
+                startDateActive: true,
+                currentSelectedDate: ''
             }
         },
         watch: {
-            'startDateActive': function(){
+            'startDateActive': function () {
                 this.setScrollPosition();
             }
         },
-        mounted() {
+        computed: {
+            getCurrentDate() {
+                return this.currentSelectedDate.date;
+            },
+            getCurrentDateTime() {
+                return this.currentSelectedDate.dateTime;
+            }
+        },
+        created() {
+            let selectedDates = this.$parent.calendar.selectedDates;
+            this.currentSelectedDate = selectedDates[selectedDates.length - 1];
+        },
+        mounted(){
             let startDate = this.$parent.calendar.dateRange.start.date;
             let endDate = this.$parent.calendar.dateRange.end.date;
 
@@ -69,6 +85,9 @@
                     } else {
                         this.$parent.calendar.dateRange.end.hour = hour;
                     }
+                } else if (this.$parent.fConfigs.isMultipleDatePicker) {
+                    let currentDate = this.$parent.calendar.selectedDates.find(date => date.date ===this.getCurrentDate);
+                    currentDate.hour = hour;
                 } else {
                     this.$parent.calendar.selectedHour = hour;
                 }
@@ -83,6 +102,9 @@
                     } else {
                         this.$parent.calendar.dateRange.end.minute = minute;
                     }
+                }else if(this.$parent.fConfigs.isMultipleDatePicker){
+                    let currentDate = this.$parent.calendar.selectedDates.find(date => date.date === this.getCurrentDate);
+                    currentDate.minute = minute;
                 } else {
                     this.$parent.calendar.selectedHour = hour;
                 }
@@ -91,9 +113,15 @@
                 this.setScrollPosition();
             },
             setSelectedDateTime() {
-                this.$parent.calendar.selectedDateTime = this.$parent.calendar.selectedDate + " " + this.$parent.calendar.selectedHour + ':' + this.$parent.calendar.selectedMinute;
-                this.$parent.calendar.dateRange.start.dateTime = this.$parent.calendar.dateRange.start.date + " " + this.$parent.calendar.dateRange.start.hour + ':' + this.$parent.calendar.dateRange.start.minute;
-                this.$parent.calendar.dateRange.end.dateTime = this.$parent.calendar.dateRange.end.date + " " + this.$parent.calendar.dateRange.end.hour + ':' + this.$parent.calendar.dateRange.end.minute;
+                if(this.$parent.fConfigs.isDatePicker) {
+                    this.$parent.calendar.selectedDateTime = this.$parent.calendar.selectedDate + " " + this.$parent.calendar.selectedHour + ':' + this.$parent.calendar.selectedMinute;
+                }else if(this.$parent.fConfigs.isDateRange) {
+                    this.$parent.calendar.dateRange.start.dateTime = this.$parent.calendar.dateRange.start.date + " " + this.$parent.calendar.dateRange.start.hour + ':' + this.$parent.calendar.dateRange.start.minute;
+                    this.$parent.calendar.dateRange.end.dateTime = this.$parent.calendar.dateRange.end.date + " " + this.$parent.calendar.dateRange.end.hour + ':' + this.$parent.calendar.dateRange.end.minute;
+                }else if(this.$parent.fConfigs.isMultipleDatePicker) {
+                    let currentDate = this.$parent.calendar.selectedDates.find(date => date.date === this.getCurrentDate);
+                    currentDate.dateTime = currentDate.date + " " + currentDate.hour + ":" + currentDate.minute;
+                }
             },
             checkStartDate() {
                 return this.startDateActive;
@@ -106,6 +134,8 @@
                     } else {
                         hour = this.$parent.calendar.dateRange.end.hour;
                     }
+                }else if (this.$parent.fConfigs.isMultipleDatePicker) {
+                    hour = this.$parent.calendar.selectedDates.find(date => date.date === this.getCurrentDate).hour;
                 } else {
                     hour = this.$parent.calendar.selectedHour;
                 }
@@ -120,7 +150,9 @@
                     } else {
                         minute = this.$parent.calendar.dateRange.end.minute;
                     }
-                } else {
+                } else if(this.$parent.fConfigs.isMultipleDatePicker){
+                    minute = this.$parent.calendar.selectedDates.find(date => date.date === this.getCurrentDate).minute;
+                }else {
                     minute = this.$parent.calendar.selectedMinute;
                 }
 
@@ -135,11 +167,10 @@
                 document.getElementsByClassName('vfc-time-picker__list')[0].style.height = container.clientHeight - timeLine.clientHeight + 'px';
                 document.getElementsByClassName('vfc-time-picker__list')[1].style.height = container.clientHeight - timeLine.clientHeight + 'px';
             },
-            setScrollPosition()
-            {
+            setScrollPosition() {
                 let container = this.$parent.$refs.mainContainer;
 
-                this.$nextTick(function(){
+                this.$nextTick(function () {
                     const selectedHour = this.$refs.hourList.querySelector('.vfc-time-picker__item--selected');
                     const selectedMinute = this.$refs.minuteList.querySelector('.vfc-time-picker__item--selected');
 

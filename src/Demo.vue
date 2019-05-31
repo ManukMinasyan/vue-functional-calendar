@@ -2,20 +2,8 @@
     <div>
         <functional-calendar class="demo-calendar"
                              ref="Calendar"
-                             v-model="calendarData2"
-                             :sunday-start="false"
-                             :is-modal="false"
-                             :date-format="'yyyy-mm-dd'"
-                             :change-month-function="true"
-                             :is-typeable="true"
-                             :change-year-function="true"
-                             :is-date-picker="false"
-                             :is-date-range="true"
-                             :with-time-picker="true"
-                             :is-multiple="false"
-                             :calendars-count="2"
-                             :marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"
-                             :hidden-elements="['leftAndRightDays']"
+                             v-model="calendarData"
+                             :configs="calendarConfigs"
         ></functional-calendar>
 
         <button @click="$refs.Calendar.ChooseDate('today')">Today</button>
@@ -60,16 +48,9 @@
         data() {
             return {
                 calendarData: {},
-                calendarData2: {
-                    dateRange: {
-                        start: '19.4.2019',
-                        end: '25.4.2019'
-                    }
-                },
-                calendar: {
-                    dateRange: {
-
-                    }
+                calendarConfigs: {
+                    isMultipleDatePicker: true,
+                    dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
                 }
             }
         },
