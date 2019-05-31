@@ -1,10 +1,7 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar"
-                             ref="Calendar"
-                             v-model="calendarData"
-                             :configs="calendarConfigs"
-        ></functional-calendar>
+        <functional-calendar class="demo-calendar" :with-time-picker='true' :is-date-picker='true'></functional-calendar>
+
 
         <button @click="$refs.Calendar.ChooseDate('today')">Today</button>
         <!--<functional-calendar class="demo-calendar2"-->
