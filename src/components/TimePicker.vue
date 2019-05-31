@@ -42,7 +42,7 @@
         },
         watch: {
             'startDateActive': function(){
-                this.setStyles();
+                this.setScrollPosition();
             }
         },
         mounted() {
@@ -74,6 +74,7 @@
                 }
 
                 this.setSelectedDateTime();
+                this.setScrollPosition();
             },
             changeMinute(minute) {
                 if (this.$parent.fConfigs.isDateRange) {
@@ -87,6 +88,7 @@
                 }
 
                 this.setSelectedDateTime();
+                this.setScrollPosition();
             },
             setSelectedDateTime() {
                 this.$parent.calendar.selectedDateTime = this.$parent.calendar.selectedDate + " " + this.$parent.calendar.selectedHour + ':' + this.$parent.calendar.selectedMinute;
@@ -127,6 +129,16 @@
             setStyles() {
                 let container = this.$parent.$refs.mainContainer;
 
+                this.setScrollPosition();
+
+                let timeLine = document.getElementById('time-line');
+                document.getElementsByClassName('vfc-time-picker__list')[0].style.height = container.clientHeight - timeLine.clientHeight + 'px';
+                document.getElementsByClassName('vfc-time-picker__list')[1].style.height = container.clientHeight - timeLine.clientHeight + 'px';
+            },
+            setScrollPosition()
+            {
+                let container = this.$parent.$refs.mainContainer;
+
                 this.$nextTick(function(){
                     const selectedHour = this.$refs.hourList.querySelector('.vfc-time-picker__item--selected');
                     const selectedMinute = this.$refs.minuteList.querySelector('.vfc-time-picker__item--selected');
@@ -134,10 +146,6 @@
                     this.$refs.hourList.scrollTop = selectedHour ? selectedHour.offsetTop - container.clientHeight / 2 : 0;
                     this.$refs.minuteList.scrollTop = selectedMinute ? selectedMinute.offsetTop - container.clientHeight / 2 : 0;
                 });
-
-                let timeLine = document.getElementById('time-line');
-                document.getElementsByClassName('vfc-time-picker__list')[0].style.height = container.clientHeight - timeLine.clientHeight + 'px';
-                document.getElementsByClassName('vfc-time-picker__list')[1].style.height = container.clientHeight - timeLine.clientHeight + 'px';
             }
         }
     }
