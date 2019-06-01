@@ -330,15 +330,7 @@
                 // Placeholder
                 if (!this.fConfigs.placeholder) this.fConfigs.placeholder = this.fConfigs.dateFormat;
 
-
                 this.calendar.currentDate = this.newCurrentDate;
-                // Limits
-                // if (this.fConfigs.limits) {
-                //     this.calendar.currentDate = helpCalendar.getDateFromFormat(this.fConfigs.limits.min);
-                // } else {
-                //     New Date
-                //
-                // }
 
                 // Sunday Start
                 if (this.fConfigs.sundayStart) {
@@ -433,7 +425,7 @@
                     return false;
                 }
 
-                // Limits
+                // Limitse
                 if(this.fConfigs.limits){
                     let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
                     let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
