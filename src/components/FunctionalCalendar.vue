@@ -192,12 +192,19 @@
                 handler(value) {
                     this.$emit('input', this.calendar);
                     if (this.fConfigs.limits) {
-                        let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
-                        let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                        let min = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.min));
+                        min.setDate(1);
+                        min.setHours(0,0,0,0);
+                        let max = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.max));
+                        max.setDate(1);
+                        max.setHours(0,0,0,0);
 
-                        let current = value.getTime();
                         this.allowPreDate = true;
                         this.allowNextDate = true;
+
+                        let current = new Date(value);
+                        current.setDate(1);
+                        current.setHours(0,0,0,0);
 
                         if (current <= min) {
                             this.allowPreDate = false;
@@ -324,13 +331,14 @@
                 if (!this.fConfigs.placeholder) this.fConfigs.placeholder = this.fConfigs.dateFormat;
 
 
+                this.calendar.currentDate = this.newCurrentDate;
                 // Limits
-                if (this.fConfigs.limits) {
-                    this.calendar.currentDate = helpCalendar.getDateFromFormat(this.fConfigs.limits.min);
-                } else {
-                    // New Date
-                    this.calendar.currentDate = this.newCurrentDate;
-                }
+                // if (this.fConfigs.limits) {
+                //     this.calendar.currentDate = helpCalendar.getDateFromFormat(this.fConfigs.limits.min);
+                // } else {
+                //     New Date
+                //
+                // }
 
                 // Sunday Start
                 if (this.fConfigs.sundayStart) {
@@ -423,6 +431,17 @@
                 // Disabled dates
                 if (this.fConfigs.disabledDates.includes(item.date)) {
                     return false;
+                }
+
+                // Limits
+                if(this.fConfigs.limits){
+                    let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
+                    let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                    let date = helpCalendar.getDateFromFormat(item.date).getTime();
+
+                    if(date < min || date > max){
+                        return false;
+                    }
                 }
 
                 // Date Range
@@ -694,6 +713,17 @@
                 if (this.fConfigs.disabledDates.includes(day.date)) {
                     classes.push('vfc-disabled');
                     classes.push('vfc-cursor-not-allowed');
+                }
+
+                if(this.fConfigs.limits){
+                    let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
+                    let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                    let date = helpCalendar.getDateFromFormat(day.date).getTime();
+
+                    if(date < min || date > max){
+                        classes.push('vfc-disabled');
+                        classes.push('vfc-cursor-not-allowed');
+                    }
                 }
 
                 if (day.hide) {

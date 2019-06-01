@@ -1,21 +1,25 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar" :with-time-picker='true' :is-date-picker='true'></functional-calendar>
+        <functional-calendar class="demo-calendar"
+                             :with-time-picker='true'
+                             :is-multiple-date-picker='true'
+                             :limits="{min: '13/6/2019', max: '20/7/2019'}"
+        ></functional-calendar>
 
 
         <button @click="$refs.Calendar.ChooseDate('today')">Today</button>
         <!--<functional-calendar class="demo-calendar2"-->
-                             <!--v-model="calendarData"-->
-                             <!--:sunday-start="true"-->
-                             <!--:is-modal="false"-->
-                             <!--:date-format="'dd.mm.yyyy'"-->
-                             <!--:change-month-function="true"-->
-                             <!--:change-year-function="true"-->
-                             <!--:is-date-range="true"-->
-                             <!--:is-multiple="false"-->
-                             <!--:calendars-count="2"-->
-                             <!--:marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"-->
-                             <!--:left-and-right-days="true"-->
+        <!--v-model="calendarData"-->
+        <!--:sunday-start="true"-->
+        <!--:is-modal="false"-->
+        <!--:date-format="'dd.mm.yyyy'"-->
+        <!--:change-month-function="true"-->
+        <!--:change-year-function="true"-->
+        <!--:is-date-range="true"-->
+        <!--:is-multiple="false"-->
+        <!--:calendars-count="2"-->
+        <!--:marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"-->
+        <!--:left-and-right-days="true"-->
         <!--&gt;</functional-calendar>-->
 
 
