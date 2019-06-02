@@ -6,7 +6,7 @@
   },
   "name": "vue-functional-calendar",
   "description": "A style-uninstallable datepicker component for Vue.js",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -45,7 +45,7 @@
     "pkg"
   ],
   "private": false,
-  "main": "./index.js",
+  "main": "./src/index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

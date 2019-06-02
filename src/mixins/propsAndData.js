@@ -14,8 +14,7 @@ export const propsAndData = {
             default: () => false
         },
         dateFormat: {
-            type: String,
-            default: () => 'dd/mm/yyyy'
+            type: String
         },
         isMultiple: {
             type: Boolean,
@@ -38,8 +37,7 @@ export const propsAndData = {
             default: () => false
         },
         calendarsCount: {
-            type: Number,
-            default: () => 1
+            type: Number
         },
         isModal: {
             type: Boolean,
@@ -62,29 +60,20 @@ export const propsAndData = {
             default: () => true
         },
         newCurrentDate: {
-            type: Date,
-            default: () => new Date()
+            type: Date
         },
         markedDates: {
             type: Array,
             default: () => []
         },
         markedDateRange: {
-            type: Object,
-            default: () => {
-                return {
-                    start: false,
-                    end: false
-                }
-            }
+            type: Object
         },
         disabledDayNames: {
-            type: Array,
-            default: () => []
+            type: Array
         },
         disabledDates: {
-            type: Array,
-            default: () => []
+            type: Array
         },
         limits: {
             type: [Object, Boolean],
@@ -92,11 +81,9 @@ export const propsAndData = {
         },
         dayNames: {
             type: Array,
-            default: () => ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
         },
         monthNames: {
-            type: Array,
-            default: () => ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            type: Array
         },
         value: {
             type: Object
@@ -106,8 +93,7 @@ export const propsAndData = {
             default: () => true
         },
         hiddenElements: {
-            type: Array,
-            default: () => []
+            type: Array
         }
     },
     data() {
@@ -176,7 +162,7 @@ export const propsAndData = {
                 isDateRange: false,
                 withTimePicker: false,
                 isMultiple: false,
-                calendarsCount: 3,
+                calendarsCount: 1,
 
                 isModal: false,
                 isTypeable: false,
@@ -197,8 +183,8 @@ export const propsAndData = {
                 disabledDates: [],
                 disabledDayNames: [],
 
-                dayNames: [],
-                monthNames: [],
+                dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+                monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
 
                 transition: true,
                 hiddenElements: []

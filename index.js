@@ -1,16 +1,17 @@
 // Import vue component
-import component from './src/components/FunctionalCalendar';
+import FunctionalCalendarComponent from './src/components/FunctionalCalendar';
 
 // Declaring an installation function performed by Vue.use ()
-export function install(Vue) {
-    if (install.installed) return;
-    install.installed = true;
-    Vue.component('FunctionalCalendar', component);
-}
 
 // Creating a module value for Vue.use ()
-const plugin = {
-    install
+const FunctionalCalendarPlugin = {
+    install(Vue, options) {
+        Vue.prototype.$getOptions = function () {
+            return options;
+        };
+
+        Vue.component('FunctionalCalendar', FunctionalCalendarComponent);
+    }
 };
 
 // Automatic installation when vue is found (for example, in the browser using the <script> tag)
@@ -21,8 +22,8 @@ if (typeof window !== 'undefined') {
     GlobalVue = global.Vue;
 }
 if (GlobalVue) {
-    GlobalVue.use(plugin);
+    GlobalVue.use(FunctionalCalendarPlugin);
 }
 
 // Export component for use as a module (npm / webpack / etc.)
-export default component;
+export default FunctionalCalendarPlugin;

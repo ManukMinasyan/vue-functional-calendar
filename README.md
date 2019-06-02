@@ -165,6 +165,3 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
     ✅ this.$refs.Calendar.ChooseDate('2018-12-12'); //Call method implementation to go to a date
 ````
 ___
-
-## Other
-* The following Demo.vue has a demo for reference.

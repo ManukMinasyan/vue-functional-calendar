@@ -194,17 +194,17 @@
                     if (this.fConfigs.limits) {
                         let min = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.min));
                         min.setDate(1);
-                        min.setHours(0,0,0,0);
+                        min.setHours(0, 0, 0, 0);
                         let max = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.max));
                         max.setDate(1);
-                        max.setHours(0,0,0,0);
+                        max.setHours(0, 0, 0, 0);
 
                         this.allowPreDate = true;
                         this.allowNextDate = true;
 
                         let current = new Date(value);
                         current.setDate(1);
-                        current.setHours(0,0,0,0);
+                        current.setHours(0, 0, 0, 0);
 
                         if (current <= min) {
                             this.allowPreDate = false;
@@ -286,6 +286,7 @@
             },
             setCalendarData() {
                 let date = this.calendar.currentDate;
+                console.log('yeah', this.calendar.currentDate);
                 this.listCalendars = [];
                 date = new Date(date.getFullYear(), date.getMonth() - 1);
                 for (let i = 0; i < this.fConfigs.calendarsCount; i++) {
@@ -306,19 +307,30 @@
             },
             setConfigs() {
                 let vm = this;
+                // Global Options
+                let globalOptions = vm.$getOptions();
+                Object.keys(globalOptions).map(function (objectKey) {
+                    if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
+                        vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
+                    }
+                });
+
+
                 if (typeof (this.configs) !== "undefined") {
                     Object.keys(this.fConfigs).map(function (objectKey) {
                         if (typeof (vm.configs[objectKey]) !== "undefined") {
                             // Get From Configs
                             vm.$set(vm.fConfigs, objectKey, vm.configs[objectKey]);
-                        }else{
+                        } else {
                             // Get From Props
-                            vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
+                            if (typeof (globalOptions[objectKey]) === "undefined") {
+                                vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
+                            }
                         }
                     });
                 } else {
                     Object.keys(this.$props).map(function (objectKey) {
-                        if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
+                        if (typeof (vm.fConfigs[objectKey]) !== "undefined" && typeof (vm.$props[objectKey]) !== "undefined") {
                             vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
                         }
                     });
@@ -330,7 +342,9 @@
                 // Placeholder
                 if (!this.fConfigs.placeholder) this.fConfigs.placeholder = this.fConfigs.dateFormat;
 
-                this.calendar.currentDate = this.newCurrentDate;
+                if (typeof this.newCurrentDate !== "undefined") {
+                    this.calendar.currentDate = this.newCurrentDate;
+                }
 
                 // Sunday Start
                 if (this.fConfigs.sundayStart) {
@@ -426,12 +440,12 @@
                 }
 
                 // Limitse
-                if(this.fConfigs.limits){
+                if (this.fConfigs.limits) {
                     let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
                     let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
                     let date = helpCalendar.getDateFromFormat(item.date).getTime();
 
-                    if(date < min || date > max){
+                    if (date < min || date > max) {
                         return false;
                     }
                 }
@@ -477,11 +491,11 @@
                 } else if (this.fConfigs.isDatePicker) {
                     this.calendar.selectedDate = item.date;
                     this.$emit('input', this.calendar);
-                } else if (this.fConfigs.isMultipleDatePicker){
-                    if(this.calendar.selectedDates.find(date => date.date === item.date)){
+                } else if (this.fConfigs.isMultipleDatePicker) {
+                    if (this.calendar.selectedDates.find(date => date.date === item.date)) {
                         let dateIndex = this.calendar.selectedDates.findIndex(date => date.date === item.date);
                         this.calendar.selectedDates.splice(dateIndex, 1);
-                    }else{
+                    } else {
                         let date = Object.assign({}, this.defaultDateFormat);
                         date.date = item.date;
                         this.calendar.selectedDates.push(date);
@@ -498,7 +512,7 @@
                         this.openTimePicker();
                     }
 
-                    if(this.calendar.selectedDates.find(date => date.date === item.date) && this.fConfigs.isMultipleDatePicker){
+                    if (this.calendar.selectedDates.find(date => date.date === item.date) && this.fConfigs.isMultipleDatePicker) {
                         this.openTimePicker();
                     }
                 }
@@ -518,8 +532,8 @@
                             if (vm.fConfigs.isDatePicker) {
                                 if (this.calendar.selectedDate === day.date)
                                     day.isMarked = true;
-                            } else if(vm.fConfigs.isMultipleDatePicker){
-                                if(vm.calendar.selectedDates.find(date => date.date === day.date))
+                            } else if (vm.fConfigs.isMultipleDatePicker) {
+                                if (vm.calendar.selectedDates.find(date => date.date === day.date))
                                     day.isMarked = true;
                             } else {
                                 day.isMouseToLeft = false;
@@ -707,12 +721,12 @@
                     classes.push('vfc-cursor-not-allowed');
                 }
 
-                if(this.fConfigs.limits){
+                if (this.fConfigs.limits) {
                     let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
                     let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
                     let date = helpCalendar.getDateFromFormat(day.date).getTime();
 
-                    if(date < min || date > max){
+                    if (date < min || date > max) {
                         classes.push('vfc-disabled');
                         classes.push('vfc-cursor-not-allowed');
                     }
