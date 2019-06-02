@@ -2,7 +2,7 @@
     <div>
         <functional-calendar class="demo-calendar"
                              :with-time-picker='true'
-                             :is-multiple-date-picker='true'
+                             :is-date-picker='true'
                              :limits="{min: '13/6/2019', max: '20/7/2019'}"
         ></functional-calendar>
 

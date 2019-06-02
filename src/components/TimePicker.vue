@@ -106,7 +106,7 @@
                     let currentDate = this.$parent.calendar.selectedDates.find(date => date.date === this.getCurrentDate);
                     currentDate.minute = minute;
                 } else {
-                    this.$parent.calendar.selectedHour = hour;
+                    this.$parent.calendar.selectedMinute = minute;
                 }
 
                 this.setSelectedDateTime();
