@@ -1,6 +1,6 @@
 <template>
     <div>
-        <FunctionalCalendar class="demo-calendar" :date-format="'yyyy/mm/dd'" :day-names="['Mo2', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']"></FunctionalCalendar>
+        <FunctionalCalendar class="demo-calendar" :is-date-picker="true" :date-format="'yyyy/mm/dd'"></FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
                              <!--:with-time-picker='true'-->
                              <!--:is-date-picker='true'-->
