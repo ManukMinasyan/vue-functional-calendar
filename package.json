@@ -5,7 +5,7 @@
     "url": "https://github.com/ManukMinasyan"
   },
   "name": "vue-functional-calendar",
-  "description": "A style-uninstallable datepicker component for Vue.js",
+  "description": "Lightweight, high-performance calendar component based on Vue.js",
   "version": "2.4.4",
   "license": "MIT",
   "repository": {
