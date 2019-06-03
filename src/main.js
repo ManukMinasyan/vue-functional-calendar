@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import FunctionalCalendar from '.';
+import FunctionalCalendar from './components/FunctionalCalendar';
 import Demo from './Demo';
 
 Vue.use(FunctionalCalendar, {
