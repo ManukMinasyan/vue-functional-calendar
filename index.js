@@ -3,9 +3,9 @@ import FunctionalCalendar from './src/components/FunctionalCalendar';
 
 // Creating a module value for Vue.use ()
 const FunctionalCalendarPlugin = {
-    install(Vue, options) {
+    install(Vue, options = []) {
         Vue.prototype.$getOptions = function () {
-            return typeof options !== "undefined" ? options : [];
+            return options;
         };
 
         Vue.component('FunctionalCalendar', FunctionalCalendar);
