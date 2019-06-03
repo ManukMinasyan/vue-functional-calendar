@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import FunctionalCalendar from '../index';
 import Demo from './Demo';
-Vue.use(FunctionalCalendar);
+Vue.use(FunctionalCalendar, {dayNames: ['Moa', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']});
 Vue.config.productionTip = false;
 
 new Vue({

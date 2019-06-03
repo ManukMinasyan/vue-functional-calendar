@@ -306,13 +306,15 @@
             },
             setConfigs() {
                 let vm = this;
-                // Global Options
-                let globalOptions = vm.$getOptions();
-                Object.keys(globalOptions).map(function (objectKey) {
-                    if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
-                        vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
-                    }
-                });
+                if(typeof vm.$getOptions !== "undefined") {
+                    // Global Options
+                    let globalOptions = vm.$getOptions();
+                    Object.keys(globalOptions).map(function (objectKey) {
+                        if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
+                            vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
+                        }
+                    });
+                }
 
 
                 if (typeof (this.configs) !== "undefined") {

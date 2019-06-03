@@ -1,6 +1,6 @@
 <template>
     <div>
-        <FunctionalCalendar class="demo-calendar" :is-date-picker="true" :date-format="'yyyy/mm/dd'"></FunctionalCalendar>
+        <FunctionalCalendar class="demo-calendar" :is-date-picker="true" :date-format="'yyyy/mm/dd'" :day-names="['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sus']"></FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
                              <!--:with-time-picker='true'-->
                              <!--:is-date-picker='true'-->
@@ -40,8 +40,10 @@
 </template>
 
 <script>
+    import {FunctionalCalendar} from '../index'
     /* eslint-disable */
     export default {
+        components: {FunctionalCalendar},
         data() {
             return {
                 calendarData: {},
