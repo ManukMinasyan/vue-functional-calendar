@@ -1,5 +1,5 @@
 // Import vue component
-import FunctionalCalendarComponent from './src/components/FunctionalCalendar';
+import FunctionalCalendarComponent from './components/FunctionalCalendar';
 
 // Declaring an installation function performed by Vue.use ()
 

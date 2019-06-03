@@ -45,7 +45,7 @@
     "pkg"
   ],
   "private": false,
-  "main": "./index.js",
+  "main": "./src/main.js",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
