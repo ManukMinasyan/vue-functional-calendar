@@ -286,7 +286,6 @@
             },
             setCalendarData() {
                 let date = this.calendar.currentDate;
-                console.log('yeah', this.calendar.currentDate);
                 this.listCalendars = [];
                 date = new Date(date.getFullYear(), date.getMonth() - 1);
                 for (let i = 0; i < this.fConfigs.calendarsCount; i++) {

@@ -50,7 +50,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test": "npm run build",
-    "build-bundle": "vue-cli-service build --target lib --name vueFunctionalCalendar ./src/main.js",
+    "build-bundle": "vue-cli-service build --target lib --name vueFunctionalCalendar ./index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
