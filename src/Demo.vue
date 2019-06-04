@@ -1,7 +1,12 @@
 <template>
     <div>
-        <FunctionalCalendar class="demo-calendar" :is-date-range="true" :date-format="'dd/mm/yyyy'"
-                            :limits="{ min: '03/06/2019', max: '03/06/2020' } "></FunctionalCalendar>
+        <FunctionalCalendar class="demo-calendar"
+                            :is-date-range="true"
+                            :date-format="'dd/mm/yyyy'"
+                            :is-multiple="true"
+                            :calendars-count="2"
+                            :change-month-function="true"
+        ></FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
         <!--:with-time-picker='true'-->
         <!--:is-date-picker='true'-->
@@ -91,7 +96,7 @@
     }
 
     .demo-calendar {
-        width: 20%
+        width: 600px
     }
 
     .demo-calendar2 {

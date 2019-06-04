@@ -129,6 +129,7 @@ ___
 | withTimePicker                   | Boolean         | false       | true        | Enable or disable time picker                     |
 | isMultiple                   | Boolean         | false       | true        | Enable multiple calendar function                     |
 | calendarsCount                   | Number         | 1       | 3        | Count of calendars, working only is prop isMultiple                    |
+| isSeparately                   | Boolean         | false       | true        | Enable separately  calendars                 |
 | isModal                   | Boolean         | false       | true        | Enable modal calendar function                    |
 | isTypeable                   | Boolean         | false       | true        | Enable manually date typing function, working only with prop isModal                     |
 | changeMonthFunction                   | Boolean         | false       | true        | Enable changed month with list, function                   |

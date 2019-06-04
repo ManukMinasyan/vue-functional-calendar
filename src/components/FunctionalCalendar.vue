@@ -66,17 +66,25 @@
             <template v-else>
                 <div class="vfc-calendars-container">
                     <div class="vfc-navigation-buttons" ref="navigationButtons"
-                         v-if="checkHiddenElement('navigationArrows')">
-                        <div @click="PreMonth" :class="{'vfc-cursor-pointer': allowPreDate}">
+                         v-if="checkHiddenElement('navigationArrows') && !fConfigs.isSeparately">
+                        <div @click="PreMonth()" :class="{'vfc-cursor-pointer': allowPreDate}">
                             <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
                         </div>
-                        <div @click="NextMonth" :class="{'vfc-cursor-pointer': allowNextDate}">
+                        <div @click="NextMonth()" :class="{'vfc-cursor-pointer': allowNextDate}">
                             <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
                         </div>
                     </div>
                     <div class="vfc-calendars" :key="calendarsKey" ref="calendars">
-                        <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="key">
+                        <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="calendarItem.key">
                             <div class="vfc-content">
+                                <div class="vfc-separately-navigation-buttons" v-if="fConfigs.isSeparately">
+                                    <div @click="PreMonth(key)" :class="{'vfc-cursor-pointer': allowPreDate}">
+                                        <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                                    </div>
+                                    <div @click="NextMonth(key)" :class="{'vfc-cursor-pointer': allowNextDate}">
+                                        <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
+                                    </div>
+                                </div>
                                 <h2 class="vfc-top-date"
                                     v-if="checkHiddenElement('month')"
                                     :class="{'vfc-cursor-pointer vfc-underline':changeMonthFunction}"
@@ -284,14 +292,22 @@
                 this.listRendering();
                 this.markChooseDays();
             },
+            updateCalendar() {
+                this.setExistingCalendarData();
+                this.listRendering();
+                this.markChooseDays();
+            },
             setCalendarData() {
                 let date = this.calendar.currentDate;
-                this.listCalendars = [];
                 date = new Date(date.getFullYear(), date.getMonth() - 1);
+
+                this.listCalendars = [];
+
                 for (let i = 0; i < this.fConfigs.calendarsCount; i++) {
                     date = new Date(date.getFullYear(), date.getMonth() + 1);
 
                     let calendar = {
+                        key: i,
                         date: date,
                         dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
                         weeks: helpCalendar.getFinalizedWeeks(date.getMonth(), date.getFullYear())
@@ -304,9 +320,26 @@
                     }
                 }
             },
+            setExistingCalendarData() {
+                for (let i = 0; i < this.listCalendars.length; i++) {
+                    let calendar = this.listCalendars[i];
+                    let date = calendar.date;
+
+                    this.$set(this.listCalendars, i, {
+                        key: calendar.key,
+                        date: date,
+                        dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
+                        weeks: helpCalendar.getFinalizedWeeks(date.getMonth(), date.getFullYear())
+                    });
+
+                    if (!this.fConfigs.isMultiple) {
+                        break;
+                    }
+                }
+            },
             setConfigs() {
                 let vm = this;
-                if(typeof vm.$getOptions !== "undefined") {
+                if (typeof vm.$getOptions !== "undefined") {
                     // Global Options
                     let globalOptions = vm.$getOptions();
                     Object.keys(globalOptions).map(function (objectKey) {
@@ -631,31 +664,45 @@
             /**
              * @return {boolean}
              */
-            PreMonth() {
+            PreMonth(calendarKey = null) {
                 if (!this.allowPreDate)
                     return false;
 
                 this.transitionPrefix = 'right';
 
-                this.calendarsKey -= 1;
+                if (calendarKey !== null) {
+                    let currentCalendar = this.listCalendars[calendarKey];
+                    currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() - 1);
+                    currentCalendar.key -= 1;
+                    this.updateCalendar();
+                } else {
+                    this.calendarsKey -= 1;
+                    this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() - 1);
+                    this.initCalendar();
+                }
 
-                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() - 1);
-                this.initCalendar();
                 this.$emit('changedMonth', this.calendar.currentDate);
             },
             /**
              * @return {boolean}
              */
-            NextMonth() {
+            NextMonth(calendarKey = null) {
                 if (!this.allowNextDate)
                     return false;
 
                 this.transitionPrefix = 'left';
 
-                this.calendarsKey += 1;
+                if(calendarKey !== null){
+                    let currentCalendar = this.listCalendars[calendarKey];
+                    currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() + 1);
+                    currentCalendar.key += 1;
+                    this.updateCalendar();
+                }else {
+                    this.calendarsKey += 1;
+                    this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() + 1);
+                    this.initCalendar();
+                }
 
-                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() + 1);
-                this.initCalendar();
                 this.$emit('changedMonth', this.calendar.currentDate);
             },
             /**

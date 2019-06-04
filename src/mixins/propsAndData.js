@@ -20,6 +20,10 @@ export const propsAndData = {
             type: Boolean,
             default: () => false
         },
+        isSeparately: {
+            type: Boolean,
+            default: () => false
+        },
         isDatePicker: {
             type: Boolean,
             default: () => false
@@ -163,6 +167,7 @@ export const propsAndData = {
                 withTimePicker: false,
                 isMultiple: false,
                 calendarsCount: 1,
+                isSeparately: false,
 
                 isModal: false,
                 isTypeable: false,

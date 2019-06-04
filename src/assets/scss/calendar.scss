@@ -264,7 +264,11 @@ input.vfc-single-input {
     }
   }
 
-  .vfc-navigation-buttons {
+  .vfc-separately-navigation-buttons {
+    margin-bottom: -80px;
+  }
+
+  .vfc-navigation-buttons, .vfc-separately-navigation-buttons {
     flex: 0 1 15%;
     margin-top: -10px;
     display: flex;
