@@ -440,7 +440,7 @@
                     return false;
                 }
 
-                // Limitse
+                // Limits
                 if (this.fConfigs.limits) {
                     let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
                     let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
@@ -568,6 +568,17 @@
             dayMouseOver(week_key, date) {
                 if (!this.fConfigs.isDateRange) {
                     return false;
+                }
+
+                // Limits
+                if (this.fConfigs.limits) {
+                    let limitMin = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
+                    let limitMax = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                    let limitDate = helpCalendar.getDateFromFormat(date).getTime();
+
+                    if (limitDate < limitMin || limitDate > limitMax) {
+                        return false;
+                    }
                 }
 
                 if ((this.calendar.dateRange.start.date === false || this.calendar.dateRange.end.date === false)
