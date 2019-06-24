@@ -118,33 +118,41 @@ input.vfc-single-input {
 
     .vfc-time-picker {
       box-sizing: border-box;
+
       &::after {
         content: '';
         display: table;
         clear: both;
       }
+
       & * {
         box-sizing: border-box;
       }
     }
+
     .vfc-time-picker__list {
       float: left;
       width: 50%;
       height: 200px;
       overflow-y: scroll;
+
       &::-webkit-scrollbar {
         width: 3px;
       }
+
       &::-webkit-scrollbar-track {
         background: #efefef;
       }
+
       &::-webkit-scrollbar-thumb {
         background: #ccc;
       }
     }
+
     .vfc-time-picker__with-suffix .vfc-time-picker__list {
       width: 33.3%;
     }
+
     .vfc-time-picker__item {
       padding: 10px 0;
       font-size: 20px;
@@ -152,19 +160,22 @@ input.vfc-single-input {
       cursor: pointer;
       transition: font-size .3s;
     }
+
     .vfc-time-picker__item:hover {
       font-size: 32px;
     }
+
     .vfc-time-picker__item--selected {
       color: $royalblue;
       font-size: 32px;
     }
+
     .vfc-time-picker__item--disabled {
       opacity: 0.4;
       cursor: default;
       font-size: 20px !important;
     }
-    
+
     .vfc-close {
       position: absolute;
       right: 12px;
@@ -174,9 +185,11 @@ input.vfc-single-input {
       opacity: 0.3;
       z-index: 10000;
     }
+
     .vfc-close:hover {
       opacity: 1;
     }
+
     .vfc-close:before, .vfc-close:after {
       position: absolute;
       left: 15px;
@@ -185,9 +198,11 @@ input.vfc-single-input {
       width: 2px;
       background-color: #FFFFFF;
     }
+
     .vfc-close:before {
       transform: rotate(45deg);
     }
+
     .vfc-close:after {
       transform: rotate(-45deg);
     }
@@ -196,6 +211,7 @@ input.vfc-single-input {
       position: relative;
       margin: 0 auto;
       width: 100%;
+
       .vfc-modal-time-line {
         width: 100%;
         background-color: $royalblue;
@@ -205,8 +221,10 @@ input.vfc-single-input {
         padding-top: 15px;
         padding-bottom: 15px;
         border-radius: .28571429rem .28571429rem 0 0;
+
         span {
           margin-left: 15px;
+
           span.vfc-active {
             text-decoration: underline;
           }
@@ -219,13 +237,16 @@ input.vfc-single-input {
       font-weight: normal;
       display: flex;
       justify-content: space-between;
+
       .vfc-arrow {
         opacity: 0.3;
         transition: 0.2s;
       }
+
       .vfc-arrow:hover {
         opacity: 1;
       }
+
       .vfc-arrow-up {
         width: 0;
         height: 0;
@@ -233,6 +254,7 @@ input.vfc-single-input {
         border-right: 20px solid transparent;
         border-bottom: 20px solid #333333;
       }
+
       .vfc-arrow-down {
         width: 0;
         height: 0;
@@ -255,11 +277,12 @@ input.vfc-single-input {
       display: flex;
       justify-content: space-between;
       font-size: 50px;
+
       select {
         margin: 5px 0;
         width: 100%;
         text-align: center;
-        text-align-last:center;
+        text-align-last: center;
       }
     }
   }
@@ -409,12 +432,13 @@ input.vfc-single-input {
                   }
 
                   span {
-                    display: block;
+                    display: inline-block;
                     text-align: center;
-                    width: 50%;
-                    padding: 15%;
+                    //width: 63.3333%;
+                    //padding-bottom: 25%;
                     border-radius: 50%;
                     margin: 0 auto;
+                    vertical-align: middle;
 
                     &.vfc-today {
                       background-color: #ff8498;
@@ -457,6 +481,7 @@ input.vfc-single-input {
 
                       &.vfc-hide {
                         color: #d9d9d9;
+
                         &:after {
 
                         }
@@ -465,6 +490,7 @@ input.vfc-single-input {
 
                     &.vfc-hide {
                       color: $gainsboro;
+
                       &:after {
 
                       }

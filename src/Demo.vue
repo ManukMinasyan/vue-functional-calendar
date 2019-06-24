@@ -5,7 +5,7 @@
                             :is-date-range="true"
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
-                            :calendars-count="2"
+                            :calendars-count="1"
                             :change-month-function="true"
         ></FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
@@ -97,7 +97,8 @@
     }
 
     .demo-calendar {
-        width: 600px
+        width: 800px;
+        height: 400px;
     }
 
     .demo-calendar2 {

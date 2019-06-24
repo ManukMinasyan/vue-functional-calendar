@@ -895,6 +895,13 @@
             setCalendarStyles() {
                 let day = this.$refs.day[0];
                 let container = this.$refs.mainContainer;
+                let c = container.querySelectorAll('.vfc-day span');
+                c.forEach(function(item){
+                    item.style.width = container.clientWidth/10+'px';
+                    item.style.lineHeight = container.clientWidth/10+'px';
+                });
+
+
                 container.style.display = "";
                 let height = container.clientHeight + (day.clientHeight + (day.clientHeight / 2.5));
                 container.style.height = height + "px";
