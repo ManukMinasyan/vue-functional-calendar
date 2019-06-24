@@ -41,10 +41,20 @@ ___
 
 ## Usage
 
-### Import Component
+### Vue.use()
+
 ```javascript
 // Introduced in vue file
 import FunctionalCalendar from 'vue-functional-calendar';
+Vue.use(FunctionalCalendar, {
+    dayNames: ['Moa', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+});
+````
+
+### Import Component
+```javascript
+// Introduced in vue file
+import { FunctionalCalendar } from 'vue-functional-calendar';
 ````
 
 ### Component Settings
