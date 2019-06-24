@@ -109,10 +109,11 @@
                                             <div v-else-if="(day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays"
                                                  class="vfc-base-end"></div>
                                             <span v-if="!day.hideLeftAndRightDays"
-                                                  :data-date="day.day" :key="day_key"
+                                                  data-date="" :key="day_key"
                                                   :class="getClassNames(day)"
                                                   @click="clickDay(day)"
                                                   @mouseover="dayMouseOver(week_key, day.date)">
+                                                {{ day.day }}
                                         </span>
                                         </div>
                                     </div>
@@ -278,6 +279,12 @@
                     }
                 }
             }
+        },
+        ready: function () {
+            window.addEventListener('resize', this.setCalendarStyles)
+        },
+        beforeDestroy: function () {
+            window.removeEventListener('resize', this.setCalendarStyles)
         },
         methods: {
             initCalendar() {
@@ -692,12 +699,12 @@
 
                 this.transitionPrefix = 'left';
 
-                if(calendarKey !== null){
+                if (calendarKey !== null) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() + 1);
                     currentCalendar.key += 1;
                     this.updateCalendar();
-                }else {
+                } else {
                     this.calendarsKey += 1;
                     this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear(), this.calendar.currentDate.getMonth() + 1);
                     this.initCalendar();

@@ -1,6 +1,7 @@
 <template>
     <div>
         <FunctionalCalendar class="demo-calendar"
+                            ref="Calendar"
                             :is-date-range="true"
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
