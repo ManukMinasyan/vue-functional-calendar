@@ -200,29 +200,7 @@
             'calendar.currentDate': {
                 handler(value) {
                     this.$emit('input', this.calendar);
-                    if (this.fConfigs.limits) {
-                        let min = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.min));
-                        min.setDate(1);
-                        min.setHours(0, 0, 0, 0);
-                        let max = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.max));
-                        max.setDate(1);
-                        max.setHours(0, 0, 0, 0);
-
-                        this.allowPreDate = true;
-                        this.allowNextDate = true;
-
-                        let current = new Date(value);
-                        current.setDate(1);
-                        current.setHours(0, 0, 0, 0);
-
-                        if (current <= min) {
-                            this.allowPreDate = false;
-                        }
-
-                        if (current >= max) {
-                            this.allowNextDate = false;
-                        }
-                    }
+                    this.checkLimits(value);
                 }
             },
             'calendar.dateRange.start.date': {
@@ -298,6 +276,7 @@
                 this.setCalendarData();
                 this.listRendering();
                 this.markChooseDays();
+                this.checkLimits(this.calendar.currentDate);
             },
             updateCalendar() {
                 this.setExistingCalendarData();
@@ -879,6 +858,31 @@
             },
             checkDateRangeEnd(date) {
                 return date === this.fConfigs.markedDateRange.end;
+            },
+            checkLimits(value) {
+                if (this.fConfigs.limits) {
+                    let min = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.min));
+                    min.setDate(1);
+                    min.setHours(0, 0, 0, 0);
+                    let max = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.max));
+                    max.setDate(1);
+                    max.setHours(0, 0, 0, 0);
+
+                    this.allowPreDate = true;
+                    this.allowNextDate = true;
+
+                    let current = new Date(value);
+                    current.setDate(1);
+                    current.setHours(0, 0, 0, 0);
+
+                    if (current <= min) {
+                        this.allowPreDate = false;
+                    }
+
+                    if (current >= max) {
+                        this.allowNextDate = false;
+                    }
+                }
             },
             getTransition_() {
                 if (!this.fConfigs.transition)

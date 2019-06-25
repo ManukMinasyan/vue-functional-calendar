@@ -196,7 +196,7 @@ input.vfc-single-input {
       content: ' ';
       height: 26px;
       width: 2px;
-      background-color: #FFFFFF;
+      background-color: $white;
     }
 
     .vfc-close:before {
@@ -216,8 +216,8 @@ input.vfc-single-input {
         width: 100%;
         background-color: $royalblue;
         text-align: left;
-        color: #FFFFFF;
-        font-size: 20px;
+        color: $white;
+        font-size: 16px;
         padding-top: 15px;
         padding-bottom: 15px;
         border-radius: .28571429rem .28571429rem 0 0;
@@ -441,7 +441,7 @@ input.vfc-single-input {
                     vertical-align: middle;
 
                     &.vfc-today {
-                      background-color: #ff8498;
+                      background-color: $lightred;
                       color: $white;
                     }
 
@@ -480,7 +480,7 @@ input.vfc-single-input {
                       }
 
                       &.vfc-hide {
-                        color: #d9d9d9;
+                        color: $lightgrey;
 
                         &:after {
 
@@ -520,7 +520,7 @@ input.vfc-single-input {
                     }
 
                     &.vfc-hover:hover {
-                      background-color: #dadada;
+                      background-color: $lightgreyHover;
                       z-index: 100;
                     }
                   }

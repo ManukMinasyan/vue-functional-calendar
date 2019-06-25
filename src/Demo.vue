@@ -6,6 +6,8 @@
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
                             :calendars-count="1"
+                            :with-time-picker="true"
+                            :limits="{min: '25/06/2019', max: '01/07/2019'}"
                             :change-month-function="true"
         ></FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
@@ -97,7 +99,7 @@
     }
 
     .demo-calendar {
-        width: 256px;
+        width: 300px;
         /*height: 400px;*/
         margin: 100px;
     }
