@@ -97,8 +97,9 @@
     }
 
     .demo-calendar {
-        width: 800px;
-        height: 400px;
+        width: 256px;
+        /*height: 400px;*/
+        margin: 100px;
     }
 
     .demo-calendar2 {
