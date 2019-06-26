@@ -110,10 +110,13 @@
                                                  class="vfc-base-end"></div>
                                             <span v-if="!day.hideLeftAndRightDays"
                                                   data-date="" :key="day_key"
+                                                  class="vfc-span-day"
                                                   :class="getClassNames(day)"
                                                   @click="clickDay(day)"
                                                   @mouseover="dayMouseOver(week_key, day.date)">
-                                                {{ day.day }}
+                                                <slot :week="week" :day="day">
+                                                    {{ day.day }}
+                                                </slot>
                                         </span>
                                         </div>
                                     </div>

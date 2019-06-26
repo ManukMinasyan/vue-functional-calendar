@@ -7,9 +7,12 @@
                             :is-multiple="true"
                             :calendars-count="1"
                             :with-time-picker="true"
-                            :limits="{min: '25/06/2019', max: '01/07/2019'}"
                             :change-month-function="true"
-        ></FunctionalCalendar>
+                            v-slot:default="props"
+        >
+            {{ props.day.day }}
+            <span  :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
+        </FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
         <!--:with-time-picker='true'-->
         <!--:is-date-picker='true'-->
@@ -99,7 +102,7 @@
     }
 
     .demo-calendar {
-        width: 300px;
+        width: 400px;
         /*height: 400px;*/
         margin: 100px;
     }
@@ -117,5 +120,34 @@
         background-color: #eee;
         padding-bottom: 20px !ie 7;
         max-height: 600px;
+    }
+
+    .green-line {
+        width: 20px;
+        position: absolute;
+        height: 2px;
+        background-color: #45cc0d;
+        bottom: 3px;
+        left: calc(50% - 10px);
+    }
+
+    .green-point {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: #45cc0d;
+        bottom: 3px;
+        left: calc(50% - 4px);
+    }
+
+    .orange-point {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: #eb9800;
+        bottom: 3px;
+        left: calc(50% - 4px);
     }
 </style>
