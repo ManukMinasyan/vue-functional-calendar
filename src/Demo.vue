@@ -6,9 +6,12 @@
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
                             :calendars-count="1"
-                            :with-time-picker="true"
+                            :with-time-picker="false"
                             :change-month-function="true"
+                            :disabled-dates="['10/10/2019']"
                             v-slot:default="props"
+                            :is-modal="true"
+                            :is-auto-closeable="true"
         >
             {{ props.day.day }}
             <span  :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>

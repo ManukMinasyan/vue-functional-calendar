@@ -498,11 +498,10 @@ input.vfc-single-input {
 
                     &.vfc-disabled {
                       margin: auto;
-                      background-color: rgba(0, 0, 0, 0.2);
+                      color: rgba(0, 0, 0, 0.2);
                       border-radius: 50%;
                       opacity: 1;
                       z-index: 2;
-                      color: $white;
                     }
 
                     &:after {

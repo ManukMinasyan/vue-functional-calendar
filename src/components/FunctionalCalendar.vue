@@ -508,12 +508,22 @@
                         let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
 
                         this.$emit('selectedDaysCount', diffDays);
+
+                        // Is Auto Closeable
+                        if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
+                            this.showCalendar = false;
+                        }
                     }
 
                     this.$emit('input', this.calendar);
                 } else if (this.fConfigs.isDatePicker) {
                     this.calendar.selectedDate = item.date;
                     this.$emit('input', this.calendar);
+
+                    // Is Auto Closeable
+                    if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
+                        this.showCalendar = false;
+                    }
                 } else if (this.fConfigs.isMultipleDatePicker) {
                     if (this.calendar.selectedDates.find(date => date.date === item.date)) {
                         let dateIndex = this.calendar.selectedDates.findIndex(date => date.date === item.date);
