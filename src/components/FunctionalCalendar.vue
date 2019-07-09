@@ -328,9 +328,10 @@
             },
             setConfigs() {
                 let vm = this;
+                let globalOptions;
                 if (typeof vm.$getOptions !== "undefined") {
                     // Global Options
-                    let globalOptions = vm.$getOptions();
+                    globalOptions = vm.$getOptions();
                     Object.keys(globalOptions).map(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
                             vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
@@ -339,20 +340,15 @@
                 }
 
 
-                if (typeof (this.configs) !== "undefined") {
-                    Object.keys(this.fConfigs).map(function (objectKey) {
+                if (typeof (vm.configs) !== "undefined") {
+                    Object.keys(vm.fConfigs).map(function (objectKey) {
                         if (typeof (vm.configs[objectKey]) !== "undefined") {
                             // Get From Configs
                             vm.$set(vm.fConfigs, objectKey, vm.configs[objectKey]);
-                        } else {
-                            // Get From Props
-                            if (typeof (globalOptions[objectKey]) === "undefined") {
-                                vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
-                            }
                         }
                     });
                 } else {
-                    Object.keys(this.$props).map(function (objectKey) {
+                    Object.keys(vm.$props).map(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined" && typeof (vm.$props[objectKey]) !== "undefined") {
                             vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
                         }
@@ -360,18 +356,18 @@
                 }
 
                 // Is Modal
-                if (this.fConfigs.isModal) this.showCalendar = false;
+                if (vm.fConfigs.isModal) vm.showCalendar = false;
 
                 // Placeholder
-                if (!this.fConfigs.placeholder) this.fConfigs.placeholder = this.fConfigs.dateFormat;
+                if (!vm.fConfigs.placeholder) vm.fConfigs.placeholder = vm.fConfigs.dateFormat;
 
-                if (typeof this.newCurrentDate !== "undefined") {
-                    this.calendar.currentDate = this.newCurrentDate;
+                if (typeof vm.newCurrentDate !== "undefined") {
+                    vm.calendar.currentDate = vm.newCurrentDate;
                 }
 
                 // Sunday Start
-                if (this.fConfigs.sundayStart) {
-                    let dayNames = this.fConfigs.dayNames;
+                if (vm.fConfigs.sundayStart) {
+                    let dayNames = vm.fConfigs.dayNames;
                     let sundayName = dayNames[dayNames.length - 1];
                     dayNames.splice(dayNames.length - 1, 1);
                     dayNames.unshift(sundayName);
