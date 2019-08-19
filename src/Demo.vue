@@ -3,18 +3,22 @@
         <FunctionalCalendar class="demo-calendar"
                             ref="Calendar"
                             :is-date-range="true"
+                            :is-dark="true"
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
                             :calendars-count="1"
                             :with-time-picker="false"
                             :change-month-function="true"
+                            :change-year-function="true"
                             :disabled-dates="['10/10/2019']"
                             v-slot:default="props"
-                            :is-modal="true"
                             :is-auto-closeable="true"
+                            :is-modal="true"
         >
+            <span style="text-align: center">
             {{ props.day.day }}
-            <span  :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
+            <span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
+                </span>
         </FunctionalCalendar>
         <!--<functional-calendar class="demo-calendar"-->
         <!--:with-time-picker='true'-->

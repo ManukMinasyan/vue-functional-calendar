@@ -154,6 +154,7 @@ ___
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
 | transition                    | Boolean         | true      | false | Calendar animations               |
 | hiddenElements                   | Array         | []       | ['dayNames', 'navigationArrows', 'leftAndRightDays', 'month']        | Hide calendar elements                       |
+| isDark                   | Boolean         | false       | true        | Dark theme                    |
 ___
 
 ### Events

@@ -1,5 +1,6 @@
 @import './variables.scss';
 
+
 html, body {
   margin: 0;
   padding: 0;
@@ -14,7 +15,7 @@ input.vfc-single-input, .vfc-multiple-input input {
   padding: 7px;
   width: 120px;
   color: #aaa;
-  border: 1px solid #eee;
+  border: 1px solid #eeeeee;
   text-align: center;
   outline: none;
 }
@@ -29,6 +30,19 @@ input.vfc-single-input {
 
 .vfc-multiple-input input:last-child {
   border-radius: 0 10px 10px 0;
+}
+
+.vfc-dark {
+  &.vfc-multiple-input {
+    input {
+      border-color: $astronaut;
+      background-color: $mirage
+    }
+  }
+  .vfc-single-input {
+    border-color: $astronaut;
+    background-color: $mirage
+  }
 }
 
 .vfc-main-container {
@@ -312,8 +326,9 @@ input.vfc-single-input {
       .vfc-arrow-left {
         width: 12px;
         height: 12px;
-        border-top: 2px solid #0a0c19;
-        border-left: 2px solid #0a0c19;
+        border-top: 2px solid;
+        border-left: 2px solid;
+        border-color: $ebony;
         transform: rotate(-45deg);
       }
 
@@ -331,8 +346,9 @@ input.vfc-single-input {
       .vfc-arrow-right {
         width: 12px;
         height: 12px;
-        border-top: 2px solid #0a0c19;
-        border-right: 2px solid #0a0c19;
+        border-top: 2px solid;
+        border-right: 2px solid;
+        border-color: $ebony;
         transform: rotate(45deg);
       }
     }
@@ -396,7 +412,7 @@ input.vfc-single-input {
               span {
                 width: 100%;
                 margin-right: 5px;
-                color: #333;
+                color: $mineShaft;
                 text-align: center;
 
                 &:last-child {
@@ -589,6 +605,164 @@ input.vfc-single-input {
               transform: translateY(-20px)
             }
           }
+        }
+      }
+    }
+  }
+
+  &.vfc-dark {
+    background-color: $mirage;
+
+    .vfc-top-date {
+      color: $white
+    }
+
+    .vfc-navigation-buttons {
+      div {
+        .vfc-arrow-right, .vfc-arrow-left {
+          border-color: $white
+        }
+
+        .vfc-arrow-left:active,
+        .vfc-arrow-right:active {
+          border-color: $lightgrey;
+        }
+      }
+    }
+
+    .vfc-calendars {
+      .vfc-calendar {
+        div {
+          &.vfc-content {
+            h2 {
+              &.vfc-top-date {
+                &.vfc-underline {
+                  text-decoration: underline $pictionBlue;
+                }
+              }
+            }
+
+            .vfc-dayNames {
+              span {
+                color: $gainsboro;
+              }
+            }
+
+            .vfc-week {
+              div {
+                &.vfc-day {
+
+                  .vfc-base-start, .vfc-base-end {
+                    background-color: $astronaut;
+                  }
+
+                  span.vfc-span-day {
+                    color: $white;
+
+                    &.vfc-today {
+                      background-color: $keppel;
+                      color: $white;
+                    }
+
+                    &.vfc-marked {
+                      background-color: $pictionBlue;
+
+                      &.vfc-borderd, &.vfc-start-marked, &.vfc-end-marked {
+                        color: $white;
+                      }
+
+                      &:before {
+                        background-color: $astronaut;
+                      }
+
+                      &:after {
+                        color: $black;
+                      }
+
+                      &.vfc-hide {
+                        color: $gainsboro;
+                      }
+                    }
+
+                    &.vfc-hide {
+                      color: $tundora;
+                    }
+
+                    &.vfc-disabled {
+                      color: rgba(133, 133, 133, 0.2);
+                    }
+
+                    &:after {
+                      color: $black;
+                    }
+
+                    &.vfc-hover:hover {
+                      background-color: rgba(76, 76, 76, 0.3);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .vfc-months-container {
+      .vfc-navigation-buttons {
+        .vfc-top-date {
+          &.vfc-underline {
+            text-decoration: underline dotted #66b3cc;
+          }
+        }
+      }
+
+      .vfc-months {
+        div.vfc-item {
+          color: $white;
+          border-top: 1px solid #d4d4d4;
+
+          &:hover {
+            background-color: rgba(113, 113, 113, 0.3);
+          }
+
+          &.vfc-selected {
+            background-color: $pictionBlue;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .vfc-time-picker-container {
+      .vfc-time-picker__list {
+
+        .vfc-time-picker__item {
+          color: $white;
+        }
+
+        .vfc-time-picker__item--selected {
+          color: $pictionBlue;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: $astronaut;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: $pictionBlue;
+        }
+      }
+
+
+      .vfc-close:before, .vfc-close:after {
+        background-color: $white;
+      }
+
+      .vfc-modal-time-mechanic {
+        .vfc-modal-time-line {
+          background-color: $pictionBlue;
+          color: $white;
         }
       }
     }

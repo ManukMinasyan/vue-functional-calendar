@@ -103,6 +103,10 @@ export const propsAndData = {
             type: Boolean,
             default: false,
         },
+        isDark: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -198,6 +202,7 @@ export const propsAndData = {
                 transition: true,
                 hiddenElements: [],
                 isAutoCloseable: false,
+                isDark: false
             }
         }
     }
