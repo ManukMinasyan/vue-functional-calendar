@@ -59,6 +59,10 @@ export const propsAndData = {
             type: Boolean,
             default: () => false
         },
+        changeYearStep: {
+            type: Number,
+            default: () => 12
+        },
         applyStylesheet: {
             type: Boolean,
             default: () => true
@@ -182,6 +186,7 @@ export const propsAndData = {
 
                 changeMonthFunction: false,
                 changeYearFunction: false,
+                changeYearStep: 12,
 
                 applyStylesheet: true,
 

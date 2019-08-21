@@ -13,7 +13,8 @@
                             :disabled-dates="['10/10/2019']"
                             v-slot:default="props"
                             :is-auto-closeable="true"
-                            :is-modal="true"
+                            :is-modal="false"
+                            :change-year-step="5"
         >
             <span style="text-align: center">
             {{ props.day.day }}

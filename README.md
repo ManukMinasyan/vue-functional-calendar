@@ -145,6 +145,7 @@ ___
 | isTypeable                   | Boolean         | false       | true        | Enable manually date typing function, working only with prop isModal                     |
 | changeMonthFunction                   | Boolean         | false       | true        | Enable changed month with list, function                   |
 | changeYearFunction                   | Boolean         | false       | true        | Enable changed year with list, function                   |
+| changeYearStep                   | Number         | 12       | 6        | Change year list step count                   |
 | applyStylesheet                   | Boolean         | true       | false        | Disable default styles                   |
 | markedDates                   | Array         | []       | ['10/12/2018', '12/12/2018'] OR [{date: '10/1/2019', class: 'marked-class'},{date: '12/1/2019', class: 'marked-class-2'}]        | Marked dates array                   |
 | markedDateRange                   | Object         | {start: false, end: false}       | {start: '12/12/2018', end: '20/12/2018'}        | Marked date with range                   |

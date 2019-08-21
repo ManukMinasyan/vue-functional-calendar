@@ -1,6 +1,7 @@
 <template>
     <div :class="{'vfc-styles-conditional-class': fConfigs.applyStylesheet}">
-        <div class="vfc-multiple-input" :class="{'vfc-dark': fConfigs.isDark}" v-if="fConfigs.isModal && fConfigs.isDateRange">
+        <div class="vfc-multiple-input" :class="{'vfc-dark': fConfigs.isDark}"
+             v-if="fConfigs.isModal && fConfigs.isDateRange">
             <input type="text" title="Start Date"
                    v-model="input.dateRange.start.date"
                    :placeholder="fConfigs.placeholder"
@@ -707,7 +708,9 @@
                 if (!this.allowPreDate)
                     return false;
 
-                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() - 1, this.calendar.currentDate.getMonth());
+                let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
+
+                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() - step, this.calendar.currentDate.getMonth());
                 this.initCalendar();
                 this.$emit('changedYear', this.calendar.currentDate);
             },
@@ -718,7 +721,9 @@
                 if (!this.allowNextDate)
                     return false;
 
-                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() + 1, this.calendar.currentDate.getMonth());
+                let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
+
+                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() + step, this.calendar.currentDate.getMonth());
                 this.initCalendar();
                 this.$emit('changedYear', this.calendar.currentDate);
             },
