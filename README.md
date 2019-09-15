@@ -167,7 +167,8 @@ ___
 | selectedDaysCount |Number | Get number of days between date range dates
 | opened | | The picker is opened
 | closed | | The picker is closed
-##### Add the ref attribute to the Calendar tab, exposing three methods to switch the month directly
+
+##### Add the ref attribute to the calendar component and use these methods to do more.
 ````javascript
 For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
 
@@ -176,6 +177,6 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
     ✅ this.$refs.Calendar.PreYear(); //Call method implementation to go to previous year
     ✅ this.$refs.Calendar.NextYear(); //Call method implementation to go to next year
     ✅ this.$refs.Calendar.ChooseDate('today'); //Call method implementation to go to today
-    ✅ this.$refs.Calendar.ChooseDate('2018-12-12'); //Call method implementation to go to a date
+    ✅ this.$refs.Calendar.ChooseDate('25/09/2020'); //Call method implementation to go to a date
 ````
 ___
