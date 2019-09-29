@@ -426,6 +426,7 @@
                                 hide: day.hide,
                                 isMouseToLeft: false,
                                 isMouseToRight: false,
+                                isHovered: false,
                                 isDateRangeStart: vm.checkDateRangeStart(helpCalendar.formatDate(date)),
                                 isDateRangeEnd: vm.checkDateRangeEnd(helpCalendar.formatDate(date)),
                                 hideLeftAndRightDays: day.hideLeftAndRightDays,
@@ -624,6 +625,8 @@
 
                                 let item = week.days[i];
 
+                                this.listCalendars[e].weeks[f].days[i].isHovered = false;
+
                                 if (item.date !== this.calendar.dateRange.start.date && !this.fConfigs.markedDates.includes(item.date)) {
                                     this.listCalendars[e].weeks[f].days[i].isMarked = false;
                                 }
@@ -648,6 +651,10 @@
                                             (itemDate < startDate && itemDate > thisDate))
                                     ) {
                                         this.listCalendars[e].weeks[f].days[i].isMarked = true;
+                                    }
+
+                                    if(!this.calendar.dateRange.end.date && itemDate === thisDate){
+                                        this.listCalendars[e].weeks[f].days[i].isHovered = true;
                                     }
                                 }
 
@@ -805,6 +812,8 @@
                     // Mark Date
                     if (day.isMarked) {
                         classes.push('vfc-marked');
+                    }else if(day.isHovered) {
+                        classes.push('vfc-hovered');
                     }
 
                     if (this.fConfigs.markedDates.includes(day.date)) {

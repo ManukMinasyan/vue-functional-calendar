@@ -534,7 +534,7 @@ input.vfc-single-input {
                       align-items: center;
                     }
 
-                    &.vfc-hover:hover {
+                    &.vfc-hover:hover, &.vfc-hovered {
                       background-color: $lightgreyHover;
                       z-index: 100;
                     }
@@ -696,7 +696,8 @@ input.vfc-single-input {
                       color: $black;
                     }
 
-                    &.vfc-hover:hover {
+                    &.vfc-hover:hover, &.vfc-hovered {
+                      z-index: 1;
                       background-color: rgba(76, 76, 76, 0.3);
                     }
                   }
@@ -707,6 +708,7 @@ input.vfc-single-input {
         }
       }
     }
+
 
     .vfc-months-container {
       .vfc-navigation-buttons {
