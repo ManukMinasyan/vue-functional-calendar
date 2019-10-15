@@ -492,8 +492,8 @@
                         // Start Date not empty, chose date > start date
                     } else if (this.calendar.dateRange.end.date === false && (clickDate > startDate)) {
                         this.calendar.dateRange.end.date = item.date;
-                        // Start date not empty, chose date < start date
-                    } else if (this.calendar.dateRange.start.date !== false && (clickDate < startDate)) {
+                        // Start date not empty, chose date <= start date (also same date range select)
+                    } else if (this.calendar.dateRange.start.date !== false && (clickDate <= startDate)) {
                         this.calendar.dateRange.end.date = this.calendar.dateRange.start.date;
                         this.calendar.dateRange.start.date = item.date;
                     }
@@ -580,6 +580,11 @@
                                 if (endDate === day.date) {
                                     day.isMouseToRight = !!endDate;
                                     day.isMarked = true;
+                                }
+
+                                if (startDate && startDate === endDate) {
+                                    day.isMouseToLeft = false
+                                    day.isMouseToRight = false
                                 }
 
                                 if (startDate && endDate) {
