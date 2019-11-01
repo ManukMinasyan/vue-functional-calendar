@@ -797,7 +797,7 @@
             pickYear(year) {
                 this.showYearPicker = false;
                 let date = this.calendar.currentDate;
-                this.calendar.currentDate = new Date(year, date.getMonth(), 0);
+                this.calendar.currentDate = new Date(year, date.getMonth() + 1, 0);
                 this.initCalendar();
             },
             getClassNames(day) {
