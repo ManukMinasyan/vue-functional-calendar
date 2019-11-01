@@ -164,8 +164,8 @@
 
             window.addEventListener('click', (e) => {
                 if (this.showMonthPicker || this.showYearPicker) {
-                    let element1 = document.querySelector('.vfc-calendars .vfc-top-date a:nth-child(1)');
-                    let element2 = document.querySelector('.vfc-calendars .vfc-top-date a:nth-child(2)');
+                    let element1 = this.$refs.calendars.querySelector('.vfc-calendars .vfc-top-date a:nth-child(1)');
+                    let element2 = this.$refs.calendars.querySelector('.vfc-calendars .vfc-top-date a:nth-child(2)');
 
                     if (!this.$refs.monthContainer.contains(e.target) && !element1.contains(e.target) && !element2.contains(e.target)) {
                         this.showMonthPicker = this.showYearPicker = false
