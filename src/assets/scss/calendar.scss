@@ -39,6 +39,7 @@ input.vfc-single-input {
       background-color: $mirage
     }
   }
+
   .vfc-single-input {
     border-color: $astronaut;
     background-color: $mirage
@@ -60,65 +61,98 @@ input.vfc-single-input {
   }
 
   .vfc-months-container {
-    height: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
 
-    .vfc-navigation-buttons {
-      .vfc-top-date {
-        text-align: center;
-        font-size: 21px;
-        font-weight: bold;
-        margin: 0;
+    .vfc-content {
+      width: 45%;
+      height: 50%;
+      position: absolute;
+      z-index: 1000;
+      background-color: $licorice;
+      border: 1px solid;
+      border-radius: 5px;
+      top: 55px;
+      color: $white;
+      padding: 5px 0;
 
+      .vfc-navigation-buttons {
         div {
-          margin: 20px 20px;
+          margin: 10px 10px;
+
+          .vfc-arrow-left, .vfc-arrow-right {
+            border-color: $white;
+            width: 8px;
+            height: 8px;
+            cursor: pointer;
+
+            &:hover {
+              border-color: $pictionBlue;
+            }
+          }
         }
 
+        .vfc-top-date {
+          text-align: center;
+          font-size: 18px;
+          font-weight: bold;
+          margin: 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
 
-        &.vfc-underline {
-          cursor: pointer;
-          text-decoration: underline dotted #66b3cc;
-        }
-      }
-    }
-
-    .vfc-months {
-      flex: 1 1 75%;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-
-      div.vfc-item {
-        border-top: 1px solid #d4d4d4;
-        flex: 1;
-        flex-basis: 30%;
-        //height: 69px;
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-        outline-style: none;
-
-        &:hover {
-          background-color: rgba(113, 113, 113, 0.3);
-          transition: background-color 0.2s ease-in-out;
-          cursor: pointer;
-        }
-
-        &.vfc-selected {
-          background-color: #66b3cc;
-          color: #fff;
-          text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-          font-weight: 700;
-
-          &:nth-last-child(3) {
-            border-radius: 0 0 0 5px;
+          .vfc-popover-caret {
+            content: "";
+            position: absolute;
+            display: block;
+            width: 12px;
+            height: 12px;
+            border-top: inherit;
+            border-left: inherit;
+            background: inherit;
+            z-index: -1;
+            background-color: $licorice;
+            transform: translateY(-40%) rotate(45deg);
+            top: 0;
           }
 
-          &:last-child {
-            border-radius: 0 0 5px;
+
+          &.vfc-underline {
+            cursor: pointer;
+            text-decoration: underline dotted $royalblue;
+          }
+        }
+      }
+
+      .vfc-months {
+        flex: 1 1 75%;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        div.vfc-item {
+          flex: 1;
+          flex-basis: 30%;
+          margin: 3px;
+          display: flex;
+          justify-content: center;
+          flex-direction: column;
+          text-align: center;
+          outline-style: none;
+          border-radius: 5px;
+
+          &:hover {
+            background-color: rgba(113, 113, 113, 0.3);
+            transition: background-color 0.2s ease-in-out;
+            cursor: pointer;
+          }
+
+          &.vfc-selected {
+            background-color: $pictionBlue;
+            color: #fff;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
           }
         }
       }
@@ -389,13 +423,23 @@ input.vfc-single-input {
                 font-size: 18px;
                 font-weight: normal;
 
-                &.vfc-cursor-pointer {
-                  cursor: pointer;
-                }
+                a {
+                  text-decoration: unset;
+                  margin: 0 2px;
+                  color: $black;
 
-                &.vfc-underline {
-                  cursor: pointer;
-                  text-decoration: underline #66b3cc;
+                  &.vfc-cursor-pointer {
+                    cursor: pointer;
+                  }
+
+                  &.vfc-underline {
+                    cursor: pointer;
+                    text-decoration: underline $royalblue;
+
+                    &.vfc-underline-active {
+                      text-decoration-color: $black;
+                    }
+                  }
                 }
               }
             }
@@ -613,10 +657,6 @@ input.vfc-single-input {
   &.vfc-dark {
     background-color: $mirage;
 
-    .vfc-top-date {
-      color: $white
-    }
-
     .vfc-navigation-buttons {
       div {
         .vfc-arrow-right, .vfc-arrow-left {
@@ -636,8 +676,16 @@ input.vfc-single-input {
           &.vfc-content {
             h2 {
               &.vfc-top-date {
-                &.vfc-underline {
-                  text-decoration: underline $pictionBlue;
+                a {
+                  color: $white;
+
+                  &.vfc-underline {
+                    text-decoration: underline $pictionBlue;
+
+                    &.vfc-underline-active {
+                      text-decoration-color: $white;
+                    }
+                  }
                 }
               }
             }
@@ -711,26 +759,39 @@ input.vfc-single-input {
 
 
     .vfc-months-container {
-      .vfc-navigation-buttons {
-        .vfc-top-date {
-          &.vfc-underline {
-            text-decoration: underline dotted #66b3cc;
+      .vfc-content {
+        background-color: $white;
+
+        .vfc-navigation-buttons {
+          .vfc-arrow-left, .vfc-arrow-right {
+            border-color: $black;
+          }
+
+          .vfc-top-date {
+            color: $black;
+
+            .vfc-popover-caret {
+              background-color: $white;
+            }
+
+            &.vfc-underline {
+              text-decoration: underline dotted #66b3cc;
+            }
           }
         }
-      }
 
-      .vfc-months {
-        div.vfc-item {
-          color: $white;
-          border-top: 1px solid #d4d4d4;
+        .vfc-months {
+          div.vfc-item {
+            color: $black;
 
-          &:hover {
-            background-color: rgba(113, 113, 113, 0.3);
-          }
+            &:hover {
+              background-color: rgba(113, 113, 113, 0.3);
+            }
 
-          &.vfc-selected {
-            background-color: $pictionBlue;
-            color: #fff;
+            &.vfc-selected {
+              background-color: $pictionBlue;
+              color: #fff;
+            }
           }
         }
       }

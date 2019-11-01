@@ -87,10 +87,21 @@ export const propsAndData = {
             type: [Object, Boolean],
             default: () => false
         },
+        minSelDays: {
+            type: [Number, Boolean],
+            default: () => false
+        },
+        maxSelDays: {
+            type: [Number, Boolean],
+            default: () => false
+        },
         dayNames: {
             type: Array,
         },
         monthNames: {
+            type: Array
+        },
+        shortMonthNames: {
             type: Array
         },
         value: {
@@ -197,12 +208,15 @@ export const propsAndData = {
                 },
 
                 limits: false,
+                minSelDays: false,
+                maxSelDays: false,
 
                 disabledDates: [],
                 disabledDayNames: [],
 
                 dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
                 monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+                shortMonthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 
                 transition: true,
                 hiddenElements: [],

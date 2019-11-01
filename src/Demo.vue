@@ -3,6 +3,7 @@
         <FunctionalCalendar class="demo-calendar"
                             ref="Calendar"
                             :is-date-range="true"
+                            :min-sel-days="3"
                             :is-dark="true"
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
