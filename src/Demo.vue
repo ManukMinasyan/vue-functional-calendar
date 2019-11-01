@@ -16,6 +16,7 @@
                             :is-auto-closeable="true"
                             :is-modal="false"
                             :change-year-step="5"
+                            @choseDay="choseDay"
         >
             <span style="text-align: center">
             {{ props.day.day }}
@@ -108,6 +109,9 @@
             },
             changedMonth(value) {
                 console.log(value);
+            },
+            choseDay(day) {
+                console.log(day);
             },
             preYear() {
                 this.$refs.calendar.ChooseDate('10/10/2020');

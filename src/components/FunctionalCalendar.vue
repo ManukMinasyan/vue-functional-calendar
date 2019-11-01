@@ -572,6 +572,8 @@
                         this.openTimePicker();
                     }
                 }
+
+                this.$emit('choseDay', item);
             },
             markChooseDays() {
                 let vm = this;
