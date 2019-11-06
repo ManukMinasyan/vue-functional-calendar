@@ -64,10 +64,10 @@
                     </div>
                 </div>
             </template>
-            <div v-else-if="showTimePicker">
+            <div v-if="showTimePicker">
                 <time-picker></time-picker>
             </div>
-            <template>
+            <template v-else>
                 <div class="vfc-calendars-container">
                     <div class="vfc-navigation-buttons" ref="navigationButtons"
                          v-if="checkHiddenElement('navigationArrows') && !fConfigs.isSeparately">
