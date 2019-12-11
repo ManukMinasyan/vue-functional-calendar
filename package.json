@@ -12,7 +12,9 @@
     "type": "git",
     "url": "https://github.com/ManukMinasyan/vue-functional-calendar.git"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "keywords": [
     "vue",
     "calendar",
