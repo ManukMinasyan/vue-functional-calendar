@@ -150,7 +150,7 @@ ___
 | markedDates                   | Array         | []       | ['10/12/2018', '12/12/2018'] OR [{date: '10/1/2019', class: 'marked-class'},{date: '12/1/2019', class: 'marked-class-2'}]        | Marked dates array                   |
 | markedDateRange                   | Object         | {start: false, end: false}       | {start: '12/12/2018', end: '20/12/2018'}        | Marked date with range                   |
 | disabledDayNames                   | Array         | []     | ['Su','We']        | Disabled Days Of Week                   |
-| disabledDates                   | Array         | []     | ['24/12/2018','27/12/2018']        | Disabled Dates                   |
+| disabledDates                   | Array         | []     | ['24/12/2020','27/12/2020']   OR ['beforeToday', 'afterToday', '24/12/2020','27/12/2020']     | Disabled Dates                   |
 | dayNames                   | Array         | ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']       | ['Monday', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sunday']        | Week Day Names                   |
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
 | shortMonthNames                   | Array         | ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Short month names                   |

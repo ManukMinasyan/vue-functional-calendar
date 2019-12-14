@@ -820,8 +820,16 @@
                     classes.push('vfc-cursor-not-allowed');
                 }
 
+                let date = helpCalendar.getDateFromFormat(day.date);
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+
                 // Disabled dates
-                if (this.fConfigs.disabledDates.includes(day.date)) {
+                if (this.fConfigs.disabledDates.includes(day.date) ||
+                    (this.fConfigs.disabledDates.includes('beforeToday') && date.getTime() < today.getTime()) ||
+                    (this.fConfigs.disabledDates.includes('afterToday') && date.getTime() > today.getTime())
+                ) {
                     classes.push('vfc-disabled');
                     classes.push('vfc-cursor-not-allowed');
                 }
@@ -829,9 +837,8 @@
                 if (this.fConfigs.limits) {
                     let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
                     let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
-                    let date = helpCalendar.getDateFromFormat(day.date).getTime();
 
-                    if (date < min || date > max) {
+                    if (date.getTime() < min || date.getTime() > max) {
                         classes.push('vfc-disabled');
                         classes.push('vfc-cursor-not-allowed');
                     }

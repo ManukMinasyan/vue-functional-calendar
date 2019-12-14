@@ -37,7 +37,7 @@
                             :with-time-picker="false"
                             :change-month-function="true"
                             :change-year-function="true"
-                            :disabled-dates="['10/10/2019']"
+                            :disabled-dates="['beforeToday', '20/12/2019']"
                             v-slot:default="props"
                             :is-auto-closeable="true"
                             :is-modal="false"
