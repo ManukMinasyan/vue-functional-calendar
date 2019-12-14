@@ -104,6 +104,10 @@ export const propsAndData = {
         shortMonthNames: {
             type: Array
         },
+        showWeekNumbers: {
+            type: Boolean,
+            default: () => false
+        },
         value: {
             type: Object
         },
@@ -218,6 +222,7 @@ export const propsAndData = {
                 monthNames: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
                 shortMonthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 
+                showWeekNumbers: false,
                 transition: true,
                 hiddenElements: [],
                 isAutoCloseable: false,

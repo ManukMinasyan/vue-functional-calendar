@@ -101,10 +101,14 @@
                                     </a>
                                 </h2>
                                 <section class="vfc-dayNames">
-                                <span v-for="(dayName, key) in fConfigs.dayNames" v-if="checkHiddenElement('dayNames')"
-                                      :key="key">
-                                    {{ dayName }}
-                                </span>
+                                    <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
+                                        <template v-if="fConfigs.showWeekNumbers">
+                                            {{ ++key }}.
+                                        </template>
+                                        <template v-if="checkHiddenElement('dayNames')">
+                                            {{ dayName }}
+                                        </template>
+                                    </span>
                                 </section>
                                 <transition-group
                                         tag='div'

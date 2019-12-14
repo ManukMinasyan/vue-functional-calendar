@@ -2,16 +2,18 @@
     <div>
         <FunctionalCalendar class="demo-calendar"
                             ref="Calendar"
+                            :hiddenElements="['']"
+                            :showWeekNumbers="true"
                             :is-date-range="true"
                             :min-sel-days="3"
                             :is-dark="true"
-                            :date-format="'dd/mm/yyyy'"
+                            :date-format="'yyyy-mm-dd'"
                             :is-multiple="true"
                             :calendars-count="1"
                             :with-time-picker="false"
                             :change-month-function="true"
                             :change-year-function="true"
-                            :disabled-dates="['10/10/2019']"
+                            :marked-dates="markedDates"
                             v-slot:default="props"
                             :is-auto-closeable="true"
                             :is-modal="false"
@@ -19,15 +21,16 @@
                             @choseDay="choseDay"
         >
             <span style="text-align: center">
-            {{ props.day.day }}
-            <span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
-                </span>
+                {{ props.day.day }}
+                <span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
+            </span>
         </FunctionalCalendar>
+
         <FunctionalCalendar class="demo-calendar"
                             ref="Calendar2"
                             :is-date-range="true"
                             :min-sel-days="3"
-                            :is-dark="true"
+                            :is-dark="false"
                             :date-format="'dd/mm/yyyy'"
                             :is-multiple="true"
                             :calendars-count="1"
@@ -91,6 +94,14 @@
         data() {
             return {
                 calendarData: {},
+                markedDates: [
+                    "2019-12-6",
+                    "2019-12-9",
+                    "2019-12-10",
+                    "2019-12-11",
+                    "2019-12-12",
+                    "2020-1-1"
+                ],
                 calendarConfigs: {
                     isMultipleDatePicker: true,
                     dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']

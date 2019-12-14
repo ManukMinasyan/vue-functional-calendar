@@ -150,7 +150,7 @@ input.vfc-single-input {
 
           &.vfc-selected {
             background-color: $pictionBlue;
-            color: #fff;
+            color: $white;
             text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
           }
         }
@@ -774,7 +774,7 @@ input.vfc-single-input {
             }
 
             &.vfc-underline {
-              text-decoration: underline dotted #66b3cc;
+              text-decoration: underline dotted $royalblue;
             }
           }
         }
@@ -789,7 +789,7 @@ input.vfc-single-input {
 
             &.vfc-selected {
               background-color: $pictionBlue;
-              color: #fff;
+              color: $white;
             }
           }
         }
