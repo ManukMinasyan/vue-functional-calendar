@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Downloads](https://img.shields.io/npm/dm/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 ![gzip size](https://img.shields.io/badge/gzip%20size-5.73%20kB-44cc11.svg)
 ___
 
@@ -47,7 +47,7 @@ ___
 // Introduced in vue file
 import FunctionalCalendar from 'vue-functional-calendar';
 Vue.use(FunctionalCalendar, {
-    dayNames: ['Moa', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+    dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 });
 ````
 
