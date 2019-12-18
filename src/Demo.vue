@@ -1,5 +1,8 @@
 <template>
     <div>
+        <functional-calendar class="demo-calendar" :is-date-picker="true" :with-time-picker="true">
+
+        </functional-calendar>
         <FunctionalCalendar class="demo-calendar"
                             ref="Calendar"
                             :hiddenElements="['']"

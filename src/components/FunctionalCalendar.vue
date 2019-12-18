@@ -358,17 +358,14 @@
             },
             setConfigs() {
                 let vm = this;
-                let globalOptions;
                 if (typeof vm.$getOptions !== "undefined") {
                     // Global Options
-                    globalOptions = vm.$getOptions();
-                    Object.keys(globalOptions).map(function (objectKey) {
+                    Object.keys(vm.$getOptions()).map(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
-                            vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
+                            vm.$set(vm.fConfigs, objectKey, vm.$getOptions()[objectKey]);
                         }
                     });
                 }
-
 
                 if (typeof (vm.configs) !== "undefined") {
                     Object.keys(vm.fConfigs).map(function (objectKey) {
@@ -379,11 +376,14 @@
                     });
                 } else {
                     Object.keys(vm.$props).map(function (objectKey) {
-                        if (typeof (vm.fConfigs[objectKey]) !== "undefined" && typeof (vm.$props[objectKey]) !== "undefined") {
+                        if (typeof (vm.fConfigs[objectKey]) !== "undefined" &&
+                            typeof (vm.$props[objectKey]) !== "undefined" &&
+                            typeof (vm.$getOptions()[objectKey]) === "undefined") {
                             vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
                         }
                     });
                 }
+
 
                 // Is Modal
                 if (vm.fConfigs.isModal) vm.showCalendar = false;
