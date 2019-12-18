@@ -9,7 +9,7 @@ ___
 
 ## Demo
 
-Demo: https://y3jnxov469.codesandbox.io/
+Demo: <a href="https://y3jnxov469.codesandbox.io/" target="_blank">https://y3jnxov469.codesandbox.io/</a>
 
 [![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/980jov4m4p?fontsize=14&hidenavigation=1)
 
