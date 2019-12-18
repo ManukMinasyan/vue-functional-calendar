@@ -7,57 +7,57 @@ export const propsAndData = {
         },
         sundayStart: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         placeholder: {
             type: [String, Boolean],
-            default: () => false
+            default: () => undefined
         },
         dateFormat: {
             type: String
         },
         isMultiple: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         isSeparately: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         isDatePicker: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         isMultipleDatePicker: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         isDateRange: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         withTimePicker: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         calendarsCount: {
             type: Number
         },
         isModal: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         isTypeable: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         changeMonthFunction: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         changeYearFunction: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         changeYearStep: {
             type: Number,
@@ -65,7 +65,7 @@ export const propsAndData = {
         },
         applyStylesheet: {
             type: Boolean,
-            default: () => true
+            default: () => undefined
         },
         newCurrentDate: {
             type: Date
@@ -85,15 +85,15 @@ export const propsAndData = {
         },
         limits: {
             type: [Object, Boolean],
-            default: () => false
+            default: () => undefined
         },
         minSelDays: {
             type: [Number, Boolean],
-            default: () => false
+            default: () => undefined
         },
         maxSelDays: {
             type: [Number, Boolean],
-            default: () => false
+            default: () => undefined
         },
         dayNames: {
             type: Array,
@@ -106,25 +106,25 @@ export const propsAndData = {
         },
         showWeekNumbers: {
             type: Boolean,
-            default: () => false
+            default: () => undefined
         },
         value: {
             type: Object
         },
         transition: {
             type: Boolean,
-            default: () => true
+            default: () => undefined
         },
         hiddenElements: {
             type: Array
         },
         isAutoCloseable: {
             type: Boolean,
-            default: false,
+            default: undefined,
         },
         isDark: {
             type: Boolean,
-            default: false
+            default: undefined
         }
     },
     data() {

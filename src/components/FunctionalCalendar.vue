@@ -358,11 +358,13 @@
             },
             setConfigs() {
                 let vm = this;
+                let globalOptions;
                 if (typeof vm.$getOptions !== "undefined") {
                     // Global Options
-                    Object.keys(vm.$getOptions()).map(function (objectKey) {
+                    globalOptions = vm.$getOptions();
+                    Object.keys(globalOptions).map(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
-                            vm.$set(vm.fConfigs, objectKey, vm.$getOptions()[objectKey]);
+                            vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
                         }
                     });
                 }
@@ -377,8 +379,7 @@
                 } else {
                     Object.keys(vm.$props).map(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined" &&
-                            typeof (vm.$props[objectKey]) !== "undefined" &&
-                            typeof (vm.$getOptions()[objectKey]) === "undefined") {
+                            typeof (vm.$props[objectKey]) !== "undefined") {
                             vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
                         }
                     });
