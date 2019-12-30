@@ -333,6 +333,7 @@ input.vfc-single-input {
 
             .vfc-navigation-buttons {
               position: unset;
+
               div {
                 margin: 10px 10px;
 
@@ -676,6 +677,48 @@ input.vfc-single-input {
 
     .vfc-calendars {
       .vfc-calendar {
+
+        .vfc-months-container {
+          .vfc-content {
+            background-color: $white;
+
+            .vfc-navigation-buttons {
+              div {
+                .vfc-arrow-left, .vfc-arrow-right {
+                  border-color: $black;
+                }
+              }
+
+              .vfc-top-date {
+                color: $black;
+
+                .vfc-popover-caret {
+                  background-color: $white;
+                }
+
+                &.vfc-underline {
+                  text-decoration: underline dotted $royalblue;
+                }
+              }
+            }
+
+            .vfc-months {
+              div.vfc-item {
+                color: $black;
+
+                &:hover {
+                  background-color: rgba(113, 113, 113, 0.3);
+                }
+
+                &.vfc-selected {
+                  background-color: $pictionBlue;
+                  color: $white;
+                }
+              }
+            }
+          }
+        }
+
         div {
           &.vfc-content {
             h2 {
@@ -761,45 +804,6 @@ input.vfc-single-input {
       }
     }
 
-
-    .vfc-months-container {
-      .vfc-content {
-        background-color: $white;
-
-        .vfc-navigation-buttons {
-          .vfc-arrow-left, .vfc-arrow-right {
-            border-color: $black;
-          }
-
-          .vfc-top-date {
-            color: $black;
-
-            .vfc-popover-caret {
-              background-color: $white;
-            }
-
-            &.vfc-underline {
-              text-decoration: underline dotted $royalblue;
-            }
-          }
-        }
-
-        .vfc-months {
-          div.vfc-item {
-            color: $black;
-
-            &:hover {
-              background-color: rgba(113, 113, 113, 0.3);
-            }
-
-            &.vfc-selected {
-              background-color: $pictionBlue;
-              color: $white;
-            }
-          }
-        }
-      }
-    }
 
     .vfc-time-picker-container {
       .vfc-time-picker__list {
