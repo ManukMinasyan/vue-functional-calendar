@@ -27,46 +27,7 @@
         <div class="vfc-main-container" v-show="showCalendar"
              ref="mainContainer"
              :class="{'vfc-modal': fConfigs.isModal && (fConfigs.isDatePicker || fConfigs.isDateRange), 'vfc-dark': fConfigs.isDark}">
-            <template v-if="showMonthPicker  || showYearPicker ">
-                <div class="vfc-months-container" ref="monthContainer">
-                    <div class="vfc-content">
-                        <div class="vfc-navigation-buttons">
-                            <div @click="PreYear">
-                                <div class="vfc-arrow-left"></div>
-                            </div>
-                            <h2 class="vfc-top-date">
-                                <span class="vfc-popover-caret"></span>
-                                {{ calendar.currentDate.getFullYear() }}
-                            </h2>
-                            <div @click="NextYear">
-                                <div class="vfc-arrow-right"></div>
-                            </div>
-                        </div>
-                        <div class="vfc-months">
-                            <template v-if="showMonthPicker">
-                                <div class="vfc-item" v-for="(month,key) in fConfigs.shortMonthNames"
-                                     :key="key"
-                                     :class="{'vfc-selected': calendar.currentDate.getMonth()===key}"
-                                     @click="pickMonth(key)">
-                                    {{ month }}
-                                </div>
-                            </template>
-                            <template v-else-if="showYearPicker">
-                                <div class="vfc-item"
-                                     v-for="(year,key) in yearList"
-                                     :key="key"
-                                     :class="{'vfc-selected': year.selected}"
-                                     @click="pickYear(year.year)">
-                                    {{ year.year }}
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </div>
-            </template>
-            <div v-if="showTimePicker">
-                <time-picker></time-picker>
-            </div>
+            <time-picker v-if="showTimePicker"></time-picker>
             <template v-else>
                 <div class="vfc-calendars-container">
                     <div class="vfc-navigation-buttons" ref="navigationButtons"
@@ -80,6 +41,10 @@
                     </div>
                     <div class="vfc-calendars" :key="calendarsKey" ref="calendars">
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="calendarItem.key">
+                            <month-year-picker ref="monthContainer"
+                                               v-show="showMonthPicker === key+1 || showYearPicker === key+1"
+                                               :calendar-key="key">
+                            </month-year-picker>
                             <div class="vfc-content">
                                 <div class="vfc-separately-navigation-buttons" v-if="fConfigs.isSeparately">
                                     <div @click="PreMonth(key)" :class="{'vfc-cursor-pointer': allowPreDate}">
@@ -91,11 +56,11 @@
                                 </div>
                                 <h2 class="vfc-top-date"
                                     v-if="checkHiddenElement('month')">
-                                    <a href="#" @click.prevent="openMonthPicker(key)"
+                                    <a href="#" @click.prevent="openMonthPicker(key+1)"
                                        :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker}">
                                         {{ calendarItem.month }}
                                     </a>
-                                    <a href="#" @click.prevent="openYearPicker(key)"
+                                    <a href="#" @click.prevent="openYearPicker(key+1)"
                                        :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker}">
                                         {{ calendarItem.year }}
                                     </a>
@@ -147,10 +112,11 @@
     import helpCalendar from '../assets/js/calendar'
     import {propsAndData} from "../mixins/propsAndData";
     import TimePicker from "./TimePicker";
+    import MonthYearPicker from "./MonthYearPicker";
 
     export default {
         name: "FunctionalCalendar",
-        components: {TimePicker},
+        components: {MonthYearPicker, TimePicker},
         mixins: [propsAndData],
         created() {
             this.setConfigs();
@@ -168,10 +134,12 @@
 
             window.addEventListener('click', (e) => {
                 if (this.showMonthPicker || this.showYearPicker) {
-                    let element1 = this.$refs.calendars.querySelector('.vfc-calendars .vfc-top-date a:nth-child(1)');
-                    let element2 = this.$refs.calendars.querySelector('.vfc-calendars .vfc-top-date a:nth-child(2)');
+                    let key = this.showMonthPicker ? this.showMonthPicker - 1 : this.showYearPicker - 1;
 
-                    if (!this.$refs.monthContainer.contains(e.target) && !element1.contains(e.target) && !element2.contains(e.target)) {
+                    let element1 = this.$refs.calendars.querySelector(`.vfc-calendars .vfc-calendar:nth-child(${key + 1}) .vfc-top-date a:nth-child(1)`);
+                    let element2 = this.$refs.calendars.querySelector(`.vfc-calendars .vfc-calendar:nth-child(${key + 1}) .vfc-top-date a:nth-child(2)`);
+
+                    if (!this.$refs.monthContainer[key].$el.contains(e.target) && !element1.contains(e.target) && !element2.contains(e.target)) {
                         this.showMonthPicker = this.showYearPicker = false
                     }
                 }
@@ -205,15 +173,8 @@
                 for (let i = 0; i < 12; i++) {
                     let finalYear = year + i;
 
-                    let selected = false;
-
-                    if (finalYear === this.calendar.currentDate.getFullYear()) {
-                        selected = true;
-                    }
-
                     years.push({
-                        year: finalYear,
-                        selected: selected
+                        year: finalYear
                     });
                 }
                 return years;
@@ -747,28 +708,42 @@
             /**
              * @return {boolean}
              */
-            PreYear() {
+            PreYear(calendarKey = null) {
                 if (!this.allowPreDate)
                     return false;
 
                 let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
 
-                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() - step, this.calendar.currentDate.getMonth());
-                this.initCalendar();
-                this.$emit('changedYear', this.calendar.currentDate);
+                if (calendarKey !== null) {
+                    let currentCalendar = this.listCalendars[calendarKey];
+                    currentCalendar.date = new Date(currentCalendar.date.getFullYear() - step, currentCalendar.date.getMonth());
+                    this.updateCalendar();
+                    this.$emit('changedYear', currentCalendar.date);
+                } else {
+                    this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() - step, this.calendar.currentDate.getMonth());
+                    this.initCalendar();
+                    this.$emit('changedYear', this.calendar.currentDate);
+                }
             },
             /**
              * @return {boolean}
              */
-            NextYear() {
+            NextYear(calendarKey = null) {
                 if (!this.allowNextDate)
                     return false;
 
                 let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
 
-                this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() + step, this.calendar.currentDate.getMonth());
-                this.initCalendar();
-                this.$emit('changedYear', this.calendar.currentDate);
+                if (calendarKey !== null) {
+                    let currentCalendar = this.listCalendars[calendarKey];
+                    currentCalendar.date = new Date(currentCalendar.date.getFullYear() + step, currentCalendar.date.getMonth());
+                    this.updateCalendar();
+                    this.$emit('changedYear', currentCalendar.date);
+                } else {
+                    this.calendar.currentDate = new Date(this.calendar.currentDate.getFullYear() + step, this.calendar.currentDate.getMonth());
+                    this.initCalendar();
+                    this.$emit('changedYear', this.calendar.currentDate);
+                }
             },
             ChooseDate(date) {
                 let newDate = helpCalendar.getDateFromFormat(date);
@@ -780,32 +755,49 @@
                 this.calendar.currentDate = newDate;
                 this.initCalendar();
             },
-            openMonthPicker() {
+            openMonthPicker(key) {
                 if (this.fConfigs.changeMonthFunction) {
-                    this.showMonthPicker = !this.showMonthPicker;
+                    this.showMonthPicker = (key === this.showMonthPicker) ? false : key;
                     this.showYearPicker = false;
                 }
             },
-            openYearPicker() {
+            openYearPicker(key) {
                 if (this.fConfigs.changeYearFunction) {
-                    this.showYearPicker = !this.showYearPicker;
+                    this.showYearPicker = (key === this.showYearPicker) ? false : key;
                     this.showMonthPicker = false;
                 }
             },
             openTimePicker() {
                 this.showTimePicker = true;
             },
-            pickMonth(key) {
+            pickMonth(calendarKey = null, key) {
                 this.showMonthPicker = false;
-                let date = this.calendar.currentDate;
-                this.calendar.currentDate = new Date(date.getFullYear(), key + 1, 0);
-                this.initCalendar();
+
+                if (calendarKey !== null) {
+                    let currentCalendar = this.listCalendars[calendarKey];
+                    let date = currentCalendar.date;
+                    currentCalendar.date = new Date(date.getFullYear(), key + 1, 0);
+                    this.updateCalendar();
+                } else {
+                    let date = this.calendar.currentDate;
+                    this.calendar.currentDate = new Date(date.getFullYear(), key + 1, 0);
+                    this.initCalendar();
+                }
+
             },
-            pickYear(year) {
+            pickYear(calendarKey = null, year) {
                 this.showYearPicker = false;
-                let date = this.calendar.currentDate;
-                this.calendar.currentDate = new Date(year, date.getMonth() + 1, 0);
-                this.initCalendar();
+
+                if (calendarKey !== null) {
+                    let currentCalendar = this.listCalendars[calendarKey];
+                    let date = currentCalendar.date;
+                    currentCalendar.date = new Date(year, date.getMonth() + 1, 0);
+                    this.updateCalendar();
+                } else {
+                    let date = this.calendar.currentDate;
+                    this.calendar.currentDate = new Date(year, date.getMonth() + 1, 0);
+                    this.initCalendar();
+                }
             },
             getClassNames(day) {
                 let classes = [];

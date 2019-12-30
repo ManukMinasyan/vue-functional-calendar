@@ -60,104 +60,6 @@ input.vfc-single-input {
     z-index: 1000;
   }
 
-  .vfc-months-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-
-    .vfc-content {
-      width: 45%;
-      position: absolute;
-      z-index: 1000;
-      background-color: $licorice;
-      border: 1px solid;
-      border-radius: 5px;
-      top: 55px;
-      color: $white;
-      padding: 5px 0;
-
-      .vfc-navigation-buttons {
-        div {
-          margin: 10px 10px;
-
-          .vfc-arrow-left, .vfc-arrow-right {
-            border-color: $white;
-            width: 8px;
-            height: 8px;
-            cursor: pointer;
-
-            &:hover {
-              border-color: $pictionBlue;
-            }
-          }
-        }
-
-        .vfc-top-date {
-          text-align: center;
-          font-size: 18px;
-          font-weight: bold;
-          margin: 0;
-          display: flex;
-          flex-direction: row;
-          justify-content: center;
-
-          .vfc-popover-caret {
-            content: "";
-            position: absolute;
-            display: block;
-            width: 12px;
-            height: 12px;
-            border-top: inherit;
-            border-left: inherit;
-            background: inherit;
-            z-index: -1;
-            background-color: $licorice;
-            transform: translateY(-40%) rotate(45deg);
-            top: 0;
-          }
-
-
-          &.vfc-underline {
-            cursor: pointer;
-            text-decoration: underline dotted $royalblue;
-          }
-        }
-      }
-
-      .vfc-months {
-        flex: 1 1 75%;
-        padding: 0;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-
-        div.vfc-item {
-          flex: 1;
-          flex-basis: 30%;
-          margin: 3px;
-          display: flex;
-          justify-content: center;
-          flex-direction: column;
-          text-align: center;
-          outline-style: none;
-          border-radius: 5px;
-
-          &:hover {
-            background-color: rgba(113, 113, 113, 0.3);
-            transition: background-color 0.2s ease-in-out;
-            cursor: pointer;
-          }
-
-          &.vfc-selected {
-            background-color: $pictionBlue;
-            color: $white;
-            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-          }
-        }
-      }
-    }
-  }
-
   .vfc-time-picker-container {
     display: flex;
     flex-direction: column;
@@ -405,11 +307,112 @@ input.vfc-single-input {
       flex-wrap: wrap;
 
       .vfc-calendar {
+        position: relative;
         flex: 1;
         height: auto;
         display: flex;
         flex-flow: column nowrap;
         align-items: stretch;
+
+        .vfc-months-container {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          margin-left: -20px;
+
+          .vfc-content {
+            width: 45%;
+            position: absolute;
+            z-index: 1000;
+            background-color: $licorice;
+            border: 1px solid;
+            border-radius: 5px;
+            top: 55px;
+            color: $white;
+            padding: 5px 0;
+
+            .vfc-navigation-buttons {
+              position: unset;
+              div {
+                margin: 10px 10px;
+
+                .vfc-arrow-left, .vfc-arrow-right {
+                  border-color: $white;
+                  width: 8px;
+                  height: 8px;
+                  cursor: pointer;
+
+                  &:hover {
+                    border-color: $pictionBlue;
+                  }
+                }
+              }
+
+              .vfc-top-date {
+                text-align: center;
+                font-size: 18px;
+                font-weight: bold;
+                margin: 0;
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+
+                .vfc-popover-caret {
+                  content: "";
+                  position: absolute;
+                  display: block;
+                  width: 12px;
+                  height: 12px;
+                  border-top: inherit;
+                  border-left: inherit;
+                  background: inherit;
+                  z-index: -1;
+                  background-color: $licorice;
+                  transform: translateY(-40%) rotate(45deg);
+                  top: 0;
+                }
+
+
+                &.vfc-underline {
+                  cursor: pointer;
+                  text-decoration: underline dotted $royalblue;
+                }
+              }
+            }
+
+            .vfc-months {
+              flex: 1 1 75%;
+              padding: 0;
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: space-between;
+
+              div.vfc-item {
+                flex: 1;
+                flex-basis: 30%;
+                margin: 3px;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                text-align: center;
+                outline-style: none;
+                border-radius: 5px;
+
+                &:hover {
+                  background-color: rgba(113, 113, 113, 0.3);
+                  transition: background-color 0.2s ease-in-out;
+                  cursor: pointer;
+                }
+
+                &.vfc-selected {
+                  background-color: $pictionBlue;
+                  color: $white;
+                  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+                }
+              }
+            }
+          }
+        }
 
         div {
           &.vfc-content {
