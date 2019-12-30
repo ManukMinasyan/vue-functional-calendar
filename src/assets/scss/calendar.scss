@@ -402,10 +402,11 @@ input.vfc-single-input {
     .vfc-calendars {
       flex: 1 1 75%;
       display: flex;
+      flex-wrap: wrap;
 
       .vfc-calendar {
         flex: 1;
-        height: 100%;
+        height: auto;
         display: flex;
         flex-flow: column nowrap;
         align-items: stretch;
