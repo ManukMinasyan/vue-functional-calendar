@@ -57,11 +57,10 @@
                                 <h2 class="vfc-top-date"
                                     v-if="checkHiddenElement('month')">
                                     <a href="#" @click.prevent="openMonthPicker(key+1)"
-                                       :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker}">
-                                        {{ calendarItem.month }}
-                                    </a>
+                                       :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker === key+1}">
+                                        {{ calendarItem.month }}</a>
                                     <a href="#" @click.prevent="openYearPicker(key+1)"
-                                       :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker}">
+                                       :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker === key+1}">
                                         {{ calendarItem.year }}
                                     </a>
                                 </h2>
