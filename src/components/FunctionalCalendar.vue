@@ -82,9 +82,11 @@
                                         <div class="vfc-day" ref="day" v-for="(day, day_key) in week.days"
                                              :key="day_key">
                                             <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
-                                                 class="vfc-base-start"></div>
+                                                 class="vfc-base-start">
+                                            </div>
                                             <div v-else-if="(day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays"
-                                                 class="vfc-base-end"></div>
+                                                 class="vfc-base-end">
+                                            </div>
                                             <span v-if="!day.hideLeftAndRightDays"
                                                   data-date="" :key="day_key"
                                                   class="vfc-span-day"
@@ -468,7 +470,7 @@
 
                     let startDate = false;
                     if (this.calendar.dateRange.start.date) {
-                        startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date).getTime();
+                        startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
                     }
 
                     // Two dates is not empty
@@ -479,14 +481,13 @@
                     } else if (this.calendar.dateRange.start.date === false && this.calendar.dateRange.end.date === false) {
                         this.calendar.dateRange.start.date = item.date;
                         // Start Date not empty, chose date > start date
-                    } else if (this.calendar.dateRange.end.date === false && (clickDate > startDate)) {
+                    } else if (this.calendar.dateRange.end.date === false && (clickDate > startDate.getTime())) {
                         this.calendar.dateRange.end.date = item.date;
                         // Start date not empty, chose date <= start date (also same date range select)
-                    } else if (this.calendar.dateRange.start.date !== false && (clickDate <= startDate)) {
+                    } else if (this.calendar.dateRange.start.date !== false && (clickDate <= startDate.getTime())) {
                         this.calendar.dateRange.end.date = this.calendar.dateRange.start.date;
                         this.calendar.dateRange.start.date = item.date;
                     }
-
 
                     //Get number of days between date range dates
                     if (this.calendar.dateRange.start.date !== false && this.calendar.dateRange.end.date !== false) {
@@ -500,6 +501,20 @@
                         // Is Auto Closeable
                         if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
                             this.showCalendar = false;
+                        }
+
+                        // Minimum Selected Days
+                        let minSelDays = this.fConfigs.minSelDays;
+                        let itemTime = helpCalendar.getDateFromFormat(item.date).getTime();
+
+                        if (minSelDays && itemTime >= startDate.getTime() && diffDays < minSelDays) {
+                            startDate.setDate(startDate.getDate() + (minSelDays - 1));
+                            this.calendar.dateRange.end.date = helpCalendar.formatDate(startDate);
+                        }
+
+                        if (minSelDays && itemTime < startDate.getTime() && diffDays < minSelDays) {
+                            startDate.setDate(startDate.getDate() - (minSelDays - 1));
+                            this.calendar.dateRange.start.date = helpCalendar.formatDate(startDate);
                         }
                     }
 
@@ -574,8 +589,8 @@
                                 }
 
                                 if (startDate && startDate === endDate) {
-                                    day.isMouseToLeft = false
-                                    day.isMouseToRight = false
+                                    day.isMouseToLeft = false;
+                                    day.isMouseToRight = false;
                                 }
 
                                 if (startDate && endDate) {
@@ -649,11 +664,15 @@
                                         this.listCalendars[e].weeks[f].days[i].isMarked = true;
                                     }
 
+                                    if (this.isMinSelDates(this.calendar.dateRange.start.date, item.date, date)) {
+                                        this.listCalendars[e].weeks[f].days[i].isMarked = true;
+                                    }
+
                                     if (!this.calendar.dateRange.end.date && itemDate === thisDate) {
                                         this.listCalendars[e].weeks[f].days[i].isHovered = true;
+
                                     }
                                 }
-
                             }
 
                         }
@@ -919,6 +938,24 @@
             },
             checkDateRangeEnd(date) {
                 return date === this.fConfigs.markedDateRange.end;
+            },
+            isMinSelDates(startDate, itemDate, hoverDate) {
+                let startTime = helpCalendar.getDateFromFormat(startDate).getTime();
+                let itemTime = helpCalendar.getDateFromFormat(itemDate).getTime();
+                let hoverTime = helpCalendar.getDateFromFormat(hoverDate).getTime();
+
+                let minTime = this.fConfigs.minSelDays * 1000 * 60 * 60 * 24;
+                let minRightTime = startTime + minTime;
+                let minLeftTime = startTime - minTime;
+
+                let result;
+                if (hoverTime > startTime) {
+                    result = itemTime < minRightTime && itemTime > startTime;
+                } else if (hoverTime < startTime) {
+                    result = itemTime > minLeftTime && itemTime < startTime;
+                }
+
+                return this.fConfigs.minSelDays && result;
             },
             checkLimits(value) {
                 if (this.fConfigs.limits) {
