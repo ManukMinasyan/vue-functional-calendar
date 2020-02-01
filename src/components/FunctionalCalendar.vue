@@ -495,6 +495,7 @@
                         let firstDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
                         let secondDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.end.date);
                         let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
+                        let itemTime = helpCalendar.getDateFromFormat(item.date).getTime();
 
                         this.$emit('selectedDaysCount', diffDays);
 
@@ -503,9 +504,9 @@
                             this.showCalendar = false;
                         }
 
+
                         // Minimum Selected Days
                         let minSelDays = this.fConfigs.minSelDays;
-                        let itemTime = helpCalendar.getDateFromFormat(item.date).getTime();
 
                         if (minSelDays && itemTime >= startDate.getTime() && diffDays < minSelDays) {
                             startDate.setDate(startDate.getDate() + (minSelDays - 1));
@@ -514,6 +515,19 @@
 
                         if (minSelDays && itemTime < startDate.getTime() && diffDays < minSelDays) {
                             startDate.setDate(startDate.getDate() - (minSelDays - 1));
+                            this.calendar.dateRange.start.date = helpCalendar.formatDate(startDate);
+                        }
+
+                        // Maximum Selected Days
+                        let maxSelDays = this.fConfigs.maxSelDays;
+
+                        if (maxSelDays && itemTime >= startDate.getTime() && diffDays > maxSelDays) {
+                            startDate.setDate(startDate.getDate() + (maxSelDays - 1));
+                            this.calendar.dateRange.end.date = helpCalendar.formatDate(startDate);
+                        }
+
+                        if (maxSelDays && itemTime < startDate.getTime() && diffDays > maxSelDays) {
+                            startDate.setDate(startDate.getDate() - (maxSelDays - 1));
                             this.calendar.dateRange.start.date = helpCalendar.formatDate(startDate);
                         }
                     }
@@ -664,8 +678,12 @@
                                         this.listCalendars[e].weeks[f].days[i].isMarked = true;
                                     }
 
-                                    if (this.isMinSelDates(this.calendar.dateRange.start.date, item.date, date)) {
+                                    if (this.checkSelDates('min', this.calendar.dateRange.start.date, item.date, date)) {
                                         this.listCalendars[e].weeks[f].days[i].isMarked = true;
+                                    }
+
+                                    if (this.checkSelDates('max', this.calendar.dateRange.start.date, item.date, date)) {
+                                        this.listCalendars[e].weeks[f].days[i].isMarked = false;
                                     }
 
                                     if (!this.calendar.dateRange.end.date && itemDate === thisDate) {
@@ -939,23 +957,30 @@
             checkDateRangeEnd(date) {
                 return date === this.fConfigs.markedDateRange.end;
             },
-            isMinSelDates(startDate, itemDate, hoverDate) {
+            checkSelDates(type, startDate, itemDate, hoverDate) {
                 let startTime = helpCalendar.getDateFromFormat(startDate).getTime();
                 let itemTime = helpCalendar.getDateFromFormat(itemDate).getTime();
                 let hoverTime = helpCalendar.getDateFromFormat(hoverDate).getTime();
 
-                let minTime = this.fConfigs.minSelDays * 1000 * 60 * 60 * 24;
-                let minRightTime = startTime + minTime;
-                let minLeftTime = startTime - minTime;
+                let days = type === 'min' ? this.fConfigs.minSelDays : this.fConfigs.maxSelDays - 1;
+                let minTime = days * 1000 * 60 * 60 * 24;
+                let rightTime = startTime + minTime;
+                let leftTime = startTime - minTime;
 
                 let result;
                 if (hoverTime > startTime) {
-                    result = itemTime < minRightTime && itemTime > startTime;
+                    if (type === 'min')
+                        result = itemTime < rightTime && itemTime > startTime;
+                    else
+                        result = itemTime > rightTime && itemTime > startTime;
                 } else if (hoverTime < startTime) {
-                    result = itemTime > minLeftTime && itemTime < startTime;
+                    if (type === 'min')
+                        result = itemTime > leftTime && itemTime < startTime;
+                    else
+                        result = itemTime < leftTime && itemTime < startTime;
                 }
 
-                return this.fConfigs.minSelDays && result;
+                return days && result;
             },
             checkLimits(value) {
                 if (this.fConfigs.limits) {

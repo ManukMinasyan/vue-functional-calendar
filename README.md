@@ -131,6 +131,8 @@ ___
 | sundayStart                   | Boolean         | false       | true        | Week start sunday                       |
 | newCurrentDate                   | Date         | new Date()       | new Date(2019,10,11)        | Calendar Current Date                       |
 | limits                   | [Object, Boolean]         | false       | {min: '31/10/2019', max: '31/12/2019'}        | Set calendar show, and marked dates limits.                       |
+| minSelDays                   | [Number, Boolean]         | false       | 3  | Set minimum selected days count.                       |
+| maxSelDays                   | [Number, Boolean]         | false       | 10  | Set maximum selected days count.                       |
 | placeholder                   | [String, Boolean]         | false       | 'yyyy/mm/dd'        | Date input placeholder                       |
 | dateFormat                   | String         | 'dd/mm/yyyy'       | 'yyyy/mm/dd'        | Date formatting string                       |
 | isDatePicker                   | Boolean         | false       | true        | Enable or disable date picker                     |

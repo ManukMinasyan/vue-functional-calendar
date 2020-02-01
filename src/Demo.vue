@@ -1,6 +1,6 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar" :is-date-picker="true" :with-time-picker="true">
+        <functional-calendar class="demo-calendar" :is-date-range="true" :min-sel-days="3" :max-sel-days="5">
 
         </functional-calendar>
         <FunctionalCalendar class="demo-calendar"
