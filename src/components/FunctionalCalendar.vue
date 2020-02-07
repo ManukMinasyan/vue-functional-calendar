@@ -521,12 +521,12 @@
                         // Maximum Selected Days
                         let maxSelDays = this.fConfigs.maxSelDays;
 
-                        if (maxSelDays && itemTime >= startDate.getTime() && diffDays > maxSelDays) {
+                        if (maxSelDays && itemTime >= startDate.getTime() && diffDays >= maxSelDays) {
                             startDate.setDate(startDate.getDate() + (maxSelDays - 1));
                             this.calendar.dateRange.end.date = helpCalendar.formatDate(startDate);
                         }
 
-                        if (maxSelDays && itemTime < startDate.getTime() && diffDays > maxSelDays) {
+                        if (maxSelDays && itemTime < startDate.getTime() && diffDays >= maxSelDays) {
                             startDate.setDate(startDate.getDate() - (maxSelDays - 1));
                             this.calendar.dateRange.start.date = helpCalendar.formatDate(startDate);
                         }
@@ -659,10 +659,10 @@
                                 if (this.calendar.dateRange.start.date) {
                                     let itemDate = helpCalendar.getDateFromFormat(item.date).getTime();
                                     let thisDate = helpCalendar.getDateFromFormat(date).getTime();
-                                    let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date).getTime();
+                                    let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
 
-                                    this.listCalendars[e].weeks[f].days[i].isMouseToLeft = (itemDate === startDate && thisDate > startDate) || (itemDate === thisDate && thisDate < startDate);
-                                    this.listCalendars[e].weeks[f].days[i].isMouseToRight = (itemDate === startDate && thisDate < startDate) || (itemDate === thisDate && thisDate > startDate);
+                                    this.listCalendars[e].weeks[f].days[i].isMouseToLeft = (itemDate === startDate.getTime() && thisDate > startDate.getTime()) || (itemDate === thisDate && thisDate < startDate.getTime());
+                                    this.listCalendars[e].weeks[f].days[i].isMouseToRight = (itemDate === startDate.getTime() && thisDate < startDate.getTime()) || (itemDate === thisDate && thisDate > startDate.getTime());
 
                                     let dateDay = helpCalendar.getDateFromFormat(item.date).getDay() - 1;
                                     if (dateDay === -1) {
@@ -671,24 +671,62 @@
 
                                     let dayOfWeekString = this.fConfigs.dayNames[dateDay];
                                     if (!this.fConfigs.disabledDayNames.includes(dayOfWeekString) &&
-                                        ((itemDate > startDate && itemDate < thisDate)
+                                        ((itemDate > startDate.getTime() && itemDate < thisDate)
                                             ||
-                                            (itemDate < startDate && itemDate > thisDate))
+                                            (itemDate < startDate.getTime() && itemDate > thisDate))
                                     ) {
                                         this.listCalendars[e].weeks[f].days[i].isMarked = true;
                                     }
 
+                                    if (!this.calendar.dateRange.end.date && itemDate === thisDate) {
+                                        this.listCalendars[e].weeks[f].days[i].isHovered = true;
+                                    }
+
                                     if (this.checkSelDates('min', this.calendar.dateRange.start.date, item.date, date)) {
                                         this.listCalendars[e].weeks[f].days[i].isMarked = true;
+
+                                        let minDateToRight, minDateToLeft;
+                                        minDateToLeft = new Date(startDate.getTime());
+                                        minDateToRight = new Date(startDate.getTime());
+                                        minDateToLeft.setDate(minDateToLeft.getDate() - this.fConfigs.minSelDays + 1);
+                                        minDateToRight.setDate(minDateToRight.getDate() + this.fConfigs.minSelDays - 1);
+
+                                        if (thisDate >= minDateToLeft.getTime() && helpCalendar.formatDate(minDateToLeft) === item.date) {
+                                            this.listCalendars[e].weeks[f].days[i].isMarked = false;
+                                            this.listCalendars[e].weeks[f].days[i].isMouseToLeft = true;
+                                            this.listCalendars[e].weeks[f].days[i].isHovered = true;
+                                        } else if (thisDate <= minDateToRight.getTime() && helpCalendar.formatDate(minDateToRight) === item.date) {
+                                            this.listCalendars[e].weeks[f].days[i].isMarked = false;
+                                            this.listCalendars[e].weeks[f].days[i].isMouseToRight = true;
+                                            this.listCalendars[e].weeks[f].days[i].isHovered = true;
+                                        }
                                     }
 
                                     if (this.checkSelDates('max', this.calendar.dateRange.start.date, item.date, date)) {
                                         this.listCalendars[e].weeks[f].days[i].isMarked = false;
-                                    }
+                                        this.listCalendars[e].weeks[f].days[i].isHovered = false;
+                                        this.listCalendars[e].weeks[f].days[i].isMouseToLeft = false;
+                                        this.listCalendars[e].weeks[f].days[i].isMouseToRight = false;
 
-                                    if (!this.calendar.dateRange.end.date && itemDate === thisDate) {
-                                        this.listCalendars[e].weeks[f].days[i].isHovered = true;
+                                        let maxDateToLeft, maxDateToRight;
+                                        maxDateToLeft = new Date(startDate.getTime());
+                                        maxDateToRight = new Date(startDate.getTime());
+                                        maxDateToLeft.setDate(maxDateToLeft.getDate() - this.fConfigs.maxSelDays + 1);
+                                        maxDateToRight.setDate(maxDateToRight.getDate() + this.fConfigs.maxSelDays - 1);
 
+                                        if (thisDate <= maxDateToLeft.getTime()) {
+                                            if (helpCalendar.formatDate(maxDateToLeft) === item.date) {
+                                                this.listCalendars[e].weeks[f].days[i].isHovered = true;
+                                                this.listCalendars[e].weeks[f].days[i].isMouseToLeft = true;
+                                            }
+                                        }
+
+                                        if (thisDate >= maxDateToRight.getTime()) {
+                                            if (helpCalendar.formatDate(maxDateToRight) === item.date) {
+                                                this.listCalendars[e].weeks[f].days[i].isHovered = true;
+                                                this.listCalendars[e].weeks[f].days[i].isMouseToRight = true;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -962,7 +1000,7 @@
                 let itemTime = helpCalendar.getDateFromFormat(itemDate).getTime();
                 let hoverTime = helpCalendar.getDateFromFormat(hoverDate).getTime();
 
-                let days = type === 'min' ? this.fConfigs.minSelDays : this.fConfigs.maxSelDays - 1;
+                let days = type === 'min' ? this.fConfigs.minSelDays : this.fConfigs.maxSelDays - 2;
                 let minTime = days * 1000 * 60 * 60 * 24;
                 let rightTime = startTime + minTime;
                 let leftTime = startTime - minTime;
@@ -970,17 +1008,17 @@
                 let result;
                 if (hoverTime > startTime) {
                     if (type === 'min')
-                        result = itemTime < rightTime && itemTime > startTime;
+                        result = itemTime < rightTime && itemTime > startTime && this.fConfigs.minSelDays;
                     else
-                        result = itemTime > rightTime && itemTime > startTime;
+                        result = itemTime > rightTime && itemTime > startTime && this.fConfigs.maxSelDays;
                 } else if (hoverTime < startTime) {
                     if (type === 'min')
-                        result = itemTime > leftTime && itemTime < startTime;
+                        result = itemTime > leftTime && itemTime < startTime && this.fConfigs.minSelDays;
                     else
-                        result = itemTime < leftTime && itemTime < startTime;
+                        result = itemTime < leftTime && itemTime < startTime && this.fConfigs.maxSelDays;
                 }
 
-                return days && result;
+                return result;
             },
             checkLimits(value) {
                 if (this.fConfigs.limits) {
