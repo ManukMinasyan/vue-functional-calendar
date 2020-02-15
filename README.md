@@ -1,4 +1,6 @@
-# VueJS Functional Calendar (Date Picker, Date Range) 
+<h1 align="center">Vue Functional Calendar</h1>
+<p align="center">Modern calendar and datepicker module for Vue.js</p>
+ 
 [![Buy us a tree](https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=for-the-badge)](https://offset.earth/treeware?gift-trees)
 [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Lightweight,%20high%20performance%20calendar%20component%20based%20on%20Vue.js&url=https://github.com/ManukMinasyan/vue-functional-calendar&via=github&hashtags=vue,calendar,design,developers)
 
