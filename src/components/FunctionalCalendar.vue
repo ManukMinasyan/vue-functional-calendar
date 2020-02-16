@@ -933,8 +933,21 @@
                         classes.push('vfc-borderd');
                     }
 
-                    // Date Range Marked
-                    if (this.fConfigs.markedDateRange.start && this.fConfigs.markedDateRange.end) {
+                    if (Array.isArray(this.fConfigs.markedDateRange)) {
+                        this.fConfigs.markedDateRange.forEach(range => {
+                            if (helpCalendar.getDateFromFormat(range.start) <= helpCalendar.getDateFromFormat(day.date)
+                                && helpCalendar.getDateFromFormat(range.end) >= helpCalendar.getDateFromFormat(day.date)) {
+                                classes.push('vfc-marked');
+                            }
+
+                            if (day.date === range.start) {
+                                classes.push('vfc-start-marked');
+                            } else if (day.date === range.end) {
+                                classes.push('vfc-end-marked');
+                            }
+                        })
+                    } else if (this.fConfigs.markedDateRange.start && this.fConfigs.markedDateRange.end) {
+                        // Date Range Marked
                         if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date)
                             && helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= helpCalendar.getDateFromFormat(day.date)) {
                             classes.push('vfc-marked');
@@ -946,7 +959,6 @@
                             classes.push('vfc-end-marked');
                         }
                     } else {
-
                         // Only After Start Marked
                         if (this.fConfigs.markedDateRange.start) {
                             if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date))
@@ -990,9 +1002,21 @@
                 return classes;
             },
             checkDateRangeStart(date) {
+                if (Array.isArray(this.fConfigs.markedDateRange)) {
+                    return this.fConfigs.markedDateRange.findIndex(range => {
+                        return range.start === date;
+                    }) !== -1;
+                }
+
                 return date === this.fConfigs.markedDateRange.start;
             },
             checkDateRangeEnd(date) {
+                if (Array.isArray(this.fConfigs.markedDateRange)) {
+                    return this.fConfigs.markedDateRange.findIndex(range => {
+                        return range.end === date;
+                    }) !== -1;
+                }
+
                 return date === this.fConfigs.markedDateRange.end;
             },
             checkSelDates(type, startDate, itemDate, hoverDate) {

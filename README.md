@@ -1,6 +1,5 @@
 <h1 align="center">Vue Functional Calendar</h1>
 <p align="center">Modern calendar and datepicker module for Vue.js</p>
- 
 [![Buy us a tree](https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=for-the-badge)](https://offset.earth/treeware?gift-trees)
 [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Lightweight,%20high%20performance%20calendar%20component%20based%20on%20Vue.js&url=https://github.com/ManukMinasyan/vue-functional-calendar&via=github&hashtags=vue,calendar,design,developers)
 
@@ -32,7 +31,6 @@ ___
 ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Edge](https://raw.github.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![IE](https://raw.github.com/alrra/browser-logos/master/src/archive/internet-explorer_9-11/internet-explorer_9-11_48x48.png) |
 --- | --- | --- | --- | --- | --- |
  39+ ✔ | 28+ ✔ | 10.1+ ✔ | 27+ ✔ | 15+ ✔ | Latest ✔ |
-
 
 ___
 
@@ -131,7 +129,7 @@ ___
 
 ## Available props
 | Prop                          | Type            | Default     | Example     | Description                              |
-|-------------------------------|-----------------|-------------|-------------|------------------------------------------|             
+|-------------------------------|-----------------|-------------|-------------|------------------------------------------|
 | sundayStart                   | Boolean         | false       | true        | Week start sunday                       |
 | newCurrentDate                   | Date         | new Date()       | new Date(2019,10,11)        | Calendar Current Date                       |
 | limits                   | [Object, Boolean]         | false       | {min: '31/10/2019', max: '31/12/2019'}        | Set calendar show, and marked dates limits.                       |
@@ -153,10 +151,10 @@ ___
 | changeYearFunction                   | Boolean         | false       | true        | Enable changed year with list, function                   |
 | changeYearStep                   | Number         | 12       | 6        | Change year list step count                   |
 | applyStylesheet                   | Boolean         | true       | false        | Disable default styles                   |
-| markedDates                   | Array         | []       | ['10/12/2018', '12/12/2018'] OR [{date: '10/1/2019', class: 'marked-class'},{date: '12/1/2019', class: 'marked-class-2'}]        | Marked dates array                   |
-| markedDateRange                   | Object         | {start: false, end: false}       | {start: '12/12/2018', end: '20/12/2018'}        | Marked date with range                   |
+| markedDates                   | Array         | []       | ['10/12/2020', '12/12/2020'] **OR** [{date: '10/1/2020', class: 'marked-class'},{date: '12/1/2020', class: 'marked-class-2'}] | Marked dates array                   |
+| markedDateRange                   | Object         | {start: false, end: false}       | {start: '12/12/2020', end: '20/12/2020'} **OR** [{start: '12/12/2020', end: '20/12/2020'}, {start: '24/12/2020', end: '28/12/2020'}] | Marked date ranges                  |
 | disabledDayNames                   | Array         | []     | ['Su','We']        | Disabled Days Of Week                   |
-| disabledDates                   | Array         | []     | ['24/12/2020','27/12/2020']   OR ['beforeToday', 'afterToday', '24/12/2020','27/12/2020']     | Disabled Dates                   |
+| disabledDates                   | Array         | []     | ['24/12/2020','27/12/2020']   **OR** ['beforeToday', 'afterToday', '24/12/2020','27/12/2020'] | Disabled Dates                   |
 | dayNames                   | Array         | ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']       | ['Monday', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sunday']        | Week Day Names                   |
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
 | shortMonthNames                   | Array         | ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Short month names                   |

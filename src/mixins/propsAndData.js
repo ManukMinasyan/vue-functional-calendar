@@ -75,7 +75,7 @@ export const propsAndData = {
             default: () => []
         },
         markedDateRange: {
-            type: Object
+            type: [Object, Array]
         },
         disabledDayNames: {
             type: Array
