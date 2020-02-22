@@ -1,8 +1,10 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
-
+        <functional-calendar class="demo-calendar" :markedDates="markedDates2" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
         </functional-calendar>
+
+        <button @click="markedDates2.push('22/2/2020')">Add date</button>
+
         <FunctionalCalendar class="demo-calendar"
                             ref="Calendar"
                             :hiddenElements="['']"
@@ -105,6 +107,7 @@
                     "2019-12-12",
                     "2020-1-1"
                 ],
+                markedDates2: [],
                 calendarConfigs: {
                     isMultipleDatePicker: true,
                     dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']

@@ -182,6 +182,16 @@
             }
         },
         watch: {
+            'fConfigs.markedDates': {
+                handler() {
+                    this.markChooseDays();
+                }
+            },
+            'fConfigs.markedDateRange': {
+                handler() {
+                    this.markChooseDays();
+                }
+            },
             'calendar.selectedDate': {
                 handler(val) {
                     this.input.selectedDate = val || '';
