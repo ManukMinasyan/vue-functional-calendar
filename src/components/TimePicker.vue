@@ -21,13 +21,13 @@
                 <div class="vfc-time-picker__list vfc-time-picker__list--hours" ref="hourList">
                     <div class="vfc-time-picker__item"
                          :class="{'vfc-time-picker__item--selected': checkHourActiveClass(i)}" v-for="i in 23"
-                         @click="changeHour(i < 10 ? '0'+(i-1) : i)">{{ i < 10 ? '0'+(i-1) : i}}
+                         @click="changeHour(i <= 10 ? '0'+(i-1) : i-1)">{{ i <= 10 ? '0'+(i-1) : i-1 }}
                     </div>
                 </div>
                 <div class="vfc-time-picker__list vfc-time-picker__list--minutes" ref="minuteList">
                     <div class="vfc-time-picker__item"
                          :class="{'vfc-time-picker__item--selected': checkMinuteActiveClass(i)}"
-                         v-for="i in 59" @click="changeMinute(i < 10 ? '0'+(i-1) : i)">{{ i < 10 ? '0'+(i-1) : i}}
+                         v-for="i in 59" @click="changeMinute(i <= 10 ? '0'+(i-1) : i-1)">{{ i <= 10 ? '0'+(i-1) : i-1 }}
                     </div>
                 </div>
             </div>
@@ -140,7 +140,7 @@
                     hour = this.$parent.calendar.selectedHour;
                 }
 
-                return hour === (i < 10 ? '0' + (i - 1) : i);
+                return hour === (i <= 10 ? '0' + (i - 1) : i - 1);
             },
             checkMinuteActiveClass(i) {
                 let minute;
@@ -156,7 +156,7 @@
                     minute = this.$parent.calendar.selectedMinute;
                 }
 
-                return minute === (i < 10 ? '0' + (i - 1) : i);
+                return minute === (i <= 10 ? '0' + (i - 1) : i - 1);
             },
             setStyles() {
                 let container = this.$parent.$refs.mainContainer;
