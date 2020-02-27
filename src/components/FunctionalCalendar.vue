@@ -65,10 +65,8 @@
                                     </a>
                                 </h2>
                                 <section class="vfc-dayNames">
+                                    <span v-if="fConfigs.showWeekNumbers"></span>
                                     <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
-                                        <template v-if="fConfigs.showWeekNumbers">
-                                            {{ ++key }}.
-                                        </template>
                                         <template v-if="checkHiddenElement('dayNames')">
                                             {{ dayName }}
                                         </template>
@@ -79,6 +77,11 @@
                                         :name='getTransition_()' appear>
                                     <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks"
                                          :key="week_key+0">
+                                        <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
+                                            <span class="vfc-span-day">
+                                                {{ week.number }}
+                                            </span>
+                                        </div>
                                         <div class="vfc-day" ref="day" v-for="(day, day_key) in week.days"
                                              :key="day_key">
                                             <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
@@ -122,32 +125,16 @@
         created() {
             this.setConfigs();
             this.initCalendar();
-
-            if (this.fConfigs.isModal && !this.fConfigs.withTimePicker) {
-                // Event
-                window.addEventListener('click', (e) => {
-                    if (!this.$el.contains(e.target)) {
-                        this.showCalendar = false
-                    }
-                });
-            }
-
-
-            window.addEventListener('click', (e) => {
-                if (this.showMonthPicker || this.showYearPicker) {
-                    let key = this.showMonthPicker ? this.showMonthPicker - 1 : this.showYearPicker - 1;
-
-                    let element1 = this.$refs.calendars.querySelector(`.vfc-calendars .vfc-calendar:nth-child(${key + 1}) .vfc-top-date a:nth-child(1)`);
-                    let element2 = this.$refs.calendars.querySelector(`.vfc-calendars .vfc-calendar:nth-child(${key + 1}) .vfc-top-date a:nth-child(2)`);
-
-                    if (!this.$refs.monthContainer[key].$el.contains(e.target) && !element1.contains(e.target) && !element2.contains(e.target)) {
-                        this.showMonthPicker = this.showYearPicker = false
-                    }
-                }
-            });
-
         },
         mounted() {
+            if (this.fConfigs.isModal && !this.fConfigs.withTimePicker) {
+                // Event
+                window.addEventListener('click', this.canCalendarClosed);
+            }
+
+            window.addEventListener('click', this.hideMonthYearPicker);
+            window.addEventListener('resize', this.setCalendarStyles)
+
             // Reacts to external selected dates
             this.$watch('value', function (value) {
                 if (this.fConfigs.isDateRange) {
@@ -166,6 +153,11 @@
             }, {immediate: true, deep: true});
 
             this.setCalendarStyles();
+        },
+        beforeDestroy: function () {
+            window.removeEventListener('click', this.canCalendarClosed)
+            window.removeEventListener('click', this.hideMonthYearPicker)
+            window.removeEventListener('resize', this.setCalendarStyles)
         },
         computed: {
             yearList() {
@@ -259,12 +251,6 @@
                 }
             }
         },
-        ready: function () {
-            window.addEventListener('resize', this.setCalendarStyles)
-        },
-        beforeDestroy: function () {
-            window.removeEventListener('resize', this.setCalendarStyles)
-        },
         methods: {
             initCalendar() {
                 // Set Help Calendar Configs
@@ -334,7 +320,7 @@
                 if (typeof vm.$getOptions !== "undefined") {
                     // Global Options
                     globalOptions = vm.$getOptions();
-                    Object.keys(globalOptions).map(function (objectKey) {
+                    Object.keys(globalOptions).forEach(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined") {
                             vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey]);
                         }
@@ -342,14 +328,14 @@
                 }
 
                 if (typeof (vm.configs) !== "undefined") {
-                    Object.keys(vm.fConfigs).map(function (objectKey) {
+                    Object.keys(vm.fConfigs).forEach(function (objectKey) {
                         if (typeof (vm.configs[objectKey]) !== "undefined") {
                             // Get From Configs
                             vm.$set(vm.fConfigs, objectKey, vm.configs[objectKey]);
                         }
                     });
                 } else {
-                    Object.keys(vm.$props).map(function (objectKey) {
+                    Object.keys(vm.$props).forEach(function (objectKey) {
                         if (typeof (vm.fConfigs[objectKey]) !== "undefined" &&
                             typeof (vm.$props[objectKey]) !== "undefined") {
                             vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey]);
@@ -854,7 +840,7 @@
             openTimePicker() {
                 this.showTimePicker = true;
             },
-            pickMonth(calendarKey = null, key) {
+            pickMonth(key, calendarKey = null) {
                 this.showMonthPicker = false;
 
                 if (calendarKey !== null) {
@@ -869,7 +855,7 @@
                 }
 
             },
-            pickYear(calendarKey = null, year) {
+            pickYear(year, calendarKey = null) {
                 this.showYearPicker = false;
 
                 if (calendarKey !== null) {
@@ -1005,7 +991,7 @@
                     classes.push('vfc-end-marked');
                 }
 
-                if (day.date === this.calendar.selectedDate || this.calendar.selectedDates.find(date => date.date === day.date)) {
+                if (day.date === this.calendar.selectedDate || this.calendar.selectedDates.find(sDate => sDate.date === day.date)) {
                     classes.push('vfc-borderd')
                 }
 
@@ -1105,6 +1091,25 @@
             },
             checkHiddenElement(elementName) {
                 return !this.fConfigs.hiddenElements.includes(elementName);
+            },
+            canCalendarClosed(e) {
+                if (!this.$el.contains(e.target)) {
+                    return this.showCalendar = false
+                }
+                return true;
+            },
+            hideMonthYearPicker(e) {
+                if (this.showMonthPicker || this.showYearPicker) {
+                    let key = this.showMonthPicker ? this.showMonthPicker - 1 : this.showYearPicker - 1;
+
+                    let element1 = this.$refs.calendars.querySelector(`.vfc-calendars .vfc-calendar:nth-child(${key + 1}) .vfc-top-date a:nth-child(1)`);
+                    let element2 = this.$refs.calendars.querySelector(`.vfc-calendars .vfc-calendar:nth-child(${key + 1}) .vfc-top-date a:nth-child(2)`);
+
+                    if (!this.$refs.monthContainer[key].$el.contains(e.target) && !element1.contains(e.target) && !element2.contains(e.target)) {
+                        return this.showMonthPicker = this.showYearPicker = false
+                    }
+                }
+                return;
             }
         }
     }

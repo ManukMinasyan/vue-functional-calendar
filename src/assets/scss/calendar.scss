@@ -471,6 +471,9 @@ input.vfc-single-input {
             }
 
             .vfc-week {
+              .vfc-week-number {
+                border-right: 1px solid $lightred;
+              }
               div {
                 &.vfc-day {
                   position: relative;
@@ -744,6 +747,9 @@ input.vfc-single-input {
             }
 
             .vfc-week {
+              .vfc-week-number {
+                border-color: $keppel;
+              }
               div {
                 &.vfc-day {
 

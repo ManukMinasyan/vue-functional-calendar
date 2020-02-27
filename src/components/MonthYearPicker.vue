@@ -18,7 +18,7 @@
                     <div class="vfc-item" v-for="(month,key) in $parent.fConfigs.shortMonthNames"
                          :key="key"
                          :class="{'vfc-selected': $parent.listCalendars[calendarKey].date.getMonth()===key}"
-                         @click="$parent.pickMonth(calendarKey, key)">
+                         @click="$parent.pickMonth(key, calendarKey)">
                         {{ month }}
                     </div>
                 </template>
@@ -27,7 +27,7 @@
                          v-for="(year,key) in $parent.yearList"
                          :key="key"
                          :class="{'vfc-selected': $parent.listCalendars[calendarKey].date.getFullYear()===year.year}"
-                         @click="$parent.pickYear(calendarKey, year.year)">
+                         @click="$parent.pickYear(year.year, calendarKey)">
                         {{ year.year }}
                     </div>
                 </template>

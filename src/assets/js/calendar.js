@@ -1,3 +1,17 @@
+Date.prototype.getWeekNumber = function (sundayStart) {
+    if(!sundayStart){
+        // ISO week date weeks start on monday
+        // so correct the day number
+        let dayNumber   = (this.getDay() + 6) % 7;
+        // Set the target to the thursday of this week so the
+        // target date is in the right year
+        this.setDate(this.getDate() - dayNumber + 3);
+    }
+
+    let january4 = new Date(this.getFullYear(), 0, 4);
+    return Math.ceil((((this - january4) / 86400000) + january4.getDay() + 1) / 7);
+};
+
 export default {
     configs: {
         sundayStart: false,
@@ -30,7 +44,7 @@ export default {
             format = format.split('.');
             date = date.split('.');
         } else {
-            alert('Your date format not valid. Please read documentation.!');
+            throw new Error('Your date format not valid. Please read documentation.!');
         }
 
         let year = format.indexOf('yyyy');
@@ -39,10 +53,10 @@ export default {
 
         return new Date(date[year], date[month] - 1, date[day]);
     },
-    checkValidDate(val){
+    checkValidDate(val) {
         val = this.getDateFromFormat(val);
 
-        if(val != "Invalid Date"){
+        if (val != "Invalid Date") {
             return true;
         }
 
@@ -62,12 +76,19 @@ export default {
             : 7 - firstDate.getDay();
 
         while (start <= numDays) {
-            weeks.push({year: year, start: start, end: end, days: []});
+            weeks.push({
+                year: year,
+                start: start,
+                end: end,
+                number: new Date(year, month, start).getWeekNumber(this.configs.sundayStart),
+                days: []
+            });
             start = end + 1;
             end = end + 7;
             if (end > numDays)
                 end = numDays;
         }
+
         return {weeks: weeks, month: lastDate.getMonth(), year: lastDate.getFullYear()};
     },
     getLeftMonthDays(month, year) {
@@ -191,12 +212,12 @@ export default {
         let month = this.getDateFromFormat(value).getMonth();
 
         let dayMask = '00';
-        if(dayLength===1){
+        if (dayLength === 1) {
             dayMask = '0';
         }
 
         let monthMask = '00';
-        if(month+1 <= 9){
+        if (month + 1 <= 9) {
             monthMask = '0';
         }
 
