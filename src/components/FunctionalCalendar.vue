@@ -740,7 +740,7 @@
 
                 this.transitionPrefix = 'right';
 
-                if (calendarKey !== null) {
+                if (calendarKey !== null && calendarKey !== 0) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() - 1);
                     currentCalendar.key -= 1;
@@ -762,7 +762,7 @@
 
                 this.transitionPrefix = 'left';
 
-                if (calendarKey !== null) {
+                if (calendarKey !== null && calendarKey !== 0) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() + 1);
                     currentCalendar.key += 1;
@@ -784,7 +784,7 @@
 
                 let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
 
-                if (calendarKey !== null) {
+                if (calendarKey !== null && calendarKey !== 0) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     currentCalendar.date = new Date(currentCalendar.date.getFullYear() - step, currentCalendar.date.getMonth());
                     this.updateCalendar();
@@ -804,7 +804,7 @@
 
                 let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
 
-                if (calendarKey !== null) {
+                if (calendarKey !== null && calendarKey !== 0) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     currentCalendar.date = new Date(currentCalendar.date.getFullYear() + step, currentCalendar.date.getMonth());
                     this.updateCalendar();
