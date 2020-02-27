@@ -665,7 +665,7 @@ input.vfc-single-input {
   &.vfc-dark {
     background-color: $mirage;
 
-    .vfc-navigation-buttons {
+    .vfc-navigation-buttons, .vfc-separately-navigation-buttons {
       div {
         .vfc-arrow-right, .vfc-arrow-left {
           border-color: $white

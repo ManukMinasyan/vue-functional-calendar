@@ -843,7 +843,7 @@
             pickMonth(key, calendarKey = null) {
                 this.showMonthPicker = false;
 
-                if (calendarKey !== null) {
+                if (calendarKey !== null && calendarKey !== 0) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     let date = currentCalendar.date;
                     currentCalendar.date = new Date(date.getFullYear(), key + 1, 0);
@@ -858,7 +858,7 @@
             pickYear(year, calendarKey = null) {
                 this.showYearPicker = false;
 
-                if (calendarKey !== null) {
+                if (calendarKey !== null && calendarKey !== 0) {
                     let currentCalendar = this.listCalendars[calendarKey];
                     let date = currentCalendar.date;
                     currentCalendar.date = new Date(year, date.getMonth() + 1, 0);
