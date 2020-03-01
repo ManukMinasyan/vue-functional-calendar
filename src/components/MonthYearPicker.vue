@@ -24,7 +24,7 @@
                 </template>
                 <template v-else-if="$parent.showYearPicker">
                     <div class="vfc-item"
-                         v-for="(year,key) in $parent.yearList"
+                         v-for="(year,key) in $parent.getYearList($parent.listCalendars[calendarKey].date)"
                          :key="key"
                          :class="{'vfc-selected': $parent.listCalendars[calendarKey].date.getFullYear()===year.year}"
                          @click="$parent.pickYear(year.year, calendarKey)">

@@ -174,7 +174,6 @@ export const propsAndData = {
                     }
                 }
             },
-            calendarsKey: 0,
             transitionPrefix: 'left',
             showCalendar: true,
             showMonthPicker: false,

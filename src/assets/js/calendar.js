@@ -51,6 +51,7 @@ export default {
         let month = format.indexOf('mm');
         let day = format.indexOf('dd');
 
+
         return new Date(date[year], date[month] - 1, date[day]);
     },
     checkValidDate(val) {
@@ -158,6 +159,7 @@ export default {
                 });
             }
         });
+
 
 
         // Left month days
