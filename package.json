@@ -6,7 +6,7 @@
   },
   "name": "vue-functional-calendar",
   "description": "Lightweight, high-performance calendar component based on Vue.js",
-  "version": "2.8.4",
+  "version": "2.8.5",
   "license": "MIT",
   "repository": {
     "type": "git",

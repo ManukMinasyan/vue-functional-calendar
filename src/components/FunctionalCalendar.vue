@@ -712,11 +712,13 @@
             /**
              * @return {boolean}
              */
-            PreMonth(calendarKey) {
+            PreMonth(calendarKey = null) {
                 if (!this.allowPreDate)
                     return false;
 
                 this.transitionPrefix = 'right';
+
+                calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() - 1);
@@ -733,11 +735,13 @@
             /**
              * @return {boolean}
              */
-            NextMonth(calendarKey) {
+            NextMonth(calendarKey = null) {
                 if (!this.allowNextDate)
                     return false;
 
                 this.transitionPrefix = 'left';
+
+                calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() + 1);
@@ -754,11 +758,13 @@
             /**
              * @return {boolean}
              */
-            PreYear(calendarKey) {
+            PreYear(calendarKey = null) {
                 if (!this.allowPreDate)
                     return false;
 
                 let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
+
+                calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear() - step, currentCalendar.date.getMonth());
@@ -776,11 +782,13 @@
             /**
              * @return {boolean}
              */
-            NextYear(calendarKey) {
+            NextYear(calendarKey = null) {
                 if (!this.allowNextDate)
                     return false;
 
                 let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1;
+
+                calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear() + step, currentCalendar.date.getMonth());
