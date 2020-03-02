@@ -20,14 +20,14 @@
             <div class="vfc-time-picker">
                 <div class="vfc-time-picker__list vfc-time-picker__list--hours" ref="hourList">
                     <div class="vfc-time-picker__item"
-                         :class="{'vfc-time-picker__item--selected': checkHourActiveClass(i)}" v-for="i in 23"
+                         :class="{'vfc-time-picker__item--selected': checkHourActiveClass(i)}" v-for="i in 24"
                          @click="changeHour(i <= 10 ? '0'+(i-1) : i-1)">{{ i <= 10 ? '0'+(i-1) : i-1 }}
                     </div>
                 </div>
                 <div class="vfc-time-picker__list vfc-time-picker__list--minutes" ref="minuteList">
                     <div class="vfc-time-picker__item"
                          :class="{'vfc-time-picker__item--selected': checkMinuteActiveClass(i)}"
-                         v-for="i in 59" @click="changeMinute(i <= 10 ? '0'+(i-1) : i-1)">{{ i <= 10 ? '0'+(i-1) : i-1 }}
+                         v-for="i in 60" @click="changeMinute(i <= 10 ? '0'+(i-1) : i-1)">{{ i <= 10 ? '0'+(i-1) : i-1 }}
                     </div>
                 </div>
             </div>
