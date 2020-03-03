@@ -125,7 +125,7 @@
             }
 
             window.addEventListener('click', this.hideMonthYearPicker);
-            window.addEventListener('resize', this.setCalendarStyles)
+            window.addEventListener('resize', this.setCalendarStyles);
 
             // Reacts to external selected dates
             this.$watch('value', function (value) {
@@ -147,9 +147,9 @@
             this.setCalendarStyles();
         },
         beforeDestroy: function () {
-            window.removeEventListener('click', this.canCalendarClosed)
-            window.removeEventListener('click', this.hideMonthYearPicker)
-            window.removeEventListener('resize', this.setCalendarStyles)
+            window.removeEventListener('click', this.canCalendarClosed);
+            window.removeEventListener('click', this.hideMonthYearPicker);
+            window.removeEventListener('resize', this.setCalendarStyles);
         },
         watch: {
             'fConfigs.markedDates': {
@@ -802,7 +802,7 @@
                 this.$emit('changedYear', currentCalendar.date);
             },
             ChooseDate(date) {
-                let newDate = helpCalendar.getDateFromFormat('2020-5-14');
+                let newDate = helpCalendar.getDateFromFormat(date);
 
                 if (date === 'today') {
                     newDate = new Date();
@@ -810,6 +810,7 @@
 
                 this.listCalendars[0].date = this.calendar.currentDate = newDate;
 
+                this.updateCalendar();
                 this.initCalendar();
             },
             openMonthPicker(key) {

@@ -1,11 +1,11 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar"  :change-month-function="true" :change-year-function="true" :sundayStart="false" :showWeekNumbers="true" :markedDates="markedDates2" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
+        <functional-calendar class="demo-calendar 1"  :change-month-function="true" :change-year-function="true" :sundayStart="false" :showWeekNumbers="true" :markedDates="markedDates2" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
         </functional-calendar>
 
         <button @click="markedDates2.push('22/3/2020')">Add date</button>
 
-        <FunctionalCalendar class="demo-calendar"
+        <FunctionalCalendar class="demo-calendar 2"
                             ref="Calendar"
                             :hiddenElements="['']"
                             :showWeekNumbers="true"
@@ -32,7 +32,9 @@
             </span>
         </FunctionalCalendar>
 
-        <FunctionalCalendar class="demo-calendar"
+        <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>
+
+        <FunctionalCalendar class="demo-calendar 3"
                             ref="Calendar2"
                             :is-date-range="true"
                             :min-sel-days="3"
