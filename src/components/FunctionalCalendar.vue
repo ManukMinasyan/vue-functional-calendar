@@ -410,6 +410,8 @@
                     return false;
                 }
 
+                //Disabled Dates - Start
+
                 // Disable days of week if set in configuration
                 let dateDay = helpCalendar.getDateFromFormat(item.date).getDay() - 1;
                 if (dateDay === -1) {
@@ -417,14 +419,11 @@
                 }
 
                 let dayOfWeekString = this.fConfigs.dayNames[dateDay];
-                if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
+                if (this.fConfigs.disabledDayNames.includes(dayOfWeekString) || this.isDisabledDate(item.date)) {
                     return false;
                 }
 
-                // Disabled dates
-                if (this.fConfigs.disabledDates.includes(item.date)) {
-                    return false;
-                }
+                //Disabled Dates - End
 
                 // Limits
                 if (this.fConfigs.limits) {
@@ -876,10 +875,7 @@
 
 
                 // Disabled dates
-                if (this.fConfigs.disabledDates.includes(day.date) ||
-                    (this.fConfigs.disabledDates.includes('beforeToday') && date.getTime() < today.getTime()) ||
-                    (this.fConfigs.disabledDates.includes('afterToday') && date.getTime() > today.getTime())
-                ) {
+                if (this.isDisabledDate(day.date)) {
                     classes.push('vfc-disabled');
                     classes.push('vfc-cursor-not-allowed');
                 }
@@ -1085,6 +1081,15 @@
                 }
                 return true;
             },
+            isDisabledDate(date) {
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+                let dateObj = helpCalendar.getDateFromFormat(date);
+
+                return this.fConfigs.disabledDates.includes(date) ||
+                    (this.fConfigs.disabledDates.includes('beforeToday') && dateObj.getTime() < today.getTime()) ||
+                    (this.fConfigs.disabledDates.includes('afterToday') && dateObj.getTime() > today.getTime())
+            },
             hideMonthYearPicker(e) {
                 if (this.showMonthPicker || this.showYearPicker) {
                     let key = this.showMonthPicker ? this.showMonthPicker - 1 : this.showYearPicker - 1;
@@ -1096,7 +1101,6 @@
                         return this.showMonthPicker = this.showYearPicker = false
                     }
                 }
-                return;
             }
         }
     }

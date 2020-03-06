@@ -1,6 +1,6 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar 1"  :change-month-function="true" :change-year-function="true" :sundayStart="false" :showWeekNumbers="true" :markedDates="markedDates2" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
+        <functional-calendar class="demo-calendar 1" :disabledDates="['beforeToday', '8/3/2020']"  :change-month-function="true" :change-year-function="true" :sundayStart="false" :showWeekNumbers="true" :markedDates="markedDates2" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
         </functional-calendar>
 
         <button @click="markedDates2.push('22/3/2020')">Add date</button>
