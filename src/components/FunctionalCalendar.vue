@@ -406,6 +406,8 @@
 
             },
             clickDay(item) {
+                this.$emit('dayClicked', item);
+            
                 if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker && !this.fConfigs.isMultipleDatePicker) {
                     return false;
                 }
