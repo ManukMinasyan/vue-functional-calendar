@@ -406,6 +406,8 @@
 
             },
             clickDay(item) {
+                this.$emit('choseDay', item);
+                
                 if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker && !this.fConfigs.isMultipleDatePicker) {
                     return false;
                 }
@@ -539,8 +541,6 @@
                         this.openTimePicker();
                     }
                 }
-
-                this.$emit('choseDay', item);
             },
             markChooseDays() {
                 let vm = this;
