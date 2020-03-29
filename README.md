@@ -169,7 +169,8 @@ ___
 
 | Event          | Output       | Description                                                        |
 | :------------- | :------------- | :-----------------------------------------------------------: 
-| choseDay |Object | Get clicked day object
+| dayClicked |Object | Get clicked day object
+| choseDay |Object | Get the object of the selected day
 | changedMonth |Date | Month page has been changed
 | changedYear |Date | Year page has been changed
 | selectedDaysCount |Number | Get number of days between date range dates
