@@ -46,24 +46,33 @@
                                         <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
                                     </div>
                                 </div>
-                                <h2 class="vfc-top-date"
-                                    v-if="checkHiddenElement('month')">
-                                    <a href="#" @click.prevent="openMonthPicker(key+1)"
-                                       :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker === key+1}">
-                                        {{ calendarItem.month }}</a>
-                                    <a href="#" @click.prevent="openYearPicker(key+1)"
-                                       :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker === key+1}">
-                                        {{ calendarItem.year }}
-                                    </a>
-                                </h2>
-                                <section class="vfc-dayNames">
-                                    <span v-if="fConfigs.showWeekNumbers"></span>
-                                    <span v-for="(dayName, key) in fConfigs.dayNames" :key="key">
-                                        <template v-if="checkHiddenElement('dayNames')">
-                                            {{ dayName }}
-                                        </template>
-                                    </span>
-                                </section>
+                                <transition
+                                        tag="div"
+                                        :name='getTransition_()' appear>
+                                    <h2 class="vfc-top-date"
+                                        v-if="checkHiddenElement('month')">
+                                        <a href="#" @click.prevent="openMonthPicker(key+1)"
+                                           :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker === key+1}">
+                                            {{ calendarItem.month }}</a>
+                                        <a href="#" @click.prevent="openYearPicker(key+1)"
+                                           :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker === key+1}">
+                                            {{ calendarItem.year }}
+                                        </a>
+                                    </h2>
+                                </transition>
+                                <transition
+                                        tag="div"
+                                        :name='getTransition_()' appear>
+                                    <section class="vfc-dayNames">
+                                        <span v-if="fConfigs.showWeekNumbers"></span>
+                                        <span v-for="(dayName, key) in fConfigs.dayNames" :key="key" class="vfc-day">
+                                            <template v-if="checkHiddenElement('dayNames')">
+                                                {{ dayName }}
+                                            </template>
+                                        </span>
+
+                                    </section>
+                                </transition>
                                 <transition-group
                                         tag='div'
                                         :name='getTransition_()' appear>
@@ -105,15 +114,26 @@
 </template>
 
 <script>
-    import helpCalendar from '../assets/js/calendar'
+    import helpCalendarClass from '../assets/js/helpCalendar'
     import {propsAndData} from "../mixins/propsAndData";
     import TimePicker from "./TimePicker";
     import MonthYearPicker from "./MonthYearPicker";
+
 
     export default {
         name: "FunctionalCalendar",
         components: {MonthYearPicker, TimePicker},
         mixins: [propsAndData],
+        computed: {
+            helpCalendar() {
+                return new helpCalendarClass(
+                    this.fConfigs.sundayStart,
+                    this.checkHiddenElement('leftAndRightDays'),
+                    this.fConfigs.dateFormat,
+                    this.fConfigs.dayNames
+                );
+            }
+        },
         created() {
             this.setConfigs();
             this.initCalendar();
@@ -188,42 +208,42 @@
             },
             'input.selectedDate': {
                 handler(val) {
-                    this.input.selectedDate = val = helpCalendar.mask(val);
-                    if (helpCalendar.getDateFromFormat(val).getMonth()) {
+                    this.input.selectedDate = val = this.helpCalendar.mask(val);
+                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.selectedDate = val;
                         this.markChooseDays();
                     }
 
                     // Typeable
-                    if (helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
                         this.ChooseDate(val);
                     }
                 }
             },
             'input.dateRange.start.date': {
                 handler(val) {
-                    this.input.dateRange.start.date = val = helpCalendar.mask(val);
-                    if (helpCalendar.getDateFromFormat(val).getMonth()) {
+                    this.input.dateRange.start.date = val = this.helpCalendar.mask(val);
+                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.start.date = val;
                         this.markChooseDays();
                     }
 
                     // Typeable
-                    if (helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
                         this.ChooseDate(val);
                     }
                 }
             },
             'input.dateRange.end.date': {
                 handler(val) {
-                    this.input.dateRange.end.date = val = helpCalendar.mask(val);
-                    if (helpCalendar.getDateFromFormat(val).getMonth()) {
+                    this.input.dateRange.end.date = val = this.helpCalendar.mask(val);
+                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
                         this.calendar.dateRange.end.date = val;
                         this.markChooseDays();
                     }
 
                     // Typeable
-                    if (helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
+                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
                         this.ChooseDate(val);
                     }
                 }
@@ -231,12 +251,6 @@
         },
         methods: {
             initCalendar() {
-                // Set Help Calendar Configs
-                helpCalendar.configs.sundayStart = this.fConfigs.sundayStart;
-                helpCalendar.configs.leftAndRightDays = this.checkHiddenElement('leftAndRightDays');
-                helpCalendar.configs.dateFormat = this.fConfigs.dateFormat;
-                helpCalendar.configs.dayNames = this.fConfigs.dayNames;
-                helpCalendar.configs.monthNames = this.fConfigs.monthNames;
 
                 this.setCalendarData();
                 this.listRendering();
@@ -263,7 +277,7 @@
                         dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
                         month: this.fConfigs.monthNames[date.getMonth()],
                         year: date.getFullYear(),
-                        weeks: helpCalendar.getFinalizedWeeks(date.getMonth(), date.getFullYear())
+                        weeks: this.helpCalendar.getFinalizedWeeks(date.getMonth(), date.getFullYear())
                     };
 
                     this.listCalendars.push(calendar);
@@ -284,7 +298,7 @@
                         dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
                         month: this.fConfigs.monthNames[date.getMonth()],
                         year: date.getFullYear(),
-                        weeks: helpCalendar.getFinalizedWeeks(date.getMonth(), date.getFullYear())
+                        weeks: this.helpCalendar.getFinalizedWeeks(date.getMonth(), date.getFullYear())
                     });
 
                     if (!this.fConfigs.isMultiple) {
@@ -367,16 +381,16 @@
                             // With Custom Classes
                             if (typeof vm.fConfigs.markedDates[0] === "object") {
                                 checkMarked = vm.fConfigs.markedDates.find(function (markDate) {
-                                    return markDate.date === helpCalendar.formatDate(date)
+                                    return markDate.date === vm.helpCalendar.formatDate(date)
                                 });
                             } else {
                                 // Without Classes
                                 checkMarked = vm.fConfigs.markedDates.find(function (markDate) {
-                                    return markDate === helpCalendar.formatDate(date)
+                                    return markDate === vm.helpCalendar.formatDate(date)
                                 });
                             }
 
-                            if (vm.calendar.dateRange.start.date === helpCalendar.formatDate(date)) {
+                            if (vm.calendar.dateRange.start.date === vm.helpCalendar.formatDate(date)) {
                                 checkMarked = true;
                             }
 
@@ -387,13 +401,13 @@
 
                             finalizedDays.push({
                                 day: day.day,
-                                date: helpCalendar.formatDate(date),
+                                date: vm.helpCalendar.formatDate(date),
                                 hide: day.hide,
                                 isMouseToLeft: false,
                                 isMouseToRight: false,
                                 isHovered: false,
-                                isDateRangeStart: vm.checkDateRangeStart(helpCalendar.formatDate(date)),
-                                isDateRangeEnd: vm.checkDateRangeEnd(helpCalendar.formatDate(date)),
+                                isDateRangeStart: vm.checkDateRangeStart(vm.helpCalendar.formatDate(date)),
+                                isDateRangeEnd: vm.checkDateRangeEnd(vm.helpCalendar.formatDate(date)),
                                 hideLeftAndRightDays: day.hideLeftAndRightDays,
                                 isToday: isToday,
                                 isMarked: isMarked
@@ -413,7 +427,7 @@
                 //Disabled Dates - Start
 
                 // Disable days of week if set in configuration
-                let dateDay = helpCalendar.getDateFromFormat(item.date).getDay() - 1;
+                let dateDay = this.helpCalendar.getDateFromFormat(item.date).getDay() - 1;
                 if (dateDay === -1) {
                     dateDay = 6;
                 }
@@ -427,9 +441,9 @@
 
                 // Limits
                 if (this.fConfigs.limits) {
-                    let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
-                    let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
-                    let date = helpCalendar.getDateFromFormat(item.date).getTime();
+                    let min = this.helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
+                    let max = this.helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                    let date = this.helpCalendar.getDateFromFormat(item.date).getTime();
 
                     if (date < min || date > max) {
                         return false;
@@ -439,11 +453,11 @@
                 // Date Range
                 if (this.fConfigs.isDateRange) {
 
-                    let clickDate = helpCalendar.getDateFromFormat(item.date).getTime();
+                    let clickDate = this.helpCalendar.getDateFromFormat(item.date).getTime();
 
                     let startDate = false;
                     if (this.calendar.dateRange.start.date) {
-                        startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
+                        startDate = this.helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
                     }
 
                     // Two dates is not empty
@@ -465,10 +479,10 @@
                     //Get number of days between date range dates
                     if (this.calendar.dateRange.start.date !== false && this.calendar.dateRange.end.date !== false) {
                         let oneDay = 24 * 60 * 60 * 1000;
-                        let firstDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
-                        let secondDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.end.date);
+                        let firstDate = this.helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
+                        let secondDate = this.helpCalendar.getDateFromFormat(this.calendar.dateRange.end.date);
                         let diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime()) / (oneDay)));
-                        let itemTime = helpCalendar.getDateFromFormat(item.date).getTime();
+                        let itemTime = this.helpCalendar.getDateFromFormat(item.date).getTime();
 
                         this.$emit('selectedDaysCount', diffDays);
 
@@ -483,12 +497,12 @@
 
                         if (minSelDays && itemTime >= startDate.getTime() && diffDays < minSelDays) {
                             startDate.setDate(startDate.getDate() + (minSelDays - 1));
-                            this.calendar.dateRange.end.date = helpCalendar.formatDate(startDate);
+                            this.calendar.dateRange.end.date = this.helpCalendar.formatDate(startDate);
                         }
 
                         if (minSelDays && itemTime < startDate.getTime() && diffDays < minSelDays) {
                             startDate.setDate(startDate.getDate() - (minSelDays - 1));
-                            this.calendar.dateRange.start.date = helpCalendar.formatDate(startDate);
+                            this.calendar.dateRange.start.date = this.helpCalendar.formatDate(startDate);
                         }
 
                         // Maximum Selected Days
@@ -496,12 +510,12 @@
 
                         if (maxSelDays && itemTime >= startDate.getTime() && diffDays >= maxSelDays) {
                             startDate.setDate(startDate.getDate() + (maxSelDays - 1));
-                            this.calendar.dateRange.end.date = helpCalendar.formatDate(startDate);
+                            this.calendar.dateRange.end.date = this.helpCalendar.formatDate(startDate);
                         }
 
                         if (maxSelDays && itemTime < startDate.getTime() && diffDays >= maxSelDays) {
                             startDate.setDate(startDate.getDate() - (maxSelDays - 1));
-                            this.calendar.dateRange.start.date = helpCalendar.formatDate(startDate);
+                            this.calendar.dateRange.start.date = this.helpCalendar.formatDate(startDate);
                         }
                     }
 
@@ -581,8 +595,8 @@
                                 }
 
                                 if (startDate && endDate) {
-                                    if (helpCalendar.getDateFromFormat(day.date).getTime() > helpCalendar.getDateFromFormat(startDate)
-                                        && helpCalendar.getDateFromFormat(day.date) < helpCalendar.getDateFromFormat(endDate)) {
+                                    if (this.helpCalendar.getDateFromFormat(day.date).getTime() > this.helpCalendar.getDateFromFormat(startDate)
+                                        && this.helpCalendar.getDateFromFormat(day.date) < this.helpCalendar.getDateFromFormat(endDate)) {
                                         day.isMarked = true;
                                     }
                                 }
@@ -601,9 +615,9 @@
 
                 // Limits
                 if (this.fConfigs.limits) {
-                    let limitMin = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
-                    let limitMax = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
-                    let limitDate = helpCalendar.getDateFromFormat(date).getTime();
+                    let limitMin = this.helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
+                    let limitMax = this.helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                    let limitDate = this.helpCalendar.getDateFromFormat(date).getTime();
 
                     if (limitDate < limitMin || limitDate > limitMax) {
                         return false;
@@ -630,14 +644,14 @@
                                 }
 
                                 if (this.calendar.dateRange.start.date) {
-                                    let itemDate = helpCalendar.getDateFromFormat(item.date).getTime();
-                                    let thisDate = helpCalendar.getDateFromFormat(date).getTime();
-                                    let startDate = helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
+                                    let itemDate = this.helpCalendar.getDateFromFormat(item.date).getTime();
+                                    let thisDate = this.helpCalendar.getDateFromFormat(date).getTime();
+                                    let startDate = this.helpCalendar.getDateFromFormat(this.calendar.dateRange.start.date);
 
                                     this.listCalendars[e].weeks[f].days[i].isMouseToLeft = (itemDate === startDate.getTime() && thisDate > startDate.getTime()) || (itemDate === thisDate && thisDate < startDate.getTime());
                                     this.listCalendars[e].weeks[f].days[i].isMouseToRight = (itemDate === startDate.getTime() && thisDate < startDate.getTime()) || (itemDate === thisDate && thisDate > startDate.getTime());
 
-                                    let dateDay = helpCalendar.getDateFromFormat(item.date).getDay() - 1;
+                                    let dateDay = this.helpCalendar.getDateFromFormat(item.date).getDay() - 1;
                                     if (dateDay === -1) {
                                         dateDay = 6;
                                     }
@@ -664,11 +678,11 @@
                                         minDateToLeft.setDate(minDateToLeft.getDate() - this.fConfigs.minSelDays + 1);
                                         minDateToRight.setDate(minDateToRight.getDate() + this.fConfigs.minSelDays - 1);
 
-                                        if (thisDate >= minDateToLeft.getTime() && helpCalendar.formatDate(minDateToLeft) === item.date) {
+                                        if (thisDate >= minDateToLeft.getTime() && this.helpCalendar.formatDate(minDateToLeft) === item.date) {
                                             this.listCalendars[e].weeks[f].days[i].isMarked = false;
                                             this.listCalendars[e].weeks[f].days[i].isMouseToLeft = true;
                                             this.listCalendars[e].weeks[f].days[i].isHovered = true;
-                                        } else if (thisDate <= minDateToRight.getTime() && helpCalendar.formatDate(minDateToRight) === item.date) {
+                                        } else if (thisDate <= minDateToRight.getTime() && this.helpCalendar.formatDate(minDateToRight) === item.date) {
                                             this.listCalendars[e].weeks[f].days[i].isMarked = false;
                                             this.listCalendars[e].weeks[f].days[i].isMouseToRight = true;
                                             this.listCalendars[e].weeks[f].days[i].isHovered = true;
@@ -688,14 +702,14 @@
                                         maxDateToRight.setDate(maxDateToRight.getDate() + this.fConfigs.maxSelDays - 1);
 
                                         if (thisDate <= maxDateToLeft.getTime()) {
-                                            if (helpCalendar.formatDate(maxDateToLeft) === item.date) {
+                                            if (this.helpCalendar.formatDate(maxDateToLeft) === item.date) {
                                                 this.listCalendars[e].weeks[f].days[i].isHovered = true;
                                                 this.listCalendars[e].weeks[f].days[i].isMouseToLeft = true;
                                             }
                                         }
 
                                         if (thisDate >= maxDateToRight.getTime()) {
-                                            if (helpCalendar.formatDate(maxDateToRight) === item.date) {
+                                            if (this.helpCalendar.formatDate(maxDateToRight) === item.date) {
                                                 this.listCalendars[e].weeks[f].days[i].isHovered = true;
                                                 this.listCalendars[e].weeks[f].days[i].isMouseToRight = true;
                                             }
@@ -716,6 +730,7 @@
                     return false;
 
                 this.transitionPrefix = 'right';
+                this.globalReRenderingKey -= 1;
 
                 calendarKey = calendarKey !== null ? calendarKey : 0;
 
@@ -739,18 +754,20 @@
                     return false;
 
                 this.transitionPrefix = 'left';
+                this.globalReRenderingKey += 1;
 
                 calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() + 1);
-                currentCalendar.key += 1;
+                this.$set(currentCalendar, 'key', currentCalendar.key + 1);
                 this.updateCalendar();
 
-                if (!this.fConfigs.isSeparately) {
-                    this.calendar.currentDate = currentCalendar.date;
-                    this.initCalendar();
-                }
+                //TODO: Key Update Functionality
+                // if (!this.fConfigs.isSeparately) {
+                //     this.calendar.currentDate = currentCalendar.date;
+                //     this.initCalendar();
+                // }
 
                 this.$emit('changedMonth', currentCalendar.date);
             },
@@ -801,7 +818,7 @@
                 this.$emit('changedYear', currentCalendar.date);
             },
             ChooseDate(date) {
-                let newDate = helpCalendar.getDateFromFormat(date);
+                let newDate = this.helpCalendar.getDateFromFormat(date);
 
                 if (date === 'today') {
                     newDate = new Date();
@@ -859,7 +876,7 @@
                 let classes = [];
 
                 // Disable days of week if set in configuration
-                let dateDay = helpCalendar.getDateFromFormat(day.date).getDay() - 1;
+                let dateDay = this.helpCalendar.getDateFromFormat(day.date).getDay() - 1;
                 if (dateDay === -1) {
                     dateDay = 6;
                 }
@@ -869,7 +886,7 @@
                     classes.push('vfc-cursor-not-allowed');
                 }
 
-                let date = helpCalendar.getDateFromFormat(day.date);
+                let date = this.helpCalendar.getDateFromFormat(day.date);
                 let today = new Date();
                 today.setHours(0, 0, 0, 0);
 
@@ -881,8 +898,8 @@
                 }
 
                 if (this.fConfigs.limits) {
-                    let min = helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
-                    let max = helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
+                    let min = this.helpCalendar.getDateFromFormat(this.fConfigs.limits.min).getTime();
+                    let max = this.helpCalendar.getDateFromFormat(this.fConfigs.limits.max).getTime();
 
                     if (date.getTime() < min || date.getTime() > max) {
                         classes.push('vfc-disabled');
@@ -914,8 +931,8 @@
 
                     if (Array.isArray(this.fConfigs.markedDateRange)) {
                         this.fConfigs.markedDateRange.forEach(range => {
-                            if (helpCalendar.getDateFromFormat(range.start) <= helpCalendar.getDateFromFormat(day.date)
-                                && helpCalendar.getDateFromFormat(range.end) >= helpCalendar.getDateFromFormat(day.date)) {
+                            if (this.helpCalendar.getDateFromFormat(range.start) <= this.helpCalendar.getDateFromFormat(day.date)
+                                && this.helpCalendar.getDateFromFormat(range.end) >= this.helpCalendar.getDateFromFormat(day.date)) {
                                 classes.push('vfc-marked');
                             }
 
@@ -927,8 +944,8 @@
                         })
                     } else if (this.fConfigs.markedDateRange.start && this.fConfigs.markedDateRange.end) {
                         // Date Range Marked
-                        if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date)
-                            && helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= helpCalendar.getDateFromFormat(day.date)) {
+                        if (this.helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= this.helpCalendar.getDateFromFormat(day.date)
+                            && this.helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= this.helpCalendar.getDateFromFormat(day.date)) {
                             classes.push('vfc-marked');
                         }
 
@@ -940,13 +957,13 @@
                     } else {
                         // Only After Start Marked
                         if (this.fConfigs.markedDateRange.start) {
-                            if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= helpCalendar.getDateFromFormat(day.date))
+                            if (this.helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.start) <= this.helpCalendar.getDateFromFormat(day.date))
                                 classes.push('vfc-marked');
                         }
 
                         // Only Before End Marked
                         if (this.fConfigs.markedDateRange.end) {
-                            if (helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= helpCalendar.getDateFromFormat(day.date))
+                            if (this.helpCalendar.getDateFromFormat(this.fConfigs.markedDateRange.end) >= this.helpCalendar.getDateFromFormat(day.date))
                                 classes.push('vfc-marked');
                         }
                     }
@@ -999,9 +1016,9 @@
                 return date === this.fConfigs.markedDateRange.end;
             },
             checkSelDates(type, startDate, itemDate, hoverDate) {
-                let startTime = helpCalendar.getDateFromFormat(startDate).getTime();
-                let itemTime = helpCalendar.getDateFromFormat(itemDate).getTime();
-                let hoverTime = helpCalendar.getDateFromFormat(hoverDate).getTime();
+                let startTime = this.helpCalendar.getDateFromFormat(startDate).getTime();
+                let itemTime = this.helpCalendar.getDateFromFormat(itemDate).getTime();
+                let hoverTime = this.helpCalendar.getDateFromFormat(hoverDate).getTime();
 
                 let days = type === 'min' ? this.fConfigs.minSelDays : this.fConfigs.maxSelDays - 2;
                 let minTime = days * 1000 * 60 * 60 * 24;
@@ -1025,10 +1042,10 @@
             },
             checkLimits(value) {
                 if (this.fConfigs.limits) {
-                    let min = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.min));
+                    let min = new Date(this.helpCalendar.getDateFromFormat(this.fConfigs.limits.min));
                     min.setDate(1);
                     min.setHours(0, 0, 0, 0);
-                    let max = new Date(helpCalendar.getDateFromFormat(this.fConfigs.limits.max));
+                    let max = new Date(this.helpCalendar.getDateFromFormat(this.fConfigs.limits.max));
                     max.setDate(1);
                     max.setHours(0, 0, 0, 0);
 
@@ -1084,7 +1101,7 @@
             isDisabledDate(date) {
                 let today = new Date();
                 today.setHours(0, 0, 0, 0);
-                let dateObj = helpCalendar.getDateFromFormat(date);
+                let dateObj = this.helpCalendar.getDateFromFormat(date);
 
                 return this.fConfigs.disabledDates.includes(date) ||
                     (this.fConfigs.disabledDates.includes('beforeToday') && dateObj.getTime() < today.getTime()) ||

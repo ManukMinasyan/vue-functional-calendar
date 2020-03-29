@@ -1,8 +1,8 @@
 Date.prototype.getWeekNumber = function (sundayStart) {
-    if(!sundayStart){
+    if (!sundayStart) {
         // ISO week date weeks start on monday
         // so correct the day number
-        let dayNumber   = (this.getDay() + 6) % 7;
+        let dayNumber = (this.getDay() + 6) % 7;
         // Set the target to the thursday of this week so the
         // target date is in the right year
         this.setDate(this.getDate() - dayNumber + 3);
@@ -12,27 +12,28 @@ Date.prototype.getWeekNumber = function (sundayStart) {
     return Math.ceil((((this - january4) / 86400000) + january4.getDay() + 1) / 7);
 };
 
-export default {
-    configs: {
-        sundayStart: false,
-        leftAndRightDays: true,
-        dateFormat: 'dd/mm/yyyy',
-        dayNames: [],
-        monthNames: []
-    },
+export default class helpCalendar {
+    constructor(sundayStart, leftAndRightDays, dateFormat, dayNames) {
+        this.sundayStart = sundayStart;
+        this.leftAndRightDays = leftAndRightDays;
+        this.dateFormat = dateFormat;
+        this.dayNames = dayNames;
+    }
+
     formatDate(date) {
         let day = date.getDate();
         let month = date.getMonth() + 1;
         let year = date.getFullYear();
 
-        let formattedDate = this.configs.dateFormat.replace("dd", day.toString());
+        let formattedDate = this.dateFormat.replace("dd", day.toString());
         formattedDate = formattedDate.replace("mm", month.toString());
         formattedDate = formattedDate.replace("yyyy", year.toString());
 
         return formattedDate;
-    },
+    }
+
     getDateFromFormat(date) {
-        let format = this.configs.dateFormat;
+        let format = this.dateFormat;
 
         if (format.indexOf('/') !== -1) {
             format = format.split('/');
@@ -53,7 +54,8 @@ export default {
 
 
         return new Date(date[year], date[month] - 1, date[day]);
-    },
+    }
+
     checkValidDate(val) {
         val = this.getDateFromFormat(val);
 
@@ -62,7 +64,8 @@ export default {
         }
 
         return false;
-    },
+    }
+
     getWeeksInMonth(month, year) {
         let weeks = [],
             firstDate = new Date(year, month, 1),
@@ -72,7 +75,7 @@ export default {
         let start = 1;
 
 
-        let end = !this.configs.sundayStart ?
+        let end = !this.sundayStart ?
             (firstDate.getDay() === 0 ? 1 : 7 - firstDate.getDay() + 1)
             : 7 - firstDate.getDay();
 
@@ -81,7 +84,7 @@ export default {
                 year: year,
                 start: start,
                 end: end,
-                number: new Date(year, month, start).getWeekNumber(this.configs.sundayStart),
+                number: new Date(year, month, start).getWeekNumber(this.sundayStart),
                 days: []
             });
             start = end + 1;
@@ -91,7 +94,8 @@ export default {
         }
 
         return {weeks: weeks, month: lastDate.getMonth(), year: lastDate.getFullYear()};
-    },
+    }
+
     getLeftMonthDays(month, year) {
         let weeks = this.getWeeksInMonth(month, year);
         let firstWeek = weeks.weeks[0];
@@ -115,7 +119,8 @@ export default {
         }
 
         return {days: days.reverse(), month: finalMonth, year: finalYear};
-    },
+    }
+
     getRightMonthDays(month, year) {
         let weeks = this.getWeeksInMonth(month, year);
         let lastWeek = weeks.weeks[weeks.weeks.length - 1];
@@ -140,7 +145,8 @@ export default {
 
 
         return {days: days, month: finalMonth, year: finalYear};
-    },
+    }
+
     getFinalizedWeeks(month, year) {
         let thisObj = this;
         let monthWeeks = this.getWeeksInMonth(month, year);
@@ -161,13 +167,12 @@ export default {
         });
 
 
-
         // Left month days
         if (leftMonthDays.days.length) {
             leftMonthDays.days.forEach(function (day) {
                 let hideLeftAndRightDays = false;
 
-                if (!thisObj.configs.leftAndRightDays) {
+                if (!thisObj.leftAndRightDays) {
                     day = '';
                     hideLeftAndRightDays = true;
                 }
@@ -187,7 +192,7 @@ export default {
             rightMonthDays.days.forEach(function (day) {
                 let hideLeftAndRightDays = false;
 
-                if (!thisObj.configs.leftAndRightDays) {
+                if (!thisObj.leftAndRightDays) {
                     day = '';
                     hideLeftAndRightDays = true;
                 }
@@ -208,7 +213,8 @@ export default {
         });
 
         return monthWeeks.weeks;
-    },
+    }
+
     mask(value) {
         let dayLength = this.getDateFromFormat(value).getDate().toString().length;
         let month = this.getDateFromFormat(value).getMonth();
@@ -223,7 +229,7 @@ export default {
             monthMask = '0';
         }
 
-        let mask = this.configs.dateFormat.replace('dd', dayMask).replace('mm', monthMask).replace('yyyy', '0000');
+        let mask = this.dateFormat.replace('dd', dayMask).replace('mm', monthMask).replace('yyyy', '0000');
         // eslint-disable-next-line
         let literalPattern = /[0\*]/;
         let numberPattern = /[0-9]/;
@@ -252,4 +258,4 @@ export default {
 
         return newValue;
     }
-};
+}

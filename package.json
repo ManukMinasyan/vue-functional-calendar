@@ -68,7 +68,7 @@
     "css-loader": "^1.0.1",
     "grunt": ">=0.4.0",
     "grunt-coveralls": "^2.0.0",
-    "jest": "^16.0.1",
+    "jest": "^16.0.2",
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "node-sass": "^4.12.0",

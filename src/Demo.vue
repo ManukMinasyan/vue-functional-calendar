@@ -1,12 +1,23 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar 1" :disabledDates="['beforeToday', '8/3/2020']"  :change-month-function="true" :change-year-function="true" :sundayStart="false" :showWeekNumbers="true" :markedDates="markedDates2" :is-date-range="true" :min-sel-days="3" :max-sel-days="6">
+        <functional-calendar class="demo-calendar 1"
+                             :with-time-picker="true"
+                             :disabledDates="['beforeToday', '8/3/2020']"
+                             :change-month-function="true"
+                             :change-year-function="true"
+                             :sundayStart="false"
+                             :showWeekNumbers="true"
+                             :markedDates="markedDates2"
+                             :is-date-range="true"
+                             :min-sel-days="3"
+                             :max-sel-days="6">
         </functional-calendar>
 
         <button @click="markedDates2.push('22/3/2020')">Add date</button>
 
         <FunctionalCalendar class="demo-calendar 2"
                             ref="Calendar"
+                            :sundayStart="true"
                             :hiddenElements="['']"
                             :showWeekNumbers="true"
                             :is-date-range="true"
@@ -34,28 +45,28 @@
 
         <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>
 
-        <FunctionalCalendar class="demo-calendar 3"
-                            ref="Calendar2"
-                            :is-date-range="true"
-                            :min-sel-days="3"
-                            :is-dark="false"
-                            :date-format="'dd/mm/yyyy'"
-                            :is-multiple="true"
-                            :calendars-count="1"
-                            :with-time-picker="false"
-                            :change-month-function="true"
-                            :change-year-function="true"
-                            :disabled-dates="['beforeToday', '20/12/2019']"
-                            v-slot:default="props"
-                            :is-auto-closeable="true"
-                            :is-modal="false"
-                            :change-year-step="5"
-        >
-            <span style="text-align: center">
-            {{ props.day.day }}
-            <span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
-                </span>
-        </FunctionalCalendar>
+        <!--<FunctionalCalendar class="demo-calendar 3"-->
+                            <!--ref="Calendar2"-->
+                            <!--:is-date-range="true"-->
+                            <!--:min-sel-days="3"-->
+                            <!--:is-dark="false"-->
+                            <!--:date-format="'dd/mm/yyyy'"-->
+                            <!--:is-multiple="true"-->
+                            <!--:calendars-count="1"-->
+                            <!--:with-time-picker="false"-->
+                            <!--:change-month-function="true"-->
+                            <!--:change-year-function="true"-->
+                            <!--:disabled-dates="['beforeToday', '20/12/2019']"-->
+                            <!--v-slot:default="props"-->
+                            <!--:is-auto-closeable="true"-->
+                            <!--:is-modal="false"-->
+                            <!--:change-year-step="5"-->
+        <!--&gt;-->
+            <!--<span style="text-align: center">-->
+            <!--{{ props.day.day }}-->
+            <!--<span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>-->
+                <!--</span>-->
+        <!--</FunctionalCalendar>-->
         <!--<functional-calendar class="demo-calendar"-->
         <!--:with-time-picker='true'-->
         <!--:is-date-picker='true'-->
@@ -63,7 +74,7 @@
         <!--&gt;</functional-calendar>-->
 
 
-        <button @click="$refs.Calendar.ChooseDate('today')">Today</button>
+        <!--<button @click="$refs.Calendar.ChooseDate('today')">Today</button>-->
         <!--<functional-calendar class="demo-calendar2"-->
         <!--v-model="calendarData"-->
         <!--:sunday-start="true"-->

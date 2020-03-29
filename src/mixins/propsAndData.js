@@ -135,6 +135,7 @@ export const propsAndData = {
                 hour: '00',
                 minute: '00',
             },
+            globalReRenderingKey: 1,
             calendar: {
                 currentDate: new Date(),
                 selectedDate: false,

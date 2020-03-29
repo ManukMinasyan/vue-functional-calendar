@@ -13,6 +13,6 @@ const FunctionalCalendarPlugin = {
     FunctionalCalendar: FunctionalCalendar
 }
 
-// // Export component for use as a module (npm / webpack / etc.)
+// Export component for use as a module (npm / webpack / etc.)
 export default FunctionalCalendarPlugin;
 export {FunctionalCalendar};
