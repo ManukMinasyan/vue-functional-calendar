@@ -154,7 +154,7 @@ export default class helpCalendar {
         let rightMonthDays = this.getRightMonthDays(month, year);
 
         // Push Current Month Week days
-        monthWeeks.weeks.forEach(function (week) {
+        monthWeeks.weeks.forEach(function (week, index) {
             for (let i = week.start; i <= week.end; i++) {
                 week.days.push({
                     day: i,

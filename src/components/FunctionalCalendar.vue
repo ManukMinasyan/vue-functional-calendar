@@ -33,11 +33,12 @@
                     <div class="vfc-calendars" ref="calendars">
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="calendarItem.key">
                             <month-year-picker ref="monthContainer"
+                                               :class="'vfc-' + fConfigs.titlePosition"
                                                v-show="showMonthPicker === key+1 || showYearPicker === key+1"
                                                :calendar-key="key">
                             </month-year-picker>
                             <div class="vfc-content">
-                                <div class="vfc-separately-navigation-buttons"
+                                <div class="vfc-separately-navigation-buttons" :class="'vfc-' + fConfigs.arrowsPosition"
                                      v-if="(!fConfigs.isSeparately && key === 0) || fConfigs.isSeparately">
                                     <div @click="PreMonth(key)" :class="{'vfc-cursor-pointer': allowPreDate}">
                                         <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
@@ -50,6 +51,7 @@
                                         tag="div"
                                         :name='getTransition_()' appear>
                                     <h2 class="vfc-top-date"
+                                        :class="'vfc-' + fConfigs.titlePosition"
                                         v-if="checkHiddenElement('month')">
                                         <a href="#" @click.prevent="openMonthPicker(key+1)"
                                            :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker === key+1}">
@@ -93,14 +95,13 @@
                                             </div>
                                             <span v-if="!day.hideLeftAndRightDays"
                                                   data-date="" :key="day_key"
-                                                  class="vfc-span-day"
                                                   :class="getClassNames(day)"
                                                   @click="clickDay(day)"
                                                   @mouseover="dayMouseOver(week_key, day.date)">
                                                 <slot :week="week" :day="day">
                                                     {{ day.day }}
                                                 </slot>
-                                        </span>
+                                            </span>
                                         </div>
                                     </div>
                                 </transition-group>
@@ -421,7 +422,7 @@
             },
             clickDay(item) {
                 this.$emit('dayClicked', item);
-                
+
                 if (!this.fConfigs.isDateRange && !this.fConfigs.isDatePicker && !this.fConfigs.isMultipleDatePicker) {
                     return false;
                 }
@@ -555,7 +556,7 @@
                         this.openTimePicker();
                     }
                 }
-                
+
                 this.$emit('choseDay', item);
             },
             markChooseDays() {
@@ -877,6 +878,10 @@
             getClassNames(day) {
                 let classes = [];
 
+                if (!this.hasSlot('default')) {
+                    classes.push('vfc-span-day')
+                }
+
                 // Disable days of week if set in configuration
                 let dateDay = this.helpCalendar.getDateFromFormat(day.date).getDay() - 1;
                 if (dateDay === -1) {
@@ -1120,6 +1125,9 @@
                         return this.showMonthPicker = this.showYearPicker = false
                     }
                 }
+            },
+            hasSlot(name = 'default') {
+                return !!this.$slots[name] || !!this.$scopedSlots[name];
             }
         }
     }

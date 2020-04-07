@@ -244,8 +244,19 @@ input.vfc-single-input {
     flex: 0 1 15%;
     margin-top: -10px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+
+    &.vfc-left {
+      justify-content: flex-start;
+    }
+
+    &.vfc-right {
+      justify-content: flex-end;
+    }
+
+    &.vfc-space-between {
+      justify-content: space-between;
+    }
 
     div {
       z-index: 200;
@@ -295,6 +306,7 @@ input.vfc-single-input {
     flex-direction: column;
     height: 100%;
     position: relative;
+    overflow: hidden;
 
     .vfc-navigation-buttons {
       width: 100%;
@@ -317,8 +329,40 @@ input.vfc-single-input {
         .vfc-months-container {
           display: flex;
           flex-direction: row;
-          justify-content: center;
           margin-left: -20px;
+
+          &.vfc-left {
+            justify-content: flex-start;
+            margin-left: 0;
+
+            .vfc-content {
+              .vfc-navigation-buttons {
+                .vfc-top-date {
+                  .vfc-popover-caret {
+                    left: 45px;
+                  }
+                }
+              }
+            }
+          }
+
+          &.vfc-center {
+            justify-content: center;
+          }
+
+          &.vfc-right {
+            justify-content: flex-end;
+
+            .vfc-content {
+              .vfc-navigation-buttons {
+                .vfc-top-date {
+                  .vfc-popover-caret {
+                    left: calc(100% - 90px);
+                  }
+                }
+              }
+            }
+          }
 
           .vfc-content {
             width: 45%;
@@ -333,6 +377,8 @@ input.vfc-single-input {
 
             .vfc-navigation-buttons {
               position: unset;
+              display: flex;
+              justify-content: space-between;
 
               div {
                 margin: 10px 10px;
@@ -350,7 +396,6 @@ input.vfc-single-input {
               }
 
               .vfc-top-date {
-                text-align: center;
                 font-size: 18px;
                 font-weight: bold;
                 margin: 0;
@@ -371,6 +416,7 @@ input.vfc-single-input {
                   background-color: $licorice;
                   transform: translateY(-40%) rotate(45deg);
                   top: 0;
+                  left: 50%;
                 }
 
 
@@ -415,6 +461,7 @@ input.vfc-single-input {
           }
         }
 
+
         div {
           &.vfc-content {
             margin: 0 20px;
@@ -422,10 +469,23 @@ input.vfc-single-input {
 
             h2 {
               &.vfc-top-date {
-                text-align: center;
                 margin: 25px;
                 font-size: 18px;
                 font-weight: normal;
+
+                &.vfc-left {
+                  text-align: left;
+                }
+
+                &.vfc-right {
+                  text-align: right;
+                }
+
+                &.vfc-center {
+                  text-align: center;
+                }
+
+
 
                 a {
                   cursor: default;
@@ -474,6 +534,7 @@ input.vfc-single-input {
               .vfc-week-number {
                 border-right: 1px solid $lightred;
               }
+
               div {
                 &.vfc-day {
                   position: relative;
@@ -750,6 +811,7 @@ input.vfc-single-input {
               .vfc-week-number {
                 border-color: $keppel;
               }
+
               div {
                 &.vfc-day {
 

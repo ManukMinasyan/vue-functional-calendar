@@ -1,19 +1,29 @@
 <template>
     <div>
-        <functional-calendar class="demo-calendar 1"
-                             :with-time-picker="true"
-                             :disabledDates="['beforeToday', '8/3/2020']"
+        <functional-calendar class="demo-custom-calendar 1"
                              :change-month-function="true"
                              :change-year-function="true"
                              :sundayStart="false"
-                             :showWeekNumbers="true"
-                             :markedDates="markedDates2"
-                             :is-date-range="true"
-                             :min-sel-days="3"
-                             :max-sel-days="6">
+                             :showWeekNumbers="false"
+                             title-position="left"
+                             arrows-position="right"
+        >
+            <template v-slot:default="props">
+                <div class="custom-day-container">
+                    <div class="custom-day">
+                        {{ props.day.day }}
+                        <div class="events">
+                            <div class="event-item" :class="event.class"
+                                 v-for="event in getEventsByDate(props.day.date)" :key="event.id">
+                                {{ event.title }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </functional-calendar>
 
-        <button @click="markedDates2.push('22/3/2020')">Add date</button>
+<!--        <button @click="markedDates2.push('22/3/2020')">Add date</button>-->
 
         <FunctionalCalendar class="demo-calendar 2"
                             ref="Calendar"
@@ -31,41 +41,38 @@
                             :change-month-function="true"
                             :change-year-function="true"
                             :marked-dates="markedDates"
-                            v-slot:default="props"
                             :is-auto-closeable="true"
                             :is-modal="false"
                             :change-year-step="5"
                             @choseDay="choseDay"
+                            title-position="left"
+                            arrows-position="right"
         >
-            <span style="text-align: center">
-                {{ props.day.day }}
-                <span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>
-            </span>
         </FunctionalCalendar>
 
         <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>
 
         <!--<FunctionalCalendar class="demo-calendar 3"-->
-                            <!--ref="Calendar2"-->
-                            <!--:is-date-range="true"-->
-                            <!--:min-sel-days="3"-->
-                            <!--:is-dark="false"-->
-                            <!--:date-format="'dd/mm/yyyy'"-->
-                            <!--:is-multiple="true"-->
-                            <!--:calendars-count="1"-->
-                            <!--:with-time-picker="false"-->
-                            <!--:change-month-function="true"-->
-                            <!--:change-year-function="true"-->
-                            <!--:disabled-dates="['beforeToday', '20/12/2019']"-->
-                            <!--v-slot:default="props"-->
-                            <!--:is-auto-closeable="true"-->
-                            <!--:is-modal="false"-->
-                            <!--:change-year-step="5"-->
+        <!--ref="Calendar2"-->
+        <!--:is-date-range="true"-->
+        <!--:min-sel-days="3"-->
+        <!--:is-dark="false"-->
+        <!--:date-format="'dd/mm/yyyy'"-->
+        <!--:is-multiple="true"-->
+        <!--:calendars-count="1"-->
+        <!--:with-time-picker="false"-->
+        <!--:change-month-function="true"-->
+        <!--:change-year-function="true"-->
+        <!--:disabled-dates="['beforeToday', '20/12/2019']"-->
+        <!--v-slot:default="props"-->
+        <!--:is-auto-closeable="true"-->
+        <!--:is-modal="false"-->
+        <!--:change-year-step="5"-->
         <!--&gt;-->
-            <!--<span style="text-align: center">-->
-            <!--{{ props.day.day }}-->
-            <!--<span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>-->
-                <!--</span>-->
+        <!--<span style="text-align: center">-->
+        <!--{{ props.day.day }}-->
+        <!--<span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>-->
+        <!--</span>-->
         <!--</FunctionalCalendar>-->
         <!--<functional-calendar class="demo-calendar"-->
         <!--:with-time-picker='true'-->
@@ -112,6 +119,32 @@
         components: {FunctionalCalendar},
         data() {
             return {
+                events: [
+                    {
+                        id: 1,
+                        title: "Meeting with new client",
+                        date: "18/4/2020",
+                        class: "has-background-color1"
+                    },
+                    {
+                        id: 2,
+                        title: "Meeting with new client",
+                        date: "24/4/2020",
+                        class: "has-background-color2"
+                    },
+                    {
+                        id: 3,
+                        title: "Meeting with new client 2",
+                        date: "24/4/2020",
+                        class: "has-background-color3"
+                    },
+                    {
+                        id: 4,
+                        title: "Meeting with new client 3",
+                        date: "24/4/2020",
+                        class: "has-background-color4"
+                    }
+                ],
                 calendarData: {},
                 markedDates: [
                     "2019-12-6",
@@ -129,6 +162,9 @@
             }
         },
         methods: {
+            getEventsByDate(date) {
+                return this.events.filter(event => event.date === date)
+            },
             get(val) {
                 console.log(val);
             },
@@ -160,7 +196,14 @@
     }
 </script>
 
-<style>
+<style lang="scss">
+    $color1: rgba(38, 109, 211, 1);
+    $color2: rgba(52, 64, 85, 1);
+    $color3: rgba(136, 128, 152, 1);
+    $color4: rgba(207, 179, 205, 1);
+    $color5: rgba(223, 194, 242, 1);
+    $color6: rgb(208, 217, 208);
+
     html, body {
         background-color: #fec928;
         padding: 0;
@@ -169,8 +212,117 @@
 
     .demo-calendar {
         width: 400px;
-        /*height: 400px;*/
         margin: 100px;
+    }
+    .demo-custom-calendar {
+        width: 800px;
+        margin: 100px;
+
+        .vfc-main-container {
+            .vfc-calendars-container {
+                .vfc-calendars {
+                    .vfc-calendar {
+                        div {
+                            &.vfc-content {
+                                margin: 0;
+                                .vfc-week {
+                                    display: grid;
+                                    grid-template-columns: repeat(7, 1fr);
+
+                                    &:nth-child(1n+2) {
+                                        .vfc-day {
+                                            border-top: none;
+                                        }
+                                    }
+
+                                    .vfc-day {
+                                        border-left: 1px solid $color3;
+                                        border-bottom: 1px solid $color3;
+                                        border-top: 1px solid $color3;
+                                        margin-top: 0 !important;
+
+                                        &:nth-child(7n) {
+                                            border-right: 1px solid $color3;
+                                            box-sizing: border-box;
+                                        }
+
+                                        .custom-day-container {
+                                            margin: 0 5px;
+
+                                            .custom-day {
+                                                .events {
+                                                    display: grid;
+                                                    height: 80px;
+                                                    padding: 5px;
+
+                                                    overflow-x: hidden;
+                                                    overflow-y: auto;
+                                                    /* width */
+                                                    &::-webkit-scrollbar {
+                                                        width: 2px;
+                                                    }
+
+                                                    /* Track */
+                                                    &::-webkit-scrollbar-track {
+                                                        background: $color5;
+                                                    }
+
+                                                    /* Handle */
+                                                    &::-webkit-scrollbar-thumb {
+                                                        background: $color3;
+                                                    }
+
+                                                    /* Handle on hover */
+                                                    &::-webkit-scrollbar-thumb:hover {
+                                                        background: $color3;
+                                                    }
+
+                                                    .event-item {
+                                                        position: relative;
+                                                        border: 0;
+                                                        width: 100%;
+                                                        border-radius: 5px;
+                                                        background-color: transparent;
+                                                        color: #FFFFFF;
+                                                        font-size: 15px;
+                                                        margin: 3px 0;
+
+                                                        &.has-background-color1 {
+                                                            background-color: $color1;
+                                                        }
+
+                                                        &.has-background-color2 {
+                                                            background-color: $color2;
+                                                        }
+
+                                                        &.has-background-color3 {
+                                                            background-color: $color3;
+                                                        }
+
+                                                        &.has-background-color4 {
+                                                            background-color: $color4;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        .vfc-today {
+                                            .custom-day-container {
+                                                .custom-day {
+                                                    color: #ff8498;
+                                                    font-weight: bold;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     .demo-calendar2 {
@@ -184,7 +336,7 @@
         width: auto;
         padding: 5px;
         background-color: #eee;
-        padding-bottom: 20px !ie 7;
+        padding-bottom: 20px;
         max-height: 600px;
     }
 

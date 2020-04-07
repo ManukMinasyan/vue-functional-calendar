@@ -125,6 +125,14 @@ export const propsAndData = {
         isDark: {
             type: Boolean,
             default: undefined
+        },
+        titlePosition: {
+            type: String,
+            default: "center"
+        },
+        arrowsPosition: {
+            type: String,
+            default: "space-between"
         }
     },
     data() {
@@ -136,6 +144,7 @@ export const propsAndData = {
                 minute: '00',
             },
             globalReRenderingKey: 1,
+            hoveredObject: null,
             calendar: {
                 currentDate: new Date(),
                 selectedDate: false,
@@ -226,7 +235,10 @@ export const propsAndData = {
                 transition: true,
                 hiddenElements: [],
                 isAutoCloseable: false,
-                isDark: false
+                isDark: false,
+
+                titlePosition: "center",
+                arrowsPosition: "space-between"
             }
         }
     }
