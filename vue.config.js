@@ -6,7 +6,7 @@ module.exports = {
     css: {
         extract: false,
     },
-    outputDir: 'lib',
+    outputDir: 'dist',
     configureWebpack: {
         resolve: {
             alias: {

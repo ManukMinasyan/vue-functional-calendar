@@ -7,7 +7,7 @@
                     <template v-if="$parent.fConfigs.isDateRange">
                         <span @click="startDateActive = true" :class="{'vfc-active': startDateActive}">{{ $parent.calendar.dateRange.start.dateTime}}</span><template
                             v-if="$parent.calendar.dateRange.end.date"> -<span @click="startDateActive = false"
-                                                                               :class="{'vfc-active': !startDateActive}">{{ this.$parent.calendar.dateRange.end.dateTime }}</span></template>
+                                                                               :class="{'vfc-active': !startDateActive}">{{ $parent.calendar.dateRange.end.dateTime }}</span></template>
                     </template>
                     <template v-else-if="$parent.fConfigs.isMultipleDatePicker">
                         {{ getCurrentDateTime }}
