@@ -828,6 +828,7 @@
                 }
 
                 this.listCalendars[0].date = this.calendar.currentDate = newDate;
+                this.calendar.selectedDate = `${newDate.getDate()}/${newDate.getMonth() + 1}/${newDate.getFullYear()}`;
 
                 this.updateCalendar();
                 this.initCalendar();
