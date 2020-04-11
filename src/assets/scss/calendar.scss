@@ -1,21 +1,12 @@
 @import './variables.scss';
 
-
-html, body {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  height: 100%
-}
-
 input.vfc-single-input, .vfc-multiple-input input {
   font-size: inherit;
   transition: width 200ms;
   padding: 7px;
   width: 120px;
-  color: #aaa;
-  border: 1px solid #eeeeee;
+  color: $silver_chalice;
+  border: 1px solid $gallery;
   text-align: center;
   outline: none;
 }
@@ -38,8 +29,8 @@ input.vfc-single-input {
     padding: 0.5em 0.25em;
     min-height: 15px;
     background: $white;
-    border: 1px solid #dbdbdb;
-    border-radius: 0.25em;
+    border: 1px solid $alto;
+    border-radius: 10px;
 
     &.vfc-tags-input {
       display: flex;
@@ -52,7 +43,7 @@ input.vfc-single-input {
         border: none;
 
         &[type="text"] {
-          color: #495057;
+          color: $trout;
         }
 
         &:focus {
@@ -72,7 +63,7 @@ input.vfc-single-input {
       /* Tag badge styles */
       .vfc-tags-input-badge {
         width: 85px;
-        background-color: #F0F1F2;
+        background-color: $porcelain;
         position: relative;
         display: inline-block;
         padding: 0.25em 0.4em;
@@ -195,11 +186,11 @@ input.vfc-single-input {
       }
 
       &::-webkit-scrollbar-track {
-        background: #efefef;
+        background: $gallery;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #ccc;
+        background: $silver;
       }
     }
 
@@ -287,7 +278,7 @@ input.vfc-single-input {
     }
 
     .vfc-modal-append {
-      color: #7d7d7d;
+      color: $boulder;
       font-weight: normal;
       display: flex;
       justify-content: space-between;
@@ -966,7 +957,7 @@ input.vfc-single-input {
 
                     &.vfc-hover:hover, &.vfc-hovered {
                       z-index: 1;
-                      background-color: rgba(76, 76, 76, 0.3);
+                      background-color: $charade;
                     }
                   }
                 }

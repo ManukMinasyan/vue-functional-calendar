@@ -168,23 +168,6 @@ export const propsAndData = {
                     }
                 }
             },
-            input: {
-                selectedDate: '',
-                dateRange: {
-                    start: {
-                        date: '',
-                        dateTime: '',
-                        hour: '',
-                        minute: ''
-                    },
-                    end: {
-                        date: '',
-                        dateTime: '',
-                        hour: '',
-                        minute: ''
-                    }
-                }
-            },
             transitionPrefix: 'left',
             showCalendar: true,
             showMonthPicker: false,

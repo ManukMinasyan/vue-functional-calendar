@@ -3,13 +3,13 @@
         <div class="vfc-multiple-input" :class="{'vfc-dark': fConfigs.isDark}"
              v-if="fConfigs.isModal && fConfigs.isDateRange">
             <input type="text" title="Start Date"
-                   v-model="input.dateRange.start.date"
+                   v-model="dateRangeSelectedStartDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
                    :maxlength="fConfigs.dateFormat.length"
                    @click="showCalendar = !showCalendar">
             <input type="text" title="End Date"
-                   v-model="input.dateRange.end.date"
+                   v-model="dateRangeSelectedEndDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
                    :maxlength="fConfigs.dateFormat.length"
@@ -17,13 +17,14 @@
         </div>
         <div :class="{'vfc-dark': fConfigs.isDark}" v-else-if="fConfigs.isModal && fConfigs.isDatePicker">
             <input class="vfc-single-input" type="text" title="Date"
-                   v-model="input.selectedDate"
+                   v-model="singleSelectedDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
                    :maxlength="fConfigs.dateFormat.length"
                    @click="showCalendar = !showCalendar">
         </div>
-        <div v-else-if="fConfigs.isModal && fConfigs.isMultipleDatePicker" class="vfc-tags-input-root" :class="{'vfc-dark': fConfigs.isDark}">
+        <div v-else-if="fConfigs.isModal && fConfigs.isMultipleDatePicker" class="vfc-tags-input-root"
+             :class="{'vfc-dark': fConfigs.isDark}">
             <div class="vfc-tags-input-wrapper-default vfc-tags-input">
                 <span
                         class="vfc-tags-input-badge vfc-tags-input-badge-pill vfc-tags-input-badge-selected-default"
@@ -31,17 +32,14 @@
                         :key="index"
                 >
                   <span v-html="date.date"></span>
-
                   <a href="#" class="vfc-tags-input-remove" @click.prevent="removeFromSelectedDates(index)"></a>
                 </span>
 
-                <input
-                        v-model="calendar.selectedDatesItem"
-                        @keydown.enter.prevent="addToSelectedDates"
-                        type="text"
-                        ref="taginput"
-                        placeholder="Add a date"
-                        @click.prevent="showCalendar = !showCalendar"
+                <input v-model="calendar.selectedDatesItem"
+                       @keydown.enter.prevent="addToSelectedDates"
+                       type="text"
+                       placeholder="Add a date"
+                       @click.prevent="showCalendar = !showCalendar"
                 >
             </div>
         </div>
@@ -101,7 +99,7 @@
                                         tag='div'
                                         :name='getTransition_()' appear>
                                     <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks"
-                                         :key="week_key+0">
+                                         :key="week_key+1">
                                         <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
                                             <span class="vfc-span-day">
                                                 {{ week.number }}
@@ -155,6 +153,39 @@
                     this.fConfigs.dateFormat,
                     this.fConfigs.dayNames
                 );
+            },
+            singleSelectedDate: {
+                get() {
+                    return this.calendar.selectedDate ? this.calendar.selectedDate : ''
+                },
+                set(newValue) {
+                    newValue = this.helpCalendar.mask(newValue);
+                    if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+                        this.calendar.selectedDate = newValue;
+                    }
+                }
+            },
+            dateRangeSelectedStartDate: {
+                get() {
+                    return this.calendar.dateRange.start.date ? this.calendar.dateRange.start.date : ''
+                },
+                set(newValue) {
+                    newValue = this.helpCalendar.mask(newValue);
+                    if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+                        this.calendar.dateRange.start.date = newValue;
+                    }
+                }
+            },
+            dateRangeSelectedEndDate: {
+                get() {
+                    return this.calendar.dateRange.end.date ? this.calendar.dateRange.end.date : ''
+                },
+                set(newValue) {
+                    newValue = this.helpCalendar.mask(newValue);
+                    if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+                        this.calendar.dateRange.end.date = newValue;
+                    }
+                }
             }
         },
         created() {
@@ -206,8 +237,7 @@
                 }
             },
             'calendar.selectedDate': {
-                handler(val) {
-                    this.input.selectedDate = val || '';
+                handler() {
                     this.markChooseDays();
                 }
             },
@@ -218,59 +248,15 @@
                 }
             },
             'calendar.dateRange.start.date': {
-                handler(val) {
-                    this.input.dateRange.start.date = val || '';
+                handler() {
                     this.markChooseDays();
                 }
             },
             'calendar.dateRange.end.date': {
-                handler(val) {
-                    this.input.dateRange.end.date = val || '';
+                handler() {
                     this.markChooseDays();
                 }
             },
-            'input.selectedDate': {
-                handler(val) {
-                    this.input.selectedDate = val = this.helpCalendar.mask(val);
-                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.selectedDate = val;
-                        this.markChooseDays();
-                    }
-
-                    // Typeable
-                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
-                        this.ChooseDate(val);
-                    }
-                }
-            },
-            'input.dateRange.start.date': {
-                handler(val) {
-                    this.input.dateRange.start.date = val = this.helpCalendar.mask(val);
-                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.dateRange.start.date = val;
-                        this.markChooseDays();
-                    }
-
-                    // Typeable
-                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
-                        this.ChooseDate(val);
-                    }
-                }
-            },
-            'input.dateRange.end.date': {
-                handler(val) {
-                    this.input.dateRange.end.date = val = this.helpCalendar.mask(val);
-                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.dateRange.end.date = val;
-                        this.markChooseDays();
-                    }
-
-                    // Typeable
-                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
-                        this.ChooseDate(val);
-                    }
-                }
-            }
         },
         methods: {
             initCalendar() {
@@ -902,7 +888,7 @@
              * @param index
              */
             addToSelectedDates() {
-                if(this.helpCalendar.checkValidDate(this.calendar.selectedDatesItem)) {
+                if (this.helpCalendar.checkValidDate(this.calendar.selectedDatesItem)) {
                     let date = Object.assign({}, this.defaultDateFormat);
                     date.date = this.calendar.selectedDatesItem;
                     this.calendar.selectedDates.push(date);

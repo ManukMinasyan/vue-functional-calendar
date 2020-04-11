@@ -8,10 +8,10 @@
                             :hiddenElements="['']"
                             :showWeekNumbers="true"
                             :is-date-picker="false"
-                            :is-multiple-date-picker="true"
-                            :is-date-range="false"
+                            :is-multiple-date-picker="false"
+                            :is-date-range="true"
                             :min-sel-days="3"
-                            :is-dark="true"
+                            :is-dark="false"
                             :date-format="'yyyy-mm-dd'"
                             :is-multiple="true"
                             :calendars-count="2"
@@ -22,6 +22,34 @@
                             :marked-dates="markedDates"
                             :is-auto-closeable="false"
                             :is-modal="true"
+                            :change-year-step="5"
+                            :is-typeable="true"
+                            @choseDay="choseDay"
+                            title-position="left"
+                            arrows-position="right"
+        >
+        </FunctionalCalendar>
+
+        <FunctionalCalendar class="demo-calendar 2"
+                            ref="Calendar"
+                            :sundayStart="true"
+                            :hiddenElements="['']"
+                            :showWeekNumbers="true"
+                            :is-date-picker="false"
+                            :is-multiple-date-picker="true"
+                            :is-date-range="false"
+                            :min-sel-days="3"
+                            :is-dark="false"
+                            :date-format="'yyyy-mm-dd'"
+                            :is-multiple="true"
+                            :calendars-count="2"
+                            :isSeparately="true"
+                            :with-time-picker="false"
+                            :change-month-function="true"
+                            :change-year-function="true"
+                            :marked-dates="markedDates"
+                            :is-auto-closeable="false"
+                            :is-modal="false"
                             :change-year-step="5"
                             :is-typeable="true"
                             @choseDay="choseDay"
@@ -57,8 +85,7 @@
             </template>
         </functional-calendar>
 
-<!--        <button @click="markedDates2.push('22/3/2020')">Add date</button>-->
-
+        <!--        <button @click="markedDates2.push('22/3/2020')">Add date</button>-->
 
 
         <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>
@@ -225,6 +252,7 @@
         width: 400px;
         margin: 100px;
     }
+
     .demo-custom-calendar {
         width: 800px;
         margin: 100px;
@@ -236,6 +264,7 @@
                         div {
                             &.vfc-content {
                                 margin: 0;
+
                                 .vfc-week {
                                     display: grid;
                                     grid-template-columns: repeat(7, 1fr);
