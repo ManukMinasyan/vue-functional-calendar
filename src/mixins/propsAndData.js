@@ -151,6 +151,7 @@ export const propsAndData = {
                 selectedDateTime: false,
                 selectedHour: '00',
                 selectedMinute: '00',
+                selectedDatesItem: '',
                 selectedDates: [],
                 dateRange: {
                     start: {

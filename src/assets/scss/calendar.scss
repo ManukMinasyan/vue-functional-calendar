@@ -32,6 +32,99 @@ input.vfc-single-input {
   border-radius: 0 10px 10px 0;
 }
 
+.vfc-tags-input-root {
+  .vfc-tags-input-wrapper-default {
+    width: 295px;
+    padding: 0.5em 0.25em;
+    min-height: 15px;
+    background: $white;
+    border: 1px solid #dbdbdb;
+    border-radius: 0.25em;
+
+    &.vfc-tags-input {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      input {
+        flex: 1;
+        background: transparent;
+        border: none;
+
+        &[type="text"] {
+          color: #495057;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      span {
+        margin-right: 0.3em;
+        margin-bottom: 0.3em;
+        padding-right: 0.75em;
+        padding-left: 0.6em;
+        border-radius: 10em;
+      }
+
+
+      /* Tag badge styles */
+      .vfc-tags-input-badge {
+        width: 85px;
+        background-color: #F0F1F2;
+        position: relative;
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .vfc-tags-input-remove {
+          cursor: pointer;
+          position: absolute;
+          display: inline-block;
+          right: 0.3em;
+          top: 0.3em;
+          padding: 0.5em;
+          overflow: hidden;
+
+          &:before, &:after {
+            content: "";
+            position: absolute;
+            width: 75%;
+            left: 0.15em;
+            background: $lightred;
+            height: 2px;
+            margin-top: -1px;
+          }
+
+          &:after {
+            content: "";
+            position: absolute;
+            width: 75%;
+            left: 0.15em;
+            background: $lightred;
+            height: 2px;
+            margin-top: -1px;
+            transform: rotate(-45deg);
+          }
+
+          &:before {
+            transform: rotate(45deg);
+          }
+        }
+      }
+    }
+  }
+}
+
 .vfc-dark {
   &.vfc-multiple-input {
     input {
@@ -43,6 +136,18 @@ input.vfc-single-input {
   .vfc-single-input {
     border-color: $astronaut;
     background-color: $mirage
+  }
+
+  &.vfc-tags-input-root {
+    .vfc-tags-input-wrapper-default {
+      background-color: $mirage;
+      border-color: $astronaut;
+      &.vfc-tags-input {
+        .vfc-tags-input-badge {
+          background-color: $white;
+        }
+      }
+    }
   }
 }
 

@@ -23,6 +23,28 @@
                    :maxlength="fConfigs.dateFormat.length"
                    @click="showCalendar = !showCalendar">
         </div>
+        <div v-else-if="fConfigs.isModal && fConfigs.isMultipleDatePicker" class="vfc-tags-input-root" :class="{'vfc-dark': fConfigs.isDark}">
+            <div class="vfc-tags-input-wrapper-default vfc-tags-input">
+                <span
+                        class="vfc-tags-input-badge vfc-tags-input-badge-pill vfc-tags-input-badge-selected-default"
+                        v-for="(date, index) in calendar.selectedDates"
+                        :key="index"
+                >
+                  <span v-html="date.date"></span>
+
+                  <a href="#" class="vfc-tags-input-remove" @click.prevent="removeFromSelectedDates(index)"></a>
+                </span>
+
+                <input
+                        v-model="calendar.selectedDatesItem"
+                        @keydown.enter.prevent="addToSelectedDates"
+                        type="text"
+                        ref="taginput"
+                        placeholder="Add a date"
+                        @click.prevent="showCalendar = !showCalendar"
+                >
+            </div>
+        </div>
 
         <div class="vfc-main-container" v-show="showCalendar"
              ref="mainContainer"
@@ -874,6 +896,22 @@
                     });
                 }
                 return years;
+            },
+            /**
+             * Remove selected date
+             * @param index
+             */
+            addToSelectedDates() {
+                if(this.helpCalendar.checkValidDate(this.calendar.selectedDatesItem)) {
+                    let date = Object.assign({}, this.defaultDateFormat);
+                    date.date = this.calendar.selectedDatesItem;
+                    this.calendar.selectedDates.push(date);
+                    this.calendar.selectedDatesItem = '';
+                    this.markChooseDays()
+                }
+            },
+            removeFromSelectedDates(index) {
+                this.calendar.selectedDates.splice(index, 1)
             },
             getClassNames(day) {
                 let classes = [];
