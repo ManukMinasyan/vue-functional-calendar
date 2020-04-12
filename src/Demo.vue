@@ -22,7 +22,7 @@
                             :change-year-function="true"
                             :marked-dates="markedDates"
                             :is-auto-closeable="false"
-                            :is-modal="true"
+                            :is-modal="false"
                             :change-year-step="5"
                             :is-typeable="true"
                             @choseDay="choseDay"

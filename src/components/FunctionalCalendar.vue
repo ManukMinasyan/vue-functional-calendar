@@ -48,7 +48,7 @@
                 <div class="vfc-calendars-container">
                     <div class="vfc-calendars" ref="calendars">
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars"
-                             :key="calendarItem.key + 10">
+                             :key="calendarItem.key">
                             <month-year-picker ref="monthContainer"
                                                :class="'vfc-' + fConfigs.titlePosition"
                                                v-show="showMonthPicker === key+1 || showYearPicker === key+1"
@@ -144,11 +144,11 @@
 </template>
 
 <script>
-    import helpCalendarClass from '@/assets/js/helpCalendar'
-    import {propsAndData} from "@/mixins/propsAndData";
-    import TimePicker from "@/components/TimePicker";
-    import MonthYearPicker from "@/components/MonthYearPicker";
-    import {hElContains, hUniqueID} from "@/utils/helpers";
+    import helpCalendarClass from '../assets/js/helpCalendar'
+    import {propsAndData} from "../mixins/propsAndData";
+    import TimePicker from "../components/TimePicker";
+    import MonthYearPicker from "../components/MonthYearPicker";
+    import {hElContains, hUniqueID} from "../utils/helpers";
 
 
     export default {
@@ -267,7 +267,6 @@
         },
         methods: {
             initCalendar() {
-
                 this.setCalendarData();
                 this.listRendering();
                 this.markChooseDays();
@@ -288,7 +287,7 @@
                     date = new Date(date.getFullYear(), date.getMonth() + 1);
 
                     let calendar = {
-                        key: i + 1,
+                        key: i + hUniqueID(),
                         date: date,
                         dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
                         month: this.fConfigs.monthNames[date.getMonth()],
@@ -779,6 +778,11 @@
                 currentCalendar.key += hUniqueID();
                 this.updateCalendar();
 
+                if (!this.fConfigs.isSeparately) {
+                    this.calendar.currentDate = currentCalendar.date;
+                    this.initCalendar();
+                }
+
                 this.$emit('changedMonth', currentCalendar.date);
             },
             /**
@@ -1156,5 +1160,5 @@
 </script>
 
 <style lang="scss">
-    @import "~@/assets/scss/calendar.scss";
+    @import "../assets/scss/calendar.scss";
 </style>
