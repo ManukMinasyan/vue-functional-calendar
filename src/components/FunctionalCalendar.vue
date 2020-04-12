@@ -779,6 +779,11 @@
                 currentCalendar.key += hUniqueID();
                 this.updateCalendar();
 
+                if (!this.fConfigs.isSeparately) {
+                    this.calendar.currentDate = currentCalendar.date;
+                    this.initCalendar();
+                }
+
                 this.$emit('changedMonth', currentCalendar.date);
             },
             /**
