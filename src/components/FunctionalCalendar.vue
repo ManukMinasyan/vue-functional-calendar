@@ -1,37 +1,54 @@
 <template>
-    <div :class="{'vfc-styles-conditional-class': fConfigs.applyStylesheet}">
+    <div class="vfc-popover-container" ref="popoverElement" tabindex="0">
         <div class="vfc-multiple-input" :class="{'vfc-dark': fConfigs.isDark}"
              v-if="fConfigs.isModal && fConfigs.isDateRange">
             <input type="text" title="Start Date"
-                   v-model="input.dateRange.start.date"
+                   v-model="dateRangeSelectedStartDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
-                   :maxlength="fConfigs.dateFormat.length"
-                   @click="showCalendar = !showCalendar">
+                   :maxlength="fConfigs.dateFormat.length">
             <input type="text" title="End Date"
-                   v-model="input.dateRange.end.date"
+                   v-model="dateRangeSelectedEndDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
-                   :maxlength="fConfigs.dateFormat.length"
-                   @click="showCalendar = !showCalendar">
+                   :maxlength="fConfigs.dateFormat.length">
         </div>
         <div :class="{'vfc-dark': fConfigs.isDark}" v-else-if="fConfigs.isModal && fConfigs.isDatePicker">
             <input class="vfc-single-input" type="text" title="Date"
-                   v-model="input.selectedDate"
+                   v-model="singleSelectedDate"
                    :placeholder="fConfigs.placeholder"
                    :readonly="!fConfigs.isTypeable"
-                   :maxlength="fConfigs.dateFormat.length"
-                   @click="showCalendar = !showCalendar">
+                   :maxlength="fConfigs.dateFormat.length">
+        </div>
+        <div v-else-if="fConfigs.isModal && fConfigs.isMultipleDatePicker" class="vfc-tags-input-root"
+             :class="{'vfc-dark': fConfigs.isDark}">
+            <div class="vfc-tags-input-wrapper-default vfc-tags-input">
+                <span
+                        class="vfc-tags-input-badge vfc-tags-input-badge-pill vfc-tags-input-badge-selected-default"
+                        v-for="(date, index) in calendar.selectedDates"
+                        :key="index"
+                >
+                  <span v-html="date.date"></span>
+                  <a href="#" class="vfc-tags-input-remove" @click.prevent="removeFromSelectedDates(index)"></a>
+                </span>
+
+                <input v-model="calendar.selectedDatesItem"
+                       @keydown.enter.prevent="addToSelectedDates"
+                       type="text"
+                       placeholder="Add a date"
+                >
+            </div>
         </div>
 
         <div class="vfc-main-container" v-show="showCalendar"
              ref="mainContainer"
-             :class="{'vfc-modal': fConfigs.isModal && (fConfigs.isDatePicker || fConfigs.isDateRange), 'vfc-dark': fConfigs.isDark}">
+             :class="{'vfc-modal': fConfigs.isModal && (fConfigs.isDatePicker || fConfigs.isDateRange || fConfigs.isMultipleDatePicker), 'vfc-dark': fConfigs.isDark}">
             <time-picker v-if="showTimePicker"></time-picker>
             <template v-else>
                 <div class="vfc-calendars-container">
                     <div class="vfc-calendars" ref="calendars">
-                        <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars" :key="calendarItem.key">
+                        <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars"
+                             :key="calendarItem.key + 10">
                             <month-year-picker ref="monthContainer"
                                                :class="'vfc-' + fConfigs.titlePosition"
                                                v-show="showMonthPicker === key+1 || showYearPicker === key+1"
@@ -67,7 +84,8 @@
                                         :name='getTransition_()' appear>
                                     <section class="vfc-dayNames">
                                         <span v-if="fConfigs.showWeekNumbers"></span>
-                                        <span v-for="(dayName, key) in fConfigs.dayNames" :key="key" class="vfc-day">
+                                        <span v-for="(dayName, dayKey) in fConfigs.dayNames" :key="key + dayKey + 1"
+                                              class="vfc-day">
                                             <template v-if="checkHiddenElement('dayNames')">
                                                 {{ dayName }}
                                             </template>
@@ -79,14 +97,14 @@
                                         tag='div'
                                         :name='getTransition_()' appear>
                                     <div class="vfc-week" v-for="(week, week_key) in calendarItem.weeks"
-                                         :key="week_key+0">
+                                         :key="key + week_key + 1">
                                         <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
                                             <span class="vfc-span-day">
                                                 {{ week.number }}
                                             </span>
                                         </div>
                                         <div class="vfc-day" ref="day" v-for="(day, day_key) in week.days"
-                                             :key="day_key">
+                                             :key="key + week_key + day_key + 1">
                                             <div v-if="(day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays"
                                                  class="vfc-base-start">
                                             </div>
@@ -94,7 +112,6 @@
                                                  class="vfc-base-end">
                                             </div>
                                             <span v-if="!day.hideLeftAndRightDays"
-                                                  data-date="" :key="day_key"
                                                   :class="getClassNames(day)"
                                                   @click="clickDay(day)"
                                                   @mouseover="dayMouseOver(week_key, day.date)">
@@ -102,6 +119,18 @@
                                                     {{ day.day }}
                                                 </slot>
                                             </span>
+                                        </div>
+                                    </div>
+                                    <div class="vfc-week" v-if="calendarItem.weeks.length < 6"
+                                         v-for="moreWeekKey in (6-calendarItem.weeks.length)"
+                                         :key="key + moreWeekKey + 'moreWeek'">
+                                        <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
+                                            <span class="vfc-span-day">
+                                            </span>
+                                        </div>
+                                        <div class="vfc-day" ref="day" v-for="i in 7"
+                                             :key="key + moreWeekKey + i">
+                                            <span class="vfc-span-day">&nbsp;</span>
                                         </div>
                                     </div>
                                 </transition-group>
@@ -115,10 +144,11 @@
 </template>
 
 <script>
-    import helpCalendarClass from '../assets/js/helpCalendar'
-    import {propsAndData} from "../mixins/propsAndData";
-    import TimePicker from "./TimePicker";
-    import MonthYearPicker from "./MonthYearPicker";
+    import helpCalendarClass from '@/assets/js/helpCalendar'
+    import {propsAndData} from "@/mixins/propsAndData";
+    import TimePicker from "@/components/TimePicker";
+    import MonthYearPicker from "@/components/MonthYearPicker";
+    import {hElContains, hUniqueID} from "@/utils/helpers";
 
 
     export default {
@@ -133,6 +163,39 @@
                     this.fConfigs.dateFormat,
                     this.fConfigs.dayNames
                 );
+            },
+            singleSelectedDate: {
+                get() {
+                    return this.calendar.selectedDate ? this.calendar.selectedDate : ''
+                },
+                set(newValue) {
+                    newValue = this.helpCalendar.mask(newValue);
+                    if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+                        this.calendar.selectedDate = newValue;
+                    }
+                }
+            },
+            dateRangeSelectedStartDate: {
+                get() {
+                    return this.calendar.dateRange.start.date ? this.calendar.dateRange.start.date : ''
+                },
+                set(newValue) {
+                    newValue = this.helpCalendar.mask(newValue);
+                    if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+                        this.calendar.dateRange.start.date = newValue;
+                    }
+                }
+            },
+            dateRangeSelectedEndDate: {
+                get() {
+                    return this.calendar.dateRange.end.date ? this.calendar.dateRange.end.date : ''
+                },
+                set(newValue) {
+                    newValue = this.helpCalendar.mask(newValue);
+                    if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+                        this.calendar.dateRange.end.date = newValue;
+                    }
+                }
             }
         },
         created() {
@@ -140,13 +203,11 @@
             this.initCalendar();
         },
         mounted() {
-            if (this.fConfigs.isModal && !this.fConfigs.withTimePicker) {
-                // Event
-                window.addEventListener('click', this.canCalendarClosed);
-            }
-
+            this.popoverElement = this.$refs.popoverElement;
+            // Event
+            this.popoverElement.addEventListener('focusin', this.onFocusIn);
+            this.popoverElement.addEventListener('focusout', this.onFocusOut);
             window.addEventListener('click', this.hideMonthYearPicker);
-            window.addEventListener('resize', this.setCalendarStyles);
 
             // Reacts to external selected dates
             this.$watch('value', function (value) {
@@ -165,12 +226,11 @@
                     this.$emit('closed');
             }, {immediate: true, deep: true});
 
-            this.setCalendarStyles();
         },
         beforeDestroy: function () {
-            window.removeEventListener('click', this.canCalendarClosed);
+            window.removeEventListener('focusin', this.onFocusIn);
+            window.removeEventListener('focusout', this.onFocusOut);
             window.removeEventListener('click', this.hideMonthYearPicker);
-            window.removeEventListener('resize', this.setCalendarStyles);
         },
         watch: {
             'fConfigs.markedDates': {
@@ -184,8 +244,7 @@
                 }
             },
             'calendar.selectedDate': {
-                handler(val) {
-                    this.input.selectedDate = val || '';
+                handler() {
                     this.markChooseDays();
                 }
             },
@@ -196,59 +255,15 @@
                 }
             },
             'calendar.dateRange.start.date': {
-                handler(val) {
-                    this.input.dateRange.start.date = val || '';
+                handler() {
                     this.markChooseDays();
                 }
             },
             'calendar.dateRange.end.date': {
-                handler(val) {
-                    this.input.dateRange.end.date = val || '';
+                handler() {
                     this.markChooseDays();
                 }
             },
-            'input.selectedDate': {
-                handler(val) {
-                    this.input.selectedDate = val = this.helpCalendar.mask(val);
-                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.selectedDate = val;
-                        this.markChooseDays();
-                    }
-
-                    // Typeable
-                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
-                        this.ChooseDate(val);
-                    }
-                }
-            },
-            'input.dateRange.start.date': {
-                handler(val) {
-                    this.input.dateRange.start.date = val = this.helpCalendar.mask(val);
-                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.dateRange.start.date = val;
-                        this.markChooseDays();
-                    }
-
-                    // Typeable
-                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
-                        this.ChooseDate(val);
-                    }
-                }
-            },
-            'input.dateRange.end.date': {
-                handler(val) {
-                    this.input.dateRange.end.date = val = this.helpCalendar.mask(val);
-                    if (this.helpCalendar.getDateFromFormat(val).getMonth()) {
-                        this.calendar.dateRange.end.date = val;
-                        this.markChooseDays();
-                    }
-
-                    // Typeable
-                    if (this.helpCalendar.checkValidDate(val) && this.fConfigs.isTypeable) {
-                        this.ChooseDate(val);
-                    }
-                }
-            }
         },
         methods: {
             initCalendar() {
@@ -273,7 +288,7 @@
                     date = new Date(date.getFullYear(), date.getMonth() + 1);
 
                     let calendar = {
-                        key: i,
+                        key: i + 1,
                         date: date,
                         dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
                         month: this.fConfigs.monthNames[date.getMonth()],
@@ -733,13 +748,12 @@
                     return false;
 
                 this.transitionPrefix = 'right';
-                this.globalReRenderingKey -= 1;
 
                 calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() - 1);
-                currentCalendar.key -= 1;
+                currentCalendar.key -= hUniqueID();
                 this.updateCalendar();
 
                 if (!this.fConfigs.isSeparately) {
@@ -757,20 +771,13 @@
                     return false;
 
                 this.transitionPrefix = 'left';
-                this.globalReRenderingKey += 1;
 
                 calendarKey = calendarKey !== null ? calendarKey : 0;
 
                 let currentCalendar = this.listCalendars[calendarKey];
                 currentCalendar.date = new Date(currentCalendar.date.getFullYear(), currentCalendar.date.getMonth() + 1);
-                this.$set(currentCalendar, 'key', currentCalendar.key + 1);
+                currentCalendar.key += hUniqueID();
                 this.updateCalendar();
-
-                //TODO: Key Update Functionality
-                // if (!this.fConfigs.isSeparately) {
-                //     this.calendar.currentDate = currentCalendar.date;
-                //     this.initCalendar();
-                // }
 
                 this.$emit('changedMonth', currentCalendar.date);
             },
@@ -853,6 +860,7 @@
                 let currentCalendar = this.listCalendars[calendarKey];
                 let date = currentCalendar.date;
                 currentCalendar.date = new Date(date.getFullYear(), key + 1, 0);
+                currentCalendar.key += hUniqueID();
                 this.updateCalendar();
             },
             pickYear(year, calendarKey) {
@@ -861,6 +869,7 @@
                 let currentCalendar = this.listCalendars[calendarKey];
                 let date = currentCalendar.date;
                 currentCalendar.date = new Date(year, date.getMonth() + 1, 0);
+                currentCalendar.key += hUniqueID();
                 this.updateCalendar();
             },
             getYearList(date) {
@@ -874,6 +883,27 @@
                     });
                 }
                 return years;
+            },
+            /**
+             * Add date to selectedDates list
+             * @param index
+             */
+            addToSelectedDates() {
+                if (this.helpCalendar.checkValidDate(this.calendar.selectedDatesItem)) {
+                    let date = Object.assign({}, this.defaultDateFormat);
+                    date.date = this.calendar.selectedDatesItem;
+                    this.calendar.selectedDates.push(date);
+                    this.calendar.selectedDatesItem = '';
+                    this.markChooseDays()
+                }
+            },
+            /**
+             * Remove date from selectedDates list
+             * @param index
+             */
+            removeFromSelectedDates(index) {
+                this.calendar.selectedDates.splice(index, 1);
+                this.markChooseDays()
             },
             getClassNames(day) {
                 let classes = [];
@@ -1084,26 +1114,18 @@
                 }
                 return name;
             },
-            setCalendarStyles() {
-                let day = this.$refs.day[0];
-                let container = this.$refs.mainContainer;
-
-                container.style.display = "";
-                let height = container.clientHeight + (day.clientHeight + (day.clientHeight / 2.5));
-                container.style.height = height + "px";
-
-                if (this.fConfigs.isModal) {
-                    container.style.display = "none"
-                }
-            },
             checkHiddenElement(elementName) {
                 return !this.fConfigs.hiddenElements.includes(elementName);
             },
-            canCalendarClosed(e) {
-                if (!this.$el.contains(e.target)) {
-                    return this.showCalendar = false
+            onFocusIn() {
+                if (this.fConfigs.isModal) {
+                    this.showCalendar = true
                 }
-                return true;
+            },
+            onFocusOut(e) {
+                if (this.fConfigs.isModal && !hElContains(this.popoverElement, e.relatedTarget)) {
+                    this.showCalendar = false
+                }
             },
             isDisabledDate(date) {
                 let today = new Date();
@@ -1134,7 +1156,5 @@
 </script>
 
 <style lang="scss">
-    .vfc-styles-conditional-class {
-        @import "../assets/scss/calendar.scss";
-    }
+    @import "~@/assets/scss/calendar.scss";
 </style>

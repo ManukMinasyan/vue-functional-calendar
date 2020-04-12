@@ -63,10 +63,6 @@ export const propsAndData = {
             type: Number,
             default: () => 12
         },
-        applyStylesheet: {
-            type: Boolean,
-            default: () => undefined
-        },
         newCurrentDate: {
             type: Date
         },
@@ -137,13 +133,13 @@ export const propsAndData = {
     },
     data() {
         return {
+            popoverElement: '',
             defaultDateFormat: {
                 date: false,
                 dateTime: false,
                 hour: '00',
                 minute: '00',
             },
-            globalReRenderingKey: 1,
             hoveredObject: null,
             calendar: {
                 currentDate: new Date(),
@@ -151,6 +147,7 @@ export const propsAndData = {
                 selectedDateTime: false,
                 selectedHour: '00',
                 selectedMinute: '00',
+                selectedDatesItem: '',
                 selectedDates: [],
                 dateRange: {
                     start: {
@@ -164,23 +161,6 @@ export const propsAndData = {
                         dateTime: false,
                         hour: '00',
                         minute: '00',
-                    }
-                }
-            },
-            input: {
-                selectedDate: '',
-                dateRange: {
-                    start: {
-                        date: '',
-                        dateTime: '',
-                        hour: '',
-                        minute: ''
-                    },
-                    end: {
-                        date: '',
-                        dateTime: '',
-                        hour: '',
-                        minute: ''
                     }
                 }
             },
@@ -211,8 +191,6 @@ export const propsAndData = {
                 changeMonthFunction: false,
                 changeYearFunction: false,
                 changeYearStep: 12,
-
-                applyStylesheet: true,
 
                 markedDates: [],
                 markedDateRange: {

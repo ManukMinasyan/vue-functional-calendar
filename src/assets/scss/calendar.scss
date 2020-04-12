@@ -1,12 +1,9 @@
 @import './variables.scss';
 
-
-html, body {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  height: 100%
+.vfc-popover-container {
+  &:focus {
+    outline: none;
+  }
 }
 
 input.vfc-single-input, .vfc-multiple-input input {
@@ -14,8 +11,8 @@ input.vfc-single-input, .vfc-multiple-input input {
   transition: width 200ms;
   padding: 7px;
   width: 120px;
-  color: #aaa;
-  border: 1px solid #eeeeee;
+  color: $silver_chalice;
+  border: 1px solid $gallery;
   text-align: center;
   outline: none;
 }
@@ -32,6 +29,99 @@ input.vfc-single-input {
   border-radius: 0 10px 10px 0;
 }
 
+.vfc-tags-input-root {
+  .vfc-tags-input-wrapper-default {
+    width: 295px;
+    padding: 0.5em 0.25em;
+    min-height: 15px;
+    background: $white;
+    border: 1px solid $alto;
+    border-radius: 10px;
+
+    &.vfc-tags-input {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      input {
+        flex: 1;
+        background: transparent;
+        border: none;
+
+        &[type="text"] {
+          color: $trout;
+        }
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      span {
+        margin-right: 0.3em;
+        margin-bottom: 0.3em;
+        padding-right: 0.75em;
+        padding-left: 0.6em;
+        border-radius: 10em;
+      }
+
+
+      /* Tag badge styles */
+      .vfc-tags-input-badge {
+        width: 85px;
+        background-color: $porcelain;
+        position: relative;
+        display: inline-block;
+        padding: 0.25em 0.4em;
+        font-size: 75%;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+        border-radius: 0.25em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .vfc-tags-input-remove {
+          cursor: pointer;
+          position: absolute;
+          display: inline-block;
+          right: 0.3em;
+          top: 0.3em;
+          padding: 0.5em;
+          overflow: hidden;
+
+          &:before, &:after {
+            content: "";
+            position: absolute;
+            width: 75%;
+            left: 0.15em;
+            background: $lightred;
+            height: 2px;
+            margin-top: -1px;
+          }
+
+          &:after {
+            content: "";
+            position: absolute;
+            width: 75%;
+            left: 0.15em;
+            background: $lightred;
+            height: 2px;
+            margin-top: -1px;
+            transform: rotate(-45deg);
+          }
+
+          &:before {
+            transform: rotate(45deg);
+          }
+        }
+      }
+    }
+  }
+}
+
 .vfc-dark {
   &.vfc-multiple-input {
     input {
@@ -43,6 +133,18 @@ input.vfc-single-input {
   .vfc-single-input {
     border-color: $astronaut;
     background-color: $mirage
+  }
+
+  &.vfc-tags-input-root {
+    .vfc-tags-input-wrapper-default {
+      background-color: $mirage;
+      border-color: $astronaut;
+      &.vfc-tags-input {
+        .vfc-tags-input-badge {
+          background-color: $white;
+        }
+      }
+    }
   }
 }
 
@@ -90,11 +192,11 @@ input.vfc-single-input {
       }
 
       &::-webkit-scrollbar-track {
-        background: #efefef;
+        background: $gallery;
       }
 
       &::-webkit-scrollbar-thumb {
-        background: #ccc;
+        background: $silver;
       }
     }
 
@@ -182,7 +284,7 @@ input.vfc-single-input {
     }
 
     .vfc-modal-append {
-      color: #7d7d7d;
+      color: $boulder;
       font-weight: normal;
       display: flex;
       justify-content: space-between;
@@ -461,7 +563,6 @@ input.vfc-single-input {
           }
         }
 
-
         div {
           &.vfc-content {
             margin: 0 20px;
@@ -719,6 +820,14 @@ input.vfc-single-input {
             }
           }
         }
+
+        &:last-child {
+          div {
+            &.vfc-content {
+              margin-bottom: 20px;
+            }
+          }
+        }
       }
     }
   }
@@ -861,7 +970,7 @@ input.vfc-single-input {
 
                     &.vfc-hover:hover, &.vfc-hovered {
                       z-index: 1;
-                      background-color: rgba(76, 76, 76, 0.3);
+                      background-color: $charade;
                     }
                   }
                 }
