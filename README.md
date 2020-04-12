@@ -161,8 +161,8 @@ ___
 | showWeekNumbers                    | Boolean         | false      | true | Display week numbers.               |
 | transition                    | Boolean         | true      | false | Calendar animations               |
 | hiddenElements                   | Array         | []       | ['dayNames', 'navigationArrows', 'leftAndRightDays', 'month']        | Hide calendar elements                       |
-| titlePosition                   | String         | center | left, right, center |  Title position               |
-| arrowsPosition                   | String         | space-between | left, right, space-between |  Title position               |
+| titlePosition                   | String         | center | left, right, center |  Set title position               |
+| arrowsPosition                   | String         | space-between | left, right, space-between |  Set arrows position               |
 | isDark                   | Boolean         | false       | true        | Dark theme                    |
 ___
 
