@@ -16,7 +16,7 @@
                             :date-format="'yyyy-mm-dd'"
                             :is-multiple="true"
                             :calendars-count="2"
-                            :isSeparately="false"
+                            :isSeparately="true"
                             :with-time-picker="false"
                             :change-month-function="true"
                             :change-year-function="true"

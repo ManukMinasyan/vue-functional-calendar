@@ -48,7 +48,7 @@
                 <div class="vfc-calendars-container">
                     <div class="vfc-calendars" ref="calendars">
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars"
-                             :key="calendarItem.key + 10">
+                             :key="calendarItem.key">
                             <month-year-picker ref="monthContainer"
                                                :class="'vfc-' + fConfigs.titlePosition"
                                                v-show="showMonthPicker === key+1 || showYearPicker === key+1"
@@ -267,7 +267,6 @@
         },
         methods: {
             initCalendar() {
-
                 this.setCalendarData();
                 this.listRendering();
                 this.markChooseDays();
@@ -288,7 +287,7 @@
                     date = new Date(date.getFullYear(), date.getMonth() + 1);
 
                     let calendar = {
-                        key: i + 1,
+                        key: i + hUniqueID(),
                         date: date,
                         dateTop: `${this.fConfigs.monthNames[date.getMonth()]} ${date.getFullYear()}`,
                         month: this.fConfigs.monthNames[date.getMonth()],
