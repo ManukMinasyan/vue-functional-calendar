@@ -1,5 +1,11 @@
 @import './variables.scss';
 
+.vfc-popover-container {
+  &:focus {
+    outline: none;
+  }
+}
+
 input.vfc-single-input, .vfc-multiple-input input {
   font-size: inherit;
   transition: width 200ms;
@@ -557,7 +563,6 @@ input.vfc-single-input {
           }
         }
 
-
         div {
           &.vfc-content {
             margin: 0 20px;
@@ -812,6 +817,14 @@ input.vfc-single-input {
               opacity: 0;
               -webkit-transform: translateY(-20px);
               transform: translateY(-20px)
+            }
+          }
+        }
+
+        &:last-child {
+          div {
+            &.vfc-content {
+              margin-bottom: 20px;
             }
           }
         }
