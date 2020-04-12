@@ -144,11 +144,11 @@
 </template>
 
 <script>
-    import helpCalendarClass from '@/assets/js/helpCalendar'
-    import {propsAndData} from "@/mixins/propsAndData";
-    import TimePicker from "@/components/TimePicker";
-    import MonthYearPicker from "@/components/MonthYearPicker";
-    import {hElContains, hUniqueID} from "@/utils/helpers";
+    import helpCalendarClass from '../assets/js/helpCalendar'
+    import {propsAndData} from "../mixins/propsAndData";
+    import TimePicker from "../components/TimePicker";
+    import MonthYearPicker from "../components/MonthYearPicker";
+    import {hElContains, hUniqueID} from "../utils/helpers";
 
 
     export default {
@@ -1156,5 +1156,5 @@
 </script>
 
 <style lang="scss">
-    @import "~@/assets/scss/calendar.scss";
+    @import "../assets/scss/calendar.scss";
 </style>

@@ -151,7 +151,6 @@ ___
 | changeMonthFunction                   | Boolean         | false       | true        | Enable changed month with list, function                   |
 | changeYearFunction                   | Boolean         | false       | true        | Enable changed year with list, function                   |
 | changeYearStep                   | Number         | 12       | 6        | Change year list step count                   |
-| applyStylesheet                   | Boolean         | true       | false        | Disable default styles                   |
 | markedDates                   | Array         | []       | ['10/12/2020', '12/12/2020'] **OR** [{date: '10/1/2020', class: 'marked-class'},{date: '12/1/2020', class: 'marked-class-2'}] | Marked dates array                   |
 | markedDateRange                   | Object         | {start: false, end: false}       | {start: '12/12/2020', end: '20/12/2020'} **OR** [{start: '12/12/2020', end: '20/12/2020'}, {start: '24/12/2020', end: '28/12/2020'}] | Marked date ranges                  |
 | disabledDayNames                   | Array         | []     | ['Su','We']        | Disabled Days Of Week                   |
