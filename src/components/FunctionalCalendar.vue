@@ -2,23 +2,28 @@
     <div class="vfc-popover-container" ref="popoverElement" tabindex="0">
         <div class="vfc-multiple-input" :class="{'vfc-dark': fConfigs.isDark}"
              v-if="fConfigs.isModal && fConfigs.isDateRange">
-            <input type="text" title="Start Date"
-                   v-model="dateRangeSelectedStartDate"
-                   :placeholder="fConfigs.placeholder"
-                   :readonly="!fConfigs.isTypeable"
-                   :maxlength="fConfigs.dateFormat.length">
-            <input type="text" title="End Date"
-                   v-model="dateRangeSelectedEndDate"
-                   :placeholder="fConfigs.placeholder"
-                   :readonly="!fConfigs.isTypeable"
-                   :maxlength="fConfigs.dateFormat.length">
+            <slot name="dateRangeInputs" :startDate="dateRangeSelectedStartDate" :endDate="dateRangeSelectedEndDate"
+                  :isTypeable="fConfigs.isTypeable">
+                <input type="text" title="Start Date"
+                       v-model="dateRangeSelectedStartDate"
+                       :placeholder="fConfigs.placeholder"
+                       :readonly="!fConfigs.isTypeable"
+                       :maxlength="fConfigs.dateFormat.length">
+                <input type="text" title="End Date"
+                       v-model="dateRangeSelectedEndDate"
+                       :placeholder="fConfigs.placeholder"
+                       :readonly="!fConfigs.isTypeable"
+                       :maxlength="fConfigs.dateFormat.length">
+            </slot>
         </div>
         <div :class="{'vfc-dark': fConfigs.isDark}" v-else-if="fConfigs.isModal && fConfigs.isDatePicker">
-            <input class="vfc-single-input" type="text" title="Date"
-                   v-model="singleSelectedDate"
-                   :placeholder="fConfigs.placeholder"
-                   :readonly="!fConfigs.isTypeable"
-                   :maxlength="fConfigs.dateFormat.length">
+            <slot name="datePickerInput" :selectedDate="singleSelectedDate" :isTypeable="fConfigs.isTypeable">
+                <input class="vfc-single-input" type="text" title="Date"
+                       v-model="singleSelectedDate"
+                       :placeholder="fConfigs.placeholder"
+                       :readonly="!fConfigs.isTypeable"
+                       :maxlength="fConfigs.dateFormat.length">
+            </slot>
         </div>
         <div v-else-if="fConfigs.isModal && fConfigs.isMultipleDatePicker" class="vfc-tags-input-root"
              :class="{'vfc-dark': fConfigs.isDark}">
