@@ -7,6 +7,7 @@ module.exports = {
         extract: false,
     },
     outputDir: 'dist',
+    filenameHashing: false,
     configureWebpack: {
         resolve: {
             alias: {

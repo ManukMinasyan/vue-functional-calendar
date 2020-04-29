@@ -6,7 +6,7 @@
   },
   "name": "vue-functional-calendar",
   "description": "Lightweight, high-performance calendar component based on Vue.js",
-  "version": "2.8.70",
+  "version": "2.8.71",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -48,9 +48,8 @@
   "main": "./index.js",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --target lib --dest dist --name FunctionalCalendar src/components/FunctionalCalendar.vue",
     "test": "npm run build",
-    "build-bundle": "vue-cli-service build --target lib --name vueFunctionalCalendar ./index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
