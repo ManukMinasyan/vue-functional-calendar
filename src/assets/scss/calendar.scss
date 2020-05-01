@@ -139,6 +139,7 @@ input.vfc-single-input {
     .vfc-tags-input-wrapper-default {
       background-color: $mirage;
       border-color: $astronaut;
+
       &.vfc-tags-input {
         .vfc-tags-input-badge {
           background-color: $white;
@@ -568,43 +569,41 @@ input.vfc-single-input {
             margin: 0 20px;
             z-index: 100;
 
-            h2 {
-              &.vfc-top-date {
-                margin: 25px;
-                font-size: 18px;
-                font-weight: normal;
 
-                &.vfc-left {
-                  text-align: left;
+            .vfc-top-date {
+              margin: 25px;
+              font-size: 18px;
+              font-weight: normal;
+
+              &.vfc-left {
+                text-align: left;
+              }
+
+              &.vfc-right {
+                text-align: right;
+              }
+
+              &.vfc-center {
+                text-align: center;
+              }
+
+
+              a {
+                cursor: default;
+                text-decoration: unset;
+                margin: 0 2px;
+                color: $black;
+
+                &.vfc-cursor-pointer {
+                  cursor: pointer;
                 }
 
-                &.vfc-right {
-                  text-align: right;
-                }
+                &.vfc-underline {
+                  cursor: pointer;
+                  text-decoration: underline $royalblue;
 
-                &.vfc-center {
-                  text-align: center;
-                }
-
-
-
-                a {
-                  cursor: default;
-                  text-decoration: unset;
-                  margin: 0 2px;
-                  color: $black;
-
-                  &.vfc-cursor-pointer {
-                    cursor: pointer;
-                  }
-
-                  &.vfc-underline {
-                    cursor: pointer;
-                    text-decoration: underline $royalblue;
-
-                    &.vfc-underline-active {
-                      text-decoration-color: $black;
-                    }
+                  &.vfc-underline-active {
+                    text-decoration-color: $black;
                   }
                 }
               }
@@ -894,17 +893,15 @@ input.vfc-single-input {
 
         div {
           &.vfc-content {
-            h2 {
-              &.vfc-top-date {
-                a {
-                  color: $white;
+            .vfc-top-date {
+              a {
+                color: $white;
 
-                  &.vfc-underline {
-                    text-decoration: underline $pictionBlue;
+                &.vfc-underline {
+                  text-decoration: underline $pictionBlue;
 
-                    &.vfc-underline-active {
-                      text-decoration-color: $white;
-                    }
+                  &.vfc-underline-active {
+                    text-decoration-color: $white;
                   }
                 }
               }

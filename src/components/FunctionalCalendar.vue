@@ -51,6 +51,19 @@
             <time-picker v-if="showTimePicker"></time-picker>
             <template v-else>
                 <div class="vfc-calendars-container">
+                    <div class="vfc-separately-navigation-buttons" :class="'vfc-' + fConfigs.arrowsPosition"
+                         v-if="!fConfigs.isSeparately">
+                        <div @click="PreMonth(0)" :class="{'vfc-cursor-pointer': allowPreDate}">
+                            <slot name="navigationArrowLeft">
+                                <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                            </slot>
+                        </div>
+                        <div @click="NextMonth(0)" :class="{'vfc-cursor-pointer': allowNextDate}">
+                            <slot name="navigationArrowRight">
+                                <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
+                            </slot>
+                        </div>
+                    </div>
                     <div class="vfc-calendars" ref="calendars">
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars"
                              :key="calendarItem.key">
@@ -60,21 +73,26 @@
                                                :calendar-key="key">
                             </month-year-picker>
                             <div class="vfc-content">
-                                <div class="vfc-separately-navigation-buttons" :class="'vfc-' + fConfigs.arrowsPosition"
-                                     v-if="(!fConfigs.isSeparately && key === 0) || fConfigs.isSeparately">
+                                <div v-if="fConfigs.isSeparately" class="vfc-separately-navigation-buttons"
+                                     :class="'vfc-' + fConfigs.arrowsPosition">
                                     <div @click="PreMonth(key)" :class="{'vfc-cursor-pointer': allowPreDate}">
-                                        <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                                        <slot name="navigationArrowLeft">
+                                            <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                                        </slot>
                                     </div>
                                     <div @click="NextMonth(key)" :class="{'vfc-cursor-pointer': allowNextDate}">
-                                        <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
+                                        <slot name="navigationArrowRight">
+                                            <div class="vfc-arrow-right"
+                                                 :class="{'vfc-disabled': !allowNextDate}"></div>
+                                        </slot>
                                     </div>
                                 </div>
                                 <transition
                                         tag="div"
                                         :name='getTransition_()' appear>
-                                    <h2 class="vfc-top-date"
-                                        :class="'vfc-' + fConfigs.titlePosition"
-                                        v-if="checkHiddenElement('month')">
+                                    <div class="vfc-top-date"
+                                         :class="'vfc-' + fConfigs.titlePosition"
+                                         v-if="checkHiddenElement('month')">
                                         <a href="#" @click.prevent="openMonthPicker(key+1)"
                                            :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker === key+1}">
                                             {{ calendarItem.month }}</a>
@@ -82,12 +100,12 @@
                                            :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker === key+1}">
                                             {{ calendarItem.year }}
                                         </a>
-                                    </h2>
+                                    </div>
                                 </transition>
                                 <transition
                                         tag="div"
                                         :name='getTransition_()' appear>
-                                    <section class="vfc-dayNames">
+                                    <div class="vfc-dayNames">
                                         <span v-if="fConfigs.showWeekNumbers"></span>
                                         <span v-for="(dayName, dayKey) in fConfigs.dayNames" :key="key + dayKey + 1"
                                               class="vfc-day">
@@ -96,7 +114,7 @@
                                             </template>
                                         </span>
 
-                                    </section>
+                                    </div>
                                 </transition>
                                 <transition-group
                                         tag='div'
@@ -126,7 +144,8 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="vfc-week" v-if="calendarItem.weeks.length < 6 && !fConfigs.isLayoutExpandable"
+                                    <div class="vfc-week"
+                                         v-if="calendarItem.weeks.length < 6 && !fConfigs.isLayoutExpandable"
                                          v-for="moreWeekKey in (6-calendarItem.weeks.length)"
                                          :key="key + moreWeekKey + 'moreWeek'">
                                         <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">

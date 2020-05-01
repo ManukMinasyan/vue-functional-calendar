@@ -4,11 +4,13 @@
         <FunctionalCalendar class="demo-calendar dateRangeInputs"
                             ref="demoCalendar1"
                             v-model="demoCalendar1"
-                            :is-modal="true"
+                            :is-modal="false"
                             :is-date-range="true"
                             :is-multiple="true"
                             :isLayoutExpandable="true"
-                            :clanedars-count="2">
+                            :calendars-count="2"
+                            :isSeparately="false"
+                            arrowsPosition="space-between">
             <template v-slot:dateRangeInputs="props">
                 <label for="check-in">
                     <svg width="21" height="23" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,6 +40,12 @@
                            placeholder="Check Out"
                            :readonly="!props.isTypeable">
                 </label>
+            </template>
+            <template v-slot:navigationArrowLeft>
+                <div>←</div>
+            </template>
+            <template v-slot:navigationArrowRight>
+                <div>→</div>
             </template>
             <template v-slot:footer>
                 <div class="footer">
@@ -298,7 +306,7 @@
     }
 
     .demo-calendar {
-        width: 400px;
+        width: 600px;
         margin: 100px;
 
         &.dateRangeInputs {
