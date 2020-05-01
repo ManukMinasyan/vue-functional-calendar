@@ -1,188 +1,375 @@
 @import './variables.scss';
 
-.vfc-popover-container {
-  &:focus {
+.vfc {
+  &-popover-container {
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &-single-input,
+  &-multiple-input input {
+    font-size: inherit;
+    transition: width 200ms;
+    padding: 7px;
+    width: 120px;
+    color: $silver_chalice;
+    border: 1px solid $gallery;
+    text-align: center;
     outline: none;
   }
-}
 
-input.vfc-single-input, .vfc-multiple-input input {
-  font-size: inherit;
-  transition: width 200ms;
-  padding: 7px;
-  width: 120px;
-  color: $silver_chalice;
-  border: 1px solid $gallery;
-  text-align: center;
-  outline: none;
-}
-
-input.vfc-single-input {
-  border-radius: 10px;
-}
-
-.vfc-multiple-input input:first-child {
-  border-radius: 10px 0 0 10px;
-}
-
-.vfc-multiple-input input:last-child {
-  border-radius: 0 10px 10px 0;
-}
-
-.vfc-tags-input-root {
-  .vfc-tags-input-wrapper-default {
-    width: 295px;
-    padding: 0.5em 0.25em;
-    min-height: 15px;
-    background: $white;
-    border: 1px solid $alto;
+  &-single-input {
     border-radius: 10px;
+  }
 
-    &.vfc-tags-input {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
+  &-multiple-input input {
+    &:first-child {
+      border-radius: 10px 0 0 10px;
+    }
 
-      input {
-        flex: 1;
-        background: transparent;
-        border: none;
+    &:last-child {
+      border-radius: 0 10px 10px 0;
+    }
+  }
 
-        &[type="text"] {
-          color: $trout;
-        }
+  &-tags-input {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 
-        &:focus {
-          outline: none;
-        }
+    input {
+      flex: 1;
+      background: transparent;
+      border: none;
+
+      &[type="text"] {
+        color: $trout;
       }
 
-      span {
-        margin-right: 0.3em;
-        margin-bottom: 0.3em;
-        padding-right: 0.75em;
-        padding-left: 0.6em;
-        border-radius: 10em;
+      &:focus {
+        outline: none;
+      }
+    }
+
+    span {
+      margin-right: 0.3em;
+      margin-bottom: 0.3em;
+      padding-right: 0.75em;
+      padding-left: 0.6em;
+      border-radius: 10em;
+    }
+
+    &-wrapper-default {
+      width: 295px;
+      padding: 0.5em 0.25em;
+      min-height: 15px;
+      background: $white;
+      border: 1px solid $alto;
+      border-radius: 10px;
+    }
+
+    &-badge {
+      width: 85px;
+      background-color: $porcelain;
+      position: relative;
+      display: inline-block;
+      padding: 0.25em 0.4em;
+      font-size: 75%;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.25em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &-remove {
+      cursor: pointer;
+      position: absolute;
+      display: inline-block;
+      right: 0.3em;
+      top: 0.3em;
+      padding: 0.5em;
+      overflow: hidden;
+
+      &::before,
+      &::after {
+        content: "";
+        position: absolute;
+        width: 75%;
+        left: 0.15em;
+        background: $lightred;
+        height: 2px;
+        margin-top: -1px;
+        transform: rotate(45deg);
       }
 
-
-      /* Tag badge styles */
-      .vfc-tags-input-badge {
-        width: 85px;
-        background-color: $porcelain;
-        position: relative;
-        display: inline-block;
-        padding: 0.25em 0.4em;
-        font-size: 75%;
-        font-weight: 700;
-        line-height: 1;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: baseline;
-        border-radius: 0.25em;
-        overflow: hidden;
-        text-overflow: ellipsis;
-
-        .vfc-tags-input-remove {
-          cursor: pointer;
-          position: absolute;
-          display: inline-block;
-          right: 0.3em;
-          top: 0.3em;
-          padding: 0.5em;
-          overflow: hidden;
-
-          &:before, &:after {
-            content: "";
-            position: absolute;
-            width: 75%;
-            left: 0.15em;
-            background: $lightred;
-            height: 2px;
-            margin-top: -1px;
-          }
-
-          &:after {
-            content: "";
-            position: absolute;
-            width: 75%;
-            left: 0.15em;
-            background: $lightred;
-            height: 2px;
-            margin-top: -1px;
-            transform: rotate(-45deg);
-          }
-
-          &:before {
-            transform: rotate(45deg);
-          }
-        }
+      &::after {
+        transform: rotate(-45deg);
       }
     }
   }
-}
 
-.vfc-dark {
-  &.vfc-multiple-input {
-    input {
+  &-dark {
+    &.vfc-multiple-input {
+      input {
+        border-color: $astronaut;
+        background-color: $mirage
+      }
+    }
+
+    .vfc-single-input {
       border-color: $astronaut;
       background-color: $mirage
     }
-  }
 
-  .vfc-single-input {
-    border-color: $astronaut;
-    background-color: $mirage
-  }
+    &.vfc-tags-input-root {
+      .vfc-tags-input-wrapper-default {
+        background-color: $mirage;
+        border-color: $astronaut;
 
-  &.vfc-tags-input-root {
-    .vfc-tags-input-wrapper-default {
-      background-color: $mirage;
-      border-color: $astronaut;
-
-      &.vfc-tags-input {
-        .vfc-tags-input-badge {
-          background-color: $white;
+        &.vfc-tags-input {
+          .vfc-tags-input-badge {
+            background-color: $white;
+          }
         }
       }
     }
   }
-}
 
-.vfc-main-container {
-  position: relative;
-  border-radius: .28571429rem;
-  box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
-  background-color: $white;
-  user-select: none;
+  &-main-container {
+    position: relative;
+    border-radius: .28571429rem;
+    box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
+    background-color: $white;
+    user-select: none;
+    box-sizing: border-box;
 
-  &.vfc-modal {
-    position: absolute;
-    width: inherit;
-    z-index: 1000;
-  }
-
-  .vfc-time-picker-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    .vfc-time-picker {
-      box-sizing: border-box;
-
-      &::after {
-        content: '';
-        display: table;
-        clear: both;
-      }
-
-      & * {
-        box-sizing: border-box;
-      }
+    &.vfc-modal {
+      position: absolute;
+      width: inherit;
+      z-index: 1000;
     }
 
-    .vfc-time-picker__list {
+    > * {
+      box-sizing: border-box;
+    }
+
+    &.vfc-dark {
+      background-color: $mirage;
+
+      .vfc-navigation-buttons,
+      .vfc-separately-navigation-buttons {
+        div {
+
+          .vfc-arrow-right,
+          .vfc-arrow-left {
+            border-color: $white
+          }
+
+          .vfc-arrow-left:active,
+          .vfc-arrow-right:active {
+            border-color: $lightgrey;
+          }
+        }
+      }
+
+      .vfc-calendars {
+        .vfc-calendar {
+
+          .vfc-months-container {
+            .vfc-content {
+              background-color: $white;
+
+              .vfc-navigation-buttons {
+                div {
+
+                  .vfc-arrow-left,
+                  .vfc-arrow-right {
+                    border-color: $black;
+                  }
+                }
+
+                .vfc-top-date {
+                  color: $black;
+
+                  .vfc-popover-caret {
+                    background-color: $white;
+                  }
+
+                  &.vfc-underline {
+                    text-decoration: underline dotted $royalblue;
+                  }
+                }
+              }
+
+              .vfc-months {
+                div.vfc-item {
+                  color: $black;
+
+                  &:hover {
+                    background-color: rgba(113, 113, 113, 0.3);
+                  }
+
+                  &.vfc-selected {
+                    background-color: $pictionBlue;
+                    color: $white;
+                  }
+                }
+              }
+            }
+          }
+
+          div {
+            &.vfc-content {
+              .vfc-top-date {
+                a {
+                  color: $white;
+
+                  &.vfc-underline {
+                    text-decoration: underline $pictionBlue;
+
+                    &.vfc-underline-active {
+                      text-decoration-color: $white;
+                    }
+                  }
+                }
+              }
+
+              .vfc-dayNames {
+                span {
+                  color: $gainsboro;
+                }
+              }
+
+              .vfc-week {
+                .vfc-week-number {
+                  border-color: $keppel;
+                }
+
+                div {
+                  &.vfc-day {
+
+                    .vfc-base-start,
+                    .vfc-base-end {
+                      background-color: $astronaut;
+                    }
+
+                    span.vfc-span-day {
+                      color: $white;
+
+                      &.vfc-today {
+                        background-color: $keppel;
+                        color: $white;
+                      }
+
+                      &.vfc-marked {
+                        background-color: $pictionBlue;
+
+                        &.vfc-borderd,
+                        &.vfc-start-marked,
+                        &.vfc-end-marked {
+                          color: $white;
+                        }
+
+                        &:before {
+                          background-color: $astronaut;
+                        }
+
+                        &:after {
+                          color: $black;
+                        }
+
+                        &.vfc-hide {
+                          color: $gainsboro;
+                        }
+                      }
+
+                      &.vfc-hide {
+                        color: $tundora;
+                      }
+
+                      &.vfc-disabled {
+                        color: rgba(133, 133, 133, 0.2);
+                      }
+
+                      &:after {
+                        color: $black;
+                      }
+
+                      &.vfc-hover:hover,
+                      &.vfc-hovered {
+                        z-index: 1;
+                        background-color: $charade;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+
+      .vfc-time-picker-container {
+        .vfc-time-picker__list {
+
+          .vfc-time-picker__item {
+            color: $white;
+          }
+
+          .vfc-time-picker__item--selected {
+            color: $pictionBlue;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: $astronaut;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background: $pictionBlue;
+          }
+        }
+
+
+        .vfc-close:before,
+        .vfc-close:after {
+          background-color: $white;
+        }
+
+        .vfc-modal-time-mechanic {
+          .vfc-modal-time-line {
+            background-color: $pictionBlue;
+            color: $white;
+          }
+        }
+      }
+    }
+  }
+
+  &-time-picker {
+    &::after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    &-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    &__list {
       float: left;
       width: 50%;
       height: 200px;
@@ -199,72 +386,74 @@ input.vfc-single-input {
       &::-webkit-scrollbar-thumb {
         background: $silver;
       }
+
+      .vfc-time-picker__with-suffix & {
+        width: 33.333333%;
+      }
     }
 
-    .vfc-time-picker__with-suffix .vfc-time-picker__list {
-      width: 33.3%;
-    }
-
-    .vfc-time-picker__item {
+    &__item {
       padding: 10px 0;
       font-size: 20px;
       text-align: center;
       cursor: pointer;
       transition: font-size .3s;
-    }
 
-    .vfc-time-picker__item:hover {
-      font-size: 32px;
-    }
+      &:hover {
+        font-size: 32px;
+      }
 
-    .vfc-time-picker__item--selected {
-      color: $royalblue;
-      font-size: 32px;
-    }
+      &--selected {
+        color: $royalblue;
+        font-size: 32px;
+      }
 
-    .vfc-time-picker__item--disabled {
-      opacity: 0.4;
-      cursor: default;
-      font-size: 20px !important;
+      &--disabled {
+        opacity: 0.4;
+        cursor: default;
+        font-size: 20px !important;
+      }
     }
+  }
 
-    .vfc-close {
-      position: absolute;
-      right: 12px;
-      top: 16px;
-      width: 32px;
-      height: 32px;
-      opacity: 0.3;
-      z-index: 10000;
-    }
+  &-close {
+    position: absolute;
+    right: 12px;
+    top: 16px;
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+    z-index: 100;
 
-    .vfc-close:hover {
+    &:hover {
       opacity: 1;
     }
 
-    .vfc-close:before, .vfc-close:after {
+    &::before,
+    &::after {
       position: absolute;
       left: 15px;
       content: ' ';
       height: 26px;
       width: 2px;
       background-color: $white;
-    }
-
-    .vfc-close:before {
       transform: rotate(45deg);
     }
 
-    .vfc-close:after {
+    &::after {
       transform: rotate(-45deg);
     }
+  }
 
-    .vfc-modal-time-mechanic {
-      position: relative;
-      margin: 0 auto;
-      width: 100%;
+  &-modal {
+    &-time {
+      &-mechanic {
+        position: relative;
+        margin: 0 auto;
+        width: 100%;
+      }
 
-      .vfc-modal-time-line {
+      &-line {
         width: 100%;
         background-color: $royalblue;
         text-align: left;
@@ -284,48 +473,23 @@ input.vfc-single-input {
       }
     }
 
-    .vfc-modal-append {
+    &-append {
       color: $boulder;
       font-weight: normal;
       display: flex;
       justify-content: space-between;
-
-      .vfc-arrow {
-        opacity: 0.3;
-        transition: 0.2s;
-      }
-
-      .vfc-arrow:hover {
-        opacity: 1;
-      }
-
-      .vfc-arrow-up {
-        width: 0;
-        height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-bottom: 20px solid #333333;
-      }
-
-      .vfc-arrow-down {
-        width: 0;
-        height: 0;
-        border-left: 20px solid transparent;
-        border-right: 20px solid transparent;
-        border-top: 20px solid #333333;
-      }
     }
 
-    .vfc-modal-midle {
+    &-midle {
       display: inline-block;
+
+      &-dig {
+        display: inline-block;
+        text-align: center;
+      }
     }
 
-    .vfc-modal-midle-dig {
-      display: inline-block;
-      text-align: center;
-    }
-
-    .vfc-modal-digits {
+    &-digits {
       display: flex;
       justify-content: space-between;
       font-size: 50px;
@@ -339,11 +503,42 @@ input.vfc-single-input {
     }
   }
 
-  .vfc-separately-navigation-buttons {
+  &-arrow {
+    opacity: 0.3;
+    transition: 0.2s;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &-up {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-bottom: 20px solid #333333;
+    }
+
+    &-down {
+      width: 0;
+      height: 0;
+      border-left: 20px solid transparent;
+      border-right: 20px solid transparent;
+      border-top: 20px solid #333333;
+    }
+  }
+
+  &-separately-navigation-buttons {
     margin-bottom: -80px;
   }
 
-  .vfc-navigation-buttons, .vfc-separately-navigation-buttons {
+  &-navigation-buttons {
+    width: 100%;
+    position: absolute;
+  }
+
+  &-navigation-buttons,
+  &-separately-navigation-buttons {
     flex: 0 1 15%;
     margin-top: -10px;
     display: flex;
@@ -386,7 +581,8 @@ input.vfc-single-input {
         border-color: #ddd;
       }
 
-      .vfc-arrow-left, .vfc-arrow-right {
+      .vfc-arrow-left,
+      .vfc-arrow-right {
         &.vfc-disabled {
           border-color: #dddddd;
         }
@@ -401,429 +597,266 @@ input.vfc-single-input {
         transform: rotate(45deg);
       }
     }
-
   }
 
-  .vfc-calendars-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  &-calendar {
     position: relative;
-    overflow: hidden;
+    flex: 1;
+    height: auto;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: stretch;
 
-    .vfc-navigation-buttons {
-      width: 100%;
-      position: absolute;
+    .vfc-content {
+      margin-bottom: 20px;
     }
 
-    .vfc-calendars {
+    &s {
       flex: 1 1 75%;
       display: flex;
       flex-wrap: wrap;
 
-      .vfc-calendar {
-        position: relative;
-        flex: 1;
-        height: auto;
+      &-container {
         display: flex;
-        flex-flow: column nowrap;
-        align-items: stretch;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+    }
 
-        .vfc-months-container {
-          display: flex;
-          flex-direction: row;
-          margin-left: -20px;
+    &-fade-enter-active,
+    &-fade-leave-active,
+    &-slide-down-enter-active,
+    &-slide-down-leave-active,
+    &-slide-left-enter-active,
+    &-slide-left-leave-active,
+    &-slide-right-enter-active,
+    &-slide-right-leave-active,
+    &-slide-up-enter-active,
+    &-slide-up-leave-active {
+      transition: all 0.25s ease-in-out
+    }
 
-          &.vfc-left {
-            justify-content: flex-start;
-            margin-left: 0;
+    &-fade-leave-active,
+    &-none-leave-active,
+    &-slide-down-leave-active,
+    &-slide-left-leave-active,
+    &-slide-right-leave-active,
+    &-slide-up-leave-active {
+      position: absolute
+    }
 
-            .vfc-content {
-              .vfc-navigation-buttons {
-                .vfc-top-date {
-                  .vfc-popover-caret {
-                    left: 45px;
-                  }
-                }
-              }
-            }
-          }
+    &-none-enter-active,
+    &-none-leave-active {
+      transition-duration: 0s
+    }
 
-          &.vfc-center {
-            justify-content: center;
-          }
+    &-slide-left-enter,
+    &-slide-right-leave-to {
+      opacity: 0;
+      -webkit-transform: translateX(25px);
+      transform: translateX(25px)
+    }
 
-          &.vfc-right {
-            justify-content: flex-end;
+    &-slide-left-leave-to,
+    &-slide-right-enter {
+      opacity: 0;
+      -webkit-transform: translateX(-25px);
+      transform: translateX(-25px)
+    }
 
-            .vfc-content {
-              .vfc-navigation-buttons {
-                .vfc-top-date {
-                  .vfc-popover-caret {
-                    left: calc(100% - 90px);
-                  }
-                }
-              }
-            }
-          }
+    &-slide-down-leave-to,
+    &-slide-up-enter {
+      opacity: 0;
+      -webkit-transform: translateY(20px);
+      transform: translateY(20px)
+    }
 
-          .vfc-content {
-            width: 45%;
-            position: absolute;
-            z-index: 1000;
-            background-color: $licorice;
-            border: 1px solid;
-            border-radius: 5px;
-            top: 55px;
-            color: $white;
-            padding: 5px 0;
+    &-slide-down-enter,
+    &-slide-up-leave-to {
+      opacity: 0;
+      -webkit-transform: translateY(-20px);
+      transform: translateY(-20px)
+    }
+  }
 
-            .vfc-navigation-buttons {
-              position: unset;
-              display: flex;
-              justify-content: space-between;
+  &-months {
+    flex: 1 1 75%;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 
-              div {
-                margin: 10px 10px;
+    .vfc-item {
+      flex: 1;
+      flex-basis: 30%;
+      margin: 3px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      outline-style: none;
+      border-radius: 5px;
 
-                .vfc-arrow-left, .vfc-arrow-right {
-                  border-color: $white;
-                  width: 8px;
-                  height: 8px;
-                  cursor: pointer;
+      &:hover {
+        background-color: rgba(113, 113, 113, 0.3);
+        transition: background-color 0.2s ease-in-out;
+        cursor: pointer;
+      }
 
-                  &:hover {
-                    border-color: $pictionBlue;
-                  }
-                }
-              }
+      &.vfc-selected {
+        background-color: $pictionBlue;
+        color: $white;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+      }
+    }
 
-              .vfc-top-date {
-                font-size: 18px;
-                font-weight: bold;
-                margin: 0;
-                display: flex;
-                flex-direction: row;
-                justify-content: center;
+    &-container {
+      display: flex;
+      flex-direction: row;
+      margin-left: -20px;
 
-                .vfc-popover-caret {
-                  content: "";
-                  position: absolute;
-                  display: block;
-                  width: 12px;
-                  height: 12px;
-                  border-top: inherit;
-                  border-left: inherit;
-                  background: inherit;
-                  z-index: -1;
-                  background-color: $licorice;
-                  transform: translateY(-40%) rotate(45deg);
-                  top: 0;
-                  left: 50%;
-                }
+      &.vfc-left {
+        justify-content: flex-start;
+        margin-left: 0;
 
-
-                &.vfc-underline {
-                  cursor: pointer;
-                  text-decoration: underline dotted $royalblue;
-                }
-              }
-            }
-
-            .vfc-months {
-              flex: 1 1 75%;
-              padding: 0;
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: space-between;
-
-              div.vfc-item {
-                flex: 1;
-                flex-basis: 30%;
-                margin: 3px;
-                display: flex;
-                justify-content: center;
-                flex-direction: column;
-                text-align: center;
-                outline-style: none;
-                border-radius: 5px;
-
-                &:hover {
-                  background-color: rgba(113, 113, 113, 0.3);
-                  transition: background-color 0.2s ease-in-out;
-                  cursor: pointer;
-                }
-
-                &.vfc-selected {
-                  background-color: $pictionBlue;
-                  color: $white;
-                  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-                }
-              }
-            }
-          }
-        }
-
-        div {
-          &.vfc-content {
-            margin: 0 20px;
-            z-index: 100;
-
-
+        .vfc-content {
+          .vfc-navigation-buttons {
             .vfc-top-date {
-              margin: 25px;
-              font-size: 18px;
-              font-weight: normal;
-
-              &.vfc-left {
-                text-align: left;
-              }
-
-              &.vfc-right {
-                text-align: right;
-              }
-
-              &.vfc-center {
-                text-align: center;
-              }
-
-
-              a {
-                cursor: default;
-                text-decoration: unset;
-                margin: 0 2px;
-                color: $black;
-
-                &.vfc-cursor-pointer {
-                  cursor: pointer;
-                }
-
-                &.vfc-underline {
-                  cursor: pointer;
-                  text-decoration: underline $royalblue;
-
-                  &.vfc-underline-active {
-                    text-decoration-color: $black;
-                  }
-                }
+              .vfc-popover-caret {
+                left: 45px;
               }
             }
+          }
+        }
+      }
 
-            /* Calendar rows */
-            .vfc-dayNames, .vfc-week {
-              display: flex;
-            }
+      &.vfc-left {
+        justify-content: flex-start;
+        margin-left: 0;
 
-            .vfc-dayNames {
-              flex: 30px 0 0;
-              margin-bottom: 10px;
-
-              span {
-                width: 100%;
-                margin-right: 5px;
-                color: $mineShaft;
-                text-align: center;
-
-                &:last-child {
-                  margin-right: 0
-                }
+        .vfc-content {
+          .vfc-navigation-buttons {
+            .vfc-top-date {
+              .vfc-popover-caret {
+                left: 45px;
               }
             }
+          }
+        }
+      }
 
-            .vfc-week {
-              .vfc-week-number {
-                border-right: 1px solid $lightred;
-              }
+      &.vfc-center {
+        justify-content: center;
+      }
 
-              div {
-                &.vfc-day {
-                  position: relative;
-                  width: 100%;
-                  display: flex;
-                  flex-direction: column;
-                  margin-top: 3px;
+      &.vfc-right {
+        justify-content: flex-end;
 
-                  .vfc-base-start, .vfc-base-end {
-                    position: absolute;
-                    background: $lightskyblue;
-                    width: 50% !important;
-                    border-radius: 0 !important;
-                    border-right-width: 0 !important;
-                    height: 100%;
-                  }
-
-                  .vfc-base-start {
-                    right: 0;
-                  }
-
-                  .vfc-base-end {
-                    left: 0;
-                  }
-
-                  span.vfc-span-day {
-                    display: inline-block;
-                    text-align: center;
-                    width: 30px;
-                    line-height: 30px;
-                    border-radius: 50%;
-                    margin: 0 auto;
-                    vertical-align: middle;
-
-                    &.vfc-today {
-                      background-color: $lightred;
-                      color: $white;
-                    }
-
-                    &.vfc-cursor-not-allowed {
-                      cursor: not-allowed
-                    }
-
-                    &.vfc-marked {
-                      margin: auto;
-                      background-color: $royalblue;
-                      border-radius: 50%;
-                      opacity: 1;
-                      z-index: 1;
-
-                      &.vfc-borderd, &.vfc-start-marked, &.vfc-end-marked {
-                        color: $white;
-
-                        &:before {
-                          background: transparent;
-                        }
-                      }
-
-                      &:before {
-                        top: 0;
-                        left: 0;
-                        content: "";
-                        position: absolute;
-                        background-color: $lightskyblue;
-                        width: 100%;
-                        height: 100%;
-                        z-index: -1;
-                      }
-
-                      &:after {
-                        color: $black;
-                      }
-
-                      &.vfc-hide {
-                        color: $lightgrey;
-
-                        &:after {
-
-                        }
-                      }
-                    }
-
-                    &.vfc-hide {
-                      color: $gainsboro;
-
-                      &:after {
-
-                      }
-                    }
-
-                    &.vfc-disabled {
-                      margin: auto;
-                      color: rgba(0, 0, 0, 0.2);
-                      border-radius: 50%;
-                      opacity: 1;
-                      z-index: 2;
-                    }
-
-                    &:after {
-                      z-index: 2;
-                      position: absolute;
-                      top: 0;
-                      left: 0;
-                      bottom: 0;
-                      right: 0;
-                      content: attr(data-date);
-                      color: $black;
-                      display: flex;
-                      justify-content: center;
-                      align-items: center;
-                    }
-
-                    &.vfc-hover:hover, &.vfc-hovered {
-                      background-color: $lightgreyHover;
-                      z-index: 100;
-                    }
-                  }
-
-
-                  /* Weekends */
-                  &:last-child {
-                    color: $black;
-                  }
-
-                }
+        .vfc-content {
+          .vfc-navigation-buttons {
+            .vfc-top-date {
+              .vfc-popover-caret {
+                left: calc(100% - 90px);
               }
             }
+          }
+        }
+      }
 
-            .vfc-calendar-fade-enter-active,
-            .vfc-calendar-fade-leave-active,
-            .vfc-calendar-slide-down-enter-active,
-            .vfc-calendar-slide-down-leave-active,
-            .vfc-calendar-slide-left-enter-active,
-            .vfc-calendar-slide-left-leave-active,
-            .vfc-calendar-slide-right-enter-active,
-            .vfc-calendar-slide-right-leave-active,
-            .vfc-calendar-slide-up-enter-active,
-            .vfc-calendar-slide-up-leave-active {
-              transition: all 0.25s ease-in-out
+      .vfc-content {
+        width: 45%;
+        position: absolute;
+        z-index: 1000;
+        background-color: $licorice;
+        border: 1px solid;
+        border-radius: 5px;
+        top: 55px;
+        color: $white;
+        padding: 5px 0;
+
+        .vfc-navigation-buttons {
+          position: unset;
+          display: flex;
+          justify-content: space-between;
+
+          div {
+            margin: 10px 10px;
+
+            .vfc-arrow-left,
+            .vfc-arrow-right {
+              border-color: $white;
+              width: 8px;
+              height: 8px;
+              cursor: pointer;
+
+              &:hover {
+                border-color: $pictionBlue;
+              }
+            }
+          }
+
+          .vfc-top-date {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+
+            .vfc-popover-caret {
+              content: "";
+              position: absolute;
+              display: block;
+              width: 12px;
+              height: 12px;
+              border-top: inherit;
+              border-left: inherit;
+              background: inherit;
+              z-index: -1;
+              background-color: $licorice;
+              transform: translateY(-40%) rotate(45deg);
+              top: 0;
+              left: 50%;
             }
 
-            .vfc-calendar-fade-leave-active,
-            .vfc-calendar-none-leave-active,
-            .vfc-calendar-slide-down-leave-active,
-            .vfc-calendar-slide-left-leave-active,
-            .vfc-calendar-slide-right-leave-active,
-            .vfc-calendar-slide-up-leave-active {
-              position: absolute
-            }
 
-            .vfc-calendar-none-enter-active,
-            .vfc-calendar-none-leave-active {
-              transition-duration: 0s
-            }
-
-            .vfc-calendar-slide-left-enter,
-            .vfc-calendar-slide-right-leave-to {
-              opacity: 0;
-              -webkit-transform: translateX(25px);
-              transform: translateX(25px)
-            }
-
-            .vfc-calendar-slide-left-leave-to,
-            .vfc-calendar-slide-right-enter {
-              opacity: 0;
-              -webkit-transform: translateX(-25px);
-              transform: translateX(-25px)
-            }
-
-            .vfc-calendar-slide-down-leave-to,
-            .vfc-calendar-slide-up-enter {
-              opacity: 0;
-              -webkit-transform: translateY(20px);
-              transform: translateY(20px)
-            }
-
-            .vfc-calendar-slide-down-enter,
-            .vfc-calendar-slide-up-leave-to {
-              opacity: 0;
-              -webkit-transform: translateY(-20px);
-              transform: translateY(-20px)
+            &.vfc-underline {
+              cursor: pointer;
+              text-decoration: underline dotted $royalblue;
             }
           }
         }
 
-        &:last-child {
-          div {
-            &.vfc-content {
-              margin-bottom: 20px;
+        .vfc-months {
+          flex: 1 1 75%;
+          padding: 0;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+
+          div.vfc-item {
+            flex: 1;
+            flex-basis: 30%;
+            margin: 3px;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            outline-style: none;
+            border-radius: 5px;
+
+            &:hover {
+              background-color: rgba(113, 113, 113, 0.3);
+              transition: background-color 0.2s ease-in-out;
+              cursor: pointer;
+            }
+
+            &.vfc-selected {
+              background-color: $pictionBlue;
+              color: $white;
+              text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
             }
           }
         }
@@ -831,184 +864,192 @@ input.vfc-single-input {
     }
   }
 
-  &.vfc-dark {
-    background-color: $mirage;
+  &-content {
+    margin: 0 20px;
+    z-index: 100;
+  }
 
-    .vfc-navigation-buttons, .vfc-separately-navigation-buttons {
-      div {
-        .vfc-arrow-right, .vfc-arrow-left {
-          border-color: $white
-        }
+  &-top-date {
+    margin: 25px;
+    font-size: 18px;
+    font-weight: normal;
 
-        .vfc-arrow-left:active,
-        .vfc-arrow-right:active {
-          border-color: $lightgrey;
-        }
-      }
+    &.vfc-left {
+      text-align: left;
     }
 
-    .vfc-calendars {
-      .vfc-calendar {
+    &.vfc-right {
+      text-align: right;
+    }
 
-        .vfc-months-container {
-          .vfc-content {
-            background-color: $white;
-
-            .vfc-navigation-buttons {
-              div {
-                .vfc-arrow-left, .vfc-arrow-right {
-                  border-color: $black;
-                }
-              }
-
-              .vfc-top-date {
-                color: $black;
-
-                .vfc-popover-caret {
-                  background-color: $white;
-                }
-
-                &.vfc-underline {
-                  text-decoration: underline dotted $royalblue;
-                }
-              }
-            }
-
-            .vfc-months {
-              div.vfc-item {
-                color: $black;
-
-                &:hover {
-                  background-color: rgba(113, 113, 113, 0.3);
-                }
-
-                &.vfc-selected {
-                  background-color: $pictionBlue;
-                  color: $white;
-                }
-              }
-            }
-          }
-        }
-
-        div {
-          &.vfc-content {
-            .vfc-top-date {
-              a {
-                color: $white;
-
-                &.vfc-underline {
-                  text-decoration: underline $pictionBlue;
-
-                  &.vfc-underline-active {
-                    text-decoration-color: $white;
-                  }
-                }
-              }
-            }
-
-            .vfc-dayNames {
-              span {
-                color: $gainsboro;
-              }
-            }
-
-            .vfc-week {
-              .vfc-week-number {
-                border-color: $keppel;
-              }
-
-              div {
-                &.vfc-day {
-
-                  .vfc-base-start, .vfc-base-end {
-                    background-color: $astronaut;
-                  }
-
-                  span.vfc-span-day {
-                    color: $white;
-
-                    &.vfc-today {
-                      background-color: $keppel;
-                      color: $white;
-                    }
-
-                    &.vfc-marked {
-                      background-color: $pictionBlue;
-
-                      &.vfc-borderd, &.vfc-start-marked, &.vfc-end-marked {
-                        color: $white;
-                      }
-
-                      &:before {
-                        background-color: $astronaut;
-                      }
-
-                      &:after {
-                        color: $black;
-                      }
-
-                      &.vfc-hide {
-                        color: $gainsboro;
-                      }
-                    }
-
-                    &.vfc-hide {
-                      color: $tundora;
-                    }
-
-                    &.vfc-disabled {
-                      color: rgba(133, 133, 133, 0.2);
-                    }
-
-                    &:after {
-                      color: $black;
-                    }
-
-                    &.vfc-hover:hover, &.vfc-hovered {
-                      z-index: 1;
-                      background-color: $charade;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    &.vfc-center {
+      text-align: center;
     }
 
 
-    .vfc-time-picker-container {
-      .vfc-time-picker__list {
+    a {
+      cursor: default;
+      text-decoration: unset;
+      margin: 0 2px;
+      color: $black;
 
-        .vfc-time-picker__item {
+      &.vfc-cursor-pointer {
+        cursor: pointer;
+      }
+
+      &.vfc-underline {
+        cursor: pointer;
+        text-decoration: underline $royalblue;
+
+        &.vfc-underline-active {
+          text-decoration-color: $black;
+        }
+      }
+    }
+  }
+
+  &-dayNames,
+  &-week {
+    display: flex;
+  }
+
+  &-dayNames {
+    flex: 30px 0 0;
+    margin-bottom: 10px;
+
+    span {
+      width: 100%;
+      margin-right: 5px;
+      color: $mineShaft;
+      text-align: center;
+
+      &:last-child {
+        margin-right: 0
+      }
+    }
+  }
+
+  &-week {
+    &-number {
+      border-right: 1px solid $lightred;
+    }
+
+    .vfc-day {
+      position: relative;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      margin-top: 3px;
+
+      .vfc-base-start,
+      .vfc-base-end {
+        position: absolute;
+        background: $lightskyblue;
+        width: 50% !important;
+        border-radius: 0 !important;
+        border-right-width: 0 !important;
+        height: 100%;
+      }
+
+      .vfc-base-start {
+        right: 0;
+      }
+
+      .vfc-base-end {
+        left: 0;
+      }
+
+      span.vfc-span-day {
+        display: inline-block;
+        text-align: center;
+        width: 30px;
+        line-height: 30px;
+        border-radius: 50%;
+        margin: 0 auto;
+        vertical-align: middle;
+
+        &.vfc-today {
+          background-color: $lightred;
           color: $white;
         }
 
-        .vfc-time-picker__item--selected {
-          color: $pictionBlue;
+        &.vfc-cursor-not-allowed {
+          cursor: not-allowed
         }
 
-        &::-webkit-scrollbar-track {
-          background: $astronaut;
+        &.vfc-marked {
+          margin: auto;
+          background-color: $royalblue;
+          border-radius: 50%;
+          opacity: 1;
+          z-index: 1;
+
+          &.vfc-borderd,
+          &.vfc-start-marked,
+          &.vfc-end-marked {
+            color: $white;
+
+            &:before {
+              background: transparent;
+            }
+          }
+
+          &:before {
+            top: 0;
+            left: 0;
+            content: "";
+            position: absolute;
+            background-color: $lightskyblue;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+          }
+
+          &:after {
+            color: $black;
+          }
+
+          &.vfc-hide {
+            color: $lightgrey;
+          }
         }
 
-        &::-webkit-scrollbar-thumb {
-          background: $pictionBlue;
+        &.vfc-hide {
+          color: $gainsboro;
+        }
+
+        &.vfc-disabled {
+          margin: auto;
+          color: rgba(0, 0, 0, 0.2);
+          border-radius: 50%;
+          opacity: 1;
+          z-index: 2;
+        }
+
+        &:after {
+          z-index: 2;
+          position: absolute;
+          top: 0;
+          left: 0;
+          bottom: 0;
+          right: 0;
+          content: attr(data-date);
+          color: $black;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        &.vfc-hover:hover,
+        &.vfc-hovered {
+          background-color: $lightgreyHover;
+          z-index: 100;
         }
       }
 
-
-      .vfc-close:before, .vfc-close:after {
-        background-color: $white;
-      }
-
-      .vfc-modal-time-mechanic {
-        .vfc-modal-time-line {
-          background-color: $pictionBlue;
-          color: $white;
-        }
+      /* Weekends */
+      &:last-child {
+        color: $black;
       }
     }
   }
