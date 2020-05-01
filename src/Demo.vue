@@ -1,8 +1,13 @@
 <template>
     <div>
 
-        <FunctionalCalendar class="demo-calendar dateRangeInputs" :is-modal="true" :is-date-range="true"
+        <FunctionalCalendar class="demo-calendar dateRangeInputs"
+                            ref="demoCalendar1"
+                            v-model="demoCalendar1"
+                            :is-modal="true"
+                            :is-date-range="true"
                             :is-multiple="true"
+                            :isLayoutExpandable="true"
                             :clanedars-count="2">
             <template v-slot:dateRangeInputs="props">
                 <label for="check-in">
@@ -34,98 +39,104 @@
                            :readonly="!props.isTypeable">
                 </label>
             </template>
-        </FunctionalCalendar>
-
-
-        <FunctionalCalendar class="demo-calendar 2"
-                            ref="Calendar"
-                            v-model="calendarData"
-                            :sundayStart="true"
-                            :hiddenElements="['']"
-                            :showWeekNumbers="false"
-                            :withTimePicker="false"
-                            :is-date-picker="false"
-                            :is-multiple-date-picker="true"
-                            :is-date-range="false"
-                            :min-sel-days="3"
-                            :is-dark="false"
-                            :date-format="'yyyy-mm-dd'"
-                            :is-multiple="true"
-                            :calendars-count="2"
-                            :isSeparately="true"
-                            :with-time-picker="false"
-                            :change-month-function="true"
-                            :change-year-function="true"
-                            :marked-dates="markedDates"
-                            :is-auto-closeable="false"
-                            :is-modal="false"
-                            :change-year-step="5"
-                            :is-typeable="true"
-                            @choseDay="choseDay"
-                            title-position="left"
-                            arrows-position="right"
-        >
-        </FunctionalCalendar>
-
-        <FunctionalCalendar class="demo-calendar 2"
-                            ref="Calendar"
-                            :sundayStart="true"
-                            :hiddenElements="['']"
-                            :showWeekNumbers="true"
-                            :is-date-picker="false"
-                            :is-multiple-date-picker="true"
-                            :is-date-range="false"
-                            :min-sel-days="3"
-                            :is-dark="false"
-                            :date-format="'yyyy-mm-dd'"
-                            :is-multiple="true"
-                            :calendars-count="2"
-                            :isSeparately="true"
-                            :with-time-picker="false"
-                            :change-month-function="true"
-                            :change-year-function="true"
-                            :marked-dates="markedDates"
-                            :is-auto-closeable="false"
-                            :is-modal="false"
-                            :change-year-step="5"
-                            :is-typeable="true"
-                            @choseDay="choseDay"
-                            title-position="left"
-                            arrows-position="right"
-        >
-        </FunctionalCalendar>
-
-        <pre>
-        {{ calendarData }}
-        </pre>
-
-        <functional-calendar class="demo-custom-calendar 1"
-                             :change-month-function="true"
-                             :change-year-function="true"
-                             :sundayStart="false"
-                             :showWeekNumbers="false"
-                             title-position="left"
-                             arrows-position="right"
-        >
-            <template v-slot:default="props">
-                <div class="custom-day-container">
-                    <div class="custom-day">
-                        {{ props.day.day }}
-                        <div class="events">
-                            <div class="event-item" :class="event.class"
-                                 v-for="event in getEventsByDate(props.day.date)" :key="event.id">
-                                {{ event.title }}
-                            </div>
-                        </div>
-                    </div>
+            <template v-slot:footer>
+                <div class="footer">
+                    <a class="button" @click.prevent="$refs.demoCalendar1.showCalendar = false">Apply</a>
+                    <a class="button is-blue" @click.prevent="demoCalendar1.dateRange = {}">Clear</a>
                 </div>
             </template>
-        </functional-calendar>
-
-        <!--        <button @click="markedDates2.push('22/3/2020')">Add date</button>-->
+        </FunctionalCalendar>
 
 
-        <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>
+<!--        <FunctionalCalendar class="demo-calendar 2"-->
+<!--                            ref="Calendar"-->
+<!--                            v-model="calendarData"-->
+<!--                            :sundayStart="true"-->
+<!--                            :hiddenElements="['']"-->
+<!--                            :showWeekNumbers="false"-->
+<!--                            :withTimePicker="false"-->
+<!--                            :is-date-picker="false"-->
+<!--                            :is-multiple-date-picker="true"-->
+<!--                            :is-date-range="false"-->
+<!--                            :min-sel-days="3"-->
+<!--                            :is-dark="false"-->
+<!--                            :date-format="'yyyy-mm-dd'"-->
+<!--                            :is-multiple="true"-->
+<!--                            :calendars-count="2"-->
+<!--                            :isSeparately="true"-->
+<!--                            :with-time-picker="false"-->
+<!--                            :change-month-function="true"-->
+<!--                            :change-year-function="true"-->
+<!--                            :marked-dates="markedDates"-->
+<!--                            :is-auto-closeable="false"-->
+<!--                            :is-modal="false"-->
+<!--                            :change-year-step="5"-->
+<!--                            :is-typeable="true"-->
+<!--                            @choseDay="choseDay"-->
+<!--                            title-position="left"-->
+<!--                            arrows-position="right"-->
+<!--        >-->
+<!--        </FunctionalCalendar>-->
+
+<!--        <FunctionalCalendar class="demo-calendar 2"-->
+<!--                            ref="Calendar"-->
+<!--                            :sundayStart="true"-->
+<!--                            :hiddenElements="['']"-->
+<!--                            :showWeekNumbers="true"-->
+<!--                            :is-date-picker="false"-->
+<!--                            :is-multiple-date-picker="true"-->
+<!--                            :is-date-range="false"-->
+<!--                            :min-sel-days="3"-->
+<!--                            :is-dark="false"-->
+<!--                            :date-format="'yyyy-mm-dd'"-->
+<!--                            :is-multiple="true"-->
+<!--                            :calendars-count="2"-->
+<!--                            :isSeparately="true"-->
+<!--                            :with-time-picker="false"-->
+<!--                            :change-month-function="true"-->
+<!--                            :change-year-function="true"-->
+<!--                            :marked-dates="markedDates"-->
+<!--                            :is-auto-closeable="false"-->
+<!--                            :is-modal="false"-->
+<!--                            :change-year-step="5"-->
+<!--                            :is-typeable="true"-->
+<!--                            @choseDay="choseDay"-->
+<!--                            title-position="left"-->
+<!--                            arrows-position="right"-->
+<!--        >-->
+<!--        </FunctionalCalendar>-->
+
+<!--        <pre>-->
+<!--        {{ calendarData }}-->
+<!--        </pre>-->
+
+<!--        <functional-calendar class="demo-custom-calendar 1"-->
+<!--                             :change-month-function="true"-->
+<!--                             :change-year-function="true"-->
+<!--                             :sundayStart="false"-->
+<!--                             :showWeekNumbers="false"-->
+<!--                             title-position="left"-->
+<!--                             arrows-position="right"-->
+<!--        >-->
+<!--            <template v-slot:default="props">-->
+<!--                <div class="custom-day-container">-->
+<!--                    <div class="custom-day">-->
+<!--                        {{ props.day.day }}-->
+<!--                        <div class="events">-->
+<!--                            <div class="event-item" :class="event.class"-->
+<!--                                 v-for="event in getEventsByDate(props.day.date)" :key="event.id">-->
+<!--                                {{ event.title }}-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </template>-->
+<!--        </functional-calendar>-->
+
+<!--        &lt;!&ndash;        <button @click="markedDates2.push('22/3/2020')">Add date</button>&ndash;&gt;-->
+
+
+<!--        <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>-->
 
         <!--<FunctionalCalendar class="demo-calendar 3"-->
         <!--ref="Calendar2"-->
@@ -194,6 +205,7 @@
         components: {FunctionalCalendar},
         data() {
             return {
+                demoCalendar1: {},
                 events: [
                     {
                         id: 1,
@@ -303,6 +315,34 @@
 
                 input {
                     border-radius: unset;
+                }
+            }
+        }
+
+        .footer {
+            display: flex;
+            justify-content: flex-end;
+            margin: 0 5px 5px 0;
+
+            .button {
+                background-color: #4CAF50; /* Green */
+                border: none;
+                color: white;
+                padding: 5px 27px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+
+                &:hover {
+                    cursor: pointer;
+                    -moz-box-shadow:    inset 0 0 10px #436562;
+                    -webkit-box-shadow: inset 0 0 10px #436562;
+                    box-shadow:         inset 0 0 10px #436562;
+                }
+
+                &.is-blue {
+                    background-color: #008CBA;
                 }
             }
         }

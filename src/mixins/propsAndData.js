@@ -122,6 +122,10 @@ export const propsAndData = {
             type: Boolean,
             default: undefined
         },
+        isLayoutExpandable: {
+            type: Boolean,
+            default: undefined
+        },
         titlePosition: {
             type: String,
             default: "center"
@@ -214,6 +218,7 @@ export const propsAndData = {
                 hiddenElements: [],
                 isAutoCloseable: false,
                 isDark: false,
+                isLayoutExpandable: false,
 
                 titlePosition: "center",
                 arrowsPosition: "space-between"

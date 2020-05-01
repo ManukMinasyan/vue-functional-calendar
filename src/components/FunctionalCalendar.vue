@@ -126,7 +126,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="vfc-week" v-if="calendarItem.weeks.length < 6"
+                                    <div class="vfc-week" v-if="calendarItem.weeks.length < 6 && !fConfigs.isLayoutExpandable"
                                          v-for="moreWeekKey in (6-calendarItem.weeks.length)"
                                          :key="key + moreWeekKey + 'moreWeek'">
                                         <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
@@ -142,6 +142,7 @@
                             </div>
                         </div>
                     </div>
+                    <slot name="footer"></slot>
                 </div>
             </template>
         </div>
@@ -216,12 +217,7 @@
 
             // Reacts to external selected dates
             this.$watch('value', function (value) {
-                if (this.fConfigs.isDateRange) {
-                    this.calendar.dateRange.start.date = value.dateRange.start.date || false;
-                    this.calendar.dateRange.end.date = value.dateRange.end.date || false
-                } else {
-                    this.calendar.selectedDate = value.selectedDate || false
-                }
+                this.calendar = value;
             }, {deep: true});
 
             this.$watch('showCalendar', function (value) {
