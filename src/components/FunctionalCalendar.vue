@@ -51,6 +51,19 @@
             <time-picker v-if="showTimePicker"></time-picker>
             <template v-else>
                 <div class="vfc-calendars-container">
+                    <div class="vfc-separately-navigation-buttons" :class="'vfc-' + fConfigs.arrowsPosition"
+                         v-if="!fConfigs.isSeparately">
+                        <div @click="PreMonth(0)" :class="{'vfc-cursor-pointer': allowPreDate}">
+                            <slot name="navigationArrowLeft">
+                                <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                            </slot>
+                        </div>
+                        <div @click="NextMonth(0)" :class="{'vfc-cursor-pointer': allowNextDate}">
+                            <slot name="navigationArrowRight">
+                                <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
+                            </slot>
+                        </div>
+                    </div>
                     <div class="vfc-calendars" ref="calendars">
                         <div class="vfc-calendar" v-for="(calendarItem, key) in listCalendars"
                              :key="calendarItem.key">
@@ -60,21 +73,26 @@
                                                :calendar-key="key">
                             </month-year-picker>
                             <div class="vfc-content">
-                                <div class="vfc-separately-navigation-buttons" :class="'vfc-' + fConfigs.arrowsPosition"
-                                     v-if="(!fConfigs.isSeparately && key === 0) || fConfigs.isSeparately">
+                                <div v-if="fConfigs.isSeparately" class="vfc-separately-navigation-buttons"
+                                     :class="'vfc-' + fConfigs.arrowsPosition">
                                     <div @click="PreMonth(key)" :class="{'vfc-cursor-pointer': allowPreDate}">
-                                        <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                                        <slot name="navigationArrowLeft">
+                                            <div class="vfc-arrow-left" :class="{'vfc-disabled': !allowPreDate}"></div>
+                                        </slot>
                                     </div>
                                     <div @click="NextMonth(key)" :class="{'vfc-cursor-pointer': allowNextDate}">
-                                        <div class="vfc-arrow-right" :class="{'vfc-disabled': !allowNextDate}"></div>
+                                        <slot name="navigationArrowRight">
+                                            <div class="vfc-arrow-right"
+                                                 :class="{'vfc-disabled': !allowNextDate}"></div>
+                                        </slot>
                                     </div>
                                 </div>
                                 <transition
                                         tag="div"
                                         :name='getTransition_()' appear>
-                                    <h2 class="vfc-top-date"
-                                        :class="'vfc-' + fConfigs.titlePosition"
-                                        v-if="checkHiddenElement('month')">
+                                    <div class="vfc-top-date"
+                                         :class="'vfc-' + fConfigs.titlePosition"
+                                         v-if="checkHiddenElement('month')">
                                         <a href="#" @click.prevent="openMonthPicker(key+1)"
                                            :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeMonthFunction, 'vfc-underline-active':showMonthPicker === key+1}">
                                             {{ calendarItem.month }}</a>
@@ -82,12 +100,12 @@
                                            :class="{'vfc-cursor-pointer vfc-underline':fConfigs.changeYearFunction,  'vfc-underline-active':showYearPicker === key+1}">
                                             {{ calendarItem.year }}
                                         </a>
-                                    </h2>
+                                    </div>
                                 </transition>
                                 <transition
                                         tag="div"
                                         :name='getTransition_()' appear>
-                                    <section class="vfc-dayNames">
+                                    <div class="vfc-dayNames">
                                         <span v-if="fConfigs.showWeekNumbers"></span>
                                         <span v-for="(dayName, dayKey) in fConfigs.dayNames" :key="key + dayKey + 1"
                                               class="vfc-day">
@@ -96,7 +114,7 @@
                                             </template>
                                         </span>
 
-                                    </section>
+                                    </div>
                                 </transition>
                                 <transition-group
                                         tag='div'
@@ -126,7 +144,8 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="vfc-week" v-if="calendarItem.weeks.length < 6"
+                                    <div class="vfc-week"
+                                         v-if="calendarItem.weeks.length < 6 && !fConfigs.isLayoutExpandable"
                                          v-for="moreWeekKey in (6-calendarItem.weeks.length)"
                                          :key="key + moreWeekKey + 'moreWeek'">
                                         <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
@@ -142,6 +161,7 @@
                             </div>
                         </div>
                     </div>
+                    <slot name="footer"></slot>
                 </div>
             </template>
         </div>
@@ -216,13 +236,10 @@
 
             // Reacts to external selected dates
             this.$watch('value', function (value) {
-                if (this.fConfigs.isDateRange) {
-                    this.calendar.dateRange.start.date = value.dateRange.start.date || false;
-                    this.calendar.dateRange.end.date = value.dateRange.end.date || false
-                } else {
-                    this.calendar.selectedDate = value.selectedDate || false
+                if (value.hasOwnProperty('dateRange')) {
+                    this.calendar = value;
                 }
-            }, {deep: true});
+            }, {immediate: true, deep: true});
 
             this.$watch('showCalendar', function (value) {
                 if (value)
@@ -551,12 +568,17 @@
                         this.showCalendar = false;
                     }
                 } else if (this.fConfigs.isMultipleDatePicker) {
-                    if (this.calendar.selectedDates.find(date => date.date === item.date)) {
+                    if (this.calendar.hasOwnProperty('selectedDates') && this.calendar.selectedDates.find(date => date.date === item.date)) {
                         let dateIndex = this.calendar.selectedDates.findIndex(date => date.date === item.date);
                         this.calendar.selectedDates.splice(dateIndex, 1);
                     } else {
                         let date = Object.assign({}, this.defaultDateFormat);
                         date.date = item.date;
+
+                        if(!this.calendar.hasOwnProperty('selectedDates')) {
+                            this.calendar.selectedDates = [];
+                        }
+
                         this.calendar.selectedDates.push(date);
                     }
 
@@ -594,7 +616,7 @@
                                 if (this.calendar.selectedDate === day.date)
                                     day.isMarked = true;
                             } else if (vm.fConfigs.isMultipleDatePicker) {
-                                if (vm.calendar.selectedDates.find(date => date.date === day.date))
+                                if (vm.calendar.hasOwnProperty('selectedDates') && vm.calendar.selectedDates.find(date => date.date === day.date))
                                     day.isMarked = true;
                             } else {
                                 day.isMouseToLeft = false;
@@ -1037,7 +1059,7 @@
                     classes.push('vfc-end-marked');
                 }
 
-                if (day.date === this.calendar.selectedDate || this.calendar.selectedDates.find(sDate => sDate.date === day.date)) {
+                if (day.date === this.calendar.selectedDate || (this.calendar.hasOwnProperty('selectedDates') && this.calendar.selectedDates.find(sDate => sDate.date === day.date))) {
                     classes.push('vfc-borderd')
                 }
 
