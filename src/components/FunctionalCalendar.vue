@@ -236,8 +236,10 @@
 
             // Reacts to external selected dates
             this.$watch('value', function (value) {
-                this.calendar = value;
-            }, {deep: true});
+                if (value.hasOwnProperty('dateRange')) {
+                    this.calendar = value;
+                }
+            }, {immediate: true, deep: true});
 
             this.$watch('showCalendar', function (value) {
                 if (value)
@@ -566,12 +568,17 @@
                         this.showCalendar = false;
                     }
                 } else if (this.fConfigs.isMultipleDatePicker) {
-                    if (this.calendar.selectedDates.find(date => date.date === item.date)) {
+                    if (this.calendar.hasOwnProperty('selectedDates') && this.calendar.selectedDates.find(date => date.date === item.date)) {
                         let dateIndex = this.calendar.selectedDates.findIndex(date => date.date === item.date);
                         this.calendar.selectedDates.splice(dateIndex, 1);
                     } else {
                         let date = Object.assign({}, this.defaultDateFormat);
                         date.date = item.date;
+
+                        if(!this.calendar.hasOwnProperty('selectedDates')) {
+                            this.calendar.selectedDates = [];
+                        }
+
                         this.calendar.selectedDates.push(date);
                     }
 
@@ -609,7 +616,7 @@
                                 if (this.calendar.selectedDate === day.date)
                                     day.isMarked = true;
                             } else if (vm.fConfigs.isMultipleDatePicker) {
-                                if (vm.calendar.selectedDates.find(date => date.date === day.date))
+                                if (vm.calendar.hasOwnProperty('selectedDates') && vm.calendar.selectedDates.find(date => date.date === day.date))
                                     day.isMarked = true;
                             } else {
                                 day.isMouseToLeft = false;
@@ -1052,7 +1059,7 @@
                     classes.push('vfc-end-marked');
                 }
 
-                if (day.date === this.calendar.selectedDate || this.calendar.selectedDates.find(sDate => sDate.date === day.date)) {
+                if (day.date === this.calendar.selectedDate || (this.calendar.hasOwnProperty('selectedDates') && this.calendar.selectedDates.find(sDate => sDate.date === day.date))) {
                     classes.push('vfc-borderd')
                 }
 

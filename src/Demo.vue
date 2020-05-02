@@ -4,7 +4,7 @@
         <FunctionalCalendar class="demo-calendar dateRangeInputs"
                             ref="demoCalendar1"
                             v-model="demoCalendar1"
-                            :is-modal="false"
+                            :is-modal="true"
                             :is-date-range="true"
                             :is-multiple="true"
                             :isLayoutExpandable="true"
@@ -213,7 +213,8 @@
         components: {FunctionalCalendar},
         data() {
             return {
-                demoCalendar1: {},
+                demoCalendar1: {
+                },
                 events: [
                     {
                         id: 1,
