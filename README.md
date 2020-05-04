@@ -163,6 +163,7 @@ ___
 | titlePosition                   | String         | center | left, right, center |  Set title position               |
 | arrowsPosition                   | String         | space-between | left, right, space-between |  Set arrows position               |
 | isDark                   | Boolean         | false       | true        | Dark theme                    |
+| isLayoutExpandable | Boolean | false | true | Enable expanding the calendar layout | 
 ___
 
 ### Events
