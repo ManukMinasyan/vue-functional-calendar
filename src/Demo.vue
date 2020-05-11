@@ -1,5 +1,15 @@
 <template>
     <div>
+        <FunctionalCalendar class="demo-calendar"  :is-date-picker="true" :is-modal="true">
+            <template v-slot:datePickerInput="props">
+                <label for="input-date">
+                    <input  id="input-date" type="text" title="Start Date"
+                           v-model="props.selectedDate"
+                           placeholder="Birthday"
+                           :readonly="!props.isTypeable">
+                </label>
+            </template>
+        </FunctionalCalendar>
 
         <FunctionalCalendar class="demo-calendar dateRangeInputs"
                             ref="demoCalendar1"
