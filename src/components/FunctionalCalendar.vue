@@ -254,35 +254,24 @@
       window.removeEventListener('click', this.hideMonthYearPicker)
     },
     watch: {
-      'fConfigs.markedDates': {
+      'fConfigs': {
         handler () {
           this.markChooseDays()
         },
+        deep: true,
+        immediate: true
       },
-      'fConfigs.markedDateRange': {
+      'calendar': {
         handler () {
           this.markChooseDays()
         },
-      },
-      'calendar.selectedDate': {
-        handler () {
-          this.markChooseDays()
-        },
+        deep: true,
+        immediate: true
       },
       'calendar.currentDate': {
         handler (value) {
           this.$emit('input', this.calendar)
           this.checkLimits(value)
-        },
-      },
-      'calendar.dateRange.start.date': {
-        handler () {
-          this.markChooseDays()
-        },
-      },
-      'calendar.dateRange.end.date': {
-        handler () {
-          this.markChooseDays()
         },
       },
     },
