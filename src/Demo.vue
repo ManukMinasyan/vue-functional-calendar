@@ -1,6 +1,7 @@
 <template>
     <div>
-        <FunctionalCalendar class="demo-calendar"  :is-date-picker="true" :is-modal="true">
+        <!-- <FunctionalCalendar class="demo-calendar" :configs="demoCalendarConfigs"></FunctionalCalendar> -->
+        <FunctionalCalendar class="demo-calendar" v-model="demoCalendar1" :marked-dates="markedDates" :disabled-dates="disabledDates"  :is-date-picker="true" :is-modal="false">
             <template v-slot:datePickerInput="props">
                 <label for="input-date">
                     <input  id="input-date" type="text" title="Start Date"
@@ -10,6 +11,8 @@
                 </label>
             </template>
         </FunctionalCalendar>
+        <button @click="markedDates.push('20/5/2020')">Push marked</button>
+        <button @click="disabledDates.push('21/5/2020')">Push disabled</button>
 
         <FunctionalCalendar class="demo-calendar dateRangeInputs"
                             ref="demoCalendar1"
@@ -66,7 +69,7 @@
         </FunctionalCalendar>
 
 
-<!--        <FunctionalCalendar class="demo-calendar 2"-->
+       <!-- <FunctionalCalendar class="demo-calendar 2"-->
 <!--                            ref="Calendar"-->
 <!--                            v-model="calendarData"-->
 <!--                            :sundayStart="true"-->
@@ -126,30 +129,30 @@
 
 <!--        <pre>-->
 <!--        {{ calendarData }}-->
-<!--        </pre>-->
+<!--        </pre>!-->
 
-<!--        <functional-calendar class="demo-custom-calendar 1"-->
-<!--                             :change-month-function="true"-->
-<!--                             :change-year-function="true"-->
-<!--                             :sundayStart="false"-->
-<!--                             :showWeekNumbers="false"-->
-<!--                             title-position="left"-->
-<!--                             arrows-position="right"-->
-<!--        >-->
-<!--            <template v-slot:default="props">-->
-<!--                <div class="custom-day-container">-->
-<!--                    <div class="custom-day">-->
-<!--                        {{ props.day.day }}-->
-<!--                        <div class="events">-->
-<!--                            <div class="event-item" :class="event.class"-->
-<!--                                 v-for="event in getEventsByDate(props.day.date)" :key="event.id">-->
-<!--                                {{ event.title }}-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </template>-->
-<!--        </functional-calendar>-->
+       <functional-calendar class="demo-custom-calendar 1"
+                            :change-month-function="true"
+                            :change-year-function="true"
+                            :sundayStart="false"
+                            :showWeekNumbers="false"
+                            title-position="left"
+                            arrows-position="right"
+       >
+           <template v-slot:default="props">
+               <div class="custom-day-container">
+                   <div class="custom-day">
+                       {{ props.day.day }}
+                       <div class="events">
+                           <div class="event-item" :class="event.class"
+                                v-for="event in getEventsByDate(props.day.date)" :key="event.id">
+                               {{ event.title }}
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </template>
+   </functional-calendar>
 
 <!--        &lt;!&ndash;        <button @click="markedDates2.push('22/3/2020')">Add date</button>&ndash;&gt;-->
 
@@ -224,6 +227,15 @@
         data() {
             return {
                 demoCalendar1: {
+                    dateRange: {
+                        start: {
+                            date: '20/5/2020',
+                        },
+                        end: {
+                            date: '25/5/2020',
+                        }
+                    },
+                    selectedDate: '26/5/2020'
                 },
                 events: [
                     {
@@ -261,6 +273,7 @@
                     "2020-1-1"
                 ],
                 markedDates2: [],
+                disabledDates: [],
                 calendarConfigs: {
                     isMultipleDatePicker: true,
                     dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
