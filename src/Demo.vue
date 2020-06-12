@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- <FunctionalCalendar class="demo-calendar" :configs="demoCalendarConfigs"></FunctionalCalendar> -->
-        <FunctionalCalendar class="demo-calendar" v-model="demoCalendar1" :marked-dates="markedDates" :disabled-dates="disabledDates"  :is-date-picker="true" :is-modal="false">
+        <FunctionalCalendar class="demo-calendar" v-model="demoCalendar1" :marked-dates="markedDates" :showWeekNumbers="true" :disabled-dates="disabledDates"  :is-date-picker="true" :is-modal="false">
             <template v-slot:datePickerInput="props">
                 <label for="input-date">
                     <input  id="input-date" type="text" title="Start Date"
