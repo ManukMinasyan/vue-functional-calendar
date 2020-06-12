@@ -113,7 +113,6 @@
                                                 {{ dayName }}
                                             </template>
                                         </span>
-
                                     </div>
                                 </transition>
                                 <transition-group
@@ -144,19 +143,16 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="vfc-week"
-                                         v-if="calendarItem.weeks.length < 6 && !fConfigs.isLayoutExpandable"
-                                         v-for="moreWeekKey in (6-calendarItem.weeks.length)"
-                                         :key="key + moreWeekKey + 'moreWeek'">
-                                        <div v-if="fConfigs.showWeekNumbers" class="vfc-day vfc-week-number">
-                                            <span class="vfc-span-day">
-                                            </span>
-                                        </div>
-                                        <div class="vfc-day" ref="day" v-for="i in 7"
-                                             :key="key + moreWeekKey + i">
-                                            <span class="vfc-span-day">&nbsp;</span>
-                                        </div>
-                                    </div>
+                                    <template v-if="calendarItem.weeks.length < 6 && !fConfigs.isLayoutExpandable">
+                                      <div class="vfc-week"
+                                          v-for="moreWeekKey in (6-calendarItem.weeks.length)"
+                                          :key="key + moreWeekKey + 'moreWeek'">
+                                          <div class="vfc-day" ref="day" v-for="i in 7"
+                                              :key="key + moreWeekKey + i">
+                                              <span class="vfc-span-day">&nbsp;</span>
+                                          </div>
+                                      </div>
+                                    </template>>
                                 </transition-group>
                             </div>
                         </div>
