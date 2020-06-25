@@ -34,8 +34,8 @@
             :is-date-range="true"
             :is-multiple="true"
             :isLayoutExpandable="true"
-            :calendars-count="4"
-            :isSeparately="false"
+            :calendars-count="3"
+            :isSeparately="true"
             arrowsPosition="space-between"
         >
             <template v-slot:dateRangeInputs="props">

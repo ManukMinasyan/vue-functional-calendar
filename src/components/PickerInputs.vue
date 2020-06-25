@@ -87,14 +87,6 @@ export default {
             type: Object,
             required: true,
         },
-        dateRangeSelectedStartDate: {
-            type: String,
-            required: true,
-        },
-        dateRangeSelectedEndDate: {
-            type: String,
-            required: true,
-        },
         singleSelectedDate: {
             type: String,
             required: true,

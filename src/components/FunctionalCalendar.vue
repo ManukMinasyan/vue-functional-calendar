@@ -2,11 +2,28 @@
     <div class="vfc-popover-container" ref="popoverElement" tabindex="0">
         <PickerInputs
             :fConfigs="fConfigs"
-            :dateRangeSelectedStartDate="dateRangeSelectedStartDate"
-            :dateRangeSelectedEndDate="dateRangeSelectedEndDate"
             :singleSelectedDate="singleSelectedDate"
             :calendar="calendar"
-        />
+        >
+            <template v-slot:dateRangeInputs>
+                <slot
+                    :startDate="dateRangeSelectedStartDate"
+                    :endDate="dateRangeSelectedEndDate"
+                    :isTypeable="fConfigs.isTypeable"
+                    name="dateRangeInputs"
+                >
+                </slot>
+            </template>
+            <template v-slot:datePickerInput>
+                <slot
+                    :startDate="dateRangeSelectedStartDate"
+                    :endDate="dateRangeSelectedEndDate"
+                    :isTypeable="fConfigs.isTypeable"
+                    name="datePickerInput"
+                >
+                </slot>
+            </template>
+        </PickerInputs>
 
         <div
             class="vfc-main-container"
@@ -24,34 +41,12 @@
             <time-picker v-if="showTimePicker"></time-picker>
             <template v-else>
                 <div class="vfc-calendars-container">
-                    <div
-                        class="vfc-separately-navigation-buttons"
-                        :class="'vfc-' + fConfigs.arrowsPosition"
-                        v-if="!fConfigs.isSeparately"
-                    >
-                        <div
-                            @click="PreMonth(0)"
-                            :class="{ 'vfc-cursor-pointer': allowPreDate }"
-                        >
-                            <slot name="navigationArrowLeft">
-                                <div
-                                    class="vfc-arrow-left"
-                                    :class="{ 'vfc-disabled': !allowPreDate }"
-                                ></div>
-                            </slot>
-                        </div>
-                        <div
-                            @click="NextMonth(0)"
-                            :class="{ 'vfc-cursor-pointer': allowNextDate }"
-                        >
-                            <slot name="navigationArrowRight">
-                                <div
-                                    class="vfc-arrow-right"
-                                    :class="{ 'vfc-disabled': !allowNextDate }"
-                                ></div>
-                            </slot>
-                        </div>
-                    </div>
+                    <Arrows
+                        :isMultiple="false"
+                        :fConfigs="fConfigs"
+                        :allowPreDate="allowPreDate"
+                        :allowNextDate="allowNextDate"
+                    />
 
                     <div class="vfc-calendars" ref="calendars">
                         <div
@@ -70,42 +65,13 @@
                             >
                             </month-year-picker>
                             <div class="vfc-content">
-                                <div
-                                    v-if="fConfigs.isSeparately"
-                                    class="vfc-separately-navigation-buttons"
-                                    :class="'vfc-' + fConfigs.arrowsPosition"
-                                >
-                                    <div
-                                        @click="PreMonth(key)"
-                                        :class="{
-                                            'vfc-cursor-pointer': allowPreDate,
-                                        }"
-                                    >
-                                        <slot name="navigationArrowLeft">
-                                            <div
-                                                class="vfc-arrow-left"
-                                                :class="{
-                                                    'vfc-disabled': !allowPreDate,
-                                                }"
-                                            ></div>
-                                        </slot>
-                                    </div>
-                                    <div
-                                        @click="NextMonth(key)"
-                                        :class="{
-                                            'vfc-cursor-pointer': allowNextDate,
-                                        }"
-                                    >
-                                        <slot name="navigationArrowRight">
-                                            <div
-                                                class="vfc-arrow-right"
-                                                :class="{
-                                                    'vfc-disabled': !allowNextDate,
-                                                }"
-                                            ></div>
-                                        </slot>
-                                    </div>
-                                </div>
+                                <Arrows
+                                    :isMultiple="true"
+                                    :fConfigs="fConfigs"
+                                    :allowPreDate="allowPreDate"
+                                    :allowNextDate="allowNextDate"
+                                    :calendar-key="key"
+                                />
                                 <transition
                                     tag="div"
                                     :name="getTransition_()"
@@ -255,13 +221,17 @@
                                                     >&nbsp;</span
                                                 >
                                             </div>
-                                        </div> </template
-                                    >>
+                                        </div>
+                                    </template>
                                 </transition-group>
                             </div>
                         </div>
                     </div>
-                    <slot name="footer"></slot>
+                    <Footer>
+                        <template v-slot:footer>
+                            <slot name="footer"></slot>
+                        </template>
+                    </Footer>
                 </div>
             </template>
         </div>
@@ -272,13 +242,15 @@
 import helpCalendarClass from "../assets/js/helpCalendar"
 import { propsAndData } from "../mixins/propsAndData"
 import TimePicker from "../components/TimePicker"
+import Arrows from "../components/Arrows"
 import MonthYearPicker from "../components/MonthYearPicker"
 import PickerInputs from "../components/PickerInputs"
+import Footer from "../components/Footer"
 import calendarMethods from "../utils/calendarMethods"
 
 export default {
     name: "FunctionalCalendar",
-    components: { MonthYearPicker, TimePicker, PickerInputs },
+    components: { MonthYearPicker, TimePicker, PickerInputs, Arrows, Footer },
     mixins: [propsAndData],
     computed: {
         helpCalendar() {
