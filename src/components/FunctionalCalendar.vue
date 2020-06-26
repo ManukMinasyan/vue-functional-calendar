@@ -192,16 +192,16 @@
 </template>
 
 <script>
-import helpCalendarClass from '../assets/js/helpCalendar';
-import { propsAndData } from '../mixins/propsAndData';
-import TimePicker from '../components/TimePicker';
-import Arrows from '../components/Arrows';
-import WeekNumbers from '../components/WeekNumbers';
-import Day from '../components/Day';
-import MonthYearPicker from '../components/MonthYearPicker';
-import PickerInputs from '../components/PickerInputs';
-import Footer from '../components/Footer';
-import calendarMethods from '../utils/calendarMethods';
+import helpCalendarClass from '../assets/js/helpCalendar'
+import { propsAndData } from '../mixins/propsAndData'
+import TimePicker from '../components/TimePicker'
+import Arrows from '../components/Arrows'
+import WeekNumbers from '../components/WeekNumbers'
+import Day from '../components/Day'
+import MonthYearPicker from '../components/MonthYearPicker'
+import PickerInputs from '../components/PickerInputs'
+import Footer from '../components/Footer'
+import calendarMethods from '../utils/calendarMethods'
 
 export default {
   name: 'FunctionalCalendar',
@@ -222,30 +222,30 @@ export default {
         this.checkHiddenElement('leftAndRightDays'),
         this.fConfigs.dateFormat,
         this.fConfigs.dayNames
-      );
+      )
     },
     singleSelectedDate: {
       get() {
-        return this.calendar.selectedDate ? this.calendar.selectedDate : '';
+        return this.calendar.selectedDate ? this.calendar.selectedDate : ''
       },
       set(newValue) {
-        newValue = this.helpCalendar.mask(newValue);
+        newValue = this.helpCalendar.mask(newValue)
         if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
-          this.calendar.selectedDate = newValue;
+          this.calendar.selectedDate = newValue
         }
       }
     }
   },
   created() {
-    this.setConfigs();
-    this.initCalendar();
+    this.setConfigs()
+    this.initCalendar()
   },
   mounted() {
-    this.popoverElement = this.$refs.popoverElement;
+    this.popoverElement = this.$refs.popoverElement
     // Event
-    this.popoverElement.addEventListener('focusin', this.onFocusIn);
-    this.popoverElement.addEventListener('focusout', this.onFocusOut);
-    window.addEventListener('click', this.hideMonthYearPicker);
+    this.popoverElement.addEventListener('focusin', this.onFocusIn)
+    this.popoverElement.addEventListener('focusout', this.onFocusOut)
+    window.addEventListener('click', this.hideMonthYearPicker)
 
     // Reacts to external selected dates
     this.$watch(
@@ -256,52 +256,52 @@ export default {
           (value.hasOwnProperty('dateRange') ||
             value.hasOwnProperty('selectedDate'))
         ) {
-          this.calendar = value;
+          this.calendar = value
         }
       },
       { immediate: true, deep: true }
-    );
+    )
 
     this.$watch(
       'showCalendar',
       function(value) {
-        if (value) this.$emit('opened');
-        else this.$emit('closed');
+        if (value) this.$emit('opened')
+        else this.$emit('closed')
       },
       { immediate: true, deep: true }
-    );
+    )
   },
   beforeDestroy: function() {
-    window.removeEventListener('focusin', this.onFocusIn);
-    window.removeEventListener('focusout', this.onFocusOut);
-    window.removeEventListener('click', this.hideMonthYearPicker);
+    window.removeEventListener('focusin', this.onFocusIn)
+    window.removeEventListener('focusout', this.onFocusOut)
+    window.removeEventListener('click', this.hideMonthYearPicker)
   },
   watch: {
     fConfigs: {
       handler() {
-        this.markChooseDays();
+        this.markChooseDays()
       },
       deep: true,
       immediate: true
     },
     calendar: {
       handler() {
-        this.markChooseDays();
+        this.markChooseDays()
       },
       deep: true,
       immediate: true
     },
     'calendar.currentDate': {
       handler(value) {
-        this.$emit('input', this.calendar);
-        this.checkLimits(value);
+        this.$emit('input', this.calendar)
+        this.checkLimits(value)
       }
     }
   },
   methods: {
     ...calendarMethods
   }
-};
+}
 </script>
 
 <style lang="scss">

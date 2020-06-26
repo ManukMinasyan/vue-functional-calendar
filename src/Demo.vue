@@ -46,7 +46,7 @@
       :is-multiple="true"
       :isLayoutExpandable="true"
       :calendars-count="3"
-      :isSeparately="false"
+      :isSeparately="true"
       arrowsPosition="space-between"
     >
       <template v-slot:dateRangeInputs="props">
@@ -287,7 +287,7 @@
 </template>
 
 <script>
-import { FunctionalCalendar } from '../index';
+import { FunctionalCalendar } from '../index'
 /* eslint-disable */
 export default {
   components: { FunctionalCalendar },
@@ -345,44 +345,44 @@ export default {
         isMultipleDatePicker: true,
         dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
       }
-    };
+    }
   },
   methods: {
     dayClicked(item) {
-      console.log('clicked:' + JSON.stringify(item));
+      console.log('clicked:' + JSON.stringify(item))
     },
     getEventsByDate(date) {
-      return this.events.filter(event => event.date === date);
+      return this.events.filter(event => event.date === date)
     },
     get(val) {
-      console.log(val);
+      console.log(val)
     },
     opened() {
-      console.log('open');
+      console.log('open')
     },
     closed() {
-      console.log('close');
+      console.log('close')
     },
     changedMonth(value) {
-      console.log(value);
+      console.log(value)
     },
     choseDay(day) {
-      console.log(day);
+      console.log(day)
     },
     preYear() {
-      this.$refs.calendar.ChooseDate('10/10/2020');
+      this.$refs.calendar.ChooseDate('10/10/2020')
     },
     nextYear() {
-      this.$refs.calendar.NextYear();
+      this.$refs.calendar.NextYear()
     },
     preMonth() {
-      this.$refs.calendar.PreMonth();
+      this.$refs.calendar.PreMonth()
     },
     nextMonth() {
-      this.$refs.calendar.NextMonth();
+      this.$refs.calendar.NextMonth()
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
