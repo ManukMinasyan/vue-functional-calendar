@@ -47,7 +47,7 @@
       background: transparent;
       border: none;
 
-      &[type="text"] {
+      &[type='text'] {
         color: $trout;
       }
 
@@ -101,7 +101,7 @@
 
       &::before,
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         width: 75%;
         left: 0.15em;
@@ -121,13 +121,13 @@
     &.vfc-multiple-input {
       input {
         border-color: $astronaut;
-        background-color: $mirage
+        background-color: $mirage;
       }
     }
 
     .vfc-single-input {
       border-color: $astronaut;
-      background-color: $mirage
+      background-color: $mirage;
     }
 
     &.vfc-tags-input-root {
@@ -146,9 +146,9 @@
 
   &-main-container {
     position: relative;
-    border-radius: .28571429rem;
+    border-radius: 0.28571429rem;
     box-shadow: 0 2px 15px 0 rgba(0, 0, 0, 0.25);
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', serif;
     background-color: $white;
     user-select: none;
     box-sizing: border-box;
@@ -169,10 +169,9 @@
       .vfc-navigation-buttons,
       .vfc-separately-navigation-buttons {
         div {
-
           .vfc-arrow-right,
           .vfc-arrow-left {
-            border-color: $white
+            border-color: $white;
           }
 
           .vfc-arrow-left:active,
@@ -184,14 +183,12 @@
 
       .vfc-calendars {
         .vfc-calendar {
-
           .vfc-months-container {
             .vfc-content {
               background-color: $white;
 
               .vfc-navigation-buttons {
                 div {
-
                   .vfc-arrow-left,
                   .vfc-arrow-right {
                     border-color: $black;
@@ -257,7 +254,6 @@
 
                 div {
                   &.vfc-day {
-
                     .vfc-base-start,
                     .vfc-base-end {
                       background-color: $astronaut;
@@ -319,10 +315,8 @@
         }
       }
 
-
       .vfc-time-picker-container {
         .vfc-time-picker__list {
-
           .vfc-time-picker__item {
             color: $white;
           }
@@ -339,7 +333,6 @@
             background: $pictionBlue;
           }
         }
-
 
         .vfc-close:before,
         .vfc-close:after {
@@ -397,7 +390,7 @@
       font-size: 20px;
       text-align: center;
       cursor: pointer;
-      transition: font-size .3s;
+      transition: font-size 0.3s;
 
       &:hover {
         font-size: 32px;
@@ -461,7 +454,7 @@
         font-size: 16px;
         padding-top: 15px;
         padding-bottom: 15px;
-        border-radius: .28571429rem .28571429rem 0 0;
+        border-radius: 0.28571429rem 0.28571429rem 0 0;
 
         span {
           margin-left: 15px;
@@ -635,7 +628,7 @@
     &-slide-right-leave-active,
     &-slide-up-enter-active,
     &-slide-up-leave-active {
-      transition: all 0.25s ease-in-out
+      transition: all 0.25s ease-in-out;
     }
 
     &-fade-leave-active,
@@ -644,40 +637,40 @@
     &-slide-left-leave-active,
     &-slide-right-leave-active,
     &-slide-up-leave-active {
-      position: absolute
+      position: absolute;
     }
 
     &-none-enter-active,
     &-none-leave-active {
-      transition-duration: 0s
+      transition-duration: 0s;
     }
 
     &-slide-left-enter,
     &-slide-right-leave-to {
       opacity: 0;
       -webkit-transform: translateX(25px);
-      transform: translateX(25px)
+      transform: translateX(25px);
     }
 
     &-slide-left-leave-to,
     &-slide-right-enter {
       opacity: 0;
       -webkit-transform: translateX(-25px);
-      transform: translateX(-25px)
+      transform: translateX(-25px);
     }
 
     &-slide-down-leave-to,
     &-slide-up-enter {
       opacity: 0;
       -webkit-transform: translateY(20px);
-      transform: translateY(20px)
+      transform: translateY(20px);
     }
 
     &-slide-down-enter,
     &-slide-up-leave-to {
       opacity: 0;
       -webkit-transform: translateY(-20px);
-      transform: translateY(-20px)
+      transform: translateY(-20px);
     }
   }
 
@@ -806,7 +799,7 @@
             justify-content: center;
 
             .vfc-popover-caret {
-              content: "";
+              content: '';
               position: absolute;
               display: block;
               width: 12px;
@@ -820,7 +813,6 @@
               top: 0;
               left: 50%;
             }
-
 
             &.vfc-underline {
               cursor: pointer;
@@ -886,7 +878,6 @@
       text-align: center;
     }
 
-
     a {
       cursor: default;
       text-decoration: unset;
@@ -924,7 +915,7 @@
       text-align: center;
 
       &:last-child {
-        margin-right: 0
+        margin-right: 0;
       }
     }
   }
@@ -974,7 +965,7 @@
         }
 
         &.vfc-cursor-not-allowed {
-          cursor: not-allowed
+          cursor: not-allowed;
         }
 
         &.vfc-marked {
@@ -997,7 +988,7 @@
           &:before {
             top: 0;
             left: 0;
-            content: "";
+            content: '';
             position: absolute;
             background-color: $lightskyblue;
             width: 100%;
