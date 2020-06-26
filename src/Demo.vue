@@ -46,7 +46,7 @@
       :is-multiple="true"
       :isLayoutExpandable="true"
       :calendars-count="3"
-      :isSeparately="true"
+      :isSeparately="false"
       arrowsPosition="space-between"
     >
       <template v-slot:dateRangeInputs="props">
@@ -199,7 +199,7 @@
       class="demo-custom-calendar 1"
       :change-month-function="true"
       :change-year-function="true"
-      :sundayStart="false"
+      :sundayStart="true"
       :showWeekNumbers="false"
       @dayClicked="dayClicked"
       title-position="left"

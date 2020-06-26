@@ -498,12 +498,10 @@ export default {
               let itemDate = this.helpCalendar
                 .getDateFromFormat(item.date)
                 .getTime();
-              // console.log(date);
 
               let thisDate = this.helpCalendar
                 .getDateFromFormat(date)
                 .getTime();
-              // console.log(date);
               let startDate = this.helpCalendar.getDateFromFormat(
                 this.calendar.dateRange.start.date
               );

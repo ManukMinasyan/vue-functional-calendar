@@ -67,7 +67,6 @@ export default {
     isDisabledDate(date) {
       let today = new Date();
       today.setHours(0, 0, 0, 0);
-      // console.log(date);
       let dateObj = this.helpCalendar.getDateFromFormat(date);
 
       return (

@@ -5,10 +5,10 @@
       :singleSelectedDate="singleSelectedDate"
       :calendar="calendar"
     >
-      <template v-slot:dateRangeInputs="test">
+      <template v-slot:dateRangeInputs="props">
         <slot
-          :startDate="test.startDate"
-          :endDate="test.endDate"
+          :startDate="props.startDate"
+          :endDate="props.endDate"
           :isTypeable="fConfigs.isTypeable"
           name="dateRangeInputs"
         >
@@ -16,8 +16,8 @@
       </template>
       <template v-slot:datePickerInput>
         <slot
-          :startDate="test.startDate"
-          :endDate="test.endDate"
+          :startDate="props.startDate"
+          :endDate="props.endDate"
           :isTypeable="fConfigs.isTypeable"
           name="datePickerInput"
         >
@@ -149,7 +149,11 @@
                       :day_key="day_key"
                       @dayMouseOver="dayMouseOver"
                       @hasSlot="hasSlot"
-                    />
+                    >
+                      <template v-slot:default="props">
+                        <slot :week="props.week" :day="props.day"></slot>
+                      </template>
+                    </Day>
                   </div>
                   <template
                     v-if="
