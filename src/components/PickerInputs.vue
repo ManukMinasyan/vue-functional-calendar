@@ -101,12 +101,12 @@ export default {
       get() {
         return this.calendar.dateRange.start.date
           ? this.calendar.dateRange.start.date
-          : '';
+          : ''
       },
       set(newValue) {
-        newValue = this.helpCalendar.mask(newValue);
+        newValue = this.helpCalendar.mask(newValue)
         if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
-          this.calendar.dateRange.start.date = newValue;
+          this.calendar.dateRange.start.date = newValue
         }
       }
     },
@@ -114,17 +114,17 @@ export default {
       get() {
         return this.calendar.dateRange.end.date
           ? this.calendar.dateRange.end.date
-          : '';
+          : ''
       },
       set(newValue) {
-        newValue = this.helpCalendar.mask(newValue);
+        newValue = this.helpCalendar.mask(newValue)
         if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
-          this.calendar.dateRange.end.date = newValue;
+          this.calendar.dateRange.end.date = newValue
         }
       }
     }
   }
-};
+}
 </script>
 
 <style scoped></style>
