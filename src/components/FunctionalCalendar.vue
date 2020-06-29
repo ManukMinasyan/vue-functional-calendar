@@ -165,14 +165,7 @@
                       v-for="moreWeekKey in 6 - calendarItem.weeks.length"
                       :key="key + moreWeekKey + 'moreWeek'"
                     >
-                      <div
-                        class="vfc-day"
-                        ref="day"
-                        v-for="i in 7"
-                        :key="key + moreWeekKey + i"
-                      >
-                        <span class="vfc-span-day">&nbsp;</span>
-                      </div>
+                      &nbsp;
                     </div>
                   </template>
                 </transition-group>

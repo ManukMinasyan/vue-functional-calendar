@@ -211,9 +211,10 @@
             {{ props.day.day }}
             <div class="events">
               <div
+                v-for="event in getEventsByDate(props.day.date)"
+                @mouseover="() => eventItemHover(event)"
                 class="event-item"
                 :class="event.class"
-                v-for="event in getEventsByDate(props.day.date)"
                 :key="event.id"
               >
                 {{ event.title }}
@@ -348,6 +349,9 @@ export default {
     }
   },
   methods: {
+    eventItemHover(event) {
+      console.log(event.date, event.title)
+    },
     dayClicked(item) {
       console.log('clicked:' + JSON.stringify(item))
     },
@@ -517,8 +521,9 @@ body {
 
                         .event-item {
                           position: relative;
+                          padding: 5px;
                           border: 0;
-                          width: 100%;
+                          // width: 100%;
                           border-radius: 5px;
                           background-color: transparent;
                           color: #ffffff;
