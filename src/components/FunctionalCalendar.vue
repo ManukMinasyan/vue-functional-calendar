@@ -38,7 +38,11 @@
         'vfc-dark': fConfigs.isDark
       }"
     >
-      <time-picker v-if="showTimePicker"></time-picker>
+      <time-picker
+        v-if="showTimePicker"
+        :height="$refs.popoverElement.clientHeight"
+      ></time-picker>
+
       <template v-else>
         <div class="vfc-calendars-container">
           <Arrows
@@ -160,8 +164,9 @@
                         !fConfigs.isLayoutExpandable
                     "
                   >
+                    <!-- stabilizator -->
                     <div
-                      class="vfc-week"
+                      style="height: 32.6px"
                       v-for="moreWeekKey in 6 - calendarItem.weeks.length"
                       :key="key + moreWeekKey + 'moreWeek'"
                     >
@@ -172,10 +177,25 @@
               </div>
             </div>
           </div>
-          <Footer>
+          <Footer v-if="canClearRange || $slots['footer']">
             <template v-slot:footer>
+              <div @click="cleanRange">
+                <slot name="cleaner">
+                  <div
+                    v-if="canClearRange && fConfigs.isDateRange"
+                    class="rangeCleaner"
+                  >
+                    <span
+                      :class="[rangeIsSelected ? 'active' : 'disabled']"
+                      @click="cleanRange"
+                      >Clear Range</span
+                    >
+                  </div>
+                </slot>
+              </div>
               <slot name="footer"></slot>
             </template>
+            <!-- <span>&nbsp;</span> -->
           </Footer>
         </div>
       </template>
@@ -208,6 +228,11 @@ export default {
   },
   mixins: [propsAndData],
   computed: {
+    rangeIsSelected() {
+      return !!(
+        this.calendar.dateRange.end.date && this.calendar.dateRange.start.date
+      )
+    },
     helpCalendar() {
       return new helpCalendarClass(
         this.fConfigs.sundayStart,
@@ -296,4 +321,26 @@ export default {
 
 <style lang="scss">
 @import '../assets/scss/calendar.scss';
+.rangeCleaner {
+  padding: 5px 0 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    color: white;
+    border-radius: 5px;
+    border: none;
+    padding: 5px;
+    &.active {
+      &:hover {
+        background-color: #4f8a9e;
+        cursor: pointer;
+      }
+      background-color: #66b3cc;
+    }
+    &.disabled {
+      background-color: rgb(148, 148, 148);
+    }
+  }
+}
 </style>
