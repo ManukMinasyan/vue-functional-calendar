@@ -49,7 +49,7 @@ export default {
     },
     calendarKey: {
       type: Number,
-      default: 0
+      default: -1
     },
     isMultiple: {
       type: Boolean,

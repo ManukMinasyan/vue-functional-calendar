@@ -1,5 +1,3 @@
-const undefinedGenerator = () => undefined
-
 export const propsAndData = {
   props: {
     configs: {
@@ -8,57 +6,57 @@ export const propsAndData = {
     },
     sundayStart: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     placeholder: {
       type: [String, Boolean],
-      default: undefinedGenerator
+      default: () => undefined
     },
     dateFormat: {
       type: String
     },
     isMultiple: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     isSeparately: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     isDatePicker: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     isMultipleDatePicker: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     isDateRange: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     withTimePicker: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     calendarsCount: {
       type: Number
     },
     isModal: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     isTypeable: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     changeMonthFunction: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     changeYearFunction: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     changeYearStep: {
       type: Number,
@@ -82,15 +80,15 @@ export const propsAndData = {
     },
     limits: {
       type: [Object, Boolean],
-      default: undefinedGenerator
+      default: () => undefined
     },
     minSelDays: {
       type: [Number, Boolean],
-      default: undefinedGenerator
+      default: () => undefined
     },
     maxSelDays: {
       type: [Number, Boolean],
-      default: undefinedGenerator
+      default: () => undefined
     },
     dayNames: {
       type: Array
@@ -103,14 +101,14 @@ export const propsAndData = {
     },
     showWeekNumbers: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     value: {
       type: Object
     },
     transition: {
       type: Boolean,
-      default: undefinedGenerator
+      default: () => undefined
     },
     hiddenElements: {
       type: Array
