@@ -16,8 +16,7 @@
       </template>
       <template v-slot:datePickerInput="props">
         <slot
-          :startDate="props.startDate"
-          :endDate="props.endDate"
+          :selectedDate="props.selectedDate"
           :isTypeable="fConfigs.isTypeable"
           name="datePickerInput"
         >
@@ -261,10 +260,13 @@ export default {
               [this.calendar.selectedHour, this.calendar.selectedMinute]
                 .reverse()
                 .join(':')
+          } else {
+            res +=
+              ' ' +
+              [this.calendar.selectedHour, this.calendar.selectedMinute].join(
+                ':'
+              )
           }
-          res +=
-            ' ' +
-            [this.calendar.selectedHour, this.calendar.selectedMinute].join(':')
         }
 
         return this.calendar.selectedDate
