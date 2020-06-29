@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="footerCon">
+    <slot name="cleaner"></slot>
     <slot name="footer"></slot>
   </div>
 </template>
@@ -10,4 +11,10 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.footerCon {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 20px 20px;
+}
+</style>

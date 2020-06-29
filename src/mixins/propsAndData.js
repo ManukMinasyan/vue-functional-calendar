@@ -17,6 +17,10 @@ export const propsAndData = {
     dateFormat: {
       type: String
     },
+    canClearRange: {
+      type: Boolean,
+      default: false
+    },
     isMultiple: {
       type: Boolean,
       default: undefinedGenerator
