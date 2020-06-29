@@ -46,7 +46,7 @@
       :is-multiple="true"
       :isLayoutExpandable="true"
       :calendars-count="3"
-      :isSeparately="false"
+      :isSeparately="true"
       arrowsPosition="space-between"
     >
       <template v-slot:dateRangeInputs="props">
@@ -211,9 +211,10 @@
             {{ props.day.day }}
             <div class="events">
               <div
+                v-for="event in getEventsByDate(props.day.date)"
+                @mouseover="() => eventItemHover(event)"
                 class="event-item"
                 :class="event.class"
-                v-for="event in getEventsByDate(props.day.date)"
                 :key="event.id"
               >
                 {{ event.title }}
@@ -287,7 +288,7 @@
 </template>
 
 <script>
-import { FunctionalCalendar } from '../index';
+import { FunctionalCalendar } from '../index'
 /* eslint-disable */
 export default {
   components: { FunctionalCalendar },
@@ -345,44 +346,47 @@ export default {
         isMultipleDatePicker: true,
         dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
       }
-    };
+    }
   },
   methods: {
+    eventItemHover(event) {
+      console.log(event.date, event.title)
+    },
     dayClicked(item) {
-      console.log('clicked:' + JSON.stringify(item));
+      console.log('clicked:' + JSON.stringify(item))
     },
     getEventsByDate(date) {
-      return this.events.filter(event => event.date === date);
+      return this.events.filter(event => event.date === date)
     },
     get(val) {
-      console.log(val);
+      console.log(val)
     },
     opened() {
-      console.log('open');
+      console.log('open')
     },
     closed() {
-      console.log('close');
+      console.log('close')
     },
     changedMonth(value) {
-      console.log(value);
+      console.log(value)
     },
     choseDay(day) {
-      console.log(day);
+      console.log(day)
     },
     preYear() {
-      this.$refs.calendar.ChooseDate('10/10/2020');
+      this.$refs.calendar.ChooseDate('10/10/2020')
     },
     nextYear() {
-      this.$refs.calendar.NextYear();
+      this.$refs.calendar.NextYear()
     },
     preMonth() {
-      this.$refs.calendar.PreMonth();
+      this.$refs.calendar.PreMonth()
     },
     nextMonth() {
-      this.$refs.calendar.NextMonth();
+      this.$refs.calendar.NextMonth()
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
@@ -517,8 +521,9 @@ body {
 
                         .event-item {
                           position: relative;
+                          padding: 5px;
                           border: 0;
-                          width: 100%;
+                          // width: 100%;
                           border-radius: 5px;
                           background-color: transparent;
                           color: #ffffff;

@@ -5,10 +5,10 @@
  * @returns {boolean|*}
  */
 export const hElContains = (el, child) =>
-    !!el && !!child && (el === child || el.contains(child));
+  !!el && !!child && (el === child || el.contains(child))
 
 /**
  * Generate unique ID
  * @returns {number}
  */
-export const hUniqueID = () => new Date().getUTCMilliseconds();
+export const hUniqueID = () => new Date().getUTCMilliseconds()
