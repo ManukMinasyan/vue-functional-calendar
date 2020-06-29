@@ -25,6 +25,10 @@
           <template v-else>{{ $parent.calendar.selectedDateTime }}</template>
         </span>
       </div>
+      <div class="titles">
+        <div>Hour</div>
+        <div>Minute</div>
+      </div>
       <div class="vfc-time-picker">
         <div
           class="vfc-time-picker__list vfc-time-picker__list--hours"
@@ -71,6 +75,10 @@ export default {
       startDateActive: true,
       currentSelectedDate: ''
     }
+  },
+  props: {
+    height: Number,
+    required: true
   },
   watch: {
     startDateActive: function() {
@@ -195,7 +203,7 @@ export default {
         hour = this.$parent.calendar.selectedHour
       }
 
-      return hour === formatTime(i)
+      return hour === this.formatTime(i)
     },
     checkMinuteActiveClass(i) {
       let minute
@@ -213,18 +221,18 @@ export default {
         minute = this.$parent.calendar.selectedMinute
       }
 
-      return minute === formatTime(i)
+      return minute === this.formatTime(i)
     },
     setStyles() {
       let container = this.$parent.$refs.mainContainer
 
       this.setScrollPosition()
 
-      let timeLine = document.getElementById('time-line')
+      let timeLineHeight = +this.height - 35 - 85 // - paddings - titles height
       document.getElementsByClassName('vfc-time-picker__list')[0].style.height =
-        container.clientHeight - timeLine.clientHeight + 'px'
+        timeLineHeight + 'px'
       document.getElementsByClassName('vfc-time-picker__list')[1].style.height =
-        container.clientHeight - timeLine.clientHeight + 'px'
+        timeLineHeight + 'px'
     },
     setScrollPosition() {
       let container = this.$parent.$refs.mainContainer
@@ -249,4 +257,19 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.titles {
+  display: flex;
+  padding: 10px 0;
+  > div {
+    flex: 1;
+    text-align: center;
+    color: #66b3cc;
+    word-break: break-all;
+    font-size: 25px;
+  }
+}
+.vfc-time-picker {
+  padding-bottom: 20px;
+}
+</style>

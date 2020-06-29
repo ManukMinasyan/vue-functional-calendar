@@ -1,9 +1,141 @@
 <template>
   <div>
-    <functional-calendar
+    <table style="width: 100%">
+      <tr>
+        <td>
+          <functional-calendar></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar :is-dark="true"></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :change-month-function="true"
+            :change-year-function="true"
+          ></functional-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <functional-calendar :showWeekNumbers="true"></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar :is-date-picker="true"></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :with-time-picker="true"
+            :is-date-picker="true"
+          ></functional-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <functional-calendar
+            :is-multiple-date-picker="true"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :is-multiple-date-picker="true"
+            :with-time-picker="true"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar :is-date-range="true"></functional-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <functional-calendar
+            :marked-dates="markedDates"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :is-date-range="true"
+            :min-sel-days="3"
+            :max-sel-days="6"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :is-date-picker="true"
+            :disabled-day-names="['Su', 'We']"
+          ></functional-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <functional-calendar
+            :limits="{ min: '8/06/2020', max: '24/06/2020' }"
+            :is-date-picker="true"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :hidden-elements="['leftAndRightDays']"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :hidden-elements="['leftAndRightDays']"
+          ></functional-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <functional-calendar
+            :can-clear-range="true"
+            :is-separately="true"
+            :is-date-range="true"
+            :is-multiple="true"
+            :calendars-count="2"
+          ></functional-calendar>
+        </td>
+        <td>
+          <functional-calendar
+            :is-modal="true"
+            :can-clear-range="true"
+            :is-date-range="true"
+          >
+            <template v-slot:cleaner>
+              <div style="display: flex; justify-content: center;">
+                <button>Cancel</button>
+              </div>
+            </template>
+          </functional-calendar>
+          <functional-calendar
+            :is-modal="true"
+            :is-date-range="true"
+            :is-multiple="true"
+            :calendars-count="2"
+          ></functional-calendar>
+        </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <functional-calendar
+            :is-multiple="true"
+            :calendars-count="2"
+            :is-date-range="true"
+          ></functional-calendar>
+        </td>
+      </tr>
+    </table>
+
+    <hr />
+    <hr />
+    <hr />
+    <hr />
+    <!-- <functional-calendar
       :limits="{ min: '8/06/2020', max: '24/06/2020' }"
       :is-date-picker="true"
-    ></functional-calendar>
+    ></functional-calendar> -->
 
     <!-- <functional-calendar
       :with-time-picker="true"
@@ -117,6 +249,11 @@
       <template v-slot:navigationArrowRight>
         <div>→</div>
       </template>
+      <template v-slot:cleaner>
+        <div style="display: flex; justify-content: center;">
+          <button @click="test">Cancel</button>
+        </div>
+      </template>
       <template v-slot:footer>
         <div class="footer">
           <a
@@ -194,7 +331,10 @@
     <!--        <pre>-->
     <!--        {{ calendarData }}-->
     <!--        </pre>!-->
-
+    <functional-calendar
+      :with-time-picker="true"
+      :is-date-picker="true"
+    ></functional-calendar>
     <functional-calendar
       class="demo-custom-calendar 1"
       :change-month-function="true"
@@ -349,6 +489,9 @@ export default {
     }
   },
   methods: {
+    test() {
+      console.log(this.$refs.demoCalendar1.rangeIsSelected)
+    },
     eventItemHover(event) {
       console.log(event.date, event.title)
     },

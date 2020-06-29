@@ -930,5 +930,15 @@ export default {
     }
 
     return date === this.fConfigs.markedDateRange.start
+  },
+  cleanRange() {
+    this.calendar.dateRange.end.date = false
+    this.calendar.dateRange.start.date = false
+    this.calendar.dateRange.end.dateTime = false
+    this.calendar.dateRange.start.dateTime = false
+    this.calendar.dateRange.end.hour = '00'
+    this.calendar.dateRange.start.hour = '00'
+    this.calendar.dateRange.end.minute = '00'
+    this.calendar.dateRange.start.minute = '00'
   }
 }
