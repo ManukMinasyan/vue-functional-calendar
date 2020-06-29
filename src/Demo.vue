@@ -23,7 +23,11 @@
           <functional-calendar :is-date-picker="true"></functional-calendar>
         </td>
         <td>
+          <hr />
           <functional-calendar
+            :is-modal="true"
+            time-format="hh:mm"
+            :display-time-input="true"
             :with-time-picker="true"
             :is-date-picker="true"
           ></functional-calendar>
@@ -149,6 +153,8 @@
       v-model="demoCalendar1"
       :marked-dates="markedDates"
       :showWeekNumbers="true"
+      time-format="hh:mm"
+      :display-time-input="true"
       :disabled-dates="disabledDates"
       :is-date-picker="true"
       :is-modal="false"

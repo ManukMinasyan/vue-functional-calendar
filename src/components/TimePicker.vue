@@ -224,7 +224,7 @@ export default {
       return minute === this.formatTime(i)
     },
     setStyles() {
-      let container = this.$parent.$refs.mainContainer
+      //let container = this.$parent.$refs.mainContainer
 
       this.setScrollPosition()
 
@@ -271,5 +271,8 @@ export default {
 }
 .vfc-time-picker {
   padding-bottom: 20px;
+}
+.vfc-time-picker-container {
+  min-width: 250px;
 }
 </style>

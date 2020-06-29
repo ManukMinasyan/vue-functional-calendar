@@ -14,7 +14,7 @@
         >
         </slot>
       </template>
-      <template v-slot:datePickerInput>
+      <template v-slot:datePickerInput="props">
         <slot
           :startDate="props.startDate"
           :endDate="props.endDate"
@@ -243,7 +243,33 @@ export default {
     },
     singleSelectedDate: {
       get() {
-        return this.calendar.selectedDate ? this.calendar.selectedDate : ''
+        let res = ''
+        if (this.displayTimeInput) {
+          const validFormats = [
+            'HH:MM',
+            'HH:mm',
+            'hh:MM',
+            'hh:mm',
+            'MM:HH',
+            'mm:HH',
+            'MM:hh',
+            'mm:hh'
+          ]
+          if (validFormats.indexOf(this.timeFormat) > 3) {
+            res +=
+              ' ' +
+              [this.calendar.selectedHour, this.calendar.selectedMinute]
+                .reverse()
+                .join(':')
+          }
+          res +=
+            ' ' +
+            [this.calendar.selectedHour, this.calendar.selectedMinute].join(':')
+        }
+
+        return this.calendar.selectedDate
+          ? this.calendar.selectedDate + res
+          : ''
       },
       set(newValue) {
         newValue = this.helpCalendar.mask(newValue)
@@ -258,6 +284,11 @@ export default {
     this.initCalendar()
   },
   mounted() {
+    //show time placeholder
+    if (this.displayTimeInput) {
+      this.fConfigs.placeholder += ' ' + this.timeFormat.toUpperCase()
+    }
+
     this.popoverElement = this.$refs.popoverElement
     // Event
     this.popoverElement.addEventListener('focusin', this.onFocusIn)

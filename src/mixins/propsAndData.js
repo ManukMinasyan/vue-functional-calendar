@@ -2,6 +2,27 @@ const undefinedGenerator = () => undefined
 
 export const propsAndData = {
   props: {
+    timeFormat: {
+      type: String,
+      default: 'HH:mm',
+      validator(format) {
+        const validFormats = [
+          'HH:MM',
+          'HH:mm',
+          'hh:MM',
+          'hh:mm',
+          'MM:HH',
+          'mm:HH',
+          'MM:hh',
+          'mm:hh'
+        ]
+        return !!~validFormats.indexOf(format)
+      }
+    },
+    displayTimeInput: {
+      type: Boolean,
+      default: false
+    },
     configs: {
       type: Object,
       default: () => {}
