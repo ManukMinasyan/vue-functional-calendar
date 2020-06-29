@@ -148,7 +148,6 @@
                       :week="week"
                       :day_key="day_key"
                       @dayMouseOver="dayMouseOver"
-                      @hasSlot="hasSlot"
                     >
                       <template v-slot:default="props">
                         <slot :week="props.week" :day="props.day"></slot>
@@ -298,9 +297,7 @@ export default {
       }
     }
   },
-  methods: {
-    ...calendarMethods
-  }
+  methods: calendarMethods
 }
 </script>
 

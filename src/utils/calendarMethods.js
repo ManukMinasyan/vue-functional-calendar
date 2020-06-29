@@ -919,9 +919,7 @@ export default {
       }
     }
   },
-  hasSlot(name = 'default') {
-    return !!this.$slots[name] || !!this.$scopedSlots[name]
-  },
+
   checkDateRangeStart(date) {
     if (Array.isArray(this.fConfigs.markedDateRange)) {
       return (
