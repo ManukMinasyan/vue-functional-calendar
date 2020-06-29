@@ -37,9 +37,9 @@
             }"
             v-for="i in 24"
             :key="i"
-            @click="changeHour(i <= 10 ? '0' + (i - 1) : i - 1)"
+            @click="changeHour(formatTime(i))"
           >
-            {{ i <= 10 ? '0' + (i - 1) : i - 1 }}
+            {{ formatTime(i) }}
           </div>
         </div>
         <div
@@ -53,9 +53,9 @@
             }"
             v-for="i in 60"
             :key="i"
-            @click="changeMinute(i <= 10 ? '0' + (i - 1) : i - 1)"
+            @click="changeMinute(formatTime(i))"
           >
-            {{ i <= 10 ? '0' + (i - 1) : i - 1 }}
+            {{ formatTime(i) }}
           </div>
         </div>
       </div>
@@ -103,6 +103,9 @@ export default {
     this.setStyles()
   },
   methods: {
+    formatTime(i) {
+      return i <= 10 ? '0' + (i - 1) : i - 1
+    },
     close() {
       this.$parent.showTimePicker = false
     },
@@ -192,7 +195,7 @@ export default {
         hour = this.$parent.calendar.selectedHour
       }
 
-      return hour === (i <= 10 ? '0' + (i - 1) : i - 1)
+      return hour === formatTime(i)
     },
     checkMinuteActiveClass(i) {
       let minute
@@ -210,7 +213,7 @@ export default {
         minute = this.$parent.calendar.selectedMinute
       }
 
-      return minute === (i <= 10 ? '0' + (i - 1) : i - 1)
+      return minute === formatTime(i)
     },
     setStyles() {
       let container = this.$parent.$refs.mainContainer

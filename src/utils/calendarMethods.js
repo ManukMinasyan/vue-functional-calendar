@@ -67,65 +67,62 @@ export default {
     }
   },
   setConfigs() {
-    let vm = this
     let globalOptions
-    if (typeof vm.$getOptions !== 'undefined') {
+    if (typeof this.$getOptions !== 'undefined') {
       // Global Options
-      globalOptions = vm.$getOptions()
-      Object.keys(globalOptions).forEach(function(objectKey) {
-        if (typeof vm.fConfigs[objectKey] !== 'undefined') {
-          vm.$set(vm.fConfigs, objectKey, globalOptions[objectKey])
+      globalOptions = this.$getOptions()
+      Object.keys(globalOptions).forEach(objectKey => {
+        if (typeof this.fConfigs[objectKey] !== 'undefined') {
+          this.$set(this.fConfigs, objectKey, globalOptions[objectKey])
         }
       })
     }
 
-    if (typeof vm.configs !== 'undefined') {
-      Object.keys(vm.fConfigs).forEach(function(objectKey) {
-        if (typeof vm.configs[objectKey] !== 'undefined') {
+    if (typeof this.configs !== 'undefined') {
+      Object.keys(this.fConfigs).forEach(objectKey => {
+        if (typeof this.configs[objectKey] !== 'undefined') {
           // Get From Configs
-          vm.$set(vm.fConfigs, objectKey, vm.configs[objectKey])
+          this.$set(this.fConfigs, objectKey, this.configs[objectKey])
         }
       })
     } else {
-      Object.keys(vm.$props).forEach(function(objectKey) {
+      Object.keys(this.$props).forEach(objectKey => {
         if (
-          typeof vm.fConfigs[objectKey] !== 'undefined' &&
-          typeof vm.$props[objectKey] !== 'undefined'
+          typeof this.fConfigs[objectKey] !== 'undefined' &&
+          typeof this.$props[objectKey] !== 'undefined'
         ) {
-          vm.$set(vm.fConfigs, objectKey, vm.$props[objectKey])
+          this.$set(this.fConfigs, objectKey, this.$props[objectKey])
         }
       })
     }
 
     // Is Modal
-    if (vm.fConfigs.isModal) vm.showCalendar = false
+    if (this.fConfigs.isModal) this.showCalendar = false
 
     // Placeholder
-    if (!vm.fConfigs.placeholder)
-      vm.fConfigs.placeholder = vm.fConfigs.dateFormat
+    if (!this.fConfigs.placeholder)
+      this.fConfigs.placeholder = this.fConfigs.dateFormat
 
-    if (typeof vm.newCurrentDate !== 'undefined') {
-      vm.calendar.currentDate = vm.newCurrentDate
+    if (typeof this.newCurrentDate !== 'undefined') {
+      this.calendar.currentDate = this.newCurrentDate
     }
 
     // Sunday Start
-    if (vm.fConfigs.sundayStart) {
-      let dayNames = vm.fConfigs.dayNames
+    if (this.fConfigs.sundayStart) {
+      let dayNames = this.fConfigs.dayNames
       let sundayName = dayNames[dayNames.length - 1]
       dayNames.splice(dayNames.length - 1, 1)
       dayNames.unshift(sundayName)
     }
   },
   listRendering() {
-    let vm = this
-
     // Each Calendars
-    vm.listCalendars.forEach(function(calendar) {
+    this.listCalendars.forEach(calendar => {
       // Set Calendar Weeks
-      calendar.weeks.forEach(function(week) {
+      calendar.weeks.forEach(week => {
         let finalizedDays = []
 
-        week.days.forEach(function(day) {
+        week.days.forEach(day => {
           let date = new Date(day.year, day.month, day.day)
           let now = new Date()
 
@@ -140,20 +137,20 @@ export default {
 
           let checkMarked
           // With Custom Classes
-          if (typeof vm.fConfigs.markedDates[0] === 'object') {
-            checkMarked = vm.fConfigs.markedDates.find(function(markDate) {
-              return markDate.date === vm.helpCalendar.formatDate(date)
+          if (typeof this.fConfigs.markedDates[0] === 'object') {
+            checkMarked = this.fConfigs.markedDates.find(markDate => {
+              return markDate.date === this.helpCalendar.formatDate(date)
             })
           } else {
             // Without Classes
-            checkMarked = vm.fConfigs.markedDates.find(function(markDate) {
-              return markDate === vm.helpCalendar.formatDate(date)
+            checkMarked = this.fConfigs.markedDates.find(markDate => {
+              return markDate === this.helpCalendar.formatDate(date)
             })
           }
 
           if (
-            vm.calendar.dateRange.start.date ===
-            vm.helpCalendar.formatDate(date)
+            this.calendar.dateRange.start.date ===
+            this.helpCalendar.formatDate(date)
           ) {
             checkMarked = true
           }
@@ -165,16 +162,16 @@ export default {
 
           finalizedDays.push({
             day: day.day,
-            date: vm.helpCalendar.formatDate(date),
+            date: this.helpCalendar.formatDate(date),
             hide: day.hide,
             isMouseToLeft: false,
             isMouseToRight: false,
             isHovered: false,
-            isDateRangeStart: vm.checkDateRangeStart(
-              vm.helpCalendar.formatDate(date)
+            isDateRangeStart: this.checkDateRangeStart(
+              this.helpCalendar.formatDate(date)
             ),
-            isDateRangeEnd: vm.checkDateRangeEnd(
-              vm.helpCalendar.formatDate(date)
+            isDateRangeEnd: this.checkDateRangeEnd(
+              this.helpCalendar.formatDate(date)
             ),
             hideLeftAndRightDays: day.hideLeftAndRightDays,
             isToday: isToday,
@@ -395,9 +392,8 @@ export default {
     this.$emit('choseDay', item)
   },
   markChooseDays() {
-    let vm = this
-    let startDate = vm.calendar.dateRange.start.date
-    let endDate = vm.calendar.dateRange.end.date
+    let startDate = this.calendar.dateRange.start.date
+    let endDate = this.calendar.dateRange.end.date
 
     this.listCalendars.forEach(calendar => {
       calendar.weeks.forEach(week => {
@@ -405,12 +401,12 @@ export default {
           day.isMarked = false
 
           // Date Picker
-          if (vm.fConfigs.isDatePicker) {
+          if (this.fConfigs.isDatePicker) {
             if (this.calendar.selectedDate === day.date) day.isMarked = true
-          } else if (vm.fConfigs.isMultipleDatePicker) {
+          } else if (this.fConfigs.isMultipleDatePicker) {
             if (
-              vm.calendar.hasOwnProperty('selectedDates') &&
-              vm.calendar.selectedDates.find(date => date.date === day.date)
+              this.calendar.hasOwnProperty('selectedDates') &&
+              this.calendar.selectedDates.find(date => date.date === day.date)
             )
               day.isMarked = true
           } else {

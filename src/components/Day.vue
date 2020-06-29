@@ -205,7 +205,7 @@ export default {
 
       // Date Mark With Custom Classes
       if (typeof this.fConfigs.markedDates === 'object') {
-        let checkMarked = this.fConfigs.markedDates.find(function(markDate) {
+        let checkMarked = this.fConfigs.markedDates.find(markDate => {
           return markDate.date === day.date
         })
 
