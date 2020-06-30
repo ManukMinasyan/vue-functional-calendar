@@ -19,7 +19,7 @@
         <td>
           <functional-calendar
             :showWeekNumbers="true"
-            borderColor="rgb(255,0,255)"
+            :configs="{ borderColor: 'rgb(255,0,255)' }"
           ></functional-calendar>
         </td>
         <td>
@@ -29,7 +29,7 @@
           <hr />
           <functional-calendar
             :is-modal="true"
-            time-format="hh:mm"
+            :date-format="'yyyy-mm-dd mm:hh'"
             :display-time-input="true"
             :with-time-picker="true"
             :is-date-picker="true"
@@ -117,6 +117,7 @@
             :is-date-range="true"
             :is-multiple="true"
             :calendars-count="2"
+            :date-format="'yyyy-mm-dd hh:mm'"
           ></functional-calendar>
         </td>
       </tr>
@@ -130,6 +131,7 @@
             :is-multiple="true"
             :calendars-count="2"
             :is-date-range="true"
+            :with-time-picker="true"
           ></functional-calendar>
         </td>
       </tr>
@@ -282,7 +284,6 @@
     asd
     <functional-calendar
       :is-modal="true"
-      time-format="hh:mm"
       :display-time-input="true"
       :with-time-picker="true"
       :is-date-picker="true"
@@ -409,13 +410,13 @@
     <!--        </pre>!-->
     <functional-calendar
       :with-time-picker="true"
+      :sundayStart="true"
       :is-date-picker="true"
     ></functional-calendar>
     <functional-calendar
       class="demo-custom-calendar 1"
       :change-month-function="true"
       :change-year-function="true"
-      :sundayStart="true"
       :showWeekNumbers="false"
       @dayClicked="dayClicked"
       title-position="left"

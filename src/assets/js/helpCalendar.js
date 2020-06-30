@@ -28,12 +28,11 @@ export default class helpCalendar {
     let formattedDate = this.dateFormat.replace('dd', day.toString())
     formattedDate = formattedDate.replace('mm', month.toString())
     formattedDate = formattedDate.replace('yyyy', year.toString())
-
-    return formattedDate
+    return formattedDate.split(' ')[0]
   }
 
   getDateFromFormat(date) {
-    let format = this.dateFormat
+    let format = this.dateFormat.split(' ')[0]
 
     if (format.indexOf('/') !== -1) {
       format = format.split('/')
@@ -51,7 +50,6 @@ export default class helpCalendar {
     let year = format.indexOf('yyyy')
     let month = format.indexOf('mm')
     let day = format.indexOf('dd')
-
     return new Date(date[year], date[month] - 1, date[day])
   }
 
@@ -81,9 +79,9 @@ export default class helpCalendar {
 
     while (start <= numDays) {
       weeks.push({
-        year: year,
-        start: start,
-        end: end,
+        year,
+        start,
+        end,
         number: new Date(year, month, start).getWeekNumber(this.sundayStart),
         days: []
       })
@@ -91,7 +89,6 @@ export default class helpCalendar {
       end = end + 7
       if (end > numDays) end = numDays
     }
-
     return {
       weeks,
       month: lastDate.getMonth(),
@@ -221,6 +218,7 @@ export default class helpCalendar {
   }
 
   mask(value) {
+    console.log('sdasdasd')
     let dayLength = this.getDateFromFormat(value)
       .getDate()
       .toString().length

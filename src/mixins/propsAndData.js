@@ -6,23 +6,6 @@ export const propsAndData = {
       type: String,
       default: ''
     },
-    timeFormat: {
-      type: String,
-      default: 'HH:mm',
-      validator(format) {
-        const validFormats = [
-          'HH:MM',
-          'HH:mm',
-          'hh:MM',
-          'hh:mm',
-          'MM:HH',
-          'mm:HH',
-          'MM:hh',
-          'mm:hh'
-        ]
-        return !!~validFormats.indexOf(format)
-      }
-    },
     displayTimeInput: {
       type: Boolean,
       default: false
@@ -40,7 +23,24 @@ export const propsAndData = {
       default: undefinedGenerator
     },
     dateFormat: {
-      type: String
+      type: String,
+      validator(format) {
+        let timeFormat = format.split(' ')[1]
+        if (!timeFormat) {
+          return true
+        }
+        const validFormats = [
+          'HH:MM',
+          'HH:mm',
+          'hh:MM',
+          'hh:mm',
+          'MM:HH',
+          'mm:HH',
+          'MM:hh',
+          'mm:hh'
+        ]
+        return !!~validFormats.indexOf(timeFormat)
+      }
     },
     canClearRange: {
       type: Boolean,
@@ -209,7 +209,7 @@ export const propsAndData = {
       fConfigs: {
         sundayStart: false,
         placeholder: false,
-        dateFormat: 'dd/mm/yyyy',
+        dateFormat: 'dd/mm/yyyy hh:MM',
 
         isDatePicker: false,
         isMultipleDatePicker: false,

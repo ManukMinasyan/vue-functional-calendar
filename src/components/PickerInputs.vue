@@ -15,7 +15,7 @@
           type="text"
           title="Start Date"
           v-model="dateRangeSelectedStartDate"
-          :placeholder="fConfigs.placeholder"
+          :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
           :maxlength="fConfigs.dateFormat.length"
         />
@@ -23,7 +23,7 @@
           type="text"
           title="End Date"
           v-model="dateRangeSelectedEndDate"
-          :placeholder="fConfigs.placeholder"
+          :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
           :maxlength="fConfigs.dateFormat.length"
         />

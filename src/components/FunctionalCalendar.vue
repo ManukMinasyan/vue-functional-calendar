@@ -258,7 +258,11 @@ export default {
             'MM:hh',
             'mm:hh'
           ]
-          if (validFormats.indexOf(this.timeFormat) > 3) {
+          let format = this.fConfigs.dateFormat
+          if (this.dateFormat) {
+            format = this.dateFormat
+          }
+          if (validFormats.indexOf(format.split(' ')[1]) > 3) {
             res +=
               ' ' +
               [this.calendar.selectedHour, this.calendar.selectedMinute]
@@ -292,7 +296,10 @@ export default {
   mounted() {
     //show time placeholder
     if (this.displayTimeInput) {
-      this.fConfigs.placeholder += ' ' + this.timeFormat.toUpperCase()
+      const timeFormat = this.fConfigs.placeholder.split(' ')[1]
+      if (!timeFormat) {
+        this.fConfigs.placeholder += ' hh:mm'
+      }
     }
 
     this.popoverElement = this.$refs.popoverElement

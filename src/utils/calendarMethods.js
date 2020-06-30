@@ -109,10 +109,11 @@ export default {
 
     // Sunday Start
     if (this.fConfigs.sundayStart) {
-      let dayNames = this.fConfigs.dayNames
+      let dayNames = [...this.fConfigs.dayNames]
       let sundayName = dayNames[dayNames.length - 1]
       dayNames.splice(dayNames.length - 1, 1)
       dayNames.unshift(sundayName)
+      this.fConfigs.dayNames = dayNames
     }
   },
   listRendering() {
