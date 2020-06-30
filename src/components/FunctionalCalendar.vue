@@ -139,7 +139,11 @@
                     v-for="(week, week_key) in calendarItem.weeks"
                     :key="key + week_key + 1"
                   >
-                    <WeekNumbers v-if="showWeekNumbers" :number="week.number" />
+                    <WeekNumbers
+                      v-if="showWeekNumbers"
+                      :number="week.number"
+                      :borderColor="borderColor"
+                    />
                     <Day
                       v-for="(day, day_key) in week.days"
                       ref="day"

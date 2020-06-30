@@ -17,7 +17,10 @@
       </tr>
       <tr>
         <td>
-          <functional-calendar :showWeekNumbers="true"></functional-calendar>
+          <functional-calendar
+            :showWeekNumbers="true"
+            borderColor="rgb(255,0,255)"
+          ></functional-calendar>
         </td>
         <td>
           <functional-calendar :is-date-picker="true"></functional-calendar>
@@ -153,6 +156,7 @@
       v-model="demoCalendar1"
       :marked-dates="markedDates"
       :showWeekNumbers="true"
+      borderColor="green"
       :disabled-dates="disabledDates"
       :is-date-picker="true"
       :is-modal="false"

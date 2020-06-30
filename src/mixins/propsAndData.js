@@ -2,6 +2,10 @@ const undefinedGenerator = () => undefined
 
 export const propsAndData = {
   props: {
+    borderColor: {
+      type: String,
+      default: ''
+    },
     timeFormat: {
       type: String,
       default: 'HH:mm',
