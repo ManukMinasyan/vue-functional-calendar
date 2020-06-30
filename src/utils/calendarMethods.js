@@ -150,8 +150,7 @@ export default {
           }
 
           if (
-            this.calendar.dateRange.start.date ===
-            this.helpCalendar.formatDate(date)
+            this.calendar.dateRange.start === this.helpCalendar.formatDate(date)
           ) {
             checkMarked = true
           }
@@ -232,52 +231,52 @@ export default {
     if (this.fConfigs.isDateRange) {
       let clickDate = this.helpCalendar.getDateFromFormat(item.date).getTime()
 
-      let startDate = false
-      if (this.calendar.dateRange.start.date) {
+      let startDate = ''
+      if (this.calendar.dateRange.start) {
         startDate = this.helpCalendar.getDateFromFormat(
-          this.calendar.dateRange.start.date
+          this.calendar.dateRange.start
         )
       }
 
       // Two dates is not empty
       if (
-        this.calendar.dateRange.start.date !== false &&
-        this.calendar.dateRange.end.date !== false
+        this.calendar.dateRange.start !== '' &&
+        this.calendar.dateRange.end !== ''
       ) {
-        this.calendar.dateRange.start.date = item.date
-        this.calendar.dateRange.end.date = false
+        this.calendar.dateRange.start = item.date
+        this.calendar.dateRange.end = ''
         // Not date selected
       } else if (
-        this.calendar.dateRange.start.date === false &&
-        this.calendar.dateRange.end.date === false
+        this.calendar.dateRange.start === '' &&
+        this.calendar.dateRange.end === ''
       ) {
-        this.calendar.dateRange.start.date = item.date
+        this.calendar.dateRange.start = item.date
         // Start Date not empty, chose date > start date
       } else if (
-        this.calendar.dateRange.end.date === false &&
+        this.calendar.dateRange.end === '' &&
         clickDate > startDate.getTime()
       ) {
-        this.calendar.dateRange.end.date = item.date
+        this.calendar.dateRange.end = item.date
         // Start date not empty, chose date <= start date (also same date range select)
       } else if (
-        this.calendar.dateRange.start.date !== false &&
+        this.calendar.dateRange.start !== '' &&
         clickDate <= startDate.getTime()
       ) {
-        this.calendar.dateRange.end.date = this.calendar.dateRange.start.date
-        this.calendar.dateRange.start.date = item.date
+        this.calendar.dateRange.end = this.calendar.dateRange.start
+        this.calendar.dateRange.start = item.date
       }
 
       //Get number of days between date range dates
       if (
-        this.calendar.dateRange.start.date !== false &&
-        this.calendar.dateRange.end.date !== false
+        this.calendar.dateRange.start !== '' &&
+        this.calendar.dateRange.end !== ''
       ) {
         let oneDay = 24 * 60 * 60 * 1000
         let firstDate = this.helpCalendar.getDateFromFormat(
-          this.calendar.dateRange.start.date
+          this.calendar.dateRange.start
         )
         let secondDate = this.helpCalendar.getDateFromFormat(
-          this.calendar.dateRange.end.date
+          this.calendar.dateRange.end
         )
         let diffDays = Math.round(
           Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
@@ -300,9 +299,9 @@ export default {
           diffDays < minSelDays
         ) {
           startDate.setDate(startDate.getDate() + (minSelDays - 1))
-          this.calendar.dateRange.end.date = this.helpCalendar.formatDate(
-            startDate
-          )
+          this.calendar.dateRange.end = this.helpCalendar
+            .formatDate(startDate)
+            .toString()
         }
 
         if (
@@ -311,9 +310,9 @@ export default {
           diffDays < minSelDays
         ) {
           startDate.setDate(startDate.getDate() - (minSelDays - 1))
-          this.calendar.dateRange.start.date = this.helpCalendar.formatDate(
-            startDate
-          )
+          this.calendar.dateRange.start = this.helpCalendar
+            .formatDate(startDate)
+            .toString()
         }
 
         // Maximum Selected Days
@@ -325,9 +324,7 @@ export default {
           diffDays >= maxSelDays
         ) {
           startDate.setDate(startDate.getDate() + (maxSelDays - 1))
-          this.calendar.dateRange.end.date = this.helpCalendar.formatDate(
-            startDate
-          )
+          this.calendar.dateRange.end = this.helpCalendar.formatDate(startDate)
         }
 
         if (
@@ -336,7 +333,7 @@ export default {
           diffDays >= maxSelDays
         ) {
           startDate.setDate(startDate.getDate() - (maxSelDays - 1))
-          this.calendar.dateRange.start.date = this.helpCalendar.formatDate(
+          this.calendar.dateRange.start = this.helpCalendar.formatDate(
             startDate
           )
         }
@@ -393,8 +390,8 @@ export default {
     this.$emit('choseDay', item)
   },
   markChooseDays() {
-    let startDate = this.calendar.dateRange.start.date
-    let endDate = this.calendar.dateRange.end.date
+    let startDate = this.calendar.dateRange.start
+    let endDate = this.calendar.dateRange.end
 
     this.listCalendars.forEach(calendar => {
       calendar.weeks.forEach(week => {
@@ -429,7 +426,7 @@ export default {
               day.isMouseToLeft = false
               day.isMouseToRight = false
             }
-
+            console.log(this.calendar.dateRange.start)
             if (startDate && endDate) {
               if (
                 this.helpCalendar.getDateFromFormat(day.date).getTime() >
@@ -468,10 +465,10 @@ export default {
     }
 
     if (
-      (this.calendar.dateRange.start.date === false ||
-        this.calendar.dateRange.end.date === false) &&
-      (this.calendar.dateRange.start.date !== false ||
-        this.calendar.dateRange.end.date !== false)
+      (this.calendar.dateRange.start === '' ||
+        this.calendar.dateRange.end === '') &&
+      (this.calendar.dateRange.start !== '' ||
+        this.calendar.dateRange.end !== '')
     ) {
       for (let e = 0; e < this.listCalendars.length; e++) {
         let calendar = this.listCalendars[e]
@@ -485,20 +482,20 @@ export default {
             this.listCalendars[e].weeks[f].days[i].isHovered = false
 
             if (
-              item.date !== this.calendar.dateRange.start.date &&
+              item.date !== this.calendar.dateRange.start &&
               !this.fConfigs.markedDates.includes(item.date)
             ) {
               this.listCalendars[e].weeks[f].days[i].isMarked = false
             }
 
-            if (this.calendar.dateRange.start.date) {
+            if (this.calendar.dateRange.start) {
               let itemDate = this.helpCalendar
                 .getDateFromFormat(item.date)
                 .getTime()
 
               let thisDate = this.helpCalendar.getDateFromFormat(date).getTime()
               let startDate = this.helpCalendar.getDateFromFormat(
-                this.calendar.dateRange.start.date
+                this.calendar.dateRange.start
               )
 
               this.listCalendars[e].weeks[f].days[i].isMouseToLeft =
@@ -525,14 +522,14 @@ export default {
                 this.listCalendars[e].weeks[f].days[i].isMarked = true
               }
 
-              if (!this.calendar.dateRange.end.date && itemDate === thisDate) {
+              if (!this.calendar.dateRange.end && itemDate === thisDate) {
                 this.listCalendars[e].weeks[f].days[i].isHovered = true
               }
 
               if (
                 this.checkSelDates(
                   'min',
-                  this.calendar.dateRange.start.date,
+                  this.calendar.dateRange.start,
                   item.date,
                   date
                 )
@@ -569,7 +566,7 @@ export default {
               if (
                 this.checkSelDates(
                   'max',
-                  this.calendar.dateRange.start.date,
+                  this.calendar.dateRange.start,
                   item.date,
                   date
                 )
@@ -933,13 +930,7 @@ export default {
     return date === this.fConfigs.markedDateRange.start
   },
   cleanRange() {
-    this.calendar.dateRange.end.date = false
-    this.calendar.dateRange.start.date = false
-    this.calendar.dateRange.end.dateTime = false
-    this.calendar.dateRange.start.dateTime = false
-    this.calendar.dateRange.end.hour = '00'
-    this.calendar.dateRange.start.hour = '00'
-    this.calendar.dateRange.end.minute = '00'
-    this.calendar.dateRange.start.minute = '00'
+    this.calendar.dateRange.end = ''
+    this.calendar.dateRange.start = ''
   }
 }

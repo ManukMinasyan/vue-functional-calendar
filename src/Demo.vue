@@ -19,7 +19,7 @@
         <td>
           <functional-calendar
             :showWeekNumbers="true"
-            :configs="{ borderColor: 'rgb(255,0,255)' }"
+            borderColor="rgb(255, 0, 255)"
           ></functional-calendar>
         </td>
         <td>
@@ -29,7 +29,7 @@
           <hr />
           <functional-calendar
             :is-modal="true"
-            :date-format="'yyyy-mm-dd mm:hh'"
+            :date-format="'yyyy-mm-dd hh:mm'"
             :display-time-input="true"
             :with-time-picker="true"
             :is-date-picker="true"
@@ -153,7 +153,7 @@
     <functional-calendar :is-multiple-date-picker="true"></functional-calendar> -->
 
     <!-- <FunctionalCalendar class="demo-calendar" :configs="demoCalendarConfigs"></FunctionalCalendar> -->
-    <FunctionalCalendar
+    <!-- <FunctionalCalendar
       class="demo-calendar"
       v-model="demoCalendar1"
       :marked-dates="markedDates"
@@ -161,7 +161,7 @@
       borderColor="green"
       :disabled-dates="disabledDates"
       :is-date-picker="true"
-      :is-modal="false"
+      :is-modal="true"
     >
       <template v-slot:datePickerInput="props">
         <label for="input-date">
@@ -175,9 +175,9 @@
           />
         </label>
       </template>
-    </FunctionalCalendar>
-    <button @click="markedDates.push('20/5/2020')">Push marked</button>
-    <button @click="disabledDates.push('21/5/2020')">Push disabled</button>
+    </FunctionalCalendar> -->
+    <!-- <button @click="markedDates.push('20/5/2020')">Push marked</button>
+    <button @click="disabledDates.push('21/5/2020')">Push disabled</button> -->
 
     <FunctionalCalendar
       class="demo-calendar dateRangeInputs"
@@ -514,14 +514,10 @@ export default {
     return {
       demoCalendar1: {
         dateRange: {
-          start: {
-            date: '20/5/2020'
-          },
-          end: {
-            date: '25/5/2020'
-          }
-        },
-        selectedDate: '26/5/2020'
+          start: '20/5/2020',
+          end: '25/5/2020'
+        }
+        // selectedDate: '26/5/2020'
       },
       events: [
         {

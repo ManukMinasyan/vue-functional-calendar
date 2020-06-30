@@ -180,7 +180,7 @@ export default class helpCalendar {
         }
 
         monthWeeks.weeks[0].days.unshift({
-          day: day,
+          day,
           month: leftMonthDays.month,
           year: leftMonthDays.year,
           hide: true,
@@ -200,7 +200,7 @@ export default class helpCalendar {
         }
 
         monthWeeks.weeks[monthWeeks.weeks.length - 1].days.push({
-          day: day,
+          day,
           month: rightMonthDays.month,
           year: rightMonthDays.year,
           hide: true,
@@ -218,7 +218,7 @@ export default class helpCalendar {
   }
 
   mask(value) {
-    console.log('sdasdasd')
+    //  console.log('sdasdasd')
     let dayLength = this.getDateFromFormat(value)
       .getDate()
       .toString().length

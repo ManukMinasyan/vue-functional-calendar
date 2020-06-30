@@ -99,27 +99,26 @@ export default {
   computed: {
     dateRangeSelectedStartDate: {
       get() {
-        return this.calendar.dateRange.start.date
-          ? this.calendar.dateRange.start.date
+        return this.calendar.dateRange.start
+          ? this.calendar.dateRange.start
           : ''
       },
       set(newValue) {
         newValue = this.helpCalendar.mask(newValue)
         if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
-          this.calendar.dateRange.start.date = newValue
+          // console.log(newValue + 'asd')
+          this.calendar.dateRange.start = newValue
         }
       }
     },
     dateRangeSelectedEndDate: {
       get() {
-        return this.calendar.dateRange.end.date
-          ? this.calendar.dateRange.end.date
-          : ''
+        return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
       },
       set(newValue) {
         newValue = this.helpCalendar.mask(newValue)
         if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
-          this.calendar.dateRange.end.date = newValue
+          this.calendar.dateRange.end = newValue
         }
       }
     }

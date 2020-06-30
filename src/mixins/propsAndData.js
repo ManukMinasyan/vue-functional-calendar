@@ -29,16 +29,7 @@ export const propsAndData = {
         if (!timeFormat) {
           return true
         }
-        const validFormats = [
-          'HH:MM',
-          'HH:mm',
-          'hh:MM',
-          'hh:mm',
-          'MM:HH',
-          'mm:HH',
-          'MM:hh',
-          'mm:hh'
-        ]
+        const validFormats = ['HH:MM', 'HH:mm', 'hh:MM', 'hh:mm']
         return !!~validFormats.indexOf(timeFormat)
       }
     },
@@ -184,18 +175,8 @@ export const propsAndData = {
         selectedDatesItem: '',
         selectedDates: [],
         dateRange: {
-          start: {
-            date: false,
-            dateTime: false,
-            hour: '00',
-            minute: '00'
-          },
-          end: {
-            date: false,
-            dateTime: false,
-            hour: '00',
-            minute: '00'
-          }
+          start: '',
+          end: ''
         }
       },
       transitionPrefix: 'left',

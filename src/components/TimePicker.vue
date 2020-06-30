@@ -8,14 +8,14 @@
             <span
               @click="startDateActive = true"
               :class="{ 'vfc-active': startDateActive }"
-              >{{ $parent.calendar.dateRange.start.dateTime }}</span
+              >{{ $parent.calendar.dateRange.start }}</span
             >
-            <template v-if="$parent.calendar.dateRange.end.date">
+            <template v-if="$parent.calendar.dateRange.end">
               -
               <span
                 @click="startDateActive = false"
                 :class="{ 'vfc-active': !startDateActive }"
-                >{{ $parent.calendar.dateRange.end.dateTime }}</span
+                >{{ $parent.calendar.dateRange.end }}</span
               >
             </template>
           </template>
@@ -98,8 +98,8 @@ export default {
     this.currentSelectedDate = selectedDates[selectedDates.length - 1]
   },
   mounted() {
-    let startDate = this.$parent.calendar.dateRange.start.date
-    let endDate = this.$parent.calendar.dateRange.end.date
+    let startDate = this.$parent.calendar.dateRange.start
+    let endDate = this.$parent.calendar.dateRange.end
 
     if (startDate && startDate < endDate) {
       this.startDateActive = false
@@ -117,12 +117,32 @@ export default {
     close() {
       this.$parent.showTimePicker = false
     },
+    addMinuteHour(what, val, to) {
+      let res = ''
+      res += val.split(' ')[0]
+      if (what == 'hour') {
+        res += ' ' + to + ':'
+        res += val.split(' ')[1].split(':')[1]
+      } else {
+        res += ' ' + val.split(' ')[1].split(':')[0] + ':'
+        res += to
+      }
+      return res
+    },
     changeHour(hour) {
       if (this.$parent.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          this.$parent.calendar.dateRange.start.hour = hour
+          this.$parent.calendar.dateRange.start = this.addMinuteHour(
+            'hour',
+            this.$parent.calendar.dateRange.start,
+            hour
+          )
         } else {
-          this.$parent.calendar.dateRange.end.hour = hour
+          this.$parent.calendar.dateRange.end = this.addMinuteHour(
+            'hour',
+            this.$parent.calendar.dateRange.end,
+            hour
+          )
         }
       } else if (this.$parent.fConfigs.isMultipleDatePicker) {
         let currentDate = this.$parent.calendar.selectedDates.find(
@@ -139,9 +159,17 @@ export default {
     changeMinute(minute) {
       if (this.$parent.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          this.$parent.calendar.dateRange.start.minute = minute
+          this.$parent.calendar.dateRange.start = this.addMinuteHour(
+            'minute',
+            this.$parent.calendar.dateRange.start,
+            minute
+          )
         } else {
-          this.$parent.calendar.dateRange.end.minute = minute
+          this.$parent.calendar.dateRange.end = this.addMinuteHour(
+            'minute',
+            this.$parent.calendar.dateRange.end,
+            minute
+          )
         }
       } else if (this.$parent.fConfigs.isMultipleDatePicker) {
         let currentDate = this.$parent.calendar.selectedDates.find(
@@ -163,20 +191,23 @@ export default {
           this.$parent.calendar.selectedHour +
           ':' +
           this.$parent.calendar.selectedMinute
-      } else if (this.$parent.fConfigs.isDateRange) {
-        this.$parent.calendar.dateRange.start.dateTime =
-          this.$parent.calendar.dateRange.start.date +
-          ' ' +
-          this.$parent.calendar.dateRange.start.hour +
-          ':' +
-          this.$parent.calendar.dateRange.start.minute
-        this.$parent.calendar.dateRange.end.dateTime =
-          this.$parent.calendar.dateRange.end.date +
-          ' ' +
-          this.$parent.calendar.dateRange.end.hour +
-          ':' +
-          this.$parent.calendar.dateRange.end.minute
-      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
+      }
+      //  else if (this.$parent.fConfigs.isDateRange) {
+      //   console.log('asdasd')
+      //   this.$parent.calendar.dateRange.start.dateTime =
+      //     this.$parent.calendar.dateRange.start.date +
+      //     ' ' +
+      //     this.$parent.calendar.dateRange.start.hour +
+      //     ':' +
+      //     this.$parent.calendar.dateRange.start.minute
+      //   this.$parent.calendar.dateRange.end.dateTime =
+      //     this.$parent.calendar.dateRange.end.date +
+      //     ' ' +
+      //     this.$parent.calendar.dateRange.end.hour +
+      //     ':' +
+      //     this.$parent.calendar.dateRange.end.minute
+      // }
+      else if (this.$parent.fConfigs.isMultipleDatePicker) {
         let currentDate = this.$parent.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         )
@@ -191,9 +222,11 @@ export default {
       let hour
       if (this.$parent.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          hour = this.$parent.calendar.dateRange.start.hour
+          hour = this.$parent.calendar.dateRange.start
+            .split(' ')[1]
+            .split(':')[0]
         } else {
-          hour = this.$parent.calendar.dateRange.end.hour
+          hour = this.$parent.calendar.dateRange.end.split(' ')[1].split(':')[0]
         }
       } else if (this.$parent.fConfigs.isMultipleDatePicker) {
         hour = this.$parent.calendar.selectedDates.find(
@@ -202,16 +235,16 @@ export default {
       } else {
         hour = this.$parent.calendar.selectedHour
       }
-
-      return hour === this.formatTime(i)
+      // console.log(this.formatTime(i))
+      return hour == this.formatTime(i)
     },
     checkMinuteActiveClass(i) {
       let minute
       if (this.$parent.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          minute = this.$parent.calendar.dateRange.start.minute
+          minute = this.$parent.calendar.dateRange.start.split(':')[1]
         } else {
-          minute = this.$parent.calendar.dateRange.end.minute
+          minute = this.$parent.calendar.dateRange.end.split(':')[1]
         }
       } else if (this.$parent.fConfigs.isMultipleDatePicker) {
         minute = this.$parent.calendar.selectedDates.find(
@@ -221,7 +254,7 @@ export default {
         minute = this.$parent.calendar.selectedMinute
       }
 
-      return minute === this.formatTime(i)
+      return minute == this.formatTime(i)
     },
     setStyles() {
       //let container = this.$parent.$refs.mainContainer

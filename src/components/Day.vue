@@ -214,11 +214,11 @@ export default {
         }
       }
 
-      if (day.date === this.calendar.dateRange.start.date) {
+      if (day.date === this.calendar.dateRange.start) {
         classes.push('vfc-start-marked')
       }
 
-      if (day.date === this.calendar.dateRange.end.date) {
+      if (day.date === this.calendar.dateRange.end) {
         classes.push('vfc-end-marked')
       }
 
