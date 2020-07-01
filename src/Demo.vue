@@ -132,6 +132,8 @@
             :calendars-count="2"
             :is-date-range="true"
             :with-time-picker="true"
+            :change-month-function="true"
+            :change-year-function="true"
           ></functional-calendar>
         </td>
       </tr>
@@ -188,6 +190,8 @@
       :isLayoutExpandable="true"
       :calendars-count="3"
       :isSeparately="true"
+      :change-month-function="true"
+      :change-year-function="true"
       arrowsPosition="space-between"
     >
       <template v-slot:dateRangeInputs="props">

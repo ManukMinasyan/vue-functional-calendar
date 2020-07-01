@@ -386,6 +386,7 @@ export default {
       this.listRendering()
       this.markChooseDays()
     },
+
     setCalendarData() {
       let date = this.calendar.currentDate
       date = new Date(date.getFullYear(), date.getMonth() - 1)
@@ -1117,7 +1118,7 @@ export default {
     },
     openYearPicker(key) {
       if (this.fConfigs.changeYearFunction) {
-        this.showYearPicker = key === this.showYearPicker ? false : key
+        this.showYearPicker = key
         this.showMonthPicker = false
       }
     },
@@ -1142,9 +1143,9 @@ export default {
       currentCalendar.key += hUniqueID()
       this.updateCalendar()
     },
-    getYearList(date) {
+    getYearList(date, delta) {
       let years = []
-      let year = date.getFullYear() - 4
+      let year = date.getFullYear() - 4 + delta
       for (let i = 0; i < 12; i++) {
         let finalYear = year + i
 

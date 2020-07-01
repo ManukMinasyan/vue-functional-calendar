@@ -2,14 +2,14 @@
   <div class="vfc-months-container">
     <div class="vfc-content">
       <div class="vfc-navigation-buttons">
-        <div @click="$parent.PreYear(calendarKey)">
+        <div @click="changePicker('left')">
           <div class="vfc-arrow-left"></div>
         </div>
         <h2 class="vfc-top-date">
           <span class="vfc-popover-caret"></span>
           {{ $parent.listCalendars[calendarKey].date.getFullYear() }}
         </h2>
-        <div @click="$parent.NextYear(calendarKey)">
+        <div @click="changePicker('right')">
           <div class="vfc-arrow-right"></div>
         </div>
       </div>
@@ -32,7 +32,8 @@
           <div
             class="vfc-item"
             v-for="(year, key) in $parent.getYearList(
-              $parent.listCalendars[calendarKey].date
+              $parent.listCalendars[calendarKey].date,
+              delta
             )"
             :key="key"
             :class="{
@@ -53,8 +54,28 @@
 <script>
 export default {
   name: 'MonthYearPicker',
+  data() {
+    return {
+      delta: 0
+    }
+  },
   props: {
-    calendarKey: 0
+    calendarKey: {
+      type: Number,
+      default: 0
+    }
+  },
+  methods: {
+    changePicker(to) {
+      if (this.$parent.showMonthPicker) {
+        if (to === 'right') this.$parent.NextYear(this.calendarKey)
+        else this.$parent.PreYear(this.calendarKey)
+        return
+      }
+
+      if (to === 'right') ++this.delta
+      else --this.delta
+    }
   }
 }
 </script>

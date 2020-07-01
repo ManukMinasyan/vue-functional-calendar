@@ -760,6 +760,7 @@
 
       .vfc-content {
         width: 45%;
+        min-width: 133px;
         position: absolute;
         z-index: 1000;
         background-color: $licorice;
@@ -776,17 +777,18 @@
 
           div {
             margin: 10px 10px;
-
+            &:hover {
+              cursor: pointer;
+              .vfc-arrow-left,
+              .vfc-arrow-right {
+                border-color: $pictionBlue;
+              }
+            }
             .vfc-arrow-left,
             .vfc-arrow-right {
               border-color: $white;
               width: 8px;
               height: 8px;
-              cursor: pointer;
-
-              &:hover {
-                border-color: $pictionBlue;
-              }
             }
           }
 
