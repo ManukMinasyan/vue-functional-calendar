@@ -2,6 +2,14 @@ const undefinedGenerator = () => undefined
 
 export const propsAndData = {
   props: {
+    borderColor: {
+      type: String,
+      default: ''
+    },
+    displayTimeInput: {
+      type: Boolean,
+      default: false
+    },
     configs: {
       type: Object,
       default: () => {}
@@ -15,7 +23,15 @@ export const propsAndData = {
       default: undefinedGenerator
     },
     dateFormat: {
-      type: String
+      type: String,
+      validator(format) {
+        let timeFormat = format.split(' ')[1]
+        if (!timeFormat) {
+          return true
+        }
+        const validFormats = ['HH:MM', 'HH:mm', 'hh:MM', 'hh:mm']
+        return !!~validFormats.indexOf(timeFormat)
+      }
     },
     canClearRange: {
       type: Boolean,
@@ -159,18 +175,8 @@ export const propsAndData = {
         selectedDatesItem: '',
         selectedDates: [],
         dateRange: {
-          start: {
-            date: false,
-            dateTime: false,
-            hour: '00',
-            minute: '00'
-          },
-          end: {
-            date: false,
-            dateTime: false,
-            hour: '00',
-            minute: '00'
-          }
+          start: '',
+          end: ''
         }
       },
       transitionPrefix: 'left',
@@ -184,7 +190,7 @@ export const propsAndData = {
       fConfigs: {
         sundayStart: false,
         placeholder: false,
-        dateFormat: 'dd/mm/yyyy',
+        dateFormat: 'dd/mm/yyyy hh:MM',
 
         isDatePicker: false,
         isMultipleDatePicker: false,
