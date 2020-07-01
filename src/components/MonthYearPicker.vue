@@ -5,7 +5,10 @@
         <div @click="changePicker('left')">
           <div class="vfc-arrow-left"></div>
         </div>
-        <h2 class="vfc-top-date">
+        <h2
+          :class="['vfc-top-date', delta !== 0 && 'vfc-top-date-has-delta']"
+          @click="delta = 0"
+        >
           <span class="vfc-popover-caret"></span>
           {{ $parent.listCalendars[calendarKey].date.getFullYear() }}
         </h2>
@@ -54,15 +57,20 @@
 <script>
 export default {
   name: 'MonthYearPicker',
+  props: {
+    calendarKey: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
       delta: 0
     }
   },
-  props: {
-    calendarKey: {
-      type: Number,
-      default: 0
+  watch: {
+    delta(newDelta) {
+      if (newDelta < -new Date().getFullYear()) this.delta = 0
     }
   },
   methods: {
@@ -73,8 +81,8 @@ export default {
         return
       }
 
-      if (to === 'right') ++this.delta
-      else --this.delta
+      if (to === 'right') this.delta += 3
+      else this.delta -= 3
     }
   }
 }

@@ -1279,7 +1279,7 @@ export default {
         this.fConfigs.isModal &&
         !hElContains(this.popoverElement, e.relatedTarget)
       ) {
-        this.showCalendar = false
+        return (this.showCalendar = this.showMonthPicker = this.showYearPicker = false)
       }
     },
 
@@ -1303,7 +1303,10 @@ export default {
           !element1.contains(e.target) &&
           !element2.contains(e.target)
         ) {
-          return (this.showMonthPicker = this.showYearPicker = false)
+          if (!this.fConfigs.isModal) {
+            return (this.showMonthPicker = this.showYearPicker = false)
+          }
+          // return (this.showMonthPicker = this.showYearPicker = false)
         }
       }
     },
