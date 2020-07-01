@@ -18,9 +18,7 @@
       @click="$parent.$parent.clickDay(day, isDisabledDate)"
       @mouseover="dayMouseOver"
     >
-      <slot :week="week" :day="day">
-        {{ day.day }}
-      </slot>
+      <slot :week="week" :day="day">{{ day.day }}</slot>
     </span>
   </div>
 </template>
@@ -150,7 +148,6 @@ export default {
             ) {
               classes.push('vfc-marked')
             }
-
             if (day.date === range.start) {
               classes.push('vfc-start-marked')
             } else if (day.date === range.end) {
@@ -162,6 +159,7 @@ export default {
           this.fConfigs.markedDateRange.end
         ) {
           // Date Range Marked
+
           if (
             this.helpCalendar.getDateFromFormat(
               this.fConfigs.markedDateRange.start
@@ -172,7 +170,6 @@ export default {
           ) {
             classes.push('vfc-marked')
           }
-
           if (day.date === this.fConfigs.markedDateRange.start) {
             classes.push('vfc-start-marked')
           } else if (day.date === this.fConfigs.markedDateRange.end) {
@@ -213,12 +210,11 @@ export default {
           classes.push(checkMarked.class)
         }
       }
-
-      if (day.date === this.calendar.dateRange.start) {
+      if (day.date === this.calendar.dateRange.start.split(' ')[0]) {
         classes.push('vfc-start-marked')
       }
 
-      if (day.date === this.calendar.dateRange.end) {
+      if (day.date === this.calendar.dateRange.end.split(' ')[0]) {
         classes.push('vfc-end-marked')
       }
 

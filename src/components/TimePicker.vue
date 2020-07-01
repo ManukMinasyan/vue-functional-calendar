@@ -11,7 +11,7 @@
               >{{ $parent.calendar.dateRange.start }}</span
             >
             <template v-if="$parent.calendar.dateRange.end">
-              -
+              <span>-</span>
               <span
                 @click="startDateActive = false"
                 :class="{ 'vfc-active': !startDateActive }"
@@ -77,8 +77,10 @@ export default {
     }
   },
   props: {
-    height: Number,
-    required: true
+    height: {
+      type: Number,
+      required: true
+    }
   },
   watch: {
     startDateActive: function() {
@@ -98,10 +100,13 @@ export default {
     this.currentSelectedDate = selectedDates[selectedDates.length - 1]
   },
   mounted() {
-    let startDate = this.$parent.calendar.dateRange.start
-    let endDate = this.$parent.calendar.dateRange.end
-
-    if (startDate && startDate < endDate) {
+    let startDate = this.$parent.calendar.dateRange.start.split(' ')[0]
+    let endDate = this.$parent.calendar.dateRange.end.split(' ')[0]
+    if (
+      startDate &&
+      this.$parent.helpCalendar.getDateFromFormat(startDate) <
+        this.$parent.helpCalendar.getDateFromFormat(endDate)
+    ) {
       this.startDateActive = false
     } else {
       this.startDateActive = true
@@ -191,23 +196,7 @@ export default {
           this.$parent.calendar.selectedHour +
           ':' +
           this.$parent.calendar.selectedMinute
-      }
-      //  else if (this.$parent.fConfigs.isDateRange) {
-      //   console.log('asdasd')
-      //   this.$parent.calendar.dateRange.start.dateTime =
-      //     this.$parent.calendar.dateRange.start.date +
-      //     ' ' +
-      //     this.$parent.calendar.dateRange.start.hour +
-      //     ':' +
-      //     this.$parent.calendar.dateRange.start.minute
-      //   this.$parent.calendar.dateRange.end.dateTime =
-      //     this.$parent.calendar.dateRange.end.date +
-      //     ' ' +
-      //     this.$parent.calendar.dateRange.end.hour +
-      //     ':' +
-      //     this.$parent.calendar.dateRange.end.minute
-      // }
-      else if (this.$parent.fConfigs.isMultipleDatePicker) {
+      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
         let currentDate = this.$parent.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         )
@@ -235,7 +224,6 @@ export default {
       } else {
         hour = this.$parent.calendar.selectedHour
       }
-      // console.log(this.formatTime(i))
       return hour == this.formatTime(i)
     },
     checkMinuteActiveClass(i) {
@@ -291,21 +279,28 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.titles {
-  display: flex;
-  padding: 10px 0;
-  > div {
-    flex: 1;
-    text-align: center;
-    color: #66b3cc;
-    word-break: break-all;
-    font-size: 25px;
-  }
-}
-.vfc-time-picker {
-  padding-bottom: 20px;
-}
 .vfc-time-picker-container {
   min-width: 250px;
+  .vfc-modal-time-line {
+    > span {
+      > span:not(:nth-child(2)):not(.vfc-active):hover {
+        cursor: pointer;
+      }
+    }
+  }
+  .titles {
+    display: flex;
+    padding: 10px 0;
+    > div {
+      flex: 1;
+      text-align: center;
+      color: #66b3cc;
+      word-break: break-all;
+      font-size: 25px;
+    }
+  }
+  .vfc-time-picker {
+    padding-bottom: 20px;
+  }
 }
 </style>

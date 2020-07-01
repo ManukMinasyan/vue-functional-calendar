@@ -106,7 +106,6 @@ export default {
       set(newValue) {
         newValue = this.helpCalendar.mask(newValue)
         if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
-          // console.log(newValue + 'asd')
           this.calendar.dateRange.start = newValue
         }
       }

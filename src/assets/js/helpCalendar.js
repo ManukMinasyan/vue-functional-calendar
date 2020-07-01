@@ -33,7 +33,7 @@ export default class helpCalendar {
 
   getDateFromFormat(date) {
     let format = this.dateFormat.split(' ')[0]
-
+    date = date.split(' ')[0]
     if (format.indexOf('/') !== -1) {
       format = format.split('/')
       date = date.split('/')
@@ -218,7 +218,6 @@ export default class helpCalendar {
   }
 
   mask(value) {
-    //  console.log('sdasdasd')
     let dayLength = this.getDateFromFormat(value)
       .getDate()
       .toString().length

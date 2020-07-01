@@ -39,6 +39,7 @@
     >
       <time-picker
         v-if="showTimePicker"
+        ref="timePicker"
         :height="$refs.popoverElement.clientHeight"
       ></time-picker>
 
@@ -234,13 +235,14 @@ export default {
   mixins: [propsAndData],
   computed: {
     startDMY() {
+      //start only with Day Month and Year
       if (this.calendar.dateRange.start) {
-        console.log(this.calendar.dateRange.start.split(' ')[0])
         return this.calendar.dateRange.start.split(' ')[0]
       }
       return ''
     },
     endDMY() {
+      //end only with Day Month and Year
       if (this.calendar.dateRange.end) {
         return this.calendar.dateRange.end.split(' ')[0]
       }
@@ -521,10 +523,7 @@ export default {
               })
             }
 
-            if (
-              this.calendar.dateRange.start ===
-              this.helpCalendar.formatDate(date)
-            ) {
+            if (this.startDMY === this.helpCalendar.formatDate(date)) {
               checkMarked = true
             }
 
@@ -547,8 +546,8 @@ export default {
                 this.helpCalendar.formatDate(date)
               ),
               hideLeftAndRightDays: day.hideLeftAndRightDays,
-              isToday: isToday,
-              isMarked: isMarked
+              isToday,
+              isMarked
             })
           })
 
@@ -641,6 +640,12 @@ export default {
           this.calendar.dateRange.start !== '' &&
           clickDate <= startDate.getTime()
         ) {
+          /////////////////////
+          this.$nextTick(() => {
+            if (this.calendar.dateRange && this.calendar.withTimePicker) {
+              this.$refs['timePicker'].startDateActive = true
+            }
+          })
           this.calendar.dateRange.end = this.calendar.dateRange.start
           this.calendar.dateRange.start = item.date
         }
@@ -773,10 +778,8 @@ export default {
       this.$emit('choseDay', item)
     },
     markChooseDays() {
-      // console.log(this.calendar.dateRange.start)
       let startDate = this.startDMY
       let endDate = this.endDMY
-      // console.log(!!this.calendar.dateRange.start)
       this.listCalendars.forEach(calendar => {
         calendar.weeks.forEach(week => {
           week.days.forEach(day => {
@@ -794,7 +797,6 @@ export default {
             } else {
               day.isMouseToLeft = false
               day.isMouseToRight = false
-              console.log('dd', day.date)
               // Date Range
               if (startDate === day.date) {
                 day.isMouseToLeft = !!endDate
@@ -810,9 +812,7 @@ export default {
                 day.isMouseToLeft = false
                 day.isMouseToRight = false
               }
-              // console.log(this.calendar.dateRange.start)
               if (startDate && endDate) {
-                console.log('dd', day.date)
                 if (
                   this.helpCalendar.getDateFromFormat(day.date).getTime() >
                     this.helpCalendar.getDateFromFormat(startDate) &&
@@ -823,7 +823,6 @@ export default {
                 }
               }
             }
-
             if (this.fConfigs.markedDates.includes(day.date))
               day.isMarked = true
           })
@@ -866,9 +865,8 @@ export default {
               let item = week.days[i]
 
               this.listCalendars[e].weeks[f].days[i].isHovered = false
-
               if (
-                item.date !== this.calendar.dateRange.start &&
+                item.date !== this.startDMY &&
                 !this.fConfigs.markedDates.includes(item.date)
               ) {
                 this.listCalendars[e].weeks[f].days[i].isMarked = false
