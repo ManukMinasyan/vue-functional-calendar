@@ -152,7 +152,6 @@
     ></functional-calendar>
     <functional-calendar :is-multiple-date-picker="true"></functional-calendar> -->
 
-    <!-- <FunctionalCalendar class="demo-calendar" :configs="demoCalendarConfigs"></FunctionalCalendar> -->
     <!-- <FunctionalCalendar
       class="demo-calendar"
       v-model="demoCalendar1"
