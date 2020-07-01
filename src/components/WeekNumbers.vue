@@ -1,6 +1,9 @@
 <template>
-  <div class="vfc-day vfc-week-number">
-    <span class="vfc-span-day"> {{ number }} </span>
+  <div
+    class="vfc-day vfc-week-number"
+    :style="{ borderRightColor: borderColor }"
+  >
+    <span class="vfc-span-day">{{ number }}</span>
   </div>
 </template>
 
@@ -11,6 +14,10 @@ export default {
     number: {
       tyoe: Number,
       required: true
+    },
+    borderColor: {
+      type: String,
+      default: ''
     }
   }
 }
