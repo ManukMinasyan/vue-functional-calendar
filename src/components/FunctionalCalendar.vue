@@ -556,7 +556,6 @@ export default {
       })
     },
     clickDay(item, isDisabledDate) {
-      let onlyDMY = item.date
       if (this.fConfigs.withTimePicker && this.fConfigs.isDateRange) {
         item.date = item.date + ' 00:00'
       }
