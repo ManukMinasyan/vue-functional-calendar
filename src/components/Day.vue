@@ -15,10 +15,11 @@
     <span
       v-if="!day.hideLeftAndRightDays"
       :class="getClassNames(day)"
-      @click="$parent.$parent.clickDay(day, isDisabledDate)"
+      @click.self="$parent.$parent.clickDay(day, isDisabledDate)"
       @mouseover="dayMouseOver"
     >
       <slot :week="week" :day="day">{{ day.day }}</slot>
+      <span v-if="timesShow" @click="clearRange" class="times">&times;</span>
     </span>
   </div>
 </template>
@@ -52,7 +53,35 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      isLast: false
+    }
+  },
+  computed: {
+    timesShow() {
+      return (
+        (this.isLast &&
+          this.fConfigs.isMultipleDateRange &&
+          this.calendar.dateRange.start &&
+          this.calendar.dateRange.end) === this.day.date
+      )
+    }
+  },
+  watch: {
+    day: {
+      handler() {
+        this.isLast = true
+      },
+      deep: true
+    }
+  },
   methods: {
+    clearRange() {
+      //$emit
+
+      this.isLast = false
+    },
     dayMouseOver() {
       this.$emit('dayMouseOver', this.day.date)
     },
@@ -199,7 +228,25 @@ export default {
 
         classes.push('vfc-hover')
       }
+      //Date Multiple Range
+      if (this.fConfigs.isMultipleDateRange) {
+        console.log('asdasdasdasdasdasd')
+        if (
+          ~this.calendar.multipleDateRange
+            .map(range => range.start)
+            .indexOf(day.date)
+        ) {
+          classes.push('vfc-start-marked')
+        }
 
+        if (
+          ~this.calendar.multipleDateRange
+            .map(range => range.end)
+            .indexOf(day.date)
+        ) {
+          classes.push('vfc-end-marked')
+        }
+      }
       // Date Mark With Custom Classes
       if (typeof this.fConfigs.markedDates === 'object') {
         let checkMarked = this.fConfigs.markedDates.find(markDate => {
@@ -210,6 +257,7 @@ export default {
           classes.push(checkMarked.class)
         }
       }
+
       if (day.date === this.calendar.dateRange.start.split(' ')[0]) {
         classes.push('vfc-start-marked')
       }
@@ -232,4 +280,23 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.vfc-day {
+  position: relative;
+  .times {
+    position: absolute;
+    top: -10px;
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+    width: 15px;
+    z-index: 3;
+    height: 15px;
+    line-height: 15px;
+    &:hover {
+      cursor: pointer;
+      background-color: rgb(78, 78, 78);
+    }
+  }
+}
+</style>

@@ -53,6 +53,10 @@ export const propsAndData = {
       type: Boolean,
       default: undefinedGenerator
     },
+    isMultipleDateRange: {
+      type: Boolean,
+      default: undefinedGenerator
+    },
     isDateRange: {
       type: Boolean,
       default: undefinedGenerator
@@ -177,7 +181,13 @@ export const propsAndData = {
         dateRange: {
           start: '',
           end: ''
-        }
+        },
+        multipleDateRange: [
+          {
+            start: '',
+            end: ''
+          }
+        ]
       },
       transitionPrefix: 'left',
       showCalendar: true,
@@ -191,7 +201,7 @@ export const propsAndData = {
         sundayStart: false,
         placeholder: false,
         dateFormat: 'dd/mm/yyyy hh:MM',
-
+        isMultipleDateRange: false,
         isDatePicker: false,
         isMultipleDatePicker: false,
         isDateRange: false,

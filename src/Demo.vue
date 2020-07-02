@@ -1,5 +1,11 @@
 <template>
   <div>
+    <functional-calendar
+      :change-month-function="true"
+      :change-year-function="true"
+      :is-date-range="true"
+      :is-multiple-date-range="true"
+    ></functional-calendar>
     <table style="width: 100%">
       <tr>
         <td>
@@ -625,7 +631,7 @@ $color6: rgb(208, 217, 208);
 
 html,
 body {
-  background-color: #fec928;
+  background-color: #000;
   padding: 0;
   margin: 0;
 }

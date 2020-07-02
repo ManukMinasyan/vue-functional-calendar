@@ -154,6 +154,7 @@
                       v-for="(day, day_key) in week.days"
                       ref="day"
                       :key="key + week_key + day_key + 1"
+                      :isMultipleDateRange="isMultipleDateRange"
                       :day="day"
                       :fConfigs="fConfigs"
                       :calendar="calendar"
@@ -612,8 +613,107 @@ export default {
         }
       }
 
-      // Date Range
-      if (this.fConfigs.isDateRange) {
+      // Date Multiple Range
+      if (this.fConfigs.isMultipleDateRange) {
+        let clickDate = this.helpCalendar
+          .getDateFromFormat(item.date.split(' ')[0])
+          .getTime()
+        let rangesLength = this.calendar.multipleDateRange.length
+        let lastRange = this.calendar.multipleDateRange[rangesLength - 1]
+        let startDate = ''
+
+        if (lastRange.start) {
+          startDate = this.helpCalendar.getDateFromFormat(lastRange.start)
+        }
+
+        // Two dates is not empty
+        if (lastRange.start !== '' && lastRange.end !== '') {
+          lastRange.start = item.date
+          lastRange.end = ''
+          // Not date selected
+        } else if (lastRange.start === '' && lastRange.end === '') {
+          lastRange.start = item.date
+          // Start Date not empty, chose date > start date
+        } else if (lastRange.end === '' && clickDate > startDate.getTime()) {
+          lastRange.end = item.date
+          // Start date not empty, chose date <= start date (also same date range select)
+        } else if (lastRange.start !== '' && clickDate <= startDate.getTime()) {
+          this.$nextTick(() => {
+            if (this.calendar.withTimePicker) {
+              this.$refs['timePicker'].startDateActive = true
+            }
+          })
+          lastRange.end = lastRange.start
+          lastRange.start = item.date
+        }
+
+        //Get number of days between date range dates
+        if (lastRange.start !== '' && lastRange.end !== '') {
+          let oneDay = 24 * 60 * 60 * 1000
+          let firstDate = this.helpCalendar.getDateFromFormat(lastRange.start)
+          let secondDate = this.helpCalendar.getDateFromFormat(lastRange.end)
+          let diffDays = Math.round(
+            Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
+          )
+          let itemTime = this.helpCalendar
+            .getDateFromFormat(item.date)
+            .getTime()
+
+          this.$emit('selectedDaysCount', diffDays)
+
+          // Is Auto Closeable
+          if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
+            this.showCalendar = false
+          }
+
+          // Minimum Selected Days
+          let minSelDays = this.fConfigs.minSelDays
+
+          if (
+            minSelDays &&
+            itemTime >= startDate.getTime() &&
+            diffDays < minSelDays
+          ) {
+            startDate.setDate(startDate.getDate() + (minSelDays - 1))
+            lastRange.end = this.helpCalendar.formatDate(startDate)
+          }
+
+          if (
+            minSelDays &&
+            itemTime < startDate.getTime() &&
+            diffDays < minSelDays
+          ) {
+            startDate.setDate(startDate.getDate() - (minSelDays - 1))
+            lastRange.start = this.helpCalendar.formatDate(startDate)
+          }
+
+          // Maximum Selected Days
+          let maxSelDays = this.fConfigs.maxSelDays
+
+          if (
+            maxSelDays &&
+            itemTime >= startDate.getTime() &&
+            diffDays >= maxSelDays
+          ) {
+            startDate.setDate(startDate.getDate() + (maxSelDays - 1))
+            lastRange.end = this.helpCalendar.formatDate(startDate)
+          }
+
+          if (
+            maxSelDays &&
+            itemTime < startDate.getTime() &&
+            diffDays >= maxSelDays
+          ) {
+            startDate.setDate(startDate.getDate() - (maxSelDays - 1))
+            lastRange.start = this.helpCalendar.formatDate(startDate)
+          }
+        }
+        console.log('asdasd')
+        if (lastRange.start && lastRange.end)
+          this.calendar.multipleDateRange.push({ end: '', start: '' })
+        this.$emit('input', this.calendar)
+      } // Date Range
+      else if (this.fConfigs.isDateRange) {
         let clickDate = this.helpCalendar
           .getDateFromFormat(item.date.split(' ')[0])
           .getTime()
