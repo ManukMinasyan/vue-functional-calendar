@@ -228,7 +228,7 @@
           div {
             &.vfc-content {
               .vfc-top-date {
-                a {
+                span {
                   color: $white;
 
                   &.vfc-underline {
@@ -882,7 +882,7 @@
       text-align: center;
     }
 
-    a {
+    span {
       cursor: default;
       text-decoration: unset;
       margin: 0 2px;

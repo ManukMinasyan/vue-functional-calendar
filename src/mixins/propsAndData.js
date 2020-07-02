@@ -82,7 +82,7 @@ export const propsAndData = {
     },
     changeYearStep: {
       type: Number,
-      default: () => 12
+      default: () => 3
     },
     newCurrentDate: {
       type: Date
@@ -205,7 +205,7 @@ export const propsAndData = {
 
         changeMonthFunction: false,
         changeYearFunction: false,
-        changeYearStep: 12,
+        changeYearStep: 3,
 
         markedDates: [],
         markedDateRange: {

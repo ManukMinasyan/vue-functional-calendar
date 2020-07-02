@@ -1,6 +1,6 @@
 <template>
   <div class="vfc-months-container">
-    <div class="vfc-content">
+    <div class="vfc-content vfc-content-MY-picker">
       <div class="vfc-navigation-buttons">
         <div @click="changePicker('left')">
           <div class="vfc-arrow-left"></div>
@@ -61,6 +61,10 @@ export default {
     calendarKey: {
       type: Number,
       default: 0
+    },
+    changeYearStep: {
+      type: Number,
+      default: 3
     }
   },
   data() {
@@ -81,8 +85,8 @@ export default {
         return
       }
 
-      if (to === 'right') this.delta += 3
-      else this.delta -= 3
+      if (to === 'right') this.delta += this.changeYearStep
+      else this.delta -= this.changeYearStep
     }
   }
 }

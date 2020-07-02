@@ -95,6 +95,9 @@
           <functional-calendar
             :can-clear-range="true"
             :is-separately="true"
+            :change-month-function="true"
+            :change-year-function="true"
+            :changeYearStep="1"
             :is-date-range="true"
             :is-multiple="true"
             :calendars-count="2"
@@ -116,6 +119,9 @@
             :is-modal="true"
             :is-date-range="true"
             :is-multiple="true"
+            :change-month-function="true"
+            :change-year-function="true"
+            :with-time-picker="true"
             :calendars-count="2"
             :date-format="'yyyy-mm-dd hh:mm'"
           ></functional-calendar>
