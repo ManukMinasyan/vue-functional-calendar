@@ -68,6 +68,7 @@
               <month-year-picker
                 ref="monthContainer"
                 :class="'vfc-' + fConfigs.titlePosition"
+                :changeYearStep="changeYearStep"
                 v-show="
                   showMonthPicker === key + 1 || showYearPicker === key + 1
                 "
@@ -96,28 +97,32 @@
                     :class="'vfc-' + fConfigs.titlePosition"
                     v-if="checkHiddenElement('month')"
                   >
-                    <a
-                      href="#"
-                      @click.prevent="openMonthPicker(key + 1)"
+                    <span
+                      @click.prevent="
+                        isNotSeparatelyAndFirst(key) && openMonthPicker(key + 1)
+                      "
                       :class="{
                         'vfc-cursor-pointer vfc-underline':
-                          fConfigs.changeMonthFunction,
+                          fConfigs.changeMonthFunction &&
+                          isNotSeparatelyAndFirst(key),
                         'vfc-underline-active': showMonthPicker === key + 1
                       }"
                     >
-                      {{ calendarItem.month }}</a
+                      {{ calendarItem.month }}</span
                     >
-                    <a
-                      href="#"
-                      @click.prevent="openYearPicker(key + 1)"
+                    <span
+                      @click.prevent="
+                        isNotSeparatelyAndFirst(key) && openYearPicker(key + 1)
+                      "
                       :class="{
                         'vfc-cursor-pointer vfc-underline':
-                          fConfigs.changeYearFunction,
+                          fConfigs.changeYearFunction &&
+                          isNotSeparatelyAndFirst(key),
                         'vfc-underline-active': showYearPicker === key + 1
                       }"
                     >
                       {{ calendarItem.year }}
-                    </a>
+                    </span>
                   </div>
                 </transition>
                 <transition tag="div" :name="getTransition_()" appear>
@@ -321,7 +326,9 @@ export default {
     // Event
     this.popoverElement.addEventListener('focusin', this.onFocusIn)
     this.popoverElement.addEventListener('focusout', this.onFocusOut)
-    window.addEventListener('click', this.hideMonthYearPicker)
+    window.addEventListener('click', this.hideMonthYearPicker, {
+      capture: true
+    })
 
     // Reacts to external selected dates
     this.$watch(
@@ -385,6 +392,9 @@ export default {
       this.setExistingCalendarData()
       this.listRendering()
       this.markChooseDays()
+    },
+    isNotSeparatelyAndFirst(key) {
+      return this.isSeparately || key == 0
     },
     setCalendarData() {
       let date = this.calendar.currentDate
@@ -639,7 +649,6 @@ export default {
           this.calendar.dateRange.start !== '' &&
           clickDate <= startDate.getTime()
         ) {
-          /////////////////////
           this.$nextTick(() => {
             if (this.calendar.dateRange && this.calendar.withTimePicker) {
               this.$refs['timePicker'].startDateActive = true
@@ -1126,25 +1135,43 @@ export default {
     },
     pickMonth(key, calendarKey) {
       this.showMonthPicker = false
-
-      let currentCalendar = this.listCalendars[calendarKey]
-      let date = currentCalendar.date
-      currentCalendar.date = new Date(date.getFullYear(), key + 1, 0)
-      currentCalendar.key += hUniqueID()
+      if (!this.isSeparately) {
+        this.listCalendars.forEach((currentCalendar, index) => {
+          let date = currentCalendar.date
+          currentCalendar.date = new Date(
+            date.getFullYear(),
+            key + 1 + index,
+            0
+          )
+          currentCalendar.key += hUniqueID()
+        })
+      } else {
+        let currentCalendar = this.listCalendars[calendarKey]
+        let date = currentCalendar.date
+        currentCalendar.date = new Date(date.getFullYear(), key + 1, 0)
+        currentCalendar.key += hUniqueID()
+      }
       this.updateCalendar()
     },
     pickYear(year, calendarKey) {
       this.showYearPicker = false
-
-      let currentCalendar = this.listCalendars[calendarKey]
-      let date = currentCalendar.date
-      currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
-      currentCalendar.key += hUniqueID()
+      if (!this.isSeparately) {
+        this.listCalendars.forEach(currentCalendar => {
+          let date = currentCalendar.date
+          currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
+          currentCalendar.key += hUniqueID()
+        })
+      } else {
+        let currentCalendar = this.listCalendars[calendarKey]
+        let date = currentCalendar.date
+        currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
+        currentCalendar.key += hUniqueID()
+      }
       this.updateCalendar()
     },
-    getYearList(date) {
+    getYearList(date, delta) {
       let years = []
-      let year = date.getFullYear() - 4
+      let year = date.getFullYear() - 4 + delta
       for (let i = 0; i < 12; i++) {
         let finalYear = year + i
 
@@ -1278,33 +1305,26 @@ export default {
         this.fConfigs.isModal &&
         !hElContains(this.popoverElement, e.relatedTarget)
       ) {
-        this.showCalendar = false
+        return (this.showCalendar = this.showMonthPicker = this.showYearPicker = false)
       }
     },
 
     hideMonthYearPicker(e) {
-      if (this.showMonthPicker || this.showYearPicker) {
-        let key = this.showMonthPicker
-          ? this.showMonthPicker - 1
-          : this.showYearPicker - 1
+      this.$nextTick(() => {
+        if (this.showMonthPicker || this.showYearPicker) {
+          let key = this.showMonthPicker
+            ? this.showMonthPicker - 1
+            : this.showYearPicker - 1
 
-        let element1 = this.$refs.calendars.querySelector(
-          `.vfc-calendars .vfc-calendar:nth-child(${key +
-            1}) .vfc-top-date a:nth-child(1)`
-        )
-        let element2 = this.$refs.calendars.querySelector(
-          `.vfc-calendars .vfc-calendar:nth-child(${key +
-            1}) .vfc-top-date a:nth-child(2)`
-        )
-
-        if (
-          !this.$refs.monthContainer[key].$el.contains(e.target) &&
-          !element1.contains(e.target) &&
-          !element2.contains(e.target)
-        ) {
+          const MYactive = this.$refs.calendars.querySelectorAll(
+            `.vfc-content-MY-picker`
+          )[key]
+          if (MYactive.contains(e.target)) {
+            return
+          }
           return (this.showMonthPicker = this.showYearPicker = false)
         }
-      }
+      })
     },
 
     checkDateRangeStart(date) {

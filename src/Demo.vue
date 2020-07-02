@@ -95,6 +95,9 @@
           <functional-calendar
             :can-clear-range="true"
             :is-separately="true"
+            :change-month-function="true"
+            :change-year-function="true"
+            :changeYearStep="1"
             :is-date-range="true"
             :is-multiple="true"
             :calendars-count="2"
@@ -116,6 +119,9 @@
             :is-modal="true"
             :is-date-range="true"
             :is-multiple="true"
+            :change-month-function="true"
+            :change-year-function="true"
+            :with-time-picker="true"
             :calendars-count="2"
             :date-format="'yyyy-mm-dd hh:mm'"
           ></functional-calendar>
@@ -132,6 +138,8 @@
             :calendars-count="2"
             :is-date-range="true"
             :with-time-picker="true"
+            :change-month-function="true"
+            :change-year-function="true"
           ></functional-calendar>
         </td>
       </tr>
@@ -188,6 +196,8 @@
       :isLayoutExpandable="true"
       :calendars-count="3"
       :isSeparately="true"
+      :change-month-function="true"
+      :change-year-function="true"
       arrowsPosition="space-between"
     >
       <template v-slot:dateRangeInputs="props">
