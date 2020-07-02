@@ -1,17 +1,7 @@
 <template>
   <div class="vfc-day">
-    <div
-      v-if="
-        (day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays
-      "
-      class="vfc-base-start"
-    ></div>
-    <div
-      v-else-if="
-        (day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays
-      "
-      class="vfc-base-end"
-    ></div>
+    <div v-if="startActive" class="vfc-base-start"></div>
+    <div v-else-if="endActive" class="vfc-base-end"></div>
     <span
       v-if="!day.hideLeftAndRightDays"
       :class="getClassNames(day)"
@@ -59,13 +49,37 @@ export default {
     }
   },
   computed: {
-    timesShow() {
+    startActive() {
       return (
-        (this.isLast &&
-          this.fConfigs.isMultipleDateRange &&
-          this.calendar.dateRange.start &&
-          this.calendar.dateRange.end) === this.day.date
+        ((this.day.isDateRangeStart || this.day.isMouseToLeft) &&
+          !this.day.hideLeftAndRightDays) ||
+        (this.calendar.multipleDateRange
+          ? ~this.calendar.multipleDateRange
+              .map(range => range.start)
+              .indexOf(this.day.date)
+          : '')
       )
+    },
+    endActive() {
+      return (
+        ((this.day.isDateRangeEnd || this.day.isMouseToRight) &&
+          !this.day.hideLeftAndRightDays) ||
+        (this.calendar.multipleDateRange
+          ? ~this.calendar.multipleDateRange
+              .map(range => range.end)
+              .indexOf(this.day.date)
+          : '')
+      )
+    },
+    timesShow() {
+      let res = false
+      res = this.calendar.multipleDateRange
+        ? ~this.calendar.multipleDateRange
+            .map(range => range.end)
+            .indexOf(this.day.date)
+        : -1
+      console.log(res)
+      return this.isLast && this.fConfigs.isMultipleDateRange && res
     }
   },
   watch: {
@@ -79,7 +93,10 @@ export default {
   methods: {
     clearRange() {
       //$emit
-
+      const removeIndex = this.calendar.multipleDateRange.findIndex(
+        range => range.end === this.day.date
+      )
+      this.calendar.multipleDateRange.splice(removeIndex, 1)
       this.isLast = false
     },
     dayMouseOver() {
@@ -230,10 +247,23 @@ export default {
       }
       //Date Multiple Range
       if (this.fConfigs.isMultipleDateRange) {
-        console.log('asdasdasdasdasdasd')
-        if (
+        if (day.isMarked) {
+          classes.push('vfc-marked')
+        }
+        // } else if (day.isHovered) {
+        // classes.push('vfc-hovered')
+        // }
+        if (this.fConfigs.markedDates.includes(day.date)) {
+          classes.push('vfc-borderd')
+        }
+        console.log(
           ~this.calendar.multipleDateRange
             .map(range => range.start)
+            .indexOf(day.date)
+        )
+        if (
+          ~this.calendar.multipleDateRange
+            .map(range => range.start.split(' ')[0])
             .indexOf(day.date)
         ) {
           classes.push('vfc-start-marked')
@@ -241,7 +271,7 @@ export default {
 
         if (
           ~this.calendar.multipleDateRange
-            .map(range => range.end)
+            .map(range => range.end.split(' ')[0])
             .indexOf(day.date)
         ) {
           classes.push('vfc-end-marked')
@@ -286,7 +316,7 @@ export default {
   .times {
     position: absolute;
     top: -10px;
-    background-color: black;
+    background-color: red;
     color: white;
     border-radius: 50%;
     width: 15px;
@@ -295,7 +325,7 @@ export default {
     line-height: 15px;
     &:hover {
       cursor: pointer;
-      background-color: rgb(78, 78, 78);
+      background-color: rgb(199, 0, 0);
     }
   }
 }

@@ -708,7 +708,6 @@ export default {
             lastRange.start = this.helpCalendar.formatDate(startDate)
           }
         }
-        console.log('asdasd')
         if (lastRange.start && lastRange.end)
           this.calendar.multipleDateRange.push({ end: '', start: '' })
         this.$emit('input', this.calendar)
@@ -906,6 +905,7 @@ export default {
               day.isMouseToLeft = false
               day.isMouseToRight = false
               // Date Range
+              // console.log(this.calendar, calendar)
               if (startDate === day.date) {
                 day.isMouseToLeft = !!endDate
                 day.isMarked = true
@@ -914,6 +914,42 @@ export default {
               if (endDate === day.date) {
                 day.isMouseToRight = !!endDate
                 day.isMarked = true
+              }
+              //Multiple Range
+              if (this.calendar.multipleDateRange) {
+                if (
+                  this.calendar.multipleDateRange &&
+                  ~this.calendar.multipleDateRange
+                    .map(range => range.start.split(' ')[0])
+                    .indexOf(day.date)
+                ) {
+                  day.isMouseToLeft = !!endDate
+                  day.isMarked = true
+                }
+                if (
+                  ~this.calendar.multipleDateRange
+                    .map(range => range.end.split(' ')[0])
+                    .indexOf(day.date)
+                ) {
+                  day.isMouseToRight = !!endDate
+                  day.isMarked = true
+                }
+                this.calendar.multipleDateRange.forEach((range, index) => {
+                  if (range.start && range.start === range.end) {
+                    day.isMouseToLeft = false
+                    day.isMouseToRight = false
+                  }
+                  if (range.start && range.end) {
+                    if (
+                      this.helpCalendar.getDateFromFormat(day.date).getTime() >
+                        this.helpCalendar.getDateFromFormat(range.start) &&
+                      this.helpCalendar.getDateFromFormat(day.date) <
+                        this.helpCalendar.getDateFromFormat(range.end)
+                    ) {
+                      day.isMarked = true
+                    }
+                  }
+                })
               }
 
               if (startDate && startDate === endDate) {
@@ -955,6 +991,157 @@ export default {
         if (limitDate < limitMin || limitDate > limitMax) {
           return false
         }
+      }
+
+      //Multiple Range
+      if (this.calendar.multipleDateRange) {
+        let range = this.calendar.multipleDateRange[
+          this.calendar.multipleDateRange.length - 1
+        ]
+        // this.calendar.multipleDateRange.forEach((range, index) => {
+        if (
+          (range.start === '' || range.end === '') &&
+          (range.start !== '' || range.end !== '')
+        ) {
+          for (let e = 0; e < this.listCalendars.length; e++) {
+            let calendar = this.listCalendars[e]
+
+            for (let f = 0; f < calendar.weeks.length; f++) {
+              let week = calendar.weeks[f]
+
+              for (let i = 0; i < week.days.length; i++) {
+                let item = week.days[i]
+
+                this.listCalendars[e].weeks[f].days[i].isHovered = false
+                if (
+                  item.date !== this.startDMY &&
+                  !this.fConfigs.markedDates.includes(item.date)
+                ) {
+                  this.listCalendars[e].weeks[f].days[i].isMarked = false
+                }
+
+                if (range.start) {
+                  let itemDate = this.helpCalendar
+                    .getDateFromFormat(item.date)
+                    .getTime()
+
+                  let thisDate = this.helpCalendar
+                    .getDateFromFormat(date)
+                    .getTime()
+                  let startDate = this.helpCalendar.getDateFromFormat(
+                    range.start
+                  )
+
+                  this.listCalendars[e].weeks[f].days[i].isMouseToLeft =
+                    (itemDate === startDate.getTime() &&
+                      thisDate > startDate.getTime()) ||
+                    (itemDate === thisDate && thisDate < startDate.getTime())
+                  this.listCalendars[e].weeks[f].days[i].isMouseToRight =
+                    (itemDate === startDate.getTime() &&
+                      thisDate < startDate.getTime()) ||
+                    (itemDate === thisDate && thisDate > startDate.getTime())
+
+                  let dateDay =
+                    this.helpCalendar.getDateFromFormat(item.date).getDay() - 1
+                  if (dateDay === -1) {
+                    dateDay = 6
+                  }
+
+                  let dayOfWeekString = this.fConfigs.dayNames[dateDay]
+                  if (
+                    !this.fConfigs.disabledDayNames.includes(dayOfWeekString) &&
+                    ((itemDate > startDate.getTime() && itemDate < thisDate) ||
+                      (itemDate < startDate.getTime() && itemDate > thisDate))
+                  ) {
+                    this.listCalendars[e].weeks[f].days[i].isMarked = true
+                  }
+
+                  if (!range.end && itemDate === thisDate) {
+                    this.listCalendars[e].weeks[f].days[i].isHovered = true
+                  }
+
+                  if (this.checkSelDates('min', range.start, item.date, date)) {
+                    this.listCalendars[e].weeks[f].days[i].isMarked = true
+
+                    let minDateToRight, minDateToLeft
+                    minDateToLeft = new Date(startDate.getTime())
+                    minDateToRight = new Date(startDate.getTime())
+                    minDateToLeft.setDate(
+                      minDateToLeft.getDate() - this.fConfigs.minSelDays + 1
+                    )
+                    minDateToRight.setDate(
+                      minDateToRight.getDate() + this.fConfigs.minSelDays - 1
+                    )
+
+                    if (
+                      thisDate >= minDateToLeft.getTime() &&
+                      this.helpCalendar.formatDate(minDateToLeft) === item.date
+                    ) {
+                      this.listCalendars[e].weeks[f].days[i].isMarked = false
+                      this.listCalendars[e].weeks[f].days[
+                        i
+                      ].isMouseToLeft = true
+                      this.listCalendars[e].weeks[f].days[i].isHovered = true
+                    } else if (
+                      thisDate <= minDateToRight.getTime() &&
+                      this.helpCalendar.formatDate(minDateToRight) === item.date
+                    ) {
+                      this.listCalendars[e].weeks[f].days[i].isMarked = false
+                      this.listCalendars[e].weeks[f].days[
+                        i
+                      ].isMouseToRight = true
+                      this.listCalendars[e].weeks[f].days[i].isHovered = true
+                    }
+                  }
+
+                  if (this.checkSelDates('max', range.start, item.date, date)) {
+                    this.listCalendars[e].weeks[f].days[i].isMarked = false
+                    this.listCalendars[e].weeks[f].days[i].isHovered = false
+                    this.listCalendars[e].weeks[f].days[i].isMouseToLeft = false
+                    this.listCalendars[e].weeks[f].days[
+                      i
+                    ].isMouseToRight = false
+
+                    let maxDateToLeft, maxDateToRight
+                    maxDateToLeft = new Date(startDate.getTime())
+                    maxDateToRight = new Date(startDate.getTime())
+                    maxDateToLeft.setDate(
+                      maxDateToLeft.getDate() - this.fConfigs.maxSelDays + 1
+                    )
+                    maxDateToRight.setDate(
+                      maxDateToRight.getDate() + this.fConfigs.maxSelDays - 1
+                    )
+
+                    if (thisDate <= maxDateToLeft.getTime()) {
+                      if (
+                        this.helpCalendar.formatDate(maxDateToLeft) ===
+                        item.date
+                      ) {
+                        this.listCalendars[e].weeks[f].days[i].isHovered = true
+                        this.listCalendars[e].weeks[f].days[
+                          i
+                        ].isMouseToLeft = true
+                      }
+                    }
+
+                    if (thisDate >= maxDateToRight.getTime()) {
+                      if (
+                        this.helpCalendar.formatDate(maxDateToRight) ===
+                        item.date
+                      ) {
+                        this.listCalendars[e].weeks[f].days[i].isHovered = true
+                        this.listCalendars[e].weeks[f].days[
+                          i
+                        ].isMouseToRight = true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        // })
       }
 
       if (
