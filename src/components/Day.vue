@@ -1,24 +1,15 @@
 <template>
   <div class="vfc-day">
-    <div
-      v-if="
-        (day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays
-      "
-      class="vfc-base-start"
-    ></div>
-    <div
-      v-else-if="
-        (day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays
-      "
-      class="vfc-base-end"
-    ></div>
+    <div v-if="startActive" class="vfc-base-start"></div>
+    <div v-if="endActive" class="vfc-base-end"></div>
     <span
       v-if="!day.hideLeftAndRightDays"
       :class="getClassNames(day)"
-      @click="$parent.$parent.clickDay(day, isDisabledDate)"
+      @click.self="$parent.$parent.clickDay(day, isDisabledDate)"
       @mouseover="dayMouseOver"
     >
       <slot :week="week" :day="day">{{ day.day }}</slot>
+      <span v-if="timesShow" @click="clearRange" class="times">&times;</span>
     </span>
   </div>
 </template>
@@ -52,7 +43,124 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      isLast: false
+    }
+  },
+  computed: {
+    startActive() {
+      if (!this.fConfigs.isMultipleDateRange)
+        return (
+          (this.day.isDateRangeStart || this.day.isMouseToLeft) &&
+          !this.day.hideLeftAndRightDays
+        )
+
+      const lastElement = this.calendar.multipleDateRange[
+        this.calendar.multipleDateRange.length - 1
+      ]
+      if (!lastElement) return false
+      const lastHasDayStart = ~this.calendar.multipleDateRange
+        .map(range => range.start)
+        .indexOf(this.day.date)
+      const lastHasDayEnd = ~this.calendar.multipleDateRange
+        .map(range => range.end)
+        .indexOf(this.day.date)
+
+      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return false
+
+      if (
+        lastHasDayStart &&
+        ~lastHasDayStart > -1 &&
+        this.calendar.multipleDateRange[~lastHasDayStart].end
+      )
+        return lastHasDayStart
+
+      if (!lastElement.start && !lastElement.end) {
+        return lastHasDayStart
+      }
+      console.log('lastElement')
+
+      return (
+        (this.day.isDateRangeStart || this.day.isMouseToLeft) &&
+        !this.day.hideLeftAndRightDays
+      )
+    },
+    endActive() {
+      if (!this.fConfigs.isMultipleDateRange)
+        return (
+          (this.day.isDateRangeEnd || this.day.isMouseToRight) &&
+          !this.day.hideLeftAndRightDays
+        )
+
+      const lastElement = this.calendar.multipleDateRange[
+        this.calendar.multipleDateRange.length - 1
+      ]
+      if (!lastElement) return false
+
+      const lastHasDayStart = ~this.calendar.multipleDateRange
+        .map(range => range.start)
+        .indexOf(this.day.date)
+      const lastHasDayEnd = ~this.calendar.multipleDateRange
+        .map(range => range.end)
+        .indexOf(this.day.date)
+
+      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return false
+      if (lastHasDayEnd) return lastHasDayEnd
+
+      if (!lastElement.start && !lastElement.end) {
+        if (lastElement.start === lastElement.end) return false
+        return lastHasDayEnd
+      }
+      return (
+        (this.day.isDateRangeEnd || this.day.isMouseToRight) &&
+        !this.day.hideLeftAndRightDays
+      )
+    },
+    timesShow() {
+      let res = false
+      res = this.calendar.multipleDateRange
+        ? ~this.calendar.multipleDateRange
+            .map(range => range.end)
+            .indexOf(this.day.date)
+        : -1
+      // console.log(res)
+      return this.isLast && this.fConfigs.isMultipleDateRange && res
+    }
+  },
+  watch: {
+    day: {
+      handler() {
+        this.isLast = true
+      },
+      deep: true
+    }
+  },
   methods: {
+    inRangeInit() {
+      //!!!!\\
+      const helpCalendar = this.helpCalendar
+      String.prototype.inRange = function(arr) {
+        let res = false
+        arr.forEach(el => {
+          const start = +helpCalendar.getDateFromFormat(el.start.split(' ')[0])
+          const end = +helpCalendar.getDateFromFormat(el.end.split(' ')[0])
+          const current = +helpCalendar.getDateFromFormat(this.split(' ')[0])
+          if (start && end) res = res || (start < current && current < end)
+        })
+        return res
+      }
+      //!!!!\\
+    },
+
+    clearRange() {
+      //$emit
+      const removeIndex = this.calendar.multipleDateRange.findIndex(
+        range => range.end === this.day.date
+      )
+      this.calendar.multipleDateRange.splice(removeIndex, 1)
+      this.isLast = false
+    },
     dayMouseOver() {
       this.$emit('dayMouseOver', this.day.date)
     },
@@ -199,7 +307,49 @@ export default {
 
         classes.push('vfc-hover')
       }
+      //Date Multiple Range
+      if (this.fConfigs.isMultipleDateRange) {
+        if (!''.inRange) this.inRangeInit()
+        // console.log(day.date.inRange(this.calendar.multipleDateRange))
+        if (
+          day.isMarked ||
+          ~this.calendar.multipleDateRange
+            .map(range => range.start.split(' ')[0])
+            .indexOf(day.date) ||
+          ~this.calendar.multipleDateRange
+            .map(range => range.end.split(' ')[0])
+            .indexOf(day.date) ||
+          day.date.inRange(this.calendar.multipleDateRange)
+        ) {
+          classes.push('vfc-marked')
+        }
+        // } else if (day.isHovered) {
+        // classes.push('vfc-hovered')
+        // }
+        if (this.fConfigs.markedDates.includes(day.date)) {
+          classes.push('vfc-borderd')
+        }
+        // console.log(
+        //   ~this.calendar.multipleDateRange
+        //     .map(range => range.start)
+        //     .indexOf(day.date)
+        // )
+        if (
+          ~this.calendar.multipleDateRange
+            .map(range => range.start.split(' ')[0])
+            .indexOf(day.date)
+        ) {
+          classes.push('vfc-start-marked')
+        }
 
+        if (
+          ~this.calendar.multipleDateRange
+            .map(range => range.end.split(' ')[0])
+            .indexOf(day.date)
+        ) {
+          classes.push('vfc-end-marked')
+        }
+      }
       // Date Mark With Custom Classes
       if (typeof this.fConfigs.markedDates === 'object') {
         let checkMarked = this.fConfigs.markedDates.find(markDate => {
@@ -210,6 +360,7 @@ export default {
           classes.push(checkMarked.class)
         }
       }
+
       if (day.date === this.calendar.dateRange.start.split(' ')[0]) {
         classes.push('vfc-start-marked')
       }
@@ -232,4 +383,23 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.vfc-day {
+  position: relative;
+  .times {
+    position: absolute;
+    top: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 15px;
+    z-index: 3;
+    height: 15px;
+    line-height: 15px;
+    &:hover {
+      cursor: pointer;
+      background-color: rgb(199, 0, 0);
+    }
+  }
+}
+</style>
