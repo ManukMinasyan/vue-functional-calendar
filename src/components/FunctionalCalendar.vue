@@ -931,7 +931,6 @@ export default {
               day.isMouseToLeft = false
               day.isMouseToRight = false
               // Date Range
-              // console.log(this.calendar, calendar)
               if (startDate === day.date) {
                 day.isMouseToLeft = !!endDate
                 day.isMarked = true
@@ -1080,7 +1079,7 @@ export default {
                 }
 
                 if (!this.calendar.dateRange.end && itemDate === thisDate) {
-                  this.listCalendars[e].weeks[f].days[i].isHovered = true
+                  this.listCalendars[e].weeks[f].days[i].isHovered = false
                 }
 
                 if (
@@ -1234,7 +1233,7 @@ export default {
                   }
 
                   if (!range.end && itemDate === thisDate) {
-                    this.listCalendars[e].weeks[f].days[i].isHovered = true
+                    this.listCalendars[e].weeks[f].days[i].isHovered = false
                   }
 
                   if (this.checkSelDates('min', range.start, item.date, date)) {

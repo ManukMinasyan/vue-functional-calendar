@@ -5,7 +5,7 @@
       :change-year-function="true"
       :is-date-range="true"
       :can-clear-range="true"
-      :is-dark="false"
+      :is-dark="true"
       v-model="rangesData"
       :is-multiple-date-range="true"
     >
@@ -540,10 +540,7 @@ export default {
   data() {
     return {
       rangesData: {
-        multipleDateRange: [
-          // { start: '9/7/2020', end: '10/7/2020' }
-          // { start: '19/7/2020', end: '20/7/2020' }
-        ]
+        multipleDateRange: [{ end: '17/7/2020', start: '3/7/2020' }]
       },
       demoCalendar1: {
         dateRange: {
