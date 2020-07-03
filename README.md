@@ -166,6 +166,14 @@ ___
 | isLayoutExpandable | Boolean | false | true | Enable expanding the calendar layout | 
 ___
 
+### Slots
+| Name          | Description       | Props                                                        |
+| :------------- | :------------- | :-----------------------------------------------------------: 
+| Default |Default slot responsible for the day component | {week: Object, day: Object}
+| datePickerInput |This slot responsible for the modal date picker input | {selectedDate: String, isTypeable: Boolean}
+| dateRangeInputs |This slot responsible for the modal date range inputs | {startDate: String, endDate: String, isTypeable: Boolean}
+| footer |This slot responsible for the calendar footer | {}
+
 ### Events
 
 | Event          | Output       | Description                                                        |
