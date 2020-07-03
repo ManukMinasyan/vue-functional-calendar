@@ -182,12 +182,7 @@ export const propsAndData = {
           start: '',
           end: ''
         },
-        multipleDateRange: [
-          {
-            start: '',
-            end: ''
-          }
-        ]
+        multipleDateRange: []
       },
       transitionPrefix: 'left',
       showCalendar: true,

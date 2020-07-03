@@ -198,7 +198,7 @@
                     <span
                       :class="[rangeIsSelected ? 'active' : 'disabled']"
                       @click="cleanRange"
-                      >Clear Range</span
+                      >Clear Range{{ isMultipleDateRange && 's' }}</span
                     >
                   </div>
                 </slot>
@@ -255,7 +255,9 @@ export default {
       return ''
     },
     rangeIsSelected() {
-      return !!(this.calendar.dateRange.end && this.calendar.dateRange.start)
+      if (!this.isMultipleDateRange)
+        return !!(this.calendar.dateRange.end && this.calendar.dateRange.start)
+      return this.calendar.multipleDateRange.length > 0
     },
     helpCalendar() {
       return new helpCalendarClass(
@@ -341,6 +343,21 @@ export default {
             value.hasOwnProperty('selectedDate'))
         ) {
           this.calendar = value
+        } else if (
+          typeof value === 'object' &&
+          value.hasOwnProperty('multipleDateRange')
+        ) {
+          this.calendar.multipleDateRange = value.multipleDateRange
+          const lastElement = this.calendar.multipleDateRange[
+            Math.max(0, this.calendar.multipleDateRange.length - 1)
+          ]
+          if (
+            lastElement &&
+            ((lastElement.start && !lastElement.end) ||
+              (!lastElement.start && lastElement.end))
+          ) {
+            throw new Error('Invalid Data Range')
+          }
         }
       },
       { immediate: true, deep: true }
@@ -621,6 +638,15 @@ export default {
         let rangesLength = this.calendar.multipleDateRange.length
         let lastRange = this.calendar.multipleDateRange[rangesLength - 1]
         let startDate = ''
+        // if (lastRange) {
+        //   // if (lastRange.start && lastRange.end)
+        // } else
+
+        if (!lastRange) {
+          this.calendar.multipleDateRange.push({ end: '', start: '' })
+          rangesLength = this.calendar.multipleDateRange.length
+          lastRange = this.calendar.multipleDateRange[rangesLength - 1]
+        }
 
         if (lastRange.start) {
           startDate = this.helpCalendar.getDateFromFormat(lastRange.start)
@@ -628,8 +654,9 @@ export default {
 
         // Two dates is not empty
         if (lastRange.start !== '' && lastRange.end !== '') {
-          lastRange.start = item.date
-          lastRange.end = ''
+          this.calendar.multipleDateRange.push({ end: '', start: item.date })
+          // lastRange.start = item.date
+          // lastRange.end = ''
           // Not date selected
         } else if (lastRange.start === '' && lastRange.end === '') {
           lastRange.start = item.date
@@ -708,8 +735,7 @@ export default {
             lastRange.start = this.helpCalendar.formatDate(startDate)
           }
         }
-        if (lastRange.start && lastRange.end)
-          this.calendar.multipleDateRange.push({ end: '', start: '' })
+
         this.$emit('input', this.calendar)
       } // Date Range
       else if (this.fConfigs.isDateRange) {
@@ -918,7 +944,6 @@ export default {
               //Multiple Range
               if (this.calendar.multipleDateRange) {
                 if (
-                  this.calendar.multipleDateRange &&
                   ~this.calendar.multipleDateRange
                     .map(range => range.start.split(' ')[0])
                     .indexOf(day.date)
@@ -998,6 +1023,7 @@ export default {
         let range = this.calendar.multipleDateRange[
           this.calendar.multipleDateRange.length - 1
         ]
+        if (!range) return
         // this.calendar.multipleDateRange.forEach((range, index) => {
         if (
           (range.start === '' || range.end === '') &&
@@ -1626,8 +1652,16 @@ export default {
       return date === this.fConfigs.markedDateRange.start
     },
     cleanRange() {
-      this.calendar.dateRange.end = ''
-      this.calendar.dateRange.start = ''
+      if (!this.isMultipleDateRange) {
+        this.calendar.dateRange.end = ''
+        this.calendar.dateRange.start = ''
+        return
+      }
+      this.calendar.multipleDateRange = []
+      // this.calendar.multipleDateRange.push({
+      //   start: '',
+      //   end: ''
+      // })
     }
   }
 }
