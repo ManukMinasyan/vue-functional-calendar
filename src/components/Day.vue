@@ -223,6 +223,7 @@ export default {
           const start = +helpCalendar.getDateFromFormat(el.start.split(' ')[0])
           const end = +helpCalendar.getDateFromFormat(el.end.split(' ')[0])
           const current = +helpCalendar.getDateFromFormat(this.split(' ')[0])
+          if (start === end) return
           if (start && end) res = res || (start < current && current < end)
         })
         return res
