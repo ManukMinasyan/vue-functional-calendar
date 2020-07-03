@@ -5,7 +5,7 @@
       :change-year-function="true"
       :is-date-range="true"
       :can-clear-range="true"
-      :is-dark="true"
+      :is-dark="false"
       v-model="rangesData"
       :is-multiple-date-range="true"
     >
