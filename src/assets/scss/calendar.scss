@@ -275,11 +275,9 @@
                         &.vfc-end-marked {
                           color: $white;
                         }
-
-                        &:before {
+                        &:not(.vfc-start-marked):not(.vfc-end-marked):before {
                           background-color: $astronaut;
                         }
-
                         &:after {
                           color: $black;
                         }
@@ -304,7 +302,7 @@
                       &.vfc-hover:hover,
                       &.vfc-hovered {
                         z-index: 1;
-                        background-color: $charade;
+                        background-color: $steelblue;
                       }
                     }
                   }

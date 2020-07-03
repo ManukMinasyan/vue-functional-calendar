@@ -1,5 +1,23 @@
 <template>
   <div>
+    <functional-calendar
+      :change-month-function="true"
+      :change-year-function="true"
+      :is-date-range="true"
+      :can-clear-range="true"
+      :is-dark="true"
+      v-model="rangesData"
+      :is-multiple-date-range="true"
+    >
+      <!-- <template v-slot:cleaner>
+        <button>
+          Clear
+        </button>
+      </template> -->
+    </functional-calendar>
+    <span style="color: white">
+      {{ JSON.stringify(rangesData.multipleDateRange) }}
+    </span>
     <table style="width: 100%">
       <tr>
         <td>
@@ -521,6 +539,9 @@ export default {
   components: { FunctionalCalendar },
   data() {
     return {
+      rangesData: {
+        multipleDateRange: [{ end: '17/7/2020', start: '3/7/2020' }]
+      },
       demoCalendar1: {
         dateRange: {
           start: '20/5/2020',
@@ -625,7 +646,7 @@ $color6: rgb(208, 217, 208);
 
 html,
 body {
-  background-color: #fec928;
+  background-color: #000;
   padding: 0;
   margin: 0;
 }
