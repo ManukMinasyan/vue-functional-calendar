@@ -10,6 +10,16 @@
     >
       <slot :week="week" :day="day">{{ day.day }}</slot>
       <span v-if="timesShow" @click="clearRange" class="times">&times;</span>
+      <span
+        v-if="numberShow"
+        @mouseover="toolTip && (onNumber = true)"
+        @mouseleave="onNumber = false"
+        class="number"
+        >{{ getDaysNumber }}
+        <div v-show="toolTip && onNumber" class="toolTip">
+          {{ toolTipTxt().join('&nbsp;') }}
+        </div>
+      </span>
     </span>
   </div>
 </template>
@@ -45,7 +55,9 @@ export default {
   },
   data() {
     return {
-      isLast: false
+      toolTip: false,
+      onNumber: false
+      // toolTipTxt
     }
   },
   computed: {
@@ -56,10 +68,14 @@ export default {
           !this.day.hideLeftAndRightDays
         )
 
+      if (!''.inRange) this.inRangeInit()
+
+      const inAnyRange = this.day.date.inRange(this.calendar.multipleDateRange)
+
       const lastElement = this.calendar.multipleDateRange[
         this.calendar.multipleDateRange.length - 1
       ]
-      if (!lastElement) return false
+      if (!lastElement) return inAnyRange
       const lastHasDayStart = ~this.calendar.multipleDateRange
         .map(range => range.start)
         .indexOf(this.day.date)
@@ -67,23 +83,24 @@ export default {
         .map(range => range.end)
         .indexOf(this.day.date)
 
-      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return false
+      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return inAnyRange
 
       if (
         lastHasDayStart &&
         ~lastHasDayStart > -1 &&
         this.calendar.multipleDateRange[~lastHasDayStart].end
       )
-        return lastHasDayStart
+        return lastHasDayStart || inAnyRange
 
       if (!lastElement.start && !lastElement.end) {
-        return lastHasDayStart
+        return lastHasDayStart || inAnyRange
       }
-      console.log('lastElement')
+      // console.log('lastElement')
 
       return (
-        (this.day.isDateRangeStart || this.day.isMouseToLeft) &&
-        !this.day.hideLeftAndRightDays
+        ((this.day.isDateRangeStart || this.day.isMouseToLeft) &&
+          !this.day.hideLeftAndRightDays) ||
+        inAnyRange
       )
     },
     endActive() {
@@ -93,10 +110,14 @@ export default {
           !this.day.hideLeftAndRightDays
         )
 
+      if (!''.inRange) this.inRangeInit()
+
+      const inAnyRange = this.day.date.inRange(this.calendar.multipleDateRange)
+
       const lastElement = this.calendar.multipleDateRange[
         this.calendar.multipleDateRange.length - 1
       ]
-      if (!lastElement) return false
+      if (!lastElement) return inAnyRange
 
       const lastHasDayStart = ~this.calendar.multipleDateRange
         .map(range => range.start)
@@ -105,38 +126,94 @@ export default {
         .map(range => range.end)
         .indexOf(this.day.date)
 
-      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return false
-      if (lastHasDayEnd) return lastHasDayEnd
+      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return inAnyRange
+
+      if (lastHasDayEnd) return true
 
       if (!lastElement.start && !lastElement.end) {
         if (lastElement.start === lastElement.end) return false
         return lastHasDayEnd
       }
       return (
-        (this.day.isDateRangeEnd || this.day.isMouseToRight) &&
-        !this.day.hideLeftAndRightDays
+        ((this.day.isDateRangeEnd || this.day.isMouseToRight) &&
+          !this.day.hideLeftAndRightDays) ||
+        inAnyRange
       )
     },
+    numberShow() {
+      if (!this.fConfigs.isMultipleDateRange) return false
+
+      let endPos = this.calendar.multipleDateRange
+        .map(range => range.end)
+        .indexOf(this.day.date)
+      if (
+        ~endPos ||
+        ~this.calendar.multipleDateRange
+          .map(range => range.start)
+          .indexOf(this.day.date)
+      ) {
+        return true
+      }
+      return false
+    },
     timesShow() {
-      let res = false
-      res = this.calendar.multipleDateRange
+      let res = this.calendar.multipleDateRange
         ? ~this.calendar.multipleDateRange
             .map(range => range.end)
             .indexOf(this.day.date)
         : -1
-      // console.log(res)
-      return this.isLast && this.fConfigs.isMultipleDateRange && res
-    }
-  },
-  watch: {
-    day: {
-      handler() {
-        this.isLast = true
-      },
-      deep: true
+      return this.fConfigs.isMultipleDateRange && res
+    },
+    getDaysNumber() {
+      const endPosFirst = this.calendar.multipleDateRange
+        .map(range => range.end)
+        .indexOf(this.day.date)
+      const startPosFirst = this.calendar.multipleDateRange
+        .map(range => range.start)
+        .indexOf(this.day.date)
+      const endPosLast = this.calendar.multipleDateRange
+        .map(range => range.end)
+        .lastIndexOf(this.day.date)
+      const startPosLast = this.calendar.multipleDateRange
+        .map(range => range.start)
+        .lastIndexOf(this.day.date)
+
+      this.toolTip =
+        endPosFirst !== endPosLast ||
+        startPosFirst !== startPosLast ||
+        (endPosFirst > -1 && startPosFirst > -1) ||
+        (startPosFirst > -1 && endPosFirst > -1)
+
+      if (this.toolTip) {
+        return '·'
+      }
+
+      return (endPosFirst > -1 ? new Number(endPosFirst) : 0) || startPosFirst
     }
   },
   methods: {
+    toolTipTxt() {
+      const numbers = []
+      const endArr = this.calendar.multipleDateRange.map(range => range.end)
+      const startArr = this.calendar.multipleDateRange.map(range => range.start)
+      let endIndex = 0
+      let startIndex = 0
+      let ind = endArr.indexOf(this.day.date, endIndex)
+      while (~endArr.indexOf(this.day.date, endIndex)) {
+        ind = endArr.indexOf(this.day.date, endIndex)
+
+        numbers.push(ind)
+        endIndex = ind + 1
+      }
+      ind = startArr.indexOf(this.day.date, startIndex)
+      while (~startArr.indexOf(this.day.date, startIndex)) {
+        ind = startArr.indexOf(this.day.date, startIndex)
+
+        numbers.push(ind)
+        startIndex = ind + 1
+      }
+      return numbers.sort((a, b) => a - b)
+    },
     inRangeInit() {
       //!!!!\\
       const helpCalendar = this.helpCalendar
@@ -146,6 +223,7 @@ export default {
           const start = +helpCalendar.getDateFromFormat(el.start.split(' ')[0])
           const end = +helpCalendar.getDateFromFormat(el.end.split(' ')[0])
           const current = +helpCalendar.getDateFromFormat(this.split(' ')[0])
+          if (start === end) return
           if (start && end) res = res || (start < current && current < end)
         })
         return res
@@ -159,7 +237,6 @@ export default {
         range => range.end === this.day.date
       )
       this.calendar.multipleDateRange.splice(removeIndex, 1)
-      this.isLast = false
     },
     dayMouseOver() {
       this.$emit('dayMouseOver', this.day.date)
@@ -393,13 +470,40 @@ export default {
     color: white;
     border-radius: 50%;
     width: 15px;
-    z-index: 3;
+    z-index: 20;
     height: 15px;
     line-height: 15px;
     &:hover {
       cursor: pointer;
       background-color: rgb(199, 0, 0);
     }
+  }
+  .number {
+    position: absolute;
+    top: -5px;
+    right: calc(50% + 7px);
+    background-color: green;
+    color: white;
+    font-size: 10px;
+    border-radius: 50%;
+    width: 15px;
+    z-index: 30;
+    height: 15px;
+    line-height: 15px;
+    &:hover {
+      background-color: rgb(0, 94, 0);
+    }
+  }
+  .toolTip {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    padding: 5px;
+    max-width: 108px;
+    word-wrap: break-word;
+    border-radius: 5px;
+    z-index: 200;
+    background-color: rgb(0, 94, 0);
   }
 }
 </style>
