@@ -3,11 +3,12 @@
     <functional-calendar
       :change-month-function="true"
       :change-year-function="true"
+      :is-modal="true"
       :is-date-range="true"
       :can-clear-range="true"
       :is-dark="true"
       v-model="rangesData"
-      :is-multiple-date-range="true"
+      :is-multiple-date-range="false"
     >
       <!-- <template v-slot:cleaner>
         <button>
@@ -16,7 +17,7 @@
       </template> -->
     </functional-calendar>
     <span style="color: white">
-      {{ JSON.stringify(rangesData.multipleDateRange) }}
+      {{ JSON.stringify(rangesData) }}
     </span>
     <table style="width: 100%">
       <tr>

@@ -139,6 +139,7 @@ ___
 | dateFormat                   | String         | 'dd/mm/yyyy'       | 'yyyy/mm/dd'        | Date formatting string                       |
 | isDatePicker                   | Boolean         | false       | true        | Enable or disable date picker                     |
 | isMultipleDatePicker                   | Boolean         | false       | true        | Enable or disable multiple date picker                     |
+| isMultipleDateRange                   | Boolean         | false       | true        | Enable or disable multiple date range                     |
 | isDateRange                   | Boolean         | false       | true        | Enable or disable date range                     |
 | withTimePicker                   | Boolean         | false       | true        | Enable or disable time picker                     |
 | isMultiple                   | Boolean         | false       | true        | Enable multiple calendar function                     |
