@@ -10,6 +10,10 @@
 [![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 ___
 
+<img src="https://i.ibb.co/ChT1JNb/Card-1.jpg"/>
+If you'd like to contribute, please FORK THIS repository and work on the new branch. Thanks.
+
+___
 ## Demo
 
 Demo: <a href="https://y3jnxov469.codesandbox.io/" target="_blank">https://y3jnxov469.codesandbox.io/</a>
