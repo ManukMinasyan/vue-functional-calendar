@@ -22,6 +22,12 @@
     <table style="width: 100%">
       <tr>
         <td>
+          <functional-calendar
+            :is-date-picker="true"
+            :enabled-dates="['afterToday']"
+          ></functional-calendar>
+        </td>
+        <td>
           <functional-calendar></functional-calendar>
         </td>
         <td>
