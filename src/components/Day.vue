@@ -248,15 +248,27 @@ export default {
       )
     },
     isDisabledDate(date) {
+      const datesCollection = this.fConfigs.disabledDates;
+
+      return !this.isEnabledDate(date) ||
+        this.isDateIncludedInDatesCollection(date, datesCollection);
+    },
+    isEnabledDate(date) {
+      const datesCollection = this.fConfigs.enabledDates;
+
+      return datesCollection.length === 0 ||
+        this.isDateIncludedInDatesCollection(date, datesCollection);
+    },
+    isDateIncludedInDatesCollection(date, datesCollection) {
       let today = new Date()
       today.setHours(0, 0, 0, 0)
       let dateObj = this.helpCalendar.getDateFromFormat(date)
 
       return (
-        this.fConfigs.disabledDates.includes(date) ||
-        (this.fConfigs.disabledDates.includes('beforeToday') &&
+        datesCollection.includes(date) ||
+        (datesCollection.includes('beforeToday') &&
           dateObj.getTime() < today.getTime()) ||
-        (this.fConfigs.disabledDates.includes('afterToday') &&
+        (datesCollection.includes('afterToday') &&
           dateObj.getTime() > today.getTime())
       )
     },

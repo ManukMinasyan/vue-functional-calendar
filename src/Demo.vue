@@ -22,6 +22,13 @@
     <table style="width: 100%">
       <tr>
         <td>
+          <button class="btn" @click="enabledDates = ['28/10/2020', '29/10/2020']">Change</button>
+          <functional-calendar
+            :is-date-picker="true"
+            :enabled-dates="enabledDates"
+          ></functional-calendar>
+        </td>
+        <td>
           <functional-calendar></functional-calendar>
         </td>
         <td>
@@ -587,6 +594,7 @@ export default {
       ],
       markedDates2: [],
       disabledDates: [],
+      enabledDates: ['27/10/2020', '28/10/2020'],
       calendarConfigs: {
         isMultipleDatePicker: true,
         dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']

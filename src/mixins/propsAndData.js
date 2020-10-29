@@ -104,6 +104,9 @@ export const propsAndData = {
     disabledDates: {
       type: Array
     },
+    enabledDates: {
+      type: Array
+    },
     limits: {
       type: [Object, Boolean],
       default: undefinedGenerator
@@ -223,6 +226,7 @@ export const propsAndData = {
         maxSelDays: false,
 
         disabledDates: [],
+        enabledDates: [],
         disabledDayNames: [],
 
         dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],

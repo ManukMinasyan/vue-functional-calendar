@@ -378,6 +378,18 @@ export default {
     window.removeEventListener('click', this.hideMonthYearPicker)
   },
   watch: {
+    enabledDates: {
+      handler() {
+        this.fConfigs.enabledDates = this.enabledDates;
+      },
+      deep: true
+    },
+    'configs.enabledDates': {
+      handler() {
+        this.fConfigs.enabledDates = this.configs.enabledDates;
+      },
+      deep: true
+    },
     fConfigs: {
       handler() {
         this.markChooseDays()
