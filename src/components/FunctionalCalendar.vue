@@ -1475,6 +1475,7 @@ export default {
         currentCalendar.date = new Date(date.getFullYear(), key + 1, 0)
         currentCalendar.key += hUniqueID()
       }
+      this.$emit('changedMonth', currentCalendar.date);
       this.updateCalendar()
     },
     pickYear(year, calendarKey) {
