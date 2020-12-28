@@ -8,7 +8,8 @@
       :can-clear-range="true"
       :is-dark="true"
       v-model="rangesData"
-      :is-multiple-date-range="false"
+      :is-multiple-date-range="true"
+      @monthPicked="monthPicked"
     >
       <!-- <template v-slot:cleaner>
         <button>
@@ -155,6 +156,8 @@
           <functional-calendar
             :is-multiple="true"
             :calendars-count="2"
+            @monthPicked="monthPicked"
+            @yearPicked="monthPicked"
             :is-date-range="true"
             :with-time-picker="true"
             :change-month-function="true"
@@ -594,6 +597,9 @@ export default {
     }
   },
   methods: {
+    monthPicked(date){
+      console.log(`changed to ${date}`)
+    },
     test() {
       console.log(this.$refs.demoCalendar1.rangeIsSelected)
     },
