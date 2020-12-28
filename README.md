@@ -8,7 +8,6 @@
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
-![gzip size](https://img.shields.io/badge/gzip%20size-5.73%20kB-44cc11.svg)
 ___
 
 ## Demo
@@ -17,7 +16,7 @@ Demo: <a href="https://y3jnxov469.codesandbox.io/" target="_blank">https://y3jnx
 
 [![Edit VueJS Functional Calendar Component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/980jov4m4p?fontsize=14&hidenavigation=1)
 
-<img src="https://manukminasyan.github.io/vue-functional-calendar/public/demo.png"/>
+<img src="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/master/public/demo.png"/>
 
 ___
 
@@ -140,6 +139,7 @@ ___
 | dateFormat                   | String         | 'dd/mm/yyyy'       | 'yyyy/mm/dd'        | Date formatting string                       |
 | isDatePicker                   | Boolean         | false       | true        | Enable or disable date picker                     |
 | isMultipleDatePicker                   | Boolean         | false       | true        | Enable or disable multiple date picker                     |
+| isMultipleDateRange                   | Boolean         | false       | true        | Enable or disable multiple date range                     |
 | isDateRange                   | Boolean         | false       | true        | Enable or disable date range                     |
 | withTimePicker                   | Boolean         | false       | true        | Enable or disable time picker                     |
 | isMultiple                   | Boolean         | false       | true        | Enable multiple calendar function                     |
@@ -164,7 +164,16 @@ ___
 | titlePosition                   | String         | center | left, right, center |  Set title position               |
 | arrowsPosition                   | String         | space-between | left, right, space-between |  Set arrows position               |
 | isDark                   | Boolean         | false       | true        | Dark theme                    |
+| isLayoutExpandable | Boolean | false | true | Enable expanding the calendar layout | 
 ___
+
+### Slots
+| Name          | Description       | Props                                                        |
+| :------------- | :------------- | :-----------------------------------------------------------: 
+| Default |Default slot responsible for the day component | {week: Object, day: Object}
+| datePickerInput |This slot responsible for the modal date picker input | {selectedDate: String, isTypeable: Boolean}
+| dateRangeInputs |This slot responsible for the modal date range inputs | {startDate: String, endDate: String, isTypeable: Boolean}
+| footer |This slot responsible for the calendar footer | {}
 
 ### Events
 
