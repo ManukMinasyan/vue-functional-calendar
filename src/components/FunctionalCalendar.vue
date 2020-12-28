@@ -1446,10 +1446,11 @@ export default {
       this.showTimePicker = true
     },
     pickMonth(key, calendarKey) {
+      let date
       this.showMonthPicker = false
       if (!this.isSeparately) {
         this.listCalendars.forEach((currentCalendar, index) => {
-          let date = currentCalendar.date
+          date = currentCalendar.date
           currentCalendar.date = new Date(
             date.getFullYear(),
             key + 1 + index,
@@ -1459,26 +1460,33 @@ export default {
         })
       } else {
         let currentCalendar = this.listCalendars[calendarKey]
-        let date = currentCalendar.date
+        date = currentCalendar.date
         currentCalendar.date = new Date(date.getFullYear(), key + 1, 0)
         currentCalendar.key += hUniqueID()
       }
+      this.$emit('monthPicked', new Date(
+          date.getFullYear(),
+          key + 1,
+          0
+      ))
       this.updateCalendar()
     },
     pickYear(year, calendarKey) {
+      let date
       this.showYearPicker = false
       if (!this.isSeparately) {
         this.listCalendars.forEach(currentCalendar => {
-          let date = currentCalendar.date
+          date = currentCalendar.date
           currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
           currentCalendar.key += hUniqueID()
         })
       } else {
         let currentCalendar = this.listCalendars[calendarKey]
-        let date = currentCalendar.date
+        date = currentCalendar.date
         currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
         currentCalendar.key += hUniqueID()
       }
+      this.$emit('yearPicked', new Date(year, date.getMonth() + 1, 0))
       this.updateCalendar()
     },
     getYearList(date, delta) {
