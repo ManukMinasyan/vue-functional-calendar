@@ -146,15 +146,11 @@ export default {
       let endPos = this.calendar.multipleDateRange
         .map(range => range.end)
         .indexOf(this.day.date)
-      if (
-        ~endPos ||
+
+      return !!(~endPos ||
         ~this.calendar.multipleDateRange
           .map(range => range.start)
-          .indexOf(this.day.date)
-      ) {
-        return true
-      }
-      return false
+          .indexOf(this.day.date));
     },
     timesShow() {
       let res = this.calendar.multipleDateRange
@@ -178,6 +174,7 @@ export default {
         .map(range => range.start)
         .lastIndexOf(this.day.date)
 
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
       this.toolTip =
         endPosFirst !== endPosLast ||
         startPosFirst !== startPosLast ||
@@ -188,7 +185,7 @@ export default {
         return '·'
       }
 
-      return (endPosFirst > -1 ? new Number(endPosFirst) : 0) || startPosFirst
+      return (endPosFirst > -1 ? Number(endPosFirst) : 0) || startPosFirst
     }
   },
   methods: {
