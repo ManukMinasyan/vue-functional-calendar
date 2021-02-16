@@ -1010,6 +1010,8 @@ export default {
       })
     },
     dayMouseOver(date) {
+      this.$emit('dayMouseOver', date)
+      
       if (!this.fConfigs.isDateRange) {
         return false
       }
