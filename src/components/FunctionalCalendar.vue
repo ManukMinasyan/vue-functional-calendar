@@ -162,6 +162,7 @@
                       :week="week"
                       :day_key="day_key"
                       @dayMouseOver="dayMouseOver"
+                      :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
                     >
                       <template v-slot:default="props">
                         <slot :week="props.week" :day="props.day"></slot>

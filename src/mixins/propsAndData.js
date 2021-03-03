@@ -161,6 +161,10 @@ export const propsAndData = {
     arrowsPosition: {
       type: String,
       default: 'space-between'
+    },
+    alwaysUseDefaultClasses: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
