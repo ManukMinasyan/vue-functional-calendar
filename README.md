@@ -154,6 +154,7 @@ ___
 | markedDateRange                   | Object         | {start: false, end: false}       | {start: '12/12/2020', end: '20/12/2020'} **OR** [{start: '12/12/2020', end: '20/12/2020'}, {start: '24/12/2020', end: '28/12/2020'}] | Marked date ranges                  |
 | disabledDayNames                   | Array         | []     | ['Su','We']        | Disabled Days Of Week                   |
 | disabledDates                   | Array         | []     | ['24/12/2020','27/12/2020']   **OR** ['beforeToday', 'afterToday', '24/12/2020','27/12/2020'] | Disabled Dates                   |
+| enabledDates                   | Array         | []     | ['24/12/2020','27/12/2020'] | Reversal of Disabled Dates                   |
 | dayNames                   | Array         | ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']       | ['Monday', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Sunday']        | Week Day Names                   |
 | monthNames                   | Array         | ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]       | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Month names                   |
 | shortMonthNames                   | Array         | ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] | ["Jan.", "Feb.", "Mar", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."]        | Short month names                   |
