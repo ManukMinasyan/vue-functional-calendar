@@ -164,6 +164,7 @@ ___
 | arrowsPosition                   | String         | space-between | left, right, space-between |  Set arrows position               |
 | isDark                   | Boolean         | false       | true        | Dark theme                    |
 | isLayoutExpandable | Boolean | false | true | Enable expanding the calendar layout | 
+| alwaysUseDefaultClasses | Boolean | false | true | Always add default classes to Day element, even when overriding with a slot |
 ___
 
 ### Slots

@@ -51,6 +51,10 @@ export default {
     calendar: {
       type: Object,
       required: true
+    },
+    alwaysUseDefaultClasses: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -272,7 +276,7 @@ export default {
     getClassNames(day) {
       let classes = []
 
-      if (!this.hasSlot('default')) {
+      if (!this.hasSlot('default') || this.alwaysUseDefaultClasses) {
         classes.push('vfc-span-day')
       }
 
