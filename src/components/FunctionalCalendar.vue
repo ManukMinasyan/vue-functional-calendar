@@ -1343,12 +1343,14 @@ export default {
 
       this.transitionPrefix = 'right'
 
+      let step = this.fConfigs.changeMonthStep
+
       calendarKey = calendarKey !== null ? calendarKey : 0
 
       let currentCalendar = this.listCalendars[calendarKey]
       currentCalendar.date = new Date(
         currentCalendar.date.getFullYear(),
-        currentCalendar.date.getMonth() - 1
+        currentCalendar.date.getMonth() - step
       )
       currentCalendar.key -= hUniqueID()
       this.updateCalendar()
@@ -1368,12 +1370,14 @@ export default {
 
       this.transitionPrefix = 'left'
 
+      let step = this.fConfigs.changeMonthStep
+
       calendarKey = calendarKey !== null ? calendarKey : 0
 
       let currentCalendar = this.listCalendars[calendarKey]
       currentCalendar.date = new Date(
         currentCalendar.date.getFullYear(),
-        currentCalendar.date.getMonth() + 1
+        currentCalendar.date.getMonth() + step
       )
       currentCalendar.key += hUniqueID()
       this.updateCalendar()

@@ -88,6 +88,10 @@ export const propsAndData = {
       type: Number,
       default: () => 3
     },
+    changeMonthStep: {
+      type: Number,
+      default: () => 1
+    },
     newCurrentDate: {
       type: Date
     },
@@ -218,6 +222,8 @@ export const propsAndData = {
         changeMonthFunction: false,
         changeYearFunction: false,
         changeYearStep: 3,
+
+        changeMonthStep: 1,
 
         markedDates: [],
         markedDateRange: {
