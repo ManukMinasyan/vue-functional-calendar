@@ -218,5 +218,4 @@ Read more about Treeware at [treeware.earth](http://treeware.earth)
 ## Sponsor
 ![Scheduling API](https://user-images.githubusercontent.com/9488406/125080407-0dd25780-e0c5-11eb-9f70-ef958968674a.png)
 
-This repo is sponsored by [**Spurwing**](https://www.spurwing.io/), where their API Makes Adding Scheduling Quick, Reliable and Scalable.
-Use Spurwing to build and integrate Scheduling, Booking & Calendar features in your project. Read more about Spurwing [**Scheduling API on GitHub**](https://github.com/Spurwing/Appointment-Scheduling-API).
+This project is sponsored by **Spurwing**, where their API Makes Adding Scheduling Quick, Reliable and Scalable. Use Spurwing to build and integrate Scheduling, Booking & Calendar features in your project. Read more about Spurwing's [**Scheduling API**](https://www.spurwing.io/).
