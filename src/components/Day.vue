@@ -151,10 +151,12 @@ export default {
         .map(range => range.end)
         .indexOf(this.day.date)
 
-      return !!(~endPos ||
+      return !!(
+        ~endPos ||
         ~this.calendar.multipleDateRange
           .map(range => range.start)
-          .indexOf(this.day.date));
+          .indexOf(this.day.date)
+      )
     },
     timesShow() {
       let res = this.calendar.multipleDateRange
@@ -249,16 +251,20 @@ export default {
       )
     },
     isDisabledDate(date) {
-      const datesCollection = this.fConfigs.disabledDates;
+      const datesCollection = this.fConfigs.disabledDates
 
-      return !this.isEnabledDate(date) ||
-        this.isDateIncludedInDatesCollection(date, datesCollection);
+      return (
+        this.isDateIncludedInDatesCollection(date, datesCollection) ||
+        !this.isEnabledDate(date)
+      )
     },
     isEnabledDate(date) {
-      const datesCollection = this.fConfigs.enabledDates;
+      const datesCollection = this.fConfigs.enabledDates
 
-      return datesCollection.length === 0 ||
-        this.isDateIncludedInDatesCollection(date, datesCollection);
+      return (
+        datesCollection.length === 0 ||
+        this.isDateIncludedInDatesCollection(date, datesCollection)
+      )
     },
     isDateIncludedInDatesCollection(date, datesCollection) {
       let today = new Date()
