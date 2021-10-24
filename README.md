@@ -13,7 +13,7 @@
 ___
 <a href="https://y3jnxov469.codesandbox.io/" target="_blank">Demo</a>
 <br>
-[**Read the documentation**](https://github.com/ManukMinasyan/vue-functional-calendar)
+<a href="https://github.com/ManukMinasyan/vue-functional-calendar" target="_blank">Read the documentation</a>
 
 <img src="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/master/public/demo.png"/>
 
