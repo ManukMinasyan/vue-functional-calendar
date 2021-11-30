@@ -1,5 +1,5 @@
 // Import vue component
-import FunctionalCalendar from './src/components/FunctionalCalendar'
+import FunctionalCalendar from './src/components/FunctionalCalendar.vue'
 
 // Creating a module value for Vue.use ()
 const FunctionalCalendarPlugin = {
