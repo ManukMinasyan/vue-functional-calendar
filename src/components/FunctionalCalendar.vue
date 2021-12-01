@@ -217,13 +217,13 @@
 <script>
 import helpCalendarClass from '../assets/js/helpCalendar'
 import { propsAndData } from '../mixins/propsAndData'
-import TimePicker from '../components/TimePicker'
-import Arrows from '../components/Arrows'
-import WeekNumbers from '../components/WeekNumbers'
-import Day from '../components/Day'
-import MonthYearPicker from '../components/MonthYearPicker'
-import PickerInputs from '../components/PickerInputs'
-import Footer from '../components/Footer'
+import TimePicker from '../components/TimePicker.vue'
+import Arrows from '../components/Arrows.vue'
+import WeekNumbers from '../components/WeekNumbers.vue'
+import Day from '../components/Day.vue'
+import MonthYearPicker from '../components/MonthYearPicker.vue'
+import PickerInputs from '../components/PickerInputs.vue'
+import Footer from '../components/Footer.vue'
 
 import { hElContains, hUniqueID } from '../utils/helpers'
 // import calendarMethods from '../utils/calendarMethods'
@@ -1012,7 +1012,7 @@ export default {
     },
     dayMouseOver(date) {
       this.$emit('dayMouseOver', date)
-      
+
       if (!this.fConfigs.isDateRange) {
         return false
       }
