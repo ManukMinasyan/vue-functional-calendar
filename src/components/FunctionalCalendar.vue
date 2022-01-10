@@ -1494,12 +1494,14 @@ export default {
           let date = currentCalendar.date
           currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
           currentCalendar.key += hUniqueID()
+          this.$emit('changedYear', currentCalendar.date)
         })
       } else {
         let currentCalendar = this.listCalendars[calendarKey]
         let date = currentCalendar.date
         currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
         currentCalendar.key += hUniqueID()
+        this.$emit('changedYear', currentCalendar.date)
       }
       this.updateCalendar()
     },
