@@ -3,12 +3,11 @@
 <h1 align="center">Vue Functional Calendar</h1>
 <p align="center">Modern calendar and datepicker module for Vue.js</p>
 
-[![Buy us a tree](https://img.shields.io/badge/Treeware-%F0%9F%8C%B3-lightgreen?style=for-the-badge)](https://offset.earth/treeware?gift-trees)
-
 [![Build Status](https://travis-ci.org/ManukMinasyan/vue-functional-calendar.svg?branch=master)](https://travis-ci.org/ManukMinasyan/vue-functional-calendar)
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
+[![Plant Tree](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Plant%20Tree&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Ftreeware%2Ftrees)](https://plant.treeware.earth/ManukMinasyan/vue-functional-calendar)
 ___
 ## Demo
 
