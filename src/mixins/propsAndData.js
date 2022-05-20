@@ -106,10 +106,12 @@ export const propsAndData = {
       type: Array
     },
     disabledDates: {
-      type: Array
+      type: Array,
+      default: () => []
     },
     enabledDates: {
-      type: Array
+      type: Array,
+      default: () => []
     },
     limits: {
       type: [Object, Boolean],
