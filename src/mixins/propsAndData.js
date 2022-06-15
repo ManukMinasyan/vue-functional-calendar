@@ -2,6 +2,14 @@ const undefinedGenerator = () => undefined
 
 export const propsAndData = {
   props: {
+    activeHours: {
+      type: Array,
+      required: false
+    },
+    activeMinutes: {
+      type: Array,
+      required: false
+    },
     borderColor: {
       type: String,
       default: ''
