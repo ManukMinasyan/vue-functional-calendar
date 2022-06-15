@@ -41,6 +41,8 @@
         v-if="showTimePicker"
         ref="timePicker"
         :height="$refs.popoverElement.clientHeight"
+        :hours="activeHours"
+        :minutes="activeMinutes"
       ></time-picker>
 
       <template v-else>

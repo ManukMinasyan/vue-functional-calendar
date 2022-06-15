@@ -39,7 +39,7 @@
             :class="{
               'vfc-time-picker__item--selected': checkHourActiveClass(i)
             }"
-            v-for="i in 24"
+            v-for="i in hours"
             :key="i"
             @click="changeHour(formatTime(i))"
           >
@@ -55,7 +55,7 @@
             :class="{
               'vfc-time-picker__item--selected': checkMinuteActiveClass(i)
             }"
-            v-for="i in 60"
+            v-for="i in minutes"
             :key="i"
             @click="changeMinute(formatTime(i))"
           >
@@ -80,6 +80,20 @@ export default {
     height: {
       type: Number,
       required: true
+    },
+    hours: {
+        type: Array,
+        default: function() {
+            return [...Array(24).keys()]
+        },
+        required: false
+    },
+    minutes: {
+        type: Array,
+        default: function() {
+            return [...Array(60).keys()]
+        },
+        required: false
     }
   },
   watch: {
@@ -117,7 +131,7 @@ export default {
   },
   methods: {
     formatTime(i) {
-      return i <= 10 ? '0' + (i - 1) : i - 1
+      return i < 10 ? '0' + i : i
     },
     close() {
       this.$parent.showTimePicker = false
@@ -224,6 +238,11 @@ export default {
       } else {
         hour = this.$parent.calendar.selectedHour
       }
+
+      if (this.hours.length && !this.hours.some(el => el == hour)) {
+        hour = this.hours[0]
+      }
+
       return hour == this.formatTime(i)
     },
     checkMinuteActiveClass(i) {
@@ -240,6 +259,10 @@ export default {
         ).minute
       } else {
         minute = this.$parent.calendar.selectedMinute
+      }
+
+      if (this.minutes.length && !this.minutes.some(el => el == minute)) {
+        minute = this.minutes[0]
       }
 
       return minute == this.formatTime(i)

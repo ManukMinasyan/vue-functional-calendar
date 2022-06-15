@@ -167,6 +167,8 @@ ___
 | isDark                   | Boolean         | false       | true        | Dark theme                    |
 | isLayoutExpandable | Boolean | false | true | Enable expanding the calendar layout | 
 | alwaysUseDefaultClasses | Boolean | false | true | Always add default classes to Day element, even when overriding with a slot |
+| activeHours               | Array         | []     | [8, 9,10, 18, 19, 20] | The hours you want to be shown in the timepicker (by default all of them are shown) 
+| activeMinutes               | Array         | []     | [0, 15, 30, 45] | The minutes you want to be shown in the timepicker (by default all of them are shown) 
 ___
 
 ### Slots
