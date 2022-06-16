@@ -262,7 +262,7 @@ export default {
       const datesCollection = this.fConfigs.enabledDates
 
       return (
-        !datesCollection?.length ||
+        !datesCollection.length ||
         this.isDateIncludedInDatesCollection(date, datesCollection)
       )
     },
