@@ -7,7 +7,7 @@
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
-[![Plant Tree](https://img.shields.io/badge/dynamic/json?color=brightgreen&label=Plant%20Tree&query=%24.total&url=https%3A%2F%2Fpublic.offset.earth%2Fusers%2Ftreeware%2Ftrees)](https://plant.treeware.earth/ManukMinasyan/vue-functional-calendar)
+[![Open Collective]([[https://img.shields.io/opencollective/all/vue-functional-calendar](https://img.shields.io/opencollective/all/vue-functional-calendar))](https://opencollective.com/vue-functional-calendar#category-CONTRIBUTE)
 ___
 ## Demo
 
@@ -203,14 +203,3 @@ For example: <FunctionalCalendar ref="Calendar"></FunctionalCalendar>
     ✅ this.$refs.Calendar.ChooseDate('today'); //Call method implementation to go to today
     ✅ this.$refs.Calendar.ChooseDate('25/09/2020'); //Call method implementation to go to a date
 ````
-___
-
-## Treeware
-
-You're free to use this package, but if it makes it to your production environment you are required to buy the world a tree.
-
-It’s now common knowledge that one of the best tools to tackle the climate crisis and keep our temperatures from rising above 1.5C is to <a href="https://www.bbc.co.uk/news/science-environment-48870920">plant trees</a>. If you support this package and contribute to the Treeware forest you’ll be creating employment for local families and restoring wildlife habitats.
-
-You can buy trees here [offset.earth/treeware](https://offset.earth/treeware?gift-trees)
-
-Read more about Treeware at [treeware.earth](http://treeware.earth)
