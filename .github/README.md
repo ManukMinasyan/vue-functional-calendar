@@ -1,5 +1,4 @@
 <p align="center"><img src="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/master/public/logo.png" width="200" /></p>
-<p align="center">***To support Vue 3 version please sponsor the project***</p>
 <h1 align="center">Vue Functional Calendar</h1>
 <p align="center">Modern calendar and datepicker module for Vue.js</p>
 
