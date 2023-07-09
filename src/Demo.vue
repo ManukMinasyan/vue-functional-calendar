@@ -541,6 +541,7 @@
 </template>
 
 <script>
+  
 import { FunctionalCalendar } from '../index'
 /* eslint-disable */
 export default {
