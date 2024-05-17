@@ -8,10 +8,10 @@
 [![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Open Collective](https://img.shields.io/opencollective/all/vue-functional-calendar.svg?style=fiat)](https://opencollective.com/vue-functional-calendar#category-CONTRIBUTE)
 
-<h2 align="center"> Sponsor</h2>
+<h2 align="center"> Sponsors</h2>
 <p align="center">
-<a href="https://marmof.com">
-<img src="https://marmof.com/logo.png" width="240"/>
+<a href="https://getcopy.ai">
+<img src="https://www.getcopy.ai/logo-light.svg" width="240"/>
 </a>
 </p>
 
