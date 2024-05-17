@@ -10,10 +10,10 @@
 </p>
 
 
-<h2 align="center"> Sponsor</h2>
+<h2 align="center"> Sponsors</h2>
 <p align="center">
-<a href="https://marmof.com">
-<img src="https://marmof.com/logo.png" width="240"/>
+<a href="https://getcopy.ai">
+<img src="https://www.getcopy.ai/logo-light.svg" width="240"/>
 </a>
 </p>
 
