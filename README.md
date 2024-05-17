@@ -4,7 +4,7 @@
 <p align="center">Modern calendar and datepicker module for Vue.js</p>
 
 [![Version](https://img.shields.io/npm/v/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Downloads](https://img.shields.io/npm/dt/vue-functional-calendar.svg)](https://www.npmjs.com/package/vue-functional-calendar)
 [![Open Collective](https://img.shields.io/opencollective/all/vue-functional-calendar.svg?style=fiat)](https://opencollective.com/vue-functional-calendar#category-CONTRIBUTE)
 
