@@ -1705,11 +1705,11 @@ export default {
     border: none;
     padding: 5px;
     &.active {
+      background-color: #66b3cc;
       &:hover {
         background-color: #4f8a9e;
         cursor: pointer;
       }
-      background-color: #66b3cc;
     }
     &.disabled {
       background-color: rgb(148, 148, 148);
