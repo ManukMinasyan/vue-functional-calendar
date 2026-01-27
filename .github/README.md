@@ -9,14 +9,6 @@
 <a href="https://opencollective.com/vue-functional-calendar#category-CONTRIBUTE" rel="nofollow"><img src="https://img.shields.io/opencollective/all/vue-functional-calendar.svg?style=fiat" alt="Open Collective" data-canonical-src="https://img.shields.io/opencollective/all/vue-functional-calendar.svg?style=fiat" style="max-width: 100%;"></a>
 </p>
 
-
-<h2 align="center"> Sponsors</h2>
-<p align="center">
-<a href="https://getcopy.ai">
-<img src="https://www.getcopy.ai/logo-light.svg" width="240"/>
-</a>
-</p>
-
 ___
 ## Demo
 
