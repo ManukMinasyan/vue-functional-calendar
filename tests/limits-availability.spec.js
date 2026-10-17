@@ -578,6 +578,30 @@ describe('availability with a time picker range', () => {
     expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
   })
 
+  it('keeps a disabled date disabled after it is clicked twice', async () => {
+    const { wrapper } = mountCalendar({
+      ...options,
+      disabledDates: ['10/10/2026']
+    })
+
+    await clickDays(wrapper, [10, 10])
+
+    expect(wrapper.vm.calendar.dateRange.start).toBe('')
+    expect(findDay(wrapper, 10).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 10).getAttribute('aria-disabled')).toBe('true')
+  })
+
+  it('emits dayClicked with the time suffix for a rejected click', async () => {
+    const { wrapper, events } = mountCalendar({
+      ...options,
+      disabledDates: ['10/10/2026']
+    })
+
+    await clickDay(wrapper, 10)
+
+    expect(eventsNamed(events, 'dayClicked')[0].date).toBe('10/10/2026 00:00')
+  })
+
   it('accepts a click on an enabled date', async () => {
     const { wrapper } = mountCalendar({
       ...options,

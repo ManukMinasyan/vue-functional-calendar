@@ -832,8 +832,8 @@ export default {
     },
     clickDay(item, isDisabledDate) {
       const day = item.date
-      item.date = this.withTimeSuffix(day)
-      this.$emit('dayClicked', item)
+      const clicked = { ...item, date: this.withTimeSuffix(day) }
+      this.$emit('dayClicked', clicked)
 
       if (
         !this.fConfigs.isDateRange &&
@@ -873,7 +873,7 @@ export default {
         }
       }
 
-      this.selectDate(item.date)
+      this.selectDate(clicked.date)
       this.$emit('choseDay', item)
     },
     selectDate(date) {
