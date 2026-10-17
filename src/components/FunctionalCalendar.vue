@@ -471,12 +471,18 @@ export default {
   },
   created() {
     this.setConfigs()
-    this.applyModel(this.modelValue)
+    let invalidModel = null
+    try {
+      this.applyModel(this.modelValue)
+    } catch (error) {
+      invalidModel = error
+    }
     if (typeof this.newCurrentDate !== 'undefined') {
       this.calendar.currentDate = this.newCurrentDate
     }
     this.initCalendar()
     this.$watch('modelValue', this.applyModel, { deep: true })
+    if (invalidModel) throw invalidModel
   },
   mounted() {
     //show time placeholder

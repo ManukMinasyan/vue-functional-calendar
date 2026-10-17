@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { h, nextTick, reactive } from 'vue'
+import { createApp, h, nextTick, reactive } from 'vue'
 import { mount } from '@vue/test-utils'
 import FunctionalCalendar from '../index.js'
 import {
@@ -185,6 +185,42 @@ describe('multiple date ranges', () => {
     wrapper.vm.$.appContext.config.errorHandler = original
 
     expect(thrown?.message).toBe('Invalid Data Range')
+  })
+
+  it('reports an invalid initial model and recovers when a valid one arrives', async () => {
+    const errors = []
+    const state = reactive({
+      modelValue: { multipleDateRange: [{ start: '3/10/2026', end: '' }] }
+    })
+    const container = document.body.appendChild(document.createElement('div'))
+    const app = createApp({
+      render: () =>
+        h(FunctionalCalendar, {
+          ...options,
+          newCurrentDate: FIXED_DATE,
+          modelValue: state.modelValue
+        })
+    })
+    app.config.errorHandler = error => errors.push(error)
+    app.mount(container)
+    await nextTick()
+    const dayCell = text =>
+      [...container.querySelectorAll('.vfc-day .vfc-span-day')].find(
+        el =>
+          el.textContent.trim() === text && !el.classList.contains('vfc-hide')
+      )
+
+    expect(errors.map(error => error.message)).toEqual(['Invalid Data Range'])
+    expect(dayCell('4')).toBeTruthy()
+
+    state.modelValue = {
+      multipleDateRange: [{ start: '3/10/2026', end: '5/10/2026' }]
+    }
+    await nextTick()
+
+    expect(dayCell('4').classList).toContain('vfc-marked')
+    app.unmount()
+    container.remove()
   })
 
   it('keeps working when a parent binds a multipleDateRange-only model one way', async () => {
