@@ -297,3 +297,187 @@ describe('ChooseDate', () => {
     expect(calendarTitle(wrapper)).toBe('February 2028')
   })
 })
+
+const titles = wrapper =>
+  wrapper
+    .findAll('.vfc-calendar')
+    .map((_, index) => calendarTitle(wrapper, index))
+
+describe('programmatic month and year moves', () => {
+  it('moves the year with NextYear and PreYear and emits changedYear only', async () => {
+    const { wrapper, events } = mountCalendar()
+
+    wrapper.vm.NextYear()
+    await nextTick()
+    expect(calendarTitle(wrapper)).toBe('October 2027')
+
+    wrapper.vm.PreYear()
+    wrapper.vm.PreYear()
+    await nextTick()
+    expect(calendarTitle(wrapper)).toBe('October 2025')
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([
+      new Date(2027, 9, 1),
+      new Date(2026, 9, 1),
+      new Date(2025, 9, 1)
+    ])
+    expect(eventsNamed(events, 'changedMonth')).toEqual([])
+  })
+
+  it('moves one year at a time outside the year picker whatever changeYearStep is', async () => {
+    const { wrapper } = mountCalendar({ changeYearStep: 5 })
+
+    wrapper.vm.NextYear()
+    await nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('October 2027')
+  })
+
+  it('moves every calendar together on a year move without isSeparately', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 11, 1)
+    })
+
+    wrapper.vm.NextYear()
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual(['December 2027', 'January 2028'])
+    expect(wrapper.vm.calendar.currentDate).toEqual(new Date(2027, 11, 1))
+  })
+
+  it('moves only one calendar and keeps currentDate with isSeparately', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2
+    })
+
+    wrapper.vm.NextYear(1)
+    wrapper.vm.PreMonth(0)
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual(['September 2026', 'November 2027'])
+    expect(wrapper.vm.calendar.currentDate).toEqual(new Date(2026, 9, 1))
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 10, 1)])
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2026, 8, 1)])
+  })
+
+  it('emits changedMonth once per move and the new currentDate once', async () => {
+    const { wrapper, events } = mountCalendar()
+    await nextTick()
+    const before = wrapper.emitted('update:modelValue').length
+
+    wrapper.vm.NextMonth()
+    await nextTick()
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2026, 10, 1)])
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(before + 1)
+  })
+
+  it('lays every calendar out from the first one on a non-separate move', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 3 })
+
+    wrapper.vm.NextMonth()
+    wrapper.vm.NextMonth()
+    wrapper.vm.PreMonth()
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual([
+      'November 2026',
+      'December 2026',
+      'January 2027'
+    ])
+  })
+
+  it('keeps the other calendars where they are on an isSeparately month move', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 3,
+      changeMonthStep: 2
+    })
+
+    wrapper.vm.NextMonth(1)
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual([
+      'October 2026',
+      'January 2027',
+      'December 2026'
+    ])
+  })
+
+  it('moves to a date with ChooseDate and lays out every calendar from it', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 3
+    })
+
+    wrapper.vm.NextMonth(2)
+    wrapper.vm.ChooseDate('15/12/2026')
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual([
+      'December 2026',
+      'January 2027',
+      'February 2027'
+    ])
+    expect(wrapper.vm.calendar.currentDate).toEqual(new Date(2026, 11, 15))
+  })
+
+  it('moves a single calendar to a date outside the current year with ChooseDate', async () => {
+    const { wrapper } = mountCalendar()
+
+    wrapper.vm.ChooseDate('05/03/2025')
+    await nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('March 2025')
+    expect(wrapper.emitted('update:modelValue').at(-1)[0].currentDate).toEqual(
+      new Date(2025, 2, 5)
+    )
+  })
+})
+
+describe('month and year pickers with several calendars', () => {
+  it('moves only the picked calendar with isSeparately', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2
+    })
+
+    wrapper.vm.pickMonth(2, 1)
+    await nextTick()
+    expect(titles(wrapper)).toEqual(['October 2026', 'March 2026'])
+
+    wrapper.vm.pickYear(2030, 0)
+    await nextTick()
+    expect(titles(wrapper)).toEqual(['October 2030', 'March 2026'])
+
+    expect(eventsNamed(events, 'changedMonth')).toHaveLength(1)
+    expect(eventsNamed(events, 'changedYear')).toHaveLength(1)
+    expect(wrapper.vm.showMonthPicker).toBe(false)
+    expect(wrapper.vm.showYearPicker).toBe(false)
+  })
+
+  it('moves every calendar to the picked month inside the same year', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 2 })
+
+    wrapper.vm.pickMonth(2, 0)
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual(['March 2026', 'April 2026'])
+  })
+
+  it('moves every calendar to the picked year inside the same month span', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 2 })
+
+    wrapper.vm.pickYear(2030, 0)
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual(['October 2030', 'November 2030'])
+  })
+})
