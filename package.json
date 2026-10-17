@@ -8,6 +8,7 @@
   "description": "Lightweight, high-performance calendar component based on Vue.js",
   "version": "2.10.0",
   "license": "MIT",
+  "homepage": "https://manukminasyan.github.io/vue-functional-calendar/v2/",
   "repository": {
     "type": "git",
     "url": "https://github.com/ManukMinasyan/vue-functional-calendar.git"
