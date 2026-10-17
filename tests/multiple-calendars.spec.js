@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { hUniqueID } from '../src/utils/helpers.js'
 import {
   mountCalendar,
   clickDay,
@@ -172,5 +173,13 @@ describe('month picker without isSeparately', () => {
 
     first.click()
     expect(wrapper.vm.showMonthPicker).toBe(1)
+  })
+})
+
+describe('unique ids', () => {
+  it('never repeats within the same millisecond', () => {
+    const ids = Array.from({ length: 1000 }, () => hUniqueID())
+
+    expect(new Set(ids).size).toBe(1000)
   })
 })
