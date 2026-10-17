@@ -100,6 +100,164 @@ describe('limits', () => {
   })
 })
 
+describe('limits on every navigation move', () => {
+  const year2026 = { min: '1/1/2026', max: '31/12/2026' }
+  const openMonthPicker = async wrapper => {
+    wrapper.vm.openMonthPicker(1)
+    await wrapper.vm.$nextTick()
+  }
+
+  it('keeps the month picker next-year arrow inside the limits', async () => {
+    const { wrapper, events } = mountCalendar({
+      limits: year2026,
+      changeMonthFunction: true
+    })
+    await openMonthPicker(wrapper)
+
+    await wrapper
+      .find('.vfc-months-container .vfc-arrow-right')
+      .trigger('click')
+
+    expect(calendarTitle(wrapper)).toBe('October 2026')
+    expect(eventsNamed(events, 'changedYear')).toHaveLength(0)
+  })
+
+  it('keeps the month picker previous-year arrow inside the limits', async () => {
+    const { wrapper } = mountCalendar({
+      limits: year2026,
+      changeMonthFunction: true
+    })
+    await openMonthPicker(wrapper)
+
+    await wrapper.find('.vfc-months-container .vfc-arrow-left').trigger('click')
+
+    expect(calendarTitle(wrapper)).toBe('October 2026')
+  })
+
+  it('moves a year inside the limits', async () => {
+    const { wrapper } = mountCalendar({
+      limits: { min: '1/1/2026', max: '31/12/2027' }
+    })
+
+    wrapper.vm.NextYear()
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('October 2027')
+  })
+
+  it('refuses a changeMonthStep that lands past the max limit', async () => {
+    const { wrapper, events } = mountCalendar({
+      limits: year2026,
+      changeMonthStep: 3
+    })
+
+    wrapper.vm.NextMonth()
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('October 2026')
+    expect(eventsNamed(events, 'changedMonth')).toHaveLength(0)
+  })
+
+  it('refuses a changeMonthStep that lands before the min limit', async () => {
+    const { wrapper } = mountCalendar({
+      limits: { min: '1/8/2026', max: '31/12/2026' },
+      changeMonthStep: 3
+    })
+
+    wrapper.vm.PreMonth()
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('October 2026')
+  })
+
+  it('refuses picking a month or year outside the limits', async () => {
+    const { wrapper, events } = mountCalendar({ limits: year2026 })
+
+    wrapper.vm.pickYear(2028, 0)
+    wrapper.vm.pickMonth(11, 0)
+    wrapper.vm.pickYear(2025, 0)
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('December 2026')
+    expect(eventsNamed(events, 'changedYear')).toHaveLength(0)
+  })
+
+  it('refuses ChooseDate for a month outside the limits', async () => {
+    const { wrapper } = mountCalendar({ limits: year2026 })
+
+    wrapper.vm.ChooseDate('15/12/2027')
+    wrapper.vm.ChooseDate('15/12/2025')
+    await wrapper.vm.$nextTick()
+    expect(calendarTitle(wrapper)).toBe('October 2026')
+
+    wrapper.vm.ChooseDate('15/12/2026')
+    await wrapper.vm.$nextTick()
+    expect(calendarTitle(wrapper)).toBe('December 2026')
+  })
+
+  it('stops the right arrow before the last calendar passes the max limit', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      limits: year2026
+    })
+
+    for (let step = 0; step < 4; step++) {
+      await arrow(wrapper, 'right').trigger('click')
+    }
+
+    expect(
+      wrapper
+        .findAll('.vfc-calendar')
+        .map((_, index) => calendarTitle(wrapper, index))
+    ).toEqual(['November 2026', 'December 2026'])
+    expect(arrow(wrapper, 'right').classes()).toContain('vfc-disabled')
+  })
+
+  it('keeps both arrows of an isSeparately calendar free until its own month reaches a limit', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      limits: { min: '1/1/2026', max: '30/11/2026' }
+    })
+
+    expect(wrapper.find('.vfc-arrow-right').classes()).not.toContain(
+      'vfc-disabled'
+    )
+  })
+
+  it('stops the right arrow of a two-calendar range picker before a month past the max limit shows', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2019, 5, 1),
+      limits: { min: '3/6/2019', max: '3/6/2020' }
+    })
+
+    for (let step = 0; step < 14; step++) {
+      await arrow(wrapper, 'right').trigger('click')
+    }
+
+    expect(calendarTitle(wrapper, 1)).toBe('June 2020')
+  })
+
+  it('stops the right arrow of an isSeparately calendar at the max limit', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      limits: year2026
+    })
+
+    wrapper.vm.NextYear(1)
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper, 1)).toBe('November 2026')
+  })
+})
+
 describe('limits after picking a month', () => {
   it('re-checks the arrows for the picked month', async () => {
     const { wrapper } = mountCalendar({

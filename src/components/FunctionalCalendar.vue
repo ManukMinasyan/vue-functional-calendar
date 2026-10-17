@@ -1189,7 +1189,7 @@ export default {
     revealMonth(date) {
       const previous = this.listCalendars[0].date
       this.transitionPrefix = date > previous ? 'left' : 'right'
-      this.ChooseDate(this.helpCalendar.formatDate(date))
+      if (!this.ChooseDate(this.helpCalendar.formatDate(date))) return
 
       const first = this.listCalendars[0].date
       this.$emit('changedMonth', first)
@@ -1601,7 +1601,11 @@ export default {
     PreMonth(calendarKey = null) {
       if (!this.allowPreDate) return false
 
-      this.changeMonth(calendarKey, -this.fConfigs.changeMonthStep, 'right')
+      return this.changeMonth(
+        calendarKey,
+        -this.fConfigs.changeMonthStep,
+        'right'
+      )
     },
     /**
      * @return {boolean}
@@ -1609,7 +1613,11 @@ export default {
     NextMonth(calendarKey = null) {
       if (!this.allowNextDate) return false
 
-      this.changeMonth(calendarKey, this.fConfigs.changeMonthStep, 'left')
+      return this.changeMonth(
+        calendarKey,
+        this.fConfigs.changeMonthStep,
+        'left'
+      )
     },
     /**
      * @return {boolean}
@@ -1617,7 +1625,7 @@ export default {
     PreYear(calendarKey = null) {
       if (!this.allowPreDate) return false
 
-      this.changeYear(calendarKey, -this.yearStep())
+      return this.changeYear(calendarKey, -this.yearStep())
     },
     /**
      * @return {boolean}
@@ -1625,17 +1633,23 @@ export default {
     NextYear(calendarKey = null) {
       if (!this.allowNextDate) return false
 
-      this.changeYear(calendarKey, this.yearStep())
+      return this.changeYear(calendarKey, this.yearStep())
     },
     yearStep() {
       return this.showYearPicker ? this.fConfigs.changeYearStep : 1
     },
     changeMonth(calendarKey, months, transition) {
+      const target = this.moveMonths(calendarKey, months)
+      if (!target) return false
+
       this.transitionPrefix = transition
-      this.$emit('changedMonth', this.moveMonths(calendarKey, months))
+      this.$emit('changedMonth', target)
     },
     changeYear(calendarKey, years) {
-      this.$emit('changedYear', this.moveMonths(calendarKey, years * 12))
+      const target = this.moveMonths(calendarKey, years * 12)
+      if (!target) return false
+
+      this.$emit('changedYear', target)
     },
     moveMonths(calendarKey, months) {
       const grid = this.listCalendars[calendarKey !== null ? calendarKey : 0]
@@ -1644,9 +1658,23 @@ export default {
         grid.date.getMonth() + months,
         1
       )
+      const edge = months > 0 ? this.forwardEdge(target) : target
+      if (!this.isMonthAllowed(edge)) return null
 
       this.showMonth(grid, target)
       return target
+    },
+    forwardEdge(first) {
+      if (this.fConfigs.isSeparately) return first
+
+      return new Date(
+        first.getFullYear(),
+        first.getMonth() + this.visibleCount() - 1,
+        1
+      )
+    },
+    visibleCount() {
+      return this.fConfigs.isMultiple ? this.fConfigs.calendarsCount : 1
     },
     showMonth(grid, date) {
       if (this.fConfigs.isSeparately) {
@@ -1666,8 +1694,11 @@ export default {
         newDate = new Date()
       }
 
+      if (!this.isMonthAllowed(newDate)) return false
+
       this.calendar.currentDate = newDate
       this.initCalendar()
+      return true
     },
     openMonthPicker(key) {
       if (this.fConfigs.changeMonthFunction) {
@@ -1715,6 +1746,7 @@ export default {
       this.showMonthPicker = false
       const grid = this.pickerGrid(calendarKey)
       const target = new Date(grid.date.getFullYear(), key, 1)
+      if (!this.isMonthAllowed(target)) return
 
       this.showMonth(grid, target)
       this.$emit('changedMonth', target)
@@ -1723,6 +1755,7 @@ export default {
       this.showYearPicker = false
       const grid = this.pickerGrid(calendarKey)
       const target = new Date(year, grid.date.getMonth(), 1)
+      if (!this.isMonthAllowed(target)) return
 
       this.showMonth(grid, target)
       this.$emit('changedYear', target)
@@ -1840,7 +1873,7 @@ export default {
           this.allowPreDate = false
         }
 
-        if (current >= max) {
+        if (this.forwardEdge(current) >= max) {
           this.allowNextDate = false
         }
       }
