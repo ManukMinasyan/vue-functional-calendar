@@ -340,6 +340,73 @@ describe('custom presets', () => {
     })
   })
 
+  it('disables a custom preset whose timed start falls on a disabled day', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      disabledDates: ['15/10/2026'],
+      presets: [
+        {
+          label: 'Timed',
+          range: () => ({
+            start: new Date(2026, 9, 15, 10),
+            end: new Date(2026, 9, 16)
+          })
+        }
+      ]
+    })
+
+    expect(presetButton(wrapper, 'Timed').attributes('aria-disabled')).toBe(
+      'true'
+    )
+  })
+
+  it('allows a custom preset whose timed end falls on the max limit', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      limits: { min: '1/10/2026', max: '20/10/2026' },
+      presets: [
+        {
+          label: 'Timed',
+          range: () => ({
+            start: new Date(2026, 9, 18, 9),
+            end: new Date(2026, 9, 20, 18)
+          })
+        }
+      ]
+    })
+
+    await choose(wrapper, 'Timed')
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '18/10/2026',
+      end: '20/10/2026'
+    })
+  })
+
+  it('allows a custom preset ending later today with afterToday disabled', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      disabledDates: ['afterToday'],
+      presets: [
+        {
+          label: 'Until tonight',
+          range: () => ({
+            start: new Date(2026, 9, 13, 8),
+            end: new Date(2026, 9, 15, 22)
+          })
+        }
+      ]
+    })
+
+    await choose(wrapper, 'Until tonight')
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '13/10/2026',
+      end: '15/10/2026'
+    })
+  })
+
   it('mixes built-in keys and custom objects in the given order', async () => {
     const { wrapper } = await mountCalendarReady({
       isDateRange: true,

@@ -279,6 +279,7 @@ import {
   PRESET_KEYS,
   PRESET_DAY_KEYWORDS,
   builtInRange,
+  dayStart,
   daysBetween,
   eachDay,
   isValidRange
@@ -1111,12 +1112,13 @@ export default {
       }
       if (!label || !isValidRange(range)) return null
 
+      const days = { start: dayStart(range.start), end: dayStart(range.end) }
+
       return {
         entry,
         label,
-        start: range.start,
-        end: range.end,
-        disabled: this.isPresetBlocked(range)
+        ...days,
+        disabled: this.isPresetBlocked(days)
       }
     },
     isRangePreset() {

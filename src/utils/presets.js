@@ -7,7 +7,7 @@ export const PRESET_KEYS = [
   'lastMonth'
 ]
 
-const dayStart = (date, offset = 0) =>
+export const dayStart = (date, offset = 0) =>
   new Date(date.getFullYear(), date.getMonth(), date.getDate() + offset)
 
 export const builtInRange = (key, now) => {
