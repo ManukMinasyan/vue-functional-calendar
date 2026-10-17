@@ -1,0 +1,1 @@
+import{t as e}from"./9ff7tocg.js";import{t}from"./CZKh-21j.js";var n=e({name:`English (United Kingdom)`,code:`en-GB`,messages:t.messages});export{n as default};

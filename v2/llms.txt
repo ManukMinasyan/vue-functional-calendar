@@ -1,0 +1,22 @@
+# Vue Functional Calendar
+
+## Documentation Sets
+
+- [Vue Functional Calendar](https://manukminasyan.github.io/vue-functional-calendar/v2/llms-full.txt)
+
+## Docs
+
+Every page below is available as raw markdown.
+
+- [Events](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/essentials/events.md): Events emitted by the FunctionalCalendar component and what each one passes.
+- [Examples](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/essentials/examples.md): Common calendar setups for Vue Functional Calendar 2.x, ready to copy.
+- [Props](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/essentials/props.md): Every prop of the FunctionalCalendar component, with type, default and behavior.
+- [Slots](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/essentials/slots.md): Replace the day cell, navigation arrows, footer and inputs of the calendar.
+- [Installation](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/getting-started/installation.md): Install Vue Functional Calendar 2.x and register it in a Vue 2 app.
+- [Usage](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/getting-started/usage.md): Render a calendar, read the selected value and configure it with props or a configs object.
+
+## Landing
+
+Every page below is available as raw markdown.
+
+- [/](https://manukminasyan.github.io/vue-functional-calendar/v2/raw/index.md)

@@ -1,0 +1,89 @@
+---
+title: "Installation"
+description: "Install Vue Functional Calendar and load its styles."
+canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/getting-started/installation"
+---
+# Installation
+
+> Install Vue Functional Calendar and load its styles.
+
+Vue Functional Calendar 3.x needs Vue `^3.3.0`.
+
+## Install
+
+```bash
+npm install vue-functional-calendar
+# or: pnpm add vue-functional-calendar
+# or: yarn add vue-functional-calendar
+```
+
+Using Vue 2? Install `vue-functional-calendar@^2.10.0` instead.
+
+## Register the component
+
+Import the component and the stylesheet where you use it.
+
+```vue
+<script setup>
+import { FunctionalCalendar } from 'vue-functional-calendar'
+import 'vue-functional-calendar/style.css'
+</script>
+```
+
+The CSS is a separate file. Import it once in your app and every calendar picks it up. You need no Sass.
+
+## Register it globally
+
+`app.use` registers `FunctionalCalendar` everywhere. Its options become defaults for every calendar.
+
+```js
+import { createApp } from 'vue'
+import FunctionalCalendar from 'vue-functional-calendar'
+import 'vue-functional-calendar/style.css'
+import App from './App.vue'
+
+createApp(App)
+  .use(FunctionalCalendar, { showWeekNumbers: true, dateFormat: 'yyyy-mm-dd' })
+  .mount('#app')
+```
+
+A prop on a calendar overrides a global option. See [props](https://manukminasyan.github.io/vue-functional-calendar/essentials/props) for the order.
+
+## Use it from a CDN
+
+The UMD build exposes a global `FunctionalCalendar` and expects a global `Vue`.
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/vue-functional-calendar/dist/style.css" />
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/vue-functional-calendar"></script>
+
+<div id="app">
+  <functional-calendar v-model="value" is-date-picker></functional-calendar>
+</div>
+
+<script>
+  Vue.createApp({ data: () => ({ value: {} }) })
+    .use(FunctionalCalendar)
+    .mount('#app')
+</script>
+```
+
+## TypeScript
+
+The package ships types for the component, its props, events, slots and value. `FunctionalCalendarValue` describes the bound object.
+
+```ts
+import type { FunctionalCalendarValue } from 'vue-functional-calendar'
+
+const value = ref<Partial<FunctionalCalendarValue>>({})
+```
+
+## Browser support
+
+Any browser that supports ES modules and CSS custom properties. Derived colors use `color-mix()`. Older browsers fall back to fixed values, see the [theming guide](https://manukminasyan.github.io/vue-functional-calendar/essentials/theming#browsers-without-color-mix).
+
+
+## Sitemap
+
+See the full [sitemap](https://manukminasyan.github.io/vue-functional-calendar/sitemap.md) for all pages.

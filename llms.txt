@@ -1,0 +1,48 @@
+# Vue Functional Calendar
+
+## Documentation Sets
+
+- [Vue Functional Calendar](https://manukminasyan.github.io/vue-functional-calendar/llms-full.txt)
+
+## Docs
+
+Every page below is available as raw markdown.
+
+- [Changelog](https://manukminasyan.github.io/vue-functional-calendar/raw/community/changelog.md): Release notes for Vue Functional Calendar.
+- [Contributing](https://manukminasyan.github.io/vue-functional-calendar/raw/community/contributing.md): Report bugs, propose changes and run the project locally.
+- [Accessibility](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/accessibility.md): Grid semantics, labels and focus management.
+- [Events](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/events.md): Every event and its payload.
+- [Keyboard](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/keyboard.md): Every key the calendar handles.
+- [Layout and names](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/layout-and-names.md): Hide parts, move the title and arrows, and rename days and months.
+- [Limits and availability](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/limits-and-availability.md): Disable dates, weekdays and spans, or allow a list.
+- [Locale and labels](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/locale.md): Derive names and week start from Intl, and translate every UI string.
+- [Marking](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/marking.md): Mark dates and ranges, and show week numbers.
+- [Multiple calendars](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/multiple-calendars.md): Show several months at once.
+- [Presets](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/presets.md): Quick ranges for date ranges and date pickers.
+- [Props](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/props.md): Every prop, with its type and default.
+- [Selection modes](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/selection-modes.md): Choose what users pick, and read the value back.
+- [Slots](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/slots.md): Replace parts of the calendar with your own markup.
+- [Theming](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/theming.md): Style the calendar with --vfc-* custom properties, in light and dark.
+- [Time picker](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/time-picker.md): Add hours and minutes to a date or a range.
+- [Typeable input](https://manukminasyan.github.io/vue-functional-calendar/raw/essentials/typeable-input.md): Let users type dates into the modal inputs.
+- [Limits and availability](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/limits-and-availability.md): Block dates, weekdays and spans, or allow only a list of dates.
+- [Locale and labels](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/locale.md): Names, week start and every UI string, from the browser's Intl data.
+- [Marking and layout](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/marking.md): Mark dates and ranges, show week numbers, and hide parts of the calendar.
+- [Modal and typeable inputs](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/modal-and-inputs.md): Open the calendar from an input, type dates, or replace the inputs.
+- [Multiple calendars](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/multiple-calendars.md): Show two or three months side by side, linked or independent.
+- [Range presets](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/presets.md): Quick ranges for date ranges and date pickers.
+- [Selection modes](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/selection-modes.md): Pick one date, a range, several dates or several ranges.
+- [Slots](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/slots.md): Replace the day cell, the arrows, the footer and the clear button.
+- [Theming and dark mode](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/theming-and-dark-mode.md): Style the calendar with --vfc-* tokens and switch to dark mode.
+- [Time picker](https://manukminasyan.github.io/vue-functional-calendar/raw/examples/time-picker.md): Add hours and minutes to a date, a range or several dates.
+- [Installation](https://manukminasyan.github.io/vue-functional-calendar/raw/getting-started/installation.md): Install Vue Functional Calendar and load its styles.
+- [Introduction](https://manukminasyan.github.io/vue-functional-calendar/raw/getting-started/introduction.md): What Vue Functional Calendar is and what it does.
+- [Migrate from 2.x](https://manukminasyan.github.io/vue-functional-calendar/raw/getting-started/migration.md): Move a Vue 2 app on Vue Functional Calendar 2.x to the Vue 3 build.
+- [Usage](https://manukminasyan.github.io/vue-functional-calendar/raw/getting-started/usage.md): Render a calendar, read the bound value and configure it.
+- [Playground](https://manukminasyan.github.io/vue-functional-calendar/raw/playground.md): Change the main props and theme tokens, and copy the code.
+
+## Landing
+
+Every page below is available as raw markdown.
+
+- [/](https://manukminasyan.github.io/vue-functional-calendar/raw/index.md)

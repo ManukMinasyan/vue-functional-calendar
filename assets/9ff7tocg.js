@@ -1,0 +1,1 @@
+import{t as e}from"./BW3xJdEx.js";function t(t){return e(t,{dir:`ltr`})}export{t};

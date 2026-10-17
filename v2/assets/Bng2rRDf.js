@@ -1,0 +1,1 @@
+function e(e,t,n){let r=n.originalEvent.target,i=new CustomEvent(e,{bubbles:!1,cancelable:!0,detail:n});t&&r.addEventListener(e,t,{once:!0}),r.dispatchEvent(i)}export{e as t};

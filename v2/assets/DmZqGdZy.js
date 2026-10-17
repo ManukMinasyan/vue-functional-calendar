@@ -1,0 +1,1 @@
+import{t as e}from"./9ff7tocg.js";import t from"./MpRDfc8Q.js";var n=e({name:`Deutsch (Österreich)`,code:`de-AT`,messages:t.messages});export{n as default};

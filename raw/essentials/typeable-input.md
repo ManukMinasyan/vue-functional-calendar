@@ -1,0 +1,60 @@
+---
+title: "Typeable input"
+description: "Let users type dates into the modal inputs."
+canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/essentials/typeable-input"
+---
+# Typeable input
+
+> Let users type dates into the modal inputs.
+
+Set `isModal` and `isTypeable` on a date picker or a range. Without `isTypeable` the inputs are read-only and only show the selection.
+
+<calendar-demo :config="{"isDateRange":true,"isModal":true,"isTypeable":true,"newCurrentDate":"2026-10-01"}" :height="420">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range is-modal is-typeable />
+```
+
+</calendar-demo>
+
+Type `5/3/2026` or `05/03/2026` into an input, then try `31/02/2026`.
+
+## What the input accepts
+
+- Day and month with one or two digits, and a four digit year.
+- The separator of `dateFormat`, which is `/`, `-` or `.`. The default is `/`.
+- Padded and unpadded dates give the same value. `05/03/2026` is stored as `5/3/2026`.
+- Typing any of `-`, `.`, `/` or a space where a separator belongs inserts the format's separator.
+- Letters and extra digits are dropped as you type. A third digit in the day, or a fifth in the year, is not accepted.
+- A digit that overflows a full part moves into the next part when you type at the end.
+
+## When the value commits
+
+The calendar updates the value only when the text is a complete, real date: all parts present, a four digit year, and a day that exists in that month. `31/02/2026` and `1/1/26` change nothing, and `29/02/2028` is accepted.
+
+In a range, each input commits on its own. Typing a start date does not need an end date.
+
+## Paste
+
+A pasted date has its `-`, `.`, `/` and space separators replaced with the separator of `dateFormat`, so `5.10.2026` becomes `5/10/2026`. The text is then cut to what the format can hold. Parts are not reordered, so paste them in the order of `dateFormat`.
+
+## Time
+
+With `displayTimeInput`, the time stays in the input text while you edit the date part.
+
+## Forms
+
+Enter in these inputs is not intercepted, so a surrounding form submits. See [keyboard](https://manukminasyan.github.io/vue-functional-calendar/essentials/keyboard).
+
+## Tags input
+
+The multiple date picker shows its dates as tags. Type a date and press Enter. The date is added if it is valid.
+
+## Read the value
+
+The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. Start with a full model, as shown in [usage](https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage#the-bound-value), so the keys exist before the first click.
+
+
+## Sitemap
+
+See the full [sitemap](https://manukminasyan.github.io/vue-functional-calendar/sitemap.md) for all pages.

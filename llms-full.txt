@@ -1,0 +1,7344 @@
+# Changelog
+
+> Release notes for Vue Functional Calendar.
+
+All notable changes to this project are documented here.
+
+## 3.1.0 (unreleased) - 2026-10-18
+
+The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. Vue 2 apps stay on `^2.10.0`. See [MIGRATION.md](https://manukminasyan.github.io/vue-functional-calendar/getting-started/migration).
+
+### Added
+
+- A Vue 3 build with ESM, CJS and UMD bundles, an `exports` map and type declarations.
+- `vue-functional-calendar/style.css`, the stylesheet as a separate import.
+- Theming with `--vfc-*` custom properties, and a dark mode through `isDark`.
+- Keyboard navigation and an ARIA date grid, with focus management for modal calendars.
+- The `locale` prop, which derives day names, month names and the first day of the week from `Intl`.
+- The `labels` prop, which translates every UI string.
+- The `presets` prop, with six built-in quick ranges and custom ranges.
+- A documentation site with live examples and a playground.
+
+### Changed
+
+- `value` and `input` became `modelValue` and `update:modelValue`. Templates that use `v-model` need no change.
+- The plugin installs with `app.use(FunctionalCalendar, options)`.
+- `vue` is a peer dependency, `^3.3.0`. The package has no runtime dependencies.
+- The SCSS `!default` variables are replaced by `--vfc-*` tokens.
+- The default look is redesigned. The `vfc-*` class names are unchanged.
+- Deep imports from `src/` no longer resolve. Import from `vue-functional-calendar`.
+
+### Fixed
+
+- Week numbers with `sundayStart` follow ISO numbering of each row's Thursday. They were one lower.
+- Typed dates are validated. `31/02/2026` is rejected, padded dates such as `05/03/2026` are accepted, and a value commits only when the date is complete.
+
+## 2.10.0 - 2026-10-17
+
+The last Vue 2 line. It ships a built bundle and types.
+
+### Added
+
+- TypeScript declarations in `index.d.ts`.
+- `unpkg` and `jsdelivr` entries that point at the UMD build.
+
+### Changed
+
+- `vue` moved to `peerDependencies`, and `core-js` moved to `devDependencies`, because the polyfills are inlined at build time.
+- The build uses Dart Sass instead of `node-sass`, which no longer installs on current Node.
+- The package builds before it is published.
+
+### Fixed
+
+- `main` pointed at `index.js`, which imports the raw `.vue` sources, so every consumer had to compile the SCSS. It now points at the built bundle, so Vite projects without Sass work (#169).
+- TypeScript reported TS7016 for the missing declarations (#169).
+
+
+# Contributing
+
+> Report bugs, propose changes and run the project locally.
+
+Bug reports, fixes and ideas are welcome. Open an [issue](https://github.com/ManukMinasyan/vue-functional-calendar/issues) or a pull request against the `3.x` branch.
+
+## Set up
+
+```bash
+git clone https://github.com/ManukMinasyan/vue-functional-calendar.git
+cd vue-functional-calendar
+git checkout 3.x
+npm ci
+```
+
+## Scripts
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Command
+    </th>
+    
+    <th>
+      What it does
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        npm run dev
+      </code>
+    </td>
+    
+    <td>
+      Starts the internal test page from <code>
+        src/Demo.vue
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        npm test
+      </code>
+    </td>
+    
+    <td>
+      Runs the Vitest suite.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        npm run lint
+      </code>
+    </td>
+    
+    <td>
+      Runs ESLint over <code>
+        src
+      </code>
+      
+      , <code>
+        tests
+      </code>
+      
+       and <code>
+        index.js
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        npx prettier --check src tests index.js
+      </code>
+    </td>
+    
+    <td>
+      Checks formatting.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        npm run build
+      </code>
+    </td>
+    
+    <td>
+      Builds <code>
+        dist/
+      </code>
+      
+       for ESM, CJS and UMD, plus <code>
+        style.css
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        npm run docs:dev
+      </code>
+    </td>
+    
+    <td>
+      Runs this documentation site.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        npm run docs:build
+      </code>
+    </td>
+    
+    <td>
+      Builds this documentation site.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+The documentation site imports the calendar from the repository source, so every demo runs the current code.
+
+## Pull requests
+
+1. Branch from `3.x`.
+2. Add tests for new behavior.
+3. Update the documentation if you change a prop, event or slot.
+4. Make sure the tests and the linter pass.
+
+## Style
+
+Two spaces, no semicolons and single quotes. Prettier enforces it with the `.prettierrc` in the repository.
+
+## Reporting bugs
+
+A good report has a short summary, steps to reproduce, what you expected, what happened, and a minimal example if you can. You can use the [playground](https://manukminasyan.github.io/vue-functional-calendar/playground) to find the props that trigger the bug.
+
+## License
+
+By contributing, you agree that your contributions are licensed under the MIT License.
+
+
+# Accessibility
+
+> Grid semantics, labels and focus management.
+
+The calendar follows the ARIA date grid pattern. Screen readers get names, states and a single tab stop per month. The [keyboard page](https://manukminasyan.github.io/vue-functional-calendar/essentials/keyboard) lists every key.
+
+## Grid semantics
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Part
+    </th>
+    
+    <th>
+      Markup
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Month
+    </td>
+    
+    <td>
+      <code>
+        role="grid"
+      </code>
+      
+      , named by the month and year, such as "October 2026"
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Week
+    </td>
+    
+    <td>
+      <code>
+        role="row"
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Day
+    </td>
+    
+    <td>
+      <code>
+        role="gridcell"
+      </code>
+      
+       with a full date as <code>
+        aria-label
+      </code>
+      
+      , such as "Thursday, 15 October 2026"
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Week number
+    </td>
+    
+    <td>
+      <code>
+        role="rowheader"
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Day name row
+    </td>
+    
+    <td>
+      <code>
+        aria-hidden="true"
+      </code>
+      
+      , because each day already has a full date label
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Filler rows
+    </td>
+    
+    <td>
+      <code>
+        role="presentation"
+      </code>
+      
+       and <code>
+        aria-hidden="true"
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Day labels and the month name use the calendar's own names and the locale you set, always in the Gregorian calendar. Custom `monthNames` appear in the labels.
+
+## Day states
+
+- `aria-selected` is set on days when the calendar selects something. It is absent on a display-only calendar.
+- `aria-disabled="true"` marks days blocked by `limits`, `disabledDates`, `enabledDates` or `disabledDayNames`.
+- A day in a numbered range has its range number added to the label, such as "Thursday, 15 October 2026, Range 2". The word comes from `labels.range`.
+- Days in a multiple date range carry `aria-keyshortcuts="Delete"`.
+
+## Roving focus
+
+Each month has one tab stop, so Tab crosses the grid in one step. The stop sits on the day you last focused, then on the selected day, then on today, then on the first enabled day. The other days have `tabindex="-1"` and are reached with the arrow keys.
+
+Focus stays on the same day when the calendar re-renders, for example after a month change. If that day leaves the screen, focus goes to the tab stop of the same month.
+
+## Controls
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Control
+    </th>
+    
+    <th>
+      Markup
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Arrows
+    </td>
+    
+    <td>
+      <code>
+        <button>
+      </code>
+      
+       with the label from <code>
+        labels.previousMonth
+      </code>
+      
+       or <code>
+        labels.nextMonth
+      </code>
+      
+      , and <code>
+        aria-disabled
+      </code>
+      
+       at a limit
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Month and year titles
+    </td>
+    
+    <td>
+      <code>
+        role="button"
+      </code>
+      
+      , <code>
+        tabindex="0"
+      </code>
+      
+       and <code>
+        aria-expanded
+      </code>
+      
+      , when the pickers are on
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Picker items
+    </td>
+    
+    <td>
+      <code>
+        role="button"
+      </code>
+      
+       with <code>
+        aria-pressed
+      </code>
+      
+       on the current one
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Presets
+    </td>
+    
+    <td>
+      A <code>
+        role="group"
+      </code>
+      
+       named by <code>
+        labels.quickRanges
+      </code>
+      
+      , holding buttons with <code>
+        aria-pressed
+      </code>
+      
+       and <code>
+        aria-disabled
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Clear button
+    </td>
+    
+    <td>
+      <code>
+        role="button"
+      </code>
+      
+       with <code>
+        aria-disabled
+      </code>
+      
+       when there is nothing to clear
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Time picker
+    </td>
+    
+    <td>
+      Two <code>
+        role="listbox"
+      </code>
+      
+       lists named by <code>
+        labels.hour
+      </code>
+      
+       and <code>
+        labels.minute
+      </code>
+      
+      , with <code>
+        role="option"
+      </code>
+      
+       items and <code>
+        aria-selected
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Time picker close
+    </td>
+    
+    <td>
+      <code>
+        role="button"
+      </code>
+      
+       labeled by <code>
+        labels.close
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Arrow slots with your own button or link keep their own focus and semantics.
+
+## Modal calendars
+
+In modal mode, the calendar is a `role="dialog"` named by `labels.calendar`. Its inputs have `aria-haspopup="dialog"` and an `aria-expanded` that tracks the dialog, and a `title` from `labels.date`, `labels.startDate` or `labels.endDate`.
+
+Focus follows these rules:
+
+- Focusing an input, or pressing ArrowDown or Alt+ArrowDown on it, opens the calendar.
+- Escape closes the calendar and returns focus to the input that opened it.
+- Selecting a day with the keyboard in an auto-closing calendar returns focus to the input.
+- Focus leaving the calendar and its inputs closes it.
+- Escape inside a month or year picker, or the time picker, closes only that layer.
+
+## Focus ring
+
+Focused controls show a 2px outline in `--vfc-focus`. It defaults to the primary color, so change it if your primary color has low contrast on your background.
+
+## Translate it
+
+Every string a screen reader hears comes from `labels` or from `locale`. See [locale and labels](https://manukminasyan.github.io/vue-functional-calendar/essentials/locale).
+
+
+# Events
+
+> Every event and its payload.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Event
+    </th>
+    
+    <th>
+      Payload
+    </th>
+    
+    <th>
+      When
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        update:modelValue
+      </code>
+    </td>
+    
+    <td>
+      The calendar state object
+    </td>
+    
+    <td>
+      After a selection or a preset, and when the displayed month changes
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        opened
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      The calendar becomes visible
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        closed
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      The calendar is hidden
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        dayClicked
+      </code>
+    </td>
+    
+    <td>
+      The day object
+    </td>
+    
+    <td>
+      Any click or Enter on a day, even a disabled one
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        choseDay
+      </code>
+    </td>
+    
+    <td>
+      The day object
+    </td>
+    
+    <td>
+      A day was selected
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        selectedDaysCount
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+    </td>
+    
+    <td>
+      A range has both ends. The payload is the difference in days
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        dayMouseOver
+      </code>
+    </td>
+    
+    <td>
+      A date string
+    </td>
+    
+    <td>
+      The pointer or the keyboard focus moves over a day
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changedMonth
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        Date
+      </code>
+    </td>
+    
+    <td>
+      The first visible month changed
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changedYear
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        Date
+      </code>
+    </td>
+    
+    <td>
+      The year changed
+    </td>
+  </tr>
+</tbody>
+</table>
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  @day-clicked="day => console.log('clicked', day.date)"
+  @chose-day="day => console.log('chose', day.date)"
+  @selected-days-count="count => console.log(count, 'days')"
+  @changed-month="date => console.log(date.getMonth() + 1)"
+/>
+```
+
+Event names are camelCase in the component. In a template, `@day-clicked` and `@dayClicked` both work.
+
+## update:modelValue
+
+The payload is the calendar's own state object, the same reference each time. Typed dates, the time picker and the clear button change that object in place without emitting. To react to every change, watch the bound value deeply.
+
+```js
+watch(value, next => save(next), { deep: true })
+```
+
+A preset emits it once, with the final state. See [the bound value](https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage#the-bound-value) for the keys.
+
+## opened and closed
+
+The calendar emits one of them when it mounts, with its initial state. An inline calendar is open, so it emits `opened`. A modal calendar emits `closed`. After that they fire when the modal opens or closes.
+
+## The day object
+
+`dayClicked` and `choseDay` receive this object. With a range and the time picker on, `date` has the suffix ` 00:00`.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Key
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        day
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+    </td>
+    
+    <td>
+      Day of the month
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        date
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string
+      </code>
+    </td>
+    
+    <td>
+      The date in <code>
+        dateFormat
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        hide
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      A day of a neighbor month, or a disabled weekday
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isToday
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      Today
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isMarked
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      Part of the selection or marked
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isDateRangeStart
+      </code>
+      
+      , <code>
+        isDateRangeEnd
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      Start or end of <code>
+        markedDateRange
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isMouseToLeft
+      </code>
+      
+      , <code>
+        isMouseToRight
+      </code>
+      
+      , <code>
+        isHovered
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      Range preview state
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        hideLeftAndRightDays
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      A hidden neighbor day
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Not emitted by presets
+
+A preset emits `update:modelValue` once and no `dayClicked` or `choseDay`. See [presets](https://manukminasyan.github.io/vue-functional-calendar/essentials/presets#events).
+
+
+# Keyboard
+
+> Every key the calendar handles.
+
+Everything works without a mouse. Tab into the grid, move with the arrow keys, and press Enter to select. Try it on the demo: the modal input opens with ArrowDown.
+
+<calendar-demo :config="{"isDateRange":true,"isModal":true,"isTypeable":true,"changeMonthFunction":true,"changeYearFunction":true,"presets":true}" :height="460">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-modal
+  is-typeable
+  change-month-function
+  change-year-function
+  :presets="true"
+/>
+```
+
+</calendar-demo>
+
+## The grid
+
+Each month is a grid with one tab stop. Tab moves into the grid, and the arrow keys move between days. The tab stop sits on the focused day, then the selected day, then today, then the first enabled day.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Key
+    </th>
+    
+    <th>
+      Action
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      ArrowLeft, ArrowRight
+    </td>
+    
+    <td>
+      Previous or next day
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      ArrowUp, ArrowDown
+    </td>
+    
+    <td>
+      Same weekday, previous or next week
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Home, End
+    </td>
+    
+    <td>
+      First or last day of the week, kept inside the month
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      PageUp, PageDown
+    </td>
+    
+    <td>
+      Previous or next month, same day or the last day of a shorter month
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Shift+PageUp, Shift+PageDown
+    </td>
+    
+    <td>
+      Previous or next year
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Enter, Space
+    </td>
+    
+    <td>
+      Select the day
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Delete, Backspace
+    </td>
+    
+    <td>
+      On a day of a multiple date range, remove that range
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Moving past the edge of the visible months scrolls the calendar and emits `changedMonth`, or `changedYear` for the Shift variants. Moves stop at the months that `limits` allows. Home and End follow the week start of the calendar, so Home lands on Sunday for `en-US` and on Monday for `de-DE`.
+
+Disabled days are focusable but cannot be selected. Moving over a day also fires `dayMouseOver`, so a range preview follows the keyboard.
+
+## Title, arrows and pickers
+
+The arrows are buttons. The month and year titles are buttons when `changeMonthFunction` or `changeYearFunction` is on. Enter or Space on a title opens its picker and moves focus to the selected item. Escape closes the picker and returns focus to the title. Items in a picker are buttons too.
+
+Custom arrow slots that contain a button or a link keep their own focus. Other slot content gets `role="button"` and responds to Enter and Space.
+
+## Modal inputs
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Key
+    </th>
+    
+    <th>
+      Where
+    </th>
+    
+    <th>
+      Action
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Focus, or ArrowDown, or Alt+ArrowDown
+    </td>
+    
+    <td>
+      Input
+    </td>
+    
+    <td>
+      Open the calendar. The arrow keys also move focus to the day with the tab stop
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Escape
+    </td>
+    
+    <td>
+      Calendar
+    </td>
+    
+    <td>
+      Close it and return focus to the input
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Tab out
+    </td>
+    
+    <td>
+      Calendar
+    </td>
+    
+    <td>
+      Close it
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Enter in the single and range inputs is never intercepted, so a surrounding form submits. In the tags input of the multiple date picker, Enter adds the typed date.
+
+Selecting a day with the keyboard in a modal that closes after selection (`isAutoCloseable`) returns focus to the input.
+
+## Time picker
+
+Each list is a listbox with one tab stop. ArrowUp, ArrowDown, Home and End move, Enter and Space choose. Escape returns to the calendar.
+
+## Presets
+
+Presets are buttons in the tab order. Enter or Space on one applies it.
+
+
+# Layout and names
+
+> Hide parts, move the title and arrows, and rename days and months.
+
+<calendar-demo :config="{"isDatePicker":true,"titlePosition":"left","arrowsPosition":"right","hiddenElements":["leftAndRightDays"],"dayNames":["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  title-position="left"
+  arrows-position="right"
+  :hidden-elements="['leftAndRightDays']"
+  :day-names="['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+/>
+```
+
+</calendar-demo>
+
+## Layout props
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Values
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        titlePosition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        left
+      </code>
+      
+      , <code>
+        center
+      </code>
+      
+       (default), <code>
+        right
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        arrowsPosition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        space-between
+      </code>
+      
+       (default), <code>
+        left
+      </code>
+      
+      , <code>
+        right
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        hiddenElements
+      </code>
+    </td>
+    
+    <td>
+      Any of <code>
+        dayNames
+      </code>
+      
+      , <code>
+        leftAndRightDays
+      </code>
+      
+      , <code>
+        month
+      </code>
+      
+      , <code>
+        presets
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isLayoutExpandable
+      </code>
+    </td>
+    
+    <td>
+      Drop the reserved rows of short months
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        transition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+      
+       turns off the slide between months
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        sundayStart
+      </code>
+    </td>
+    
+    <td>
+      Start the week on Sunday
+    </td>
+  </tr>
+</tbody>
+</table>
+
+`hiddenElements: ['month']` hides the whole title row, so the month and year pickers go with it.
+
+## Names
+
+`dayNames` starts on Monday, whatever the week start. The calendar rotates the list to match the week start, so list Monday first. `monthNames` and `shortMonthNames` start on January. `shortMonthNames` appear in the month picker.
+
+```vue
+<FunctionalCalendar
+  :day-names="['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di']"
+  :month-names="['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']"
+/>
+```
+
+To derive names from the browser instead, use [`locale`](https://manukminasyan.github.io/vue-functional-calendar/essentials/locale). Explicit names win over a locale.
+
+## Your own markup
+
+Slots replace the day, arrows, footer and inputs, see [slots](https://manukminasyan.github.io/vue-functional-calendar/essentials/slots). The `vfc-*` class names are stable, so your CSS from 2.x keeps working.
+
+
+# Limits and availability
+
+> Disable dates, weekdays and spans, or allow a list.
+
+<calendar-demo :config="{"isDatePicker":true,"newCurrentDate":"2026-10-01","limits":{"min":"8/10/2026","max":"24/10/2026"},"disabledDayNames":["We"],"disabledDates":["16/10/2026"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :limits="{ min: '8/10/2026', max: '24/10/2026' }"
+  :disabled-day-names="['We']"
+  :disabled-dates="['16/10/2026']"
+/>
+```
+
+</calendar-demo>
+
+Dates use `dateFormat`, `dd/mm/yyyy` by default, and need no leading zero.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Use
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        limits
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        { min, max }
+      </code>
+      
+      . Days outside are disabled and the arrows stop at the edge months.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        disabledDates
+      </code>
+    </td>
+    
+    <td>
+      A list of dates, plus the keywords <code>
+        beforeToday
+      </code>
+      
+       and <code>
+        afterToday
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        enabledDates
+      </code>
+    </td>
+    
+    <td>
+      If it has entries, only those dates (and keywords) can be picked.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        disabledDayNames
+      </code>
+    </td>
+    
+    <td>
+      Weekday names to disable. They must match <code>
+        dayNames
+      </code>
+      
+      , <code>
+        Mo
+      </code>
+      
+       to <code>
+        Su
+      </code>
+      
+       by default.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        minSelDays
+      </code>
+      
+      , <code>
+        maxSelDays
+      </code>
+    </td>
+    
+    <td>
+      Bounds for the length of a range.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Names and locales
+
+With a `locale`, `disabledDayNames` still matches the English two letter names `Mo` to `Su`, as well as the localized ones.
+
+## Reactive list
+
+`enabledDates` is watched. Swap the list to change what is available on a calendar that is on screen. The other props are read once.
+
+## Disabled days and keyboard
+
+A disabled day has `aria-disabled="true"` and stays reachable with the arrow keys. Pressing Enter on it does not select it.
+
+## Presets
+
+A [preset](https://manukminasyan.github.io/vue-functional-calendar/essentials/presets#when-a-preset-is-disabled) is disabled when its range breaks one of these rules.
+
+
+# Locale and labels
+
+> Derive names and week start from Intl, and translate every UI string.
+
+Pass a BCP 47 tag to `locale`. The calendar reads day names, month names and the first day of the week from `Intl`.
+
+<calendar-locale-demo>
+
+```vue
+<script setup>
+const locale = ref('de-DE')
+</script>
+
+<template>
+  <FunctionalCalendar
+    :key="locale"
+    v-model="value"
+    :locale="locale"
+    is-date-picker
+    show-week-numbers
+  />
+</template>
+```
+
+</calendar-locale-demo>
+
+## What a locale sets
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Setting
+    </th>
+    
+    <th>
+      From the locale
+    </th>
+    
+    <th>
+      Explicit prop that wins
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Day names
+    </td>
+    
+    <td>
+      Short weekday names
+    </td>
+    
+    <td>
+      <code>
+        dayNames
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Month names
+    </td>
+    
+    <td>
+      Long month names
+    </td>
+    
+    <td>
+      <code>
+        monthNames
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Short month names
+    </td>
+    
+    <td>
+      Short month names
+    </td>
+    
+    <td>
+      <code>
+        shortMonthNames
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      First day of the week
+    </td>
+    
+    <td>
+      Week info of the locale
+    </td>
+    
+    <td>
+      <code>
+        sundayStart
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Underscore tags such as `de_DE` work. A malformed tag is ignored and the English defaults stay. `dateFormat` is not derived from the locale.
+
+## Names are Gregorian
+
+Names and dates are always Gregorian, even for locales that default to another calendar, such as `fa-IR`, `ar-SA` or `th-TH`. The month is named with its Gregorian name and the year is the Gregorian year. The `aria-label` of each day uses the same names.
+
+## Week start
+
+The first day of the week comes from `Intl.Locale` week info. The calendar uses `getWeekInfo()` where it exists, then the `weekInfo` property. Where the engine has neither, it falls back to a table of regions that start the week on Sunday, Saturday or Friday, and uses Monday for the rest. A first day of `7` counts as Sunday.
+
+`sundayStart` overrides all of this. `sundayStart: true` starts on Sunday, `false` on Monday.
+
+Week numbers follow the same first day.
+
+## Labels
+
+`labels` covers every string the calendar writes. Pass only the ones you want to change. The rest keep their English text.
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  can-clear-range
+  :presets="true"
+  :labels="{
+    clearRange: 'Effacer la période',
+    quickRanges: 'Périodes rapides',
+    presets: { today: 'Aujourd\'hui' },
+  }"
+/>
+```
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Label
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Used for
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        previousMonth
+      </code>
+      
+      , <code>
+        nextMonth
+      </code>
+    </td>
+    
+    <td>
+      Previous month, Next month
+    </td>
+    
+    <td>
+      Arrow buttons
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        previousYear
+      </code>
+      
+      , <code>
+        nextYear
+      </code>
+    </td>
+    
+    <td>
+      Previous year, Next year
+    </td>
+    
+    <td>
+      Month picker arrows
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        previousYears
+      </code>
+      
+      , <code>
+        nextYears
+      </code>
+    </td>
+    
+    <td>
+      Previous years, Next years
+    </td>
+    
+    <td>
+      Year picker arrows
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        calendar
+      </code>
+    </td>
+    
+    <td>
+      Calendar
+    </td>
+    
+    <td>
+      Name of the modal dialog
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        close
+      </code>
+    </td>
+    
+    <td>
+      Close
+    </td>
+    
+    <td>
+      Time picker close button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        clearRange
+      </code>
+      
+      , <code>
+        clearRanges
+      </code>
+    </td>
+    
+    <td>
+      Clear Range, Clear Ranges
+    </td>
+    
+    <td>
+      Clear button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        startDate
+      </code>
+      
+      , <code>
+        endDate
+      </code>
+    </td>
+    
+    <td>
+      Start Date, End Date
+    </td>
+    
+    <td>
+      Range input titles
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        date
+      </code>
+    </td>
+    
+    <td>
+      Date
+    </td>
+    
+    <td>
+      Single input title
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        addDate
+      </code>
+    </td>
+    
+    <td>
+      Add a date
+    </td>
+    
+    <td>
+      Tags input placeholder
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        hour
+      </code>
+      
+      , <code>
+        minute
+      </code>
+    </td>
+    
+    <td>
+      Hour, Minute
+    </td>
+    
+    <td>
+      Time picker titles and lists
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        quickRanges
+      </code>
+    </td>
+    
+    <td>
+      Quick ranges
+    </td>
+    
+    <td>
+      Name of the presets group
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        range
+      </code>
+    </td>
+    
+    <td>
+      Range
+    </td>
+    
+    <td>
+      Suffix in the label of a day in a numbered range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets.today
+      </code>
+    </td>
+    
+    <td>
+      Today
+    </td>
+    
+    <td>
+      Preset button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets.yesterday
+      </code>
+    </td>
+    
+    <td>
+      Yesterday
+    </td>
+    
+    <td>
+      Preset button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets.last7Days
+      </code>
+    </td>
+    
+    <td>
+      Last 7 days
+    </td>
+    
+    <td>
+      Preset button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets.last30Days
+      </code>
+    </td>
+    
+    <td>
+      Last 30 days
+    </td>
+    
+    <td>
+      Preset button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets.thisMonth
+      </code>
+    </td>
+    
+    <td>
+      This month
+    </td>
+    
+    <td>
+      Preset button
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets.lastMonth
+      </code>
+    </td>
+    
+    <td>
+      Last month
+    </td>
+    
+    <td>
+      Preset button
+    </td>
+  </tr>
+</tbody>
+</table>
+
+`labels.presets` merges key by key, so you can translate one preset. Labels can come from the global options and `configs` too. The more specific source wins, and calendars never share labels.
+
+## Props are not reactive
+
+The calendar reads `locale` and `labels` when it is created. To switch at runtime, re-key it:
+
+```vue
+<FunctionalCalendar :key="locale" :locale="locale" is-date-picker />
+```
+
+Re-keying keeps the bound value, so the selection survives the switch.
+
+## Other places the locale shows
+
+- Full date labels such as "Thursday, 15 October 2026" in `aria-label`.
+- The label of each month grid.
+- The weekday matching for `disabledDayNames`, which also accepts the English `Mo` to `Su`.
+
+
+# Marking
+
+> Mark dates and ranges, and show week numbers.
+
+<calendar-demo :config="{"isDatePicker":true,"newCurrentDate":"2026-10-01","markedDates":["6/10/2026","21/10/2026"],"markedDateRange":{"start":"12/10/2026","end":"16/10/2026"},"showWeekNumbers":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  show-week-numbers
+  :marked-dates="['6/10/2026', '21/10/2026']"
+  :marked-date-range="{ start: '12/10/2026', end: '16/10/2026' }"
+/>
+```
+
+</calendar-demo>
+
+## Marked dates
+
+`markedDates` takes dates in `dateFormat`. To add your own class to a day, pass objects instead of strings.
+
+```vue
+<FunctionalCalendar
+  :marked-dates="[
+    { date: '5/10/2026', class: 'holiday' },
+    { date: '12/10/2026', class: 'birthday' },
+  ]"
+/>
+```
+
+The class lands on the day cell, next to the `vfc-*` classes. The [examples](https://manukminasyan.github.io/vue-functional-calendar/examples/marking) show it live.
+
+## Marked ranges
+
+`markedDateRange` takes `{ start, end }`. Set one side to `false` to mark everything after the start or before the end. Pass an array of `{ start, end }` to mark several spans.
+
+```vue
+<FunctionalCalendar :marked-date-range="{ start: '12/10/2026', end: false }" />
+<FunctionalCalendar :marked-date-range="[{ start: '1/10/2026', end: '3/10/2026' }, { start: '9/10/2026', end: '12/10/2026' }]" />
+```
+
+## Week numbers
+
+`showWeekNumbers` adds a column. Each number is the ISO week of that row's Thursday, counted from the first day of the week the calendar uses. `borderColor` sets the color of the column border.
+
+## Today
+
+Today gets the `vfc-today` class and a small marker in the `--vfc-today` color.
+
+
+# Multiple calendars
+
+> Show several months at once.
+
+Set `isMultiple` and `calendarsCount`. `calendarsCount` has no effect without `isMultiple`.
+
+<calendar-demo :config="{"isDateRange":true,"isMultiple":true,"calendarsCount":2,"isSeparately":true,"changeMonthFunction":true,"changeYearFunction":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-multiple
+  :calendars-count="2"
+  is-separately
+  change-month-function
+  change-year-function
+/>
+```
+
+</calendar-demo>
+
+## Linked or separate
+
+By default the calendars move together and the first calendar owns the arrows and the month and year pickers. With `isSeparately`, each calendar has its own arrows and pickers.
+
+## Height
+
+Each calendar reserves six week rows so the layout does not jump when a month has five. `isLayoutExpandable` removes the reserved rows.
+
+## Related props
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Use
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        changeMonthStep
+      </code>
+    </td>
+    
+    <td>
+      Months moved by an arrow click. Default <code>
+        1
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changeYearStep
+      </code>
+    </td>
+    
+    <td>
+      Years moved in the year picker. Default <code>
+        3
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        titlePosition
+      </code>
+      
+      , <code>
+        arrowsPosition
+      </code>
+    </td>
+    
+    <td>
+      Where the title and arrows sit.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+The calendars wrap onto new lines when the container is narrow.
+
+
+# Presets
+
+> Quick ranges for date ranges and date pickers.
+
+`presets` adds a column of buttons that select a range in one click.
+
+<calendar-demo :config="{"isDateRange":true,"canClearRange":true,"presets":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range can-clear-range :presets="true" />
+```
+
+</calendar-demo>
+
+## Where they show
+
+Presets render on calendars with `isDateRange` or `isDatePicker`. They do not render for `isMultipleDatePicker`, over the time picker, or when `hiddenElements` contains `presets`. On a date picker, each preset selects its start date. With `isMultipleDateRange`, a preset adds a range.
+
+## Built-in presets
+
+`presets: true` shows all six, in this order:
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Key
+    </th>
+    
+    <th>
+      Range
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        today
+      </code>
+    </td>
+    
+    <td>
+      Today
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        yesterday
+      </code>
+    </td>
+    
+    <td>
+      Yesterday
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        last7Days
+      </code>
+    </td>
+    
+    <td>
+      The last 7 days, including today
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        last30Days
+      </code>
+    </td>
+    
+    <td>
+      The last 30 days, including today
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        thisMonth
+      </code>
+    </td>
+    
+    <td>
+      The 1st to the last day of this month
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        lastMonth
+      </code>
+    </td>
+    
+    <td>
+      The 1st to the last day of last month
+    </td>
+  </tr>
+</tbody>
+</table>
+
+Pass a list of keys to choose and order them. Unknown keys are skipped.
+
+## Width
+
+The presets sit beside the grid when the calendar is at least about 430px wide, and above it when it is narrower. A calendar sizes to its content, and WebKit measures that content smaller than Chromium does. Give the calendar a width, such as `style="width: 460px; max-width: 100%"`, to get the same layout in every browser.
+
+```vue
+<FunctionalCalendar is-date-range :presets="['today', 'last7Days', 'thisMonth']" />
+```
+
+## Custom ranges
+
+A custom preset is an object with a `label` and a `range` function that returns `{ start, end }` as `Date` objects. Mix them with keys in any order.
+
+```vue
+<script setup>
+const presets = [
+  'today',
+  {
+    label: 'Next 14 days',
+    range: () => {
+      const start = new Date()
+      const end = new Date()
+      end.setDate(end.getDate() + 13)
+      return { start, end }
+    },
+  },
+]
+</script>
+
+<template>
+  <FunctionalCalendar v-model="value" is-date-range :presets="presets" />
+</template>
+```
+
+The calendar calls `range` each time it needs the preset, so "today" stays correct after midnight. Only the day of a returned date counts, not its time. A preset is skipped if `range` throws, returns something that is not two valid dates, or returns an end before the start.
+
+<calendar-presets-demo>
+
+
+
+</calendar-presets-demo>
+
+## When a preset is disabled
+
+A preset is disabled when its whole range does not fit the rules of the calendar:
+
+- it is shorter than `minSelDays` or longer than `maxSelDays` (ranges only),
+- it starts before `limits.min` or ends after `limits.max`,
+- it contains a date in `disabledDates`, including `beforeToday` and `afterToday`,
+- it contains a day of week from `disabledDayNames`,
+- it contains a date outside `enabledDates`.
+
+A disabled preset keeps `aria-disabled="true"`, stays focusable, and does nothing when clicked. For a date picker, only the start date is checked.
+
+## Events
+
+A preset emits `update:modelValue` once, with the final value. It emits no `dayClicked` and no `choseDay`, because no day was clicked. If the start month is not on screen, the calendar moves there and emits `changedMonth`, and `changedYear` if the year changes. `selectedDaysCount` still fires for a range.
+
+In a modal with `isAutoCloseable`, picking a preset closes the calendar and returns focus to the input.
+
+## Labels and names
+
+`labels.presets` translates the buttons, one key at a time. `labels.quickRanges` names the group for screen readers.
+
+```vue
+<FunctionalCalendar
+  is-date-range
+  :presets="true"
+  :labels="{ quickRanges: 'Schnellauswahl', presets: { today: 'Heute' } }"
+/>
+```
+
+## States
+
+The button of the preset that matches the current selection has `aria-pressed="true"`. The time part of the selection is ignored in that check.
+
+
+# Props
+
+> Every prop, with its type and default.
+
+The calendar has 48 props. The calendar reads them when it is created, except `modelValue` and `enabledDates`, which it watches. Re-key the component to apply a change to any other prop.
+
+## Where options come from
+
+From lowest to highest priority:
+
+1. Defaults.
+2. Global options from `app.use(FunctionalCalendar, options)`. Only the options that `configs` also accepts apply.
+3. The `configs` object, or the props if you do not pass `configs`. When `configs` is present, the props that it can hold are ignored.
+
+`configs` holds every option on this page except `modelValue`, `configs`, `activeHours`, `activeMinutes`, `borderColor`, `displayTimeInput`, `canClearRange`, `newCurrentDate` and `alwaysUseDefaultClasses`. Those nine are always props.
+
+An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins over a `locale`.
+
+## Value
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        modelValue
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        object
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      The calendar state. Bind it with <code>
+        v-model
+      </code>
+      
+      . See <a href="https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage#the-bound-value">
+        the bound value
+      </a>
+      
+      . Watched.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        configs
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        object
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      Settings as one object, instead of props.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Selection mode
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        isDatePicker
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Select one date.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isMultipleDatePicker
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Select any number of dates.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isDateRange
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Select a range.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isMultipleDateRange
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      With <code>
+        isDateRange
+      </code>
+      
+      , select several ranges.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        canClearRange
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Show the clear button of a range.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        minSelDays
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+      
+       or <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Shortest range, in days.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        maxSelDays
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+      
+       or <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Longest range, in days.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        presets
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+      
+       or <code>
+        array
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Quick ranges. <code>
+        true
+      </code>
+      
+       shows all six built-ins. A list holds keys and <code>
+        { label, range }
+      </code>
+      
+       objects. See <a href="https://manukminasyan.github.io/vue-functional-calendar/essentials/presets">
+        presets
+      </a>
+      
+      .
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Calendars and navigation
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        isMultiple
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Show several calendars.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        calendarsCount
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        1
+      </code>
+    </td>
+    
+    <td>
+      How many calendars, with <code>
+        isMultiple
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isSeparately
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Give each calendar its own arrows and pickers.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        newCurrentDate
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        Date
+      </code>
+    </td>
+    
+    <td>
+      now
+    </td>
+    
+    <td>
+      The month to show first.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changeMonthFunction
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Click the month to pick another.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changeYearFunction
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Click the year to pick another.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changeMonthStep
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        1
+      </code>
+    </td>
+    
+    <td>
+      Months moved by an arrow.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        changeYearStep
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        3
+      </code>
+    </td>
+    
+    <td>
+      Years moved in the year picker.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        transition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        true
+      </code>
+    </td>
+    
+    <td>
+      Slide between months.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Dates and limits
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        dateFormat
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        'dd/mm/yyyy hh:MM'
+      </code>
+    </td>
+    
+    <td>
+      Tokens <code>
+        dd
+      </code>
+      
+      , <code>
+        mm
+      </code>
+      
+       and <code>
+        yyyy
+      </code>
+      
+       with a <code>
+        /
+      </code>
+      
+      , <code>
+        -
+      </code>
+      
+       or <code>
+        .
+      </code>
+      
+       separator, then an optional time (<code>
+        HH:MM
+      </code>
+      
+      , <code>
+        HH:mm
+      </code>
+      
+      , <code>
+        hh:MM
+      </code>
+      
+       or <code>
+        hh:mm
+      </code>
+      
+      ).
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        limits
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        { min, max }
+      </code>
+      
+       or <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Dates outside are disabled.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        disabledDates
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        []
+      </code>
+    </td>
+    
+    <td>
+      Disabled dates, plus <code>
+        beforeToday
+      </code>
+      
+       and <code>
+        afterToday
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        enabledDates
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        []
+      </code>
+    </td>
+    
+    <td>
+      If not empty, only these dates (and the keywords) are enabled. Watched.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        disabledDayNames
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        []
+      </code>
+    </td>
+    
+    <td>
+      Weekday names to disable, from <code>
+        dayNames
+      </code>
+      
+      .
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Marking
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        markedDates
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+      
+       or <code>
+        { date, class }[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        []
+      </code>
+    </td>
+    
+    <td>
+      Dates to mark. Objects add a class to the day.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        markedDateRange
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        { start, end }
+      </code>
+      
+       or an array of them
+    </td>
+    
+    <td>
+      <code>
+        { start: false, end: false }
+      </code>
+    </td>
+    
+    <td>
+      Ranges to mark. <code>
+        false
+      </code>
+      
+       leaves a side open.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        showWeekNumbers
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Add a week number column.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        borderColor
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        ''
+      </code>
+    </td>
+    
+    <td>
+      Border color of the week number column.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Time
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        withTimePicker
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Show the time picker after a date is chosen.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        displayTimeInput
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Add the time to a single date input.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        activeHours
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0
+      </code>
+      
+       to <code>
+        23
+      </code>
+    </td>
+    
+    <td>
+      Hours users can pick.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        activeMinutes
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        number[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0
+      </code>
+      
+       to <code>
+        59
+      </code>
+    </td>
+    
+    <td>
+      Minutes users can pick.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Modal and inputs
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        isModal
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Show inputs that open the calendar.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isTypeable
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Let users type into the inputs.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isAutoCloseable
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Close after a date or a range is chosen.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        placeholder
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string
+      </code>
+      
+       or <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      the <code>
+        dateFormat
+      </code>
+    </td>
+    
+    <td>
+      Input placeholder. Range inputs use the date part.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Names and locale
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        locale
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      BCP 47 tag for names and week start. See <a href="https://manukminasyan.github.io/vue-functional-calendar/essentials/locale">
+        locale
+      </a>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        labels
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        object
+      </code>
+    </td>
+    
+    <td>
+      English
+    </td>
+    
+    <td>
+      Partial UI strings, merged over the defaults. <code>
+        labels.presets
+      </code>
+      
+       merges key by key.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        dayNames
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        Mo
+      </code>
+      
+       to <code>
+        Su
+      </code>
+    </td>
+    
+    <td>
+      Seven names, Monday first.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        monthNames
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      English
+    </td>
+    
+    <td>
+      Twelve long names.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        shortMonthNames
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      English
+    </td>
+    
+    <td>
+      Twelve short names, shown in the month picker.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        sundayStart
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Start the week on Sunday.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Appearance
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Type
+    </th>
+    
+    <th>
+      Default
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        isDark
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Use the dark tokens.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        titlePosition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        'left'
+      </code>
+      
+      , <code>
+        'center'
+      </code>
+      
+       or <code>
+        'right'
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        'center'
+      </code>
+    </td>
+    
+    <td>
+      Title alignment.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        arrowsPosition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        'space-between'
+      </code>
+      
+      , <code>
+        'left'
+      </code>
+      
+       or <code>
+        'right'
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        'space-between'
+      </code>
+    </td>
+    
+    <td>
+      Arrow placement.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        hiddenElements
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        string[]
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        []
+      </code>
+    </td>
+    
+    <td>
+      Any of <code>
+        dayNames
+      </code>
+      
+      , <code>
+        leftAndRightDays
+      </code>
+      
+      , <code>
+        month
+      </code>
+      
+       and <code>
+        presets
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isLayoutExpandable
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Drop the reserved rows of short months.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        alwaysUseDefaultClasses
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        boolean
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        false
+      </code>
+    </td>
+    
+    <td>
+      Keep the default day classes when you use the day slot.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Methods
+
+Call these through a template ref.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Method
+    </th>
+    
+    <th>
+      Description
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        PreMonth(calendarKey?)
+      </code>
+      
+      , <code>
+        NextMonth(calendarKey?)
+      </code>
+    </td>
+    
+    <td>
+      Move by <code>
+        changeMonthStep
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        PreYear(calendarKey?)
+      </code>
+      
+      , <code>
+        NextYear(calendarKey?)
+      </code>
+    </td>
+    
+    <td>
+      Move by one year.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        ChooseDate(date)
+      </code>
+    </td>
+    
+    <td>
+      Move to a date in <code>
+        dateFormat
+      </code>
+      
+      , or to <code>
+        'today'
+      </code>
+      
+      .
+    </td>
+  </tr>
+</tbody>
+</table>
+
+
+# Selection modes
+
+> Choose what users pick, and read the value back.
+
+Four props decide what a click does. With none of them set, the calendar only displays dates and still emits `dayClicked`.
+
+<calendar-demo :config="{"isDateRange":true,"isMultipleDateRange":true,"canClearRange":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-multiple-date-range
+  can-clear-range
+/>
+```
+
+</calendar-demo>
+
+## The four modes
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Mode
+    </th>
+    
+    <th>
+      Props
+    </th>
+    
+    <th>
+      Read from the value
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Single date
+    </td>
+    
+    <td>
+      <code>
+        isDatePicker
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        selectedDate
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Multiple dates
+    </td>
+    
+    <td>
+      <code>
+        isMultipleDatePicker
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        selectedDates
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Range
+    </td>
+    
+    <td>
+      <code>
+        isDateRange
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        dateRange.start
+      </code>
+      
+       and <code>
+        dateRange.end
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Several ranges
+    </td>
+    
+    <td>
+      <code>
+        isDateRange
+      </code>
+      
+       and <code>
+        isMultipleDateRange
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        multipleDateRange
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Range rules
+
+- The first click sets the start and the second sets the end.
+- Clicking a date on or before the start makes it the new start, and the old start becomes the end.
+- A click after a complete range starts a new one.
+- `selectedDaysCount` fires when both ends are set. Its payload is the difference in days, so the 1st to the 3rd gives `2`.
+- `minSelDays` and `maxSelDays` stretch or cut a range to fit.
+- `canClearRange` adds a clear button.
+
+With several ranges, each completed range is added to `multipleDateRange`, and each range end shows its number. Focus a range day and press Delete or Backspace to remove that range, or click the small cross on its end.
+
+## Multiple dates
+
+Clicking a selected date removes it. Each entry in `selectedDates` is `{ date, dateTime, hour, minute }`.
+
+See [examples](https://manukminasyan.github.io/vue-functional-calendar/examples/selection-modes) for every mode, and [the bound value](https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage#the-bound-value) for the object shape.
+
+
+# Slots
+
+> Replace parts of the calendar with your own markup.
+
+<calendar-slots-demo>
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker always-use-default-classes>
+  <template #default="{ day }">
+    <strong v-if="isWeekend(day)" style="pointer-events: none">{{ day.day }}</strong>
+    <template v-else>{{ day.day }}</template>
+  </template>
+  <template #navigationArrowLeft>&larr;</template>
+  <template #navigationArrowRight>&rarr;</template>
+  <template #footer><small>Weekends are bold.</small></template>
+</FunctionalCalendar>
+```
+
+</calendar-slots-demo>
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Slot
+    </th>
+    
+    <th>
+      Props
+    </th>
+    
+    <th>
+      Replaces
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        default
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        { week, day }
+      </code>
+    </td>
+    
+    <td>
+      The content of a day cell
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        navigationArrowLeft
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      The previous month arrow
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        navigationArrowRight
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      The next month arrow
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        cleaner
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      The clear button of a range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        footer
+      </code>
+    </td>
+    
+    <td>
+      none
+    </td>
+    
+    <td>
+      Adds content below the calendar
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        dateRangeInputs
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        { startDate, endDate, isTypeable }
+      </code>
+    </td>
+    
+    <td>
+      The two inputs of a modal range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        datePickerInput
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        { selectedDate, isTypeable }
+      </code>
+    </td>
+    
+    <td>
+      The input of a modal date picker
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## The day slot
+
+`day` is the [day object](https://manukminasyan.github.io/vue-functional-calendar/essentials/events#the-day-object). `week` has `number`, `start`, `end` and `days`.
+
+A day slot removes the default `vfc-span-day` class from the cell. Pass `alwaysUseDefaultClasses` to keep it, along with its selection and range styling. Without it, you style the cell yourself.
+
+The cell selects only when the click lands on the cell itself, as in 2.x. Set `pointer-events: none` on the elements inside your slot so clicks reach the cell.
+
+## Arrows
+
+An arrow slot that contains a button or a link keeps its own focus. Any other content is wrapped with `role="button"` and `tabindex="0"`, and responds to Enter and Space. The label comes from `labels.previousMonth` and `labels.nextMonth`.
+
+## Cleaner and footer
+
+The footer row renders when `canClearRange` is on or you set the `footer` slot. The `cleaner` slot replaces the default clear button inside that row, and clicking inside it clears the range. The default clear button needs `isDateRange` as well.
+
+## Inputs
+
+The input slots only render in modal mode. Keep `:readonly="!isTypeable"` on your inputs so they follow the `isTypeable` prop. See the [examples](https://manukminasyan.github.io/vue-functional-calendar/examples/modal-and-inputs#your-own-range-inputs).
+
+
+# Theming
+
+> Style the calendar with --vfc-* custom properties, in light and dark.
+
+The calendar reads its colors, sizes and fonts from `--vfc-*` custom properties. Set one on the calendar, on any ancestor, or on `:root`. Pick a theme below and watch the tokens change.
+
+<calendar-theme-demo>
+
+```vue
+<div class="my-calendar">
+  <FunctionalCalendar v-model="value" is-date-range can-clear-range />
+</div>
+
+<style>
+.my-calendar {
+  --vfc-primary: #e11d48;
+  --vfc-on-primary: #ffffff;
+}
+</style>
+```
+
+</calendar-theme-demo>
+
+## Where to set tokens
+
+```css
+:root {
+  --vfc-radius: 4px;
+}
+
+.booking-form {
+  --vfc-primary: #0d9488;
+  --vfc-on-primary: #ffffff;
+}
+```
+
+You can also set them on one calendar with a `style` or `class` attribute. Both land on the root element of the component.
+
+```vue
+<FunctionalCalendar style="--vfc-primary: #0d9488; --vfc-on-primary: #fff" is-date-picker />
+```
+
+A token on `:root` applies in light and dark. To change a value in dark mode only, scope it to `.vfc-dark`:
+
+```css
+.vfc-dark {
+  --vfc-primary: #2dd4bf;
+  --vfc-on-primary: #042f2e;
+}
+```
+
+## Dark mode
+
+`isDark` adds the `vfc-dark` class to the calendar and its input. The dark block changes colors and shadows only. Radius, spacing, fonts, `--vfc-day-size`, `--vfc-header-height` and `--vfc-transition` keep their values. `--vfc-today` and `--vfc-focus` default to `--vfc-primary`, so they follow the dark primary.
+
+To follow your site theme, bind `isDark`:
+
+```vue
+<FunctionalCalendar :is-dark="colorMode.value === 'dark'" is-date-picker />
+```
+
+Props are read once, so re-key the calendar if the theme can change while it is mounted: `:key="isDark"`.
+
+## Color tokens
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Token
+    </th>
+    
+    <th>
+      Light
+    </th>
+    
+    <th>
+      Dark
+    </th>
+    
+    <th>
+      Used for
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 70% 50%)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 88% 68%)
+      </code>
+    </td>
+    
+    <td>
+      Selected days, active controls
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-on-primary
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(0 0% 100%)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 40% 8%)
+      </code>
+    </td>
+    
+    <td>
+      Text on the primary color
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-bg
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(0 0% 100%)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 24% 9%)
+      </code>
+    </td>
+    
+    <td>
+      Calendar background
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-bg-raised
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-bg
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #1c1f27
+      </code>
+    </td>
+    
+    <td>
+      Pickers and presets
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-text
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 32% 12%)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 20% 96%)
+      </code>
+    </td>
+    
+    <td>
+      Main text
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-text-muted
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #60636d
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #abacb1
+      </code>
+    </td>
+    
+    <td>
+      Day names, neighbor month days
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-text-disabled
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #b4b5ba
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #595c62
+      </code>
+    </td>
+    
+    <td>
+      Disabled days
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-border
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #e3e3e5
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #2c2f36
+      </code>
+    </td>
+    
+    <td>
+      Dividers and outlines
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-border-strong
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #7e8189
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #82848a
+      </code>
+    </td>
+    
+    <td>
+      Input and button borders
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-hover
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #f1f1f2
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #23262e
+      </code>
+    </td>
+    
+    <td>
+      Hover background
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-primary-hover
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #2443c0
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #7a92f5
+      </code>
+    </td>
+    
+    <td>
+      Hover on primary parts
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-range-mix
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        12%
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        26%
+      </code>
+    </td>
+    
+    <td>
+      Share of primary in the range colors
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-range
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #e5e9fa
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #273154
+      </code>
+    </td>
+    
+    <td>
+      Range fill
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-range-strong
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #dbe1f9
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        #303c6b
+      </code>
+    </td>
+    
+    <td>
+      Range ends and hover
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-today
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+    </td>
+    
+    <td>
+      Today marker
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-focus
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+    </td>
+    
+    <td>
+      Focus ring
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-danger
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(0 70% 42%)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(0 84% 68%)
+      </code>
+    </td>
+    
+    <td>
+      Remove badge on a range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-on-danger
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(0 0% 100%)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        hsl(228 40% 8%)
+      </code>
+    </td>
+    
+    <td>
+      Text on the danger color
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Shadow tokens
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Token
+    </th>
+    
+    <th>
+      Light
+    </th>
+    
+    <th>
+      Dark
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        --vfc-shadow-sm
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0 1px 2px hsl(228 40% 10% / 0.08)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0 1px 2px hsl(228 50% 2% / 0.4)
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-shadow-md
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0 4px 12px hsl(228 40% 10% / 0.1), 0 1px 3px hsl(228 40% 10% / 0.08)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0 4px 12px hsl(228 50% 2% / 0.5), 0 1px 3px hsl(228 50% 2% / 0.4)
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-shadow-lg
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0 16px 32px hsl(228 40% 10% / 0.12), 0 4px 8px hsl(228 40% 10% / 0.08)
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        0 16px 32px hsl(228 50% 2% / 0.6), 0 4px 8px hsl(228 50% 2% / 0.5)
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Shape, spacing and type tokens
+
+These are the same in light and dark.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Token
+    </th>
+    
+    <th>
+      Default
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        --vfc-radius-sm
+      </code>
+      
+      , <code>
+        --vfc-radius
+      </code>
+      
+      , <code>
+        --vfc-radius-lg
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        6px
+      </code>
+      
+      , <code>
+        8px
+      </code>
+      
+      , <code>
+        12px
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-space-1
+      </code>
+      
+       to <code>
+        --vfc-space-5
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        4px
+      </code>
+      
+      , <code>
+        8px
+      </code>
+      
+      , <code>
+        12px
+      </code>
+      
+      , <code>
+        16px
+      </code>
+      
+      , <code>
+        24px
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-font
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-font-size-xs
+      </code>
+      
+      , <code>
+        -sm
+      </code>
+      
+      , <code>
+        -md
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        12px
+      </code>
+      
+      , <code>
+        14px
+      </code>
+      
+      , <code>
+        16px
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-font-weight
+      </code>
+      
+      , <code>
+        -medium
+      </code>
+      
+      , <code>
+        -strong
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        400
+      </code>
+      
+      , <code>
+        500
+      </code>
+      
+      , <code>
+        600
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-day-size
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        36px
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-header-height
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        40px
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-transition
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        150ms ease
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Derived colors
+
+Where the browser supports `color-mix()`, eight tokens derive from three base colors, so changing `--vfc-primary`, `--vfc-bg` or `--vfc-text` recolors the whole calendar.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Token
+    </th>
+    
+    <th>
+      Derived as
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        --vfc-text-muted
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text
+      </code>
+      
+       68% over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-text-disabled
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text
+      </code>
+      
+       32% over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-border
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text
+      </code>
+      
+       12% over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-border-strong
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text
+      </code>
+      
+       55% over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-hover
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text
+      </code>
+      
+       7% over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-primary-hover
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+      
+       86% over <code>
+        --vfc-text
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-range
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+      
+       at <code>
+        --vfc-range-mix
+      </code>
+      
+       over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        --vfc-range-strong
+      </code>
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+      
+       at 1.4 times <code>
+        --vfc-range-mix
+      </code>
+      
+       over <code>
+        --vfc-bg
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+In dark mode, `--vfc-bg-raised` also derives, as `--vfc-text` 5% over `--vfc-bg`.
+
+## Browsers without color-mix
+
+Safari below 16.2 and other browsers without `color-mix()` use the fixed values from the tables above. They match the default colors only. If you change `--vfc-primary`, `--vfc-bg` or `--vfc-text`, override the derived tokens together:
+
+```css
+.my-calendar {
+  --vfc-primary: #0d9488;
+  --vfc-primary-hover: #0f766e;
+  --vfc-range: #ccfbf1;
+  --vfc-range-strong: #99f6e4;
+  --vfc-text-muted: #5b6770;
+  --vfc-text-disabled: #b3bcc2;
+  --vfc-border: #e2e8ec;
+  --vfc-border-strong: #7b8a94;
+  --vfc-hover: #f0f4f6;
+}
+```
+
+Add `--vfc-bg-raised` under `.vfc-dark` as well. `--vfc-range-mix` has no effect in these browsers.
+
+## Class overrides
+
+The `vfc-*` class names are the same as in 2.x, so CSS overrides written for 2.x keep working. Tokens and class rules mix freely.
+
+
+# Time picker
+
+> Add hours and minutes to a date or a range.
+
+Set `withTimePicker`. After you choose a date, the calendar swaps to an hour list and a minute list.
+
+<calendar-demo :config="{"isDatePicker":true,"withTimePicker":true,"displayTimeInput":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker with-time-picker />
+```
+
+</calendar-demo>
+
+## Where the time lives
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Mode
+    </th>
+    
+    <th>
+      Time in the value
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Single date
+    </td>
+    
+    <td>
+      <code>
+        selectedHour
+      </code>
+      
+      , <code>
+        selectedMinute
+      </code>
+      
+       and <code>
+        selectedDateTime
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Range
+    </td>
+    
+    <td>
+      The time is part of <code>
+        dateRange.start
+      </code>
+      
+       and <code>
+        dateRange.end
+      </code>
+      
+      , as <code>
+        d/m/yyyy hh:mm
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Multiple dates
+    </td>
+    
+    <td>
+      <code>
+        hour
+      </code>
+      
+       and <code>
+        minute
+      </code>
+      
+       on each entry of <code>
+        selectedDates
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## Keyboard
+
+Each list is a listbox. Use ArrowUp and ArrowDown to move, Home and End to jump to the ends, and Enter or Space to choose a value. The close button and the Escape key return to the calendar.
+
+## Props
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      Use
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        displayTimeInput
+      </code>
+    </td>
+    
+    <td>
+      Add the time to the text of a single date input.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        dateFormat
+      </code>
+    </td>
+    
+    <td>
+      A time part such as <code>
+        hh:mm
+      </code>
+      
+      . The valid forms are <code>
+        HH:MM
+      </code>
+      
+      , <code>
+        HH:mm
+      </code>
+      
+      , <code>
+        hh:MM
+      </code>
+      
+       and <code>
+        hh:mm
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        activeHours
+      </code>
+    </td>
+    
+    <td>
+      Hours users can pick, from <code>
+        0
+      </code>
+      
+       to <code>
+        23
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        activeMinutes
+      </code>
+    </td>
+    
+    <td>
+      Minutes users can pick, from <code>
+        0
+      </code>
+      
+       to <code>
+        59
+      </code>
+      
+      .
+    </td>
+  </tr>
+</tbody>
+</table>
+
+For a range, click the start or the end date at the top of the picker to choose which one you edit.
+
+
+# Typeable input
+
+> Let users type dates into the modal inputs.
+
+Set `isModal` and `isTypeable` on a date picker or a range. Without `isTypeable` the inputs are read-only and only show the selection.
+
+<calendar-demo :config="{"isDateRange":true,"isModal":true,"isTypeable":true,"newCurrentDate":"2026-10-01"}" :height="420">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range is-modal is-typeable />
+```
+
+</calendar-demo>
+
+Type `5/3/2026` or `05/03/2026` into an input, then try `31/02/2026`.
+
+## What the input accepts
+
+- Day and month with one or two digits, and a four digit year.
+- The separator of `dateFormat`, which is `/`, `-` or `.`. The default is `/`.
+- Padded and unpadded dates give the same value. `05/03/2026` is stored as `5/3/2026`.
+- Typing any of `-`, `.`, `/` or a space where a separator belongs inserts the format's separator.
+- Letters and extra digits are dropped as you type. A third digit in the day, or a fifth in the year, is not accepted.
+- A digit that overflows a full part moves into the next part when you type at the end.
+
+## When the value commits
+
+The calendar updates the value only when the text is a complete, real date: all parts present, a four digit year, and a day that exists in that month. `31/02/2026` and `1/1/26` change nothing, and `29/02/2028` is accepted.
+
+In a range, each input commits on its own. Typing a start date does not need an end date.
+
+## Paste
+
+A pasted date has its `-`, `.`, `/` and space separators replaced with the separator of `dateFormat`, so `5.10.2026` becomes `5/10/2026`. The text is then cut to what the format can hold. Parts are not reordered, so paste them in the order of `dateFormat`.
+
+## Time
+
+With `displayTimeInput`, the time stays in the input text while you edit the date part.
+
+## Forms
+
+Enter in these inputs is not intercepted, so a surrounding form submits. See [keyboard](https://manukminasyan.github.io/vue-functional-calendar/essentials/keyboard).
+
+## Tags input
+
+The multiple date picker shows its dates as tags. Type a date and press Enter. The date is added if it is valid.
+
+## Read the value
+
+The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. Start with a full model, as shown in [usage](https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage#the-bound-value), so the keys exist before the first click.
+
+
+# Limits and availability
+
+> Block dates, weekdays and spans, or allow only a list of dates.
+
+Dates use the `dateFormat` of the calendar, `dd/mm/yyyy` by default. Day and month need no leading zero.
+
+## Limit to a span
+
+`limits` takes a `min` and a `max`. Days outside are disabled, and the arrows stop at the edge months.
+
+<calendar-demo :config="{"isDatePicker":true,"newCurrentDate":"2026-10-01","limits":{"min":"8/10/2026","max":"24/10/2026"}}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :new-current-date="new Date(2026, 9, 1)"
+  :limits="{ min: '8/10/2026', max: '24/10/2026' }"
+/>
+```
+
+</calendar-demo>
+
+## Minimum and maximum range length
+
+`minSelDays` and `maxSelDays` bound the length of a range. A range that is too short is stretched to the minimum, and one that is too long is cut at the maximum.
+
+<calendar-demo :config="{"isDateRange":true,"minSelDays":3,"maxSelDays":6}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range :min-sel-days="3" :max-sel-days="6" />
+```
+
+</calendar-demo>
+
+## Disable weekdays
+
+`disabledDayNames` takes the names from `dayNames`, `Mo` to `Su` by default.
+
+<calendar-demo :config="{"isDatePicker":true,"disabledDayNames":["Sa","Su"]}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker :disabled-day-names="['Sa', 'Su']" />
+```
+
+</calendar-demo>
+
+## Disable dates
+
+`disabledDates` takes dates and two keywords, `beforeToday` and `afterToday`.
+
+<calendar-demo :config="{"isDatePicker":true,"disabledDates":["beforeToday","30/10/2026"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :disabled-dates="['beforeToday', '30/10/2026']"
+/>
+```
+
+</calendar-demo>
+
+## Allow only some dates
+
+`enabledDates` is the one prop the calendar watches, so you can change the list while it is on screen.
+
+<calendar-enabled-dates-demo>
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker :enabled-dates="enabledDates" />
+```
+
+</calendar-enabled-dates-demo>
+
+
+# Locale and labels
+
+> Names, week start and every UI string, from the browser's Intl data.
+
+## Switch the locale
+
+The `locale` prop derives day names, month names and the first day of the week from `Intl`. Names are always Gregorian, also for locales such as `fa-IR` or `ar-SA`. Props are not reactive, so the demo re-keys the calendar when you pick a locale.
+
+<calendar-locale-demo>
+
+```vue
+<script setup>
+const locale = ref('de-DE')
+</script>
+
+<template>
+  <FunctionalCalendar
+    :key="locale"
+    v-model="value"
+    :locale="locale"
+    is-date-picker
+    show-week-numbers
+  />
+</template>
+```
+
+</calendar-locale-demo>
+
+## Translate the interface
+
+`labels` covers every UI string. A partial object merges over the English defaults, including `labels.presets`.
+
+<calendar-demo :config="{"isDateRange":true,"canClearRange":true,"presets":["today","last7Days"],"locale":"fr-FR","labels":{"previousMonth":"Mois précédent","nextMonth":"Mois suivant","clearRange":"Effacer la période","quickRanges":"Périodes rapides","presets":{"today":"Aujourd'hui","last7Days":"7 derniers jours"}}}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  can-clear-range
+  locale="fr-FR"
+  :presets="['today', 'last7Days']"
+  :labels="{
+    previousMonth: 'Mois précédent',
+    nextMonth: 'Mois suivant',
+    clearRange: 'Effacer la période',
+    quickRanges: 'Périodes rapides',
+    presets: { today: 'Aujourd\'hui', last7Days: '7 derniers jours' },
+  }"
+/>
+```
+
+</calendar-demo>
+
+## Override the week start
+
+`sundayStart` beats the locale. Use it to force Sunday or Monday.
+
+<calendar-demo :config="{"isDatePicker":true,"locale":"de-DE","sundayStart":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker locale="de-DE" sundayStart />
+```
+
+</calendar-demo>
+
+
+# Marking and layout
+
+> Mark dates and ranges, show week numbers, and hide parts of the calendar.
+
+## Marked dates
+
+`markedDates` outlines the dates in the list.
+
+<calendar-demo :config="{"isDatePicker":true,"newCurrentDate":"2026-10-01","markedDates":["6/10/2026","9/10/2026","10/10/2026","21/10/2026"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :new-current-date="new Date(2026, 9, 1)"
+  :marked-dates="['6/10/2026', '9/10/2026', '10/10/2026', '21/10/2026']"
+/>
+```
+
+</calendar-demo>
+
+## Marked dates with your own class
+
+Pass objects to add a class to each day, then style that class. The class lands on the day cell.
+
+<calendar-marked-demo>
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :marked-dates="[
+    { date: '5/10/2026', class: 'demo-holiday' },
+    { date: '12/10/2026', class: 'demo-birthday' },
+  ]"
+/>
+
+<style>
+.demo-holiday { box-shadow: inset 0 0 0 2px #dc2626; }
+.demo-birthday { box-shadow: inset 0 0 0 2px #16a34a; }
+</style>
+```
+
+</calendar-marked-demo>
+
+## Marked range
+
+`markedDateRange` highlights a span. Leave one end `false` to mark everything after the start or before the end. Pass an array to mark several spans.
+
+<calendar-demo :config="{"isDatePicker":true,"newCurrentDate":"2026-10-01","markedDateRange":{"start":"12/10/2026","end":"20/10/2026"}}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :new-current-date="new Date(2026, 9, 1)"
+  :marked-date-range="{ start: '12/10/2026', end: '20/10/2026' }"
+/>
+```
+
+</calendar-demo>
+
+## Week numbers
+
+`showWeekNumbers` adds a column with the ISO week number of each row's Thursday. `borderColor` colors the column border.
+
+<calendar-demo :config="{"isDatePicker":true,"showWeekNumbers":true,"borderColor":"#d946ef"}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  show-week-numbers
+  border-color="#d946ef"
+/>
+```
+
+</calendar-demo>
+
+## Hide parts of the calendar
+
+`hiddenElements` takes any of `dayNames`, `leftAndRightDays`, `month` and `presets`. This example hides the days of the neighbor months.
+
+<calendar-demo :config="{"isDatePicker":true,"hiddenElements":["leftAndRightDays"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  :hidden-elements="['leftAndRightDays']"
+/>
+```
+
+</calendar-demo>
+
+## Title and arrow position
+
+`titlePosition` takes `left`, `center` or `right`. `arrowsPosition` takes `space-between`, `left` or `right`.
+
+<calendar-demo :config="{"isDatePicker":true,"titlePosition":"left","arrowsPosition":"right"}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  title-position="left"
+  arrows-position="right"
+/>
+```
+
+</calendar-demo>
+
+
+# Modal and typeable inputs
+
+> Open the calendar from an input, type dates, or replace the inputs.
+
+Set `isModal` to render inputs that open the calendar on focus. The calendar closes when focus leaves it, and Escape closes it and returns focus to the input.
+
+## Modal date picker
+
+Focus the input, or press ArrowDown on it. `isAutoCloseable` closes the calendar after a date is chosen.
+
+<calendar-demo :config="{"isDatePicker":true,"isModal":true,"isAutoCloseable":true}" :height="420">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker is-modal is-auto-closeable />
+```
+
+</calendar-demo>
+
+## Typeable single input
+
+Add `isTypeable` and type a date such as `5/3/2026` or `05/03/2026`. The value commits when the date is complete and valid. Typing `31/02/2026` changes nothing.
+
+<calendar-demo :config="{"isDatePicker":true,"isModal":true,"isTypeable":true,"newCurrentDate":"2026-10-01"}" :height="420">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker is-modal is-typeable />
+```
+
+</calendar-demo>
+
+## Typeable range
+
+A range gets two inputs. Each one commits on its own, so you can type only the start.
+
+<calendar-demo :config="{"isDateRange":true,"isModal":true,"isTypeable":true,"dateFormat":"yyyy-mm-dd","newCurrentDate":"2026-10-01"}" :height="420">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-modal
+  is-typeable
+  date-format="yyyy-mm-dd"
+/>
+```
+
+</calendar-demo>
+
+## Multiple dates as tags
+
+In modal mode, a multiple date picker shows its dates as removable tags. Type a date and press Enter to add it.
+
+<calendar-demo :config="{"isMultipleDatePicker":true,"isModal":true}" :height="420">
+
+```vue
+<FunctionalCalendar v-model="value" is-multiple-date-picker is-modal />
+```
+
+</calendar-demo>
+
+## Your own range inputs
+
+The `dateRangeInputs` slot replaces both inputs. It receives `startDate`, `endDate` and `isTypeable`. Keep the `readonly` state so the inputs follow `isTypeable`.
+
+<calendar-inputs-demo kind="range">
+
+```vue
+<FunctionalCalendar v-model="value" is-modal is-date-range is-typeable>
+  <template #dateRangeInputs="{ startDate, endDate, isTypeable }">
+    <input :value="startDate" :readonly="!isTypeable" placeholder="Check in" />
+    <span aria-hidden="true">&rarr;</span>
+    <input :value="endDate" :readonly="!isTypeable" placeholder="Check out" />
+  </template>
+</FunctionalCalendar>
+```
+
+</calendar-inputs-demo>
+
+## Your own date input
+
+The `datePickerInput` slot does the same for a single date and receives `selectedDate` and `isTypeable`.
+
+<calendar-inputs-demo kind="single">
+
+```vue
+<FunctionalCalendar v-model="value" is-modal is-date-picker>
+  <template #datePickerInput="{ selectedDate, isTypeable }">
+    <input :value="selectedDate" :readonly="!isTypeable" placeholder="Birthday" />
+  </template>
+</FunctionalCalendar>
+```
+
+</calendar-inputs-demo>
+
+
+# Multiple calendars
+
+> Show two or three months side by side, linked or independent.
+
+Set `isMultiple` and `calendarsCount`. The calendars wrap to fit the available width.
+
+## Linked months
+
+The calendars move together. The arrows and pickers belong to the first calendar.
+
+<calendar-demo :config="{"isDateRange":true,"isMultiple":true,"calendarsCount":2,"canClearRange":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-multiple
+  :calendars-count="2"
+  can-clear-range
+/>
+```
+
+</calendar-demo>
+
+## Independent months
+
+With `isSeparately`, each calendar has its own arrows and pickers. `changeYearStep` of 1 pages the year list one year at a time.
+
+<calendar-demo :config="{"isDateRange":true,"isMultiple":true,"isSeparately":true,"calendarsCount":2,"changeMonthFunction":true,"changeYearFunction":true,"changeYearStep":1,"canClearRange":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-multiple
+  is-separately
+  :calendars-count="2"
+  change-month-function
+  change-year-function
+  :change-year-step="1"
+  can-clear-range
+/>
+```
+
+</calendar-demo>
+
+## Three calendars with a stable height
+
+`isLayoutExpandable` lets a month with five weeks stay short. Without it, every calendar reserves six rows so the layout never jumps.
+
+<calendar-demo :config="{"isDatePicker":true,"isMultiple":true,"calendarsCount":3,"isLayoutExpandable":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  is-multiple
+  :calendars-count="3"
+  is-layout-expandable
+/>
+```
+
+</calendar-demo>
+
+## Step by more than one month
+
+`changeMonthStep` sets how many months the arrows move.
+
+<calendar-demo :config="{"isDatePicker":true,"isMultiple":true,"calendarsCount":2,"changeMonthStep":2}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  is-multiple
+  :calendars-count="2"
+  :change-month-step="2"
+/>
+```
+
+</calendar-demo>
+
+
+# Range presets
+
+> Quick ranges for date ranges and date pickers.
+
+Set `presets` to `true` for the six built-in keys, or pass a list that mixes keys and custom ranges. Presets show on `isDateRange` and `isDatePicker` calendars. A date picker uses the start of each preset.
+
+## Built-in presets
+
+`today`, `yesterday`, `last7Days`, `last30Days`, `thisMonth` and `lastMonth`. The 7 and 30 day presets include today.
+
+<calendar-demo :config="{"isDateRange":true,"canClearRange":true,"presets":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range can-clear-range :presets="true" />
+```
+
+</calendar-demo>
+
+## Choose and order presets
+
+A list picks which presets show and in what order.
+
+<calendar-demo :config="{"isDateRange":true,"presets":["today","last7Days","thisMonth"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  :presets="['today', 'last7Days', 'thisMonth']"
+/>
+```
+
+</calendar-demo>
+
+## Custom ranges
+
+A custom preset is `{ label, range }`. `range` returns `{ start, end }` as `Date` objects, and the calendar calls it each time it needs the preset.
+
+<calendar-presets-demo>
+
+```vue
+<script setup>
+const presets = [
+  'today',
+  'last7Days',
+  'thisMonth',
+  {
+    label: 'Next 14 days',
+    range: () => {
+      const start = new Date()
+      const end = new Date()
+      end.setDate(end.getDate() + 13)
+      return { start, end }
+    },
+  },
+]
+</script>
+
+<template>
+  <FunctionalCalendar v-model="value" is-date-range :presets="presets" />
+</template>
+```
+
+</calendar-presets-demo>
+
+## Disabled presets
+
+A preset is disabled when its range breaks a rule: `limits`, `disabledDates`, `disabledDayNames`, `enabledDates`, `minSelDays` or `maxSelDays`. A disabled preset stays focusable and does nothing when clicked. Here `beforeToday` disables every preset that reaches into the past.
+
+<calendar-demo :config="{"isDateRange":true,"presets":true,"disabledDates":["beforeToday"]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  :presets="true"
+  :disabled-dates="['beforeToday']"
+/>
+```
+
+</calendar-demo>
+
+## Presets in a modal
+
+The presets sit in the popup. With `isAutoCloseable`, picking one closes it and returns focus to the input. `labels.presets` translates the names.
+
+<calendar-demo :config="{"isDateRange":true,"isModal":true,"isAutoCloseable":true,"presets":true,"labels":{"presets":{"today":"Heute","yesterday":"Gestern"}}}" :height="460">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  is-modal
+  is-auto-closeable
+  :presets="true"
+  :labels="{ presets: { today: 'Heute', yesterday: 'Gestern' } }"
+/>
+```
+
+</calendar-demo>
+
+## Presets on a date picker
+
+<calendar-demo :config="{"isDatePicker":true,"presets":["today","yesterday"]}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker :presets="['today', 'yesterday']" />
+```
+
+</calendar-demo>
+
+
+# Selection modes
+
+> Pick one date, a range, several dates or several ranges.
+
+Every example is live. Click a day and read the bound value under the calendar. The code under each value is what runs above it.
+
+## Single date
+
+Set `isDatePicker`, then read `selectedDate`.
+
+<calendar-demo :config="{"isDatePicker":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker />
+```
+
+</calendar-demo>
+
+## Date range
+
+Set `isDateRange`. The first click sets the start, the second sets the end. Hover shows the range before you commit.
+
+<calendar-demo :config="{"isDateRange":true,"canClearRange":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range can-clear-range />
+```
+
+</calendar-demo>
+
+## Multiple dates
+
+Set `isMultipleDatePicker`. Click a selected day again to remove it.
+
+<calendar-demo :config="{"isMultipleDatePicker":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-multiple-date-picker />
+```
+
+</calendar-demo>
+
+## Multiple date ranges
+
+Add `isMultipleDateRange` to a range picker to collect several ranges. Focus a range day and press Delete or Backspace to remove that range.
+
+<calendar-demo :config="{"isDateRange":true,"isMultipleDateRange":true,"canClearRange":true}" :initial="{"multipleDateRange":[{"start":"3/10/2026","end":"9/10/2026"}]}">
+
+```vue
+<script setup>
+const value = ref({
+  multipleDateRange: [{ start: '3/10/2026', end: '9/10/2026' }]
+})
+</script>
+
+<template>
+  <FunctionalCalendar
+    v-model="value"
+    is-date-range
+    is-multiple-date-range
+    can-clear-range
+  />
+</template>
+```
+
+</calendar-demo>
+
+## Pick the month and year
+
+Turn on `changeMonthFunction` and `changeYearFunction` to click the title and jump. `changeYearStep` sets how far the year list pages.
+
+<calendar-demo :config="{"isDatePicker":true,"changeMonthFunction":true,"changeYearFunction":true}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  change-month-function
+  change-year-function
+/>
+```
+
+</calendar-demo>
+
+
+# Slots
+
+> Replace the day cell, the arrows, the footer and the clear button.
+
+## Day, arrows and footer
+
+The default slot receives `{ week, day }` and replaces the content of a day. Setting a day slot drops the default day classes, so add `alwaysUseDefaultClasses` to keep the selection styling. The arrow and footer slots replace their parts.
+
+The day cell selects only when the click lands on the cell itself. Set `pointer-events: none` on elements inside your slot so clicks reach the cell.
+
+<calendar-slots-demo>
+
+```vue
+<FunctionalCalendar v-model="value" is-date-picker always-use-default-classes>
+  <template #default="{ day }">
+    <strong v-if="isWeekend(day)" style="pointer-events: none">{{ day.day }}</strong>
+    <template v-else>{{ day.day }}</template>
+  </template>
+  <template #navigationArrowLeft>&larr;</template>
+  <template #navigationArrowRight>&rarr;</template>
+  <template #footer>
+    <small>Weekends are bold.</small>
+  </template>
+</FunctionalCalendar>
+```
+
+</calendar-slots-demo>
+
+## An events calendar
+
+Without `alwaysUseDefaultClasses`, a day slot is yours to lay out. This one renders events inside each day and listens to `dayClicked`.
+
+<calendar-events-demo>
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  title-position="left"
+  arrows-position="right"
+  @day-clicked="onDayClicked"
+>
+  <template #default="{ day }">
+    <div class="day">
+      <span>{{ day.day }}</span>
+      <span v-for="event in eventsOn(day.date)" :key="event.id" class="event">
+        {{ event.title }}
+      </span>
+    </div>
+  </template>
+</FunctionalCalendar>
+
+<style>
+.day { pointer-events: none; }
+</style>
+```
+
+</calendar-events-demo>
+
+## Clear button
+
+The `cleaner` slot replaces the clear button of a range. Clicking inside it clears the range.
+
+<calendar-cleaner-demo>
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range can-clear-range>
+  <template #cleaner>
+    <div style="display: flex; justify-content: center">
+      <button type="button">Cancel</button>
+    </div>
+  </template>
+</FunctionalCalendar>
+```
+
+</calendar-cleaner-demo>
+
+
+# Theming and dark mode
+
+> Style the calendar with --vfc-* tokens and switch to dark mode.
+
+## Dark mode
+
+`isDark` adds the `vfc-dark` class and the dark token values. The calendar below is always dark. Every other demo on this site passes `isDark` from the site color mode, so toggle the site theme in the header to see them follow.
+
+<calendar-demo :config="{"isDateRange":true,"isDark":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range is-dark />
+```
+
+</calendar-demo>
+
+To follow the site theme, bind it to your color mode.
+
+```vue
+<script setup>
+const colorMode = useColorMode()
+const isDark = computed(() => colorMode.value === 'dark')
+</script>
+
+<template>
+  <FunctionalCalendar v-model="value" is-date-range :is-dark="isDark" />
+</template>
+```
+
+## Tokens
+
+Set a `--vfc-*` custom property on the calendar or on any ancestor. The buttons below change the tokens of a wrapper and the calendar updates at once. See the [theming guide](https://manukminasyan.github.io/vue-functional-calendar/essentials/theming) for the full token table.
+
+<calendar-theme-demo>
+
+```vue
+<div class="my-calendar">
+  <FunctionalCalendar v-model="value" is-date-range can-clear-range />
+</div>
+
+<style>
+.my-calendar {
+  --vfc-primary: #e11d48;
+  --vfc-on-primary: #ffffff;
+}
+</style>
+```
+
+</calendar-theme-demo>
+
+## Dark only values
+
+Scope a token to `.vfc-dark` to change it in dark mode only.
+
+```css
+.vfc-dark {
+  --vfc-primary: #fb7185;
+  --vfc-on-primary: #1c1917;
+}
+```
+
+## Try it live
+
+The [playground](https://manukminasyan.github.io/vue-functional-calendar/playground) lets you change the primary color, the radius and the day size, and gives you the code.
+
+
+# Time picker
+
+> Add hours and minutes to a date, a range or several dates.
+
+Set `withTimePicker`. After you choose a date, the calendar swaps to two lists, one for hours and one for minutes. Use the arrow keys inside a list and press Enter to choose. Escape returns to the calendar.
+
+## Date with time in a modal input
+
+`displayTimeInput` adds the time to the input text. A time in `dateFormat` (`HH:MM`, `HH:mm`, `hh:MM` or `hh:mm`) sets how it prints.
+
+<calendar-demo :config="{"isDatePicker":true,"isModal":true,"withTimePicker":true,"displayTimeInput":true,"dateFormat":"yyyy-mm-dd hh:mm"}" :height="460">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  is-modal
+  with-time-picker
+  display-time-input
+  date-format="yyyy-mm-dd hh:mm"
+/>
+```
+
+</calendar-demo>
+
+## Range with a time at each end
+
+For a range, the time picker shows both ends. Click the start or the end date to choose which one you edit.
+
+<calendar-demo :config="{"isDateRange":true,"withTimePicker":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-date-range with-time-picker />
+```
+
+</calendar-demo>
+
+## Limit the hours and minutes
+
+`activeHours` and `activeMinutes` list the values users can pick.
+
+<calendar-demo :config="{"isDatePicker":true,"withTimePicker":true,"activeHours":[9,10,11,12,13,14,15,16,17],"activeMinutes":[0,15,30,45]}">
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-picker
+  with-time-picker
+  :active-hours="[9, 10, 11, 12, 13, 14, 15, 16, 17]"
+  :active-minutes="[0, 15, 30, 45]"
+/>
+```
+
+</calendar-demo>
+
+## Several dates with their own times
+
+Each date in `selectedDates` keeps its own `hour` and `minute`.
+
+<calendar-demo :config="{"isMultipleDatePicker":true,"withTimePicker":true}">
+
+```vue
+<FunctionalCalendar v-model="value" is-multiple-date-picker with-time-picker />
+```
+
+</calendar-demo>
+
+
+# Installation
+
+> Install Vue Functional Calendar and load its styles.
+
+Vue Functional Calendar 3.x needs Vue `^3.3.0`.
+
+## Install
+
+```bash
+npm install vue-functional-calendar
+# or: pnpm add vue-functional-calendar
+# or: yarn add vue-functional-calendar
+```
+
+Using Vue 2? Install `vue-functional-calendar@^2.10.0` instead.
+
+## Register the component
+
+Import the component and the stylesheet where you use it.
+
+```vue
+<script setup>
+import { FunctionalCalendar } from 'vue-functional-calendar'
+import 'vue-functional-calendar/style.css'
+</script>
+```
+
+The CSS is a separate file. Import it once in your app and every calendar picks it up. You need no Sass.
+
+## Register it globally
+
+`app.use` registers `FunctionalCalendar` everywhere. Its options become defaults for every calendar.
+
+```js
+import { createApp } from 'vue'
+import FunctionalCalendar from 'vue-functional-calendar'
+import 'vue-functional-calendar/style.css'
+import App from './App.vue'
+
+createApp(App)
+  .use(FunctionalCalendar, { showWeekNumbers: true, dateFormat: 'yyyy-mm-dd' })
+  .mount('#app')
+```
+
+A prop on a calendar overrides a global option. See [props](https://manukminasyan.github.io/vue-functional-calendar/essentials/props) for the order.
+
+## Use it from a CDN
+
+The UMD build exposes a global `FunctionalCalendar` and expects a global `Vue`.
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/vue-functional-calendar/dist/style.css" />
+<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/vue-functional-calendar"></script>
+
+<div id="app">
+  <functional-calendar v-model="value" is-date-picker></functional-calendar>
+</div>
+
+<script>
+  Vue.createApp({ data: () => ({ value: {} }) })
+    .use(FunctionalCalendar)
+    .mount('#app')
+</script>
+```
+
+## TypeScript
+
+The package ships types for the component, its props, events, slots and value. `FunctionalCalendarValue` describes the bound object.
+
+```ts
+import type { FunctionalCalendarValue } from 'vue-functional-calendar'
+
+const value = ref<Partial<FunctionalCalendarValue>>({})
+```
+
+## Browser support
+
+Any browser that supports ES modules and CSS custom properties. Derived colors use `color-mix()`. Older browsers fall back to fixed values, see the [theming guide](https://manukminasyan.github.io/vue-functional-calendar/essentials/theming#browsers-without-color-mix).
+
+
+# Introduction
+
+> What Vue Functional Calendar is and what it does.
+
+Vue Functional Calendar is a calendar and datepicker component for Vue 3. It has no runtime dependencies, and its CSS is themed with custom properties.
+
+<calendar-demo :config="{"isDateRange":true,"presets":true,"canClearRange":true}">
+
+
+
+</calendar-demo>
+
+## What you get
+
+- One component for a single date, several dates, a range or several ranges.
+- Inline or in a modal behind an input, with typeable inputs.
+- Several calendars side by side, with an optional time picker.
+- Limits, disabled and enabled dates, marked dates and range presets.
+- Light and dark themes through `--vfc-*` custom properties.
+- Keyboard navigation and a grid with ARIA roles.
+- Names and week start from `Intl` through a `locale` prop, and labels for every UI string.
+- Slots for the day cell, arrows, footer, clear button and inputs.
+
+## Which version
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Version
+    </th>
+    
+    <th>
+      Vue
+    </th>
+    
+    <th>
+      Docs
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      3.x
+    </td>
+    
+    <td>
+      Vue 3
+    </td>
+    
+    <td>
+      This site.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      2.x
+    </td>
+    
+    <td>
+      Vue 2
+    </td>
+    
+    <td>
+      Pin <code>
+        vue-functional-calendar@^2.10.0
+      </code>
+      
+      .
+    </td>
+  </tr>
+</tbody>
+</table>
+
+The `3.0.0` release on npm was a Vue 2 build. Vue 2 projects should stay on `^2.10.0`.
+
+## Next steps
+
+1. [Install the package](https://manukminasyan.github.io/vue-functional-calendar/getting-started/installation).
+2. [Render your first calendar](https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage).
+3. Browse the [examples](https://manukminasyan.github.io/vue-functional-calendar/examples/selection-modes) or the [playground](https://manukminasyan.github.io/vue-functional-calendar/playground).
+4. Coming from 2.x? Read the [migration guide](https://manukminasyan.github.io/vue-functional-calendar/getting-started/migration).
+
+
+# Migrate from 2.x
+
+> Move a Vue 2 app on Vue Functional Calendar 2.x to the Vue 3 build.
+
+3.x is a Vue 3 build of the same component. Every 2.x prop, event, slot, `vfc-*` class and value shape is still there. Most apps change a few lines.
+
+The `3.0.0` release on npm was a Vue 2 build, so a `^3.0.0` range may resolve to it. Vue 2 apps pin `^2.10.0`:
+
+```bash
+npm install vue-functional-calendar@^2.10.0
+```
+
+## Steps
+
+1. Upgrade to Vue `^3.3.0`.
+2. Install the package: `npm install vue-functional-calendar@^3.1.0`.
+3. Import the stylesheet once: `import 'vue-functional-calendar/style.css'`.
+4. Register the plugin with `app.use`.
+5. Rename `value` and `input` if you use them without `v-model`.
+6. Replace SCSS variable overrides with `--vfc-*` tokens.
+
+## `v-model`
+
+`value` and `input` became `modelValue` and `update:modelValue`. A template that uses `v-model` needs no change.
+
+```vue
+<!-- 2.x and 3.x -->
+<FunctionalCalendar v-model="calendarData" is-date-range />
+
+<!-- 2.x, without v-model -->
+<FunctionalCalendar :value="calendarData" @input="calendarData = $event" />
+
+<!-- 3.x, without v-model -->
+<FunctionalCalendar
+  :model-value="calendarData"
+  @update:model-value="calendarData = $event"
+/>
+```
+
+The value object has the same shape: `currentDate`, `selectedDate`, `selectedDateTime`, `selectedHour`, `selectedMinute`, `selectedDatesItem`, `selectedDates`, `dateRange` and `multipleDateRange`.
+
+## Styles
+
+The CSS is a separate file. Import it once.
+
+```js
+import 'vue-functional-calendar/style.css'
+```
+
+Your 2.x CSS overrides keep working, because the `vfc-*` class names are unchanged. The default look changed, so check your overrides against it.
+
+## Registration
+
+Vue 2 used `Vue.use`. Vue 3 uses `app.use`, and the options still become global defaults.
+
+```js
+// 2.x
+Vue.use(FunctionalCalendar, { showWeekNumbers: true })
+
+// 3.x
+app.use(FunctionalCalendar, { showWeekNumbers: true })
+```
+
+Both `import FunctionalCalendar from 'vue-functional-calendar'` and `import { FunctionalCalendar } from 'vue-functional-calendar'` still work.
+
+## SCSS variables
+
+The SCSS `!default` variables are gone. Custom properties replace them. Set a token on the calendar or on any ancestor, with plain CSS and no Sass.
+
+```css
+.my-calendar {
+  --vfc-primary: #e11d48;
+  --vfc-on-primary: #ffffff;
+}
+```
+
+The 2.x variables named colors, not roles, so the mapping below is by use. The old and new values do not match one to one.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      2.x variable
+    </th>
+    
+    <th>
+      What it colored
+    </th>
+    
+    <th>
+      3.x token
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        $pictionBlue
+      </code>
+      
+      , <code>
+        $royalblue
+      </code>
+    </td>
+    
+    <td>
+      Selected and marked days, time line, selected picker items
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $white
+      </code>
+    </td>
+    
+    <td>
+      Backgrounds, text on selected days
+    </td>
+    
+    <td>
+      <code>
+        --vfc-bg
+      </code>
+      
+      , <code>
+        --vfc-on-primary
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $black
+      </code>
+      
+      , <code>
+        $ebony
+      </code>
+      
+      , <code>
+        $mineShaft
+      </code>
+    </td>
+    
+    <td>
+      Text and arrows
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $mirage
+      </code>
+      
+      , <code>
+        $licorice
+      </code>
+    </td>
+    
+    <td>
+      Dark mode background
+    </td>
+    
+    <td>
+      <code>
+        --vfc-bg
+      </code>
+      
+       under <code>
+        .vfc-dark
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $astronaut
+      </code>
+    </td>
+    
+    <td>
+      Dark mode range fill and borders
+    </td>
+    
+    <td>
+      <code>
+        --vfc-range
+      </code>
+      
+      , <code>
+        --vfc-border
+      </code>
+      
+       under <code>
+        .vfc-dark
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $lightskyblue
+      </code>
+    </td>
+    
+    <td>
+      Range fill
+    </td>
+    
+    <td>
+      <code>
+        --vfc-range
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $steelblue
+      </code>
+    </td>
+    
+    <td>
+      Day hover in dark mode
+    </td>
+    
+    <td>
+      <code>
+        --vfc-primary-hover
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $lightred
+      </code>
+      
+      , <code>
+        $keppel
+      </code>
+    </td>
+    
+    <td>
+      Today
+    </td>
+    
+    <td>
+      <code>
+        --vfc-today
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $gainsboro
+      </code>
+      
+      , <code>
+        $silver_chalice
+      </code>
+      
+      , <code>
+        $boulder
+      </code>
+      
+      , <code>
+        $tundora
+      </code>
+      
+      , <code>
+        $trout
+      </code>
+    </td>
+    
+    <td>
+      Secondary text, neighbor month days
+    </td>
+    
+    <td>
+      <code>
+        --vfc-text-muted
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $gallery
+      </code>
+      
+      , <code>
+        $alto
+      </code>
+      
+      , <code>
+        $lightgrey
+      </code>
+      
+      , <code>
+        $silver
+      </code>
+    </td>
+    
+    <td>
+      Borders and scrollbars
+    </td>
+    
+    <td>
+      <code>
+        --vfc-border
+      </code>
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        $porcelain
+      </code>
+      
+      , <code>
+        $lightgreyHover
+      </code>
+    </td>
+    
+    <td>
+      Hover backgrounds
+    </td>
+    
+    <td>
+      <code>
+        --vfc-hover
+      </code>
+    </td>
+  </tr>
+</tbody>
+</table>
+
+`$powderblue` and `$charade` were never used. The full token list is in the [theming guide](https://manukminasyan.github.io/vue-functional-calendar/essentials/theming).
+
+## Behavior changes
+
+- Week numbers with `sundayStart` follow ISO numbering of each row's Thursday. 2.x showed numbers one lower.
+- A typed date is validated. `31/02/2026` is rejected, and a value commits only when day, month and a four digit year are complete. Padded dates such as `05/03/2026` are accepted.
+- Enter in the single and range inputs is never intercepted, so a surrounding form submits. The tags input of the multiple date picker still adds a valid typed date on Enter.
+
+## Imports
+
+3.x has an `exports` map with two entries, `vue-functional-calendar` and `vue-functional-calendar/style.css`. Deep imports from `src/` no longer resolve. Use the package entry.
+
+```js
+// 2.x
+import FunctionalCalendar from 'vue-functional-calendar/src/components/FunctionalCalendar.vue'
+
+// 3.x
+import { FunctionalCalendar } from 'vue-functional-calendar'
+```
+
+## Props are still not reactive
+
+As in 2.x, the calendar reads its props once, when it is created. Re-key the component to apply a change:
+
+```vue
+<FunctionalCalendar :key="locale" :locale="locale" is-date-picker />
+```
+
+`modelValue` and `enabledDates` are watched.
+
+## New in 3.1
+
+- Theming with `--vfc-*` tokens and a dark mode.
+- Keyboard navigation and a grid with ARIA roles.
+- The `locale` prop and the `labels` prop.
+- The `presets` prop for quick ranges.
+
+See the [changelog](https://manukminasyan.github.io/vue-functional-calendar/community/changelog) for the full list.
+
+
+# Usage
+
+> Render a calendar, read the bound value and configure it.
+
+## A first calendar
+
+Bind the calendar with `v-model`. Without a selection mode it only displays dates, so turn one on.
+
+<calendar-demo :config="{"isDatePicker":true}">
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import { FunctionalCalendar } from 'vue-functional-calendar'
+import 'vue-functional-calendar/style.css'
+
+const value = ref({})
+</script>
+
+<template>
+  <FunctionalCalendar v-model="value" is-date-picker />
+</template>
+```
+
+</calendar-demo>
+
+## Selection modes
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Prop
+    </th>
+    
+    <th>
+      What users pick
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      <code>
+        isDatePicker
+      </code>
+    </td>
+    
+    <td>
+      One date.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isMultipleDatePicker
+      </code>
+    </td>
+    
+    <td>
+      Any number of single dates.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isDateRange
+      </code>
+    </td>
+    
+    <td>
+      One range with a start and an end.
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        isDateRange
+      </code>
+      
+       with <code>
+        isMultipleDateRange
+      </code>
+    </td>
+    
+    <td>
+      Several ranges.
+    </td>
+  </tr>
+</tbody>
+</table>
+
+## The bound value
+
+The calendar keeps its whole state in one object. Which keys matter depends on the mode.
+
+<table>
+<thead>
+  <tr>
+    <th>
+      Mode
+    </th>
+    
+    <th>
+      Where the value lives
+    </th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr>
+    <td>
+      Date picker
+    </td>
+    
+    <td>
+      <code>
+        selectedDate
+      </code>
+      
+      , a string in <code>
+        dateFormat
+      </code>
+      
+      . With the time picker, also <code>
+        selectedDateTime
+      </code>
+      
+      , <code>
+        selectedHour
+      </code>
+      
+       and <code>
+        selectedMinute
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Multiple date picker
+    </td>
+    
+    <td>
+      <code>
+        selectedDates
+      </code>
+      
+      , a list of <code>
+        { date, dateTime, hour, minute }
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Date range
+    </td>
+    
+    <td>
+      <code>
+        dateRange.start
+      </code>
+      
+       and <code>
+        dateRange.end
+      </code>
+      
+      .
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Multiple date range
+    </td>
+    
+    <td>
+      <code>
+        multipleDateRange
+      </code>
+      
+      , a list of <code>
+        { start, end }
+      </code>
+      
+      .
+    </td>
+  </tr>
+</tbody>
+</table>
+
+`currentDate` is a `Date` in the month on display. `selectedDatesItem` is the text in the tags input.
+
+The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. If you want every key from the start, begin with a full model:
+
+```js
+const value = ref({
+  currentDate: new Date(),
+  selectedDate: false,
+  selectedDateTime: false,
+  selectedHour: '00',
+  selectedMinute: '00',
+  selectedDatesItem: '',
+  selectedDates: [],
+  dateRange: { start: '', end: '' },
+  multipleDateRange: [],
+})
+```
+
+Date strings use `dateFormat`, which is `dd/mm/yyyy hh:MM` by default. Day and month are not padded, so you read `5/3/2026`.
+
+## Listen to events
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  is-date-range
+  @choseDay="day => console.log(day.date)"
+  @selectedDaysCount="count => console.log(count)"
+  @changedMonth="date => console.log(date)"
+/>
+```
+
+See [events](https://manukminasyan.github.io/vue-functional-calendar/essentials/events) for every payload.
+
+## Configure with props or `configs`
+
+Pass props one by one, or group them in a `configs` object. When you pass `configs`, the calendar reads its settings from there and ignores the matching props.
+
+```vue
+<FunctionalCalendar
+  v-model="value"
+  :configs="{ isDateRange: true, dateFormat: 'yyyy-mm-dd', showWeekNumbers: true }"
+/>
+```
+
+## Props are read once
+
+The calendar reads its props when it is created. Changing `isDateRange`, `locale` or `calendarsCount` afterwards has no effect. Re-key the component to rebuild it.
+
+```vue
+<FunctionalCalendar :key="locale" :locale="locale" is-date-picker v-model="value" />
+```
+
+`modelValue` and `enabledDates` are watched, so changing those works on a live calendar.
+
+## Call methods
+
+Use a template ref to move the calendar from code.
+
+```vue
+<script setup>
+const calendar = ref(null)
+</script>
+
+<template>
+  <FunctionalCalendar ref="calendar" v-model="value" />
+  <button @click="calendar.PreMonth()">Previous</button>
+  <button @click="calendar.NextMonth()">Next</button>
+  <button @click="calendar.ChooseDate('today')">Today</button>
+</template>
+```
+
+`PreMonth`, `NextMonth`, `PreYear` and `NextYear` take an optional calendar index. `ChooseDate` takes a date in `dateFormat` or the word `today`, and moves the calendar there.
+
+
+# Playground
+
+> Change the main props and theme tokens, and copy the code.
+
+Change a control and the calendar rebuilds with the new props, because props are not reactive. The code under the calendar updates with it. Theme controls set `--vfc-*` tokens, which do apply live.
+
+<calendar-playground>
+
+
+
+</calendar-playground>
+
+
+<u-page-hero>
+<template v-slot:title="">
+
+Vue Functional Calendar
+
+</template>
+
+<template v-slot:description="">
+
+Lightweight calendar and datepicker for Vue 3.
+
+Date picker, date range with presets, multiple calendars and a time picker, with keyboard support, dark mode and Intl locales. No runtime dependencies.
+
+</template>
+
+<template v-slot:links="">
+<u-button color="neutral" size="xl" to="https://manukminasyan.github.io/vue-functional-calendar/getting-started/installation" trailing-icon="i-lucide-arrow-right">
+
+Get started
+
+</u-button>
+
+<u-button color="neutral" size="xl" to="https://manukminasyan.github.io/vue-functional-calendar/examples/selection-modes" icon="i-lucide-layout-grid" variant="outline">
+
+Examples
+
+</u-button>
+
+<u-button color="neutral" size="xl" to="https://github.com/ManukMinasyan/vue-functional-calendar" icon="i-simple-icons-github" variant="ghost" target="_blank">
+
+GitHub
+
+</u-button>
+</template>
+</u-page-hero>
+
+<calendar-hero>
+
+
+
+</calendar-hero>
+
+<u-page-section>
+<template v-slot:title="">
+
+Why Vue Functional Calendar?
+
+</template>
+
+<template v-slot:features="">
+<u-page-feature icon="i-lucide-calendar-days">
+<template v-slot:title="">
+
+Date picker
+
+</template>
+
+<template v-slot:description="">
+
+Pick one date or several, inline or in a modal behind a typeable input.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-calendar-range">
+<template v-slot:title="">
+
+Ranges and presets
+
+</template>
+
+<template v-slot:description="">
+
+Select one range or many, with minimum and maximum lengths and one-click presets.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-columns-2">
+<template v-slot:title="">
+
+Multiple calendars
+
+</template>
+
+<template v-slot:description="">
+
+Show two or more months side by side, linked or independent.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-clock">
+<template v-slot:title="">
+
+Time picker
+
+</template>
+
+<template v-slot:description="">
+
+Add hours and minutes to a single date, a range or several dates.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-palette">
+<template v-slot:title="">
+
+Theming and dark mode
+
+</template>
+
+<template v-slot:description="">
+
+Restyle everything with --vfc-* custom properties, in light and dark.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-keyboard">
+<template v-slot:title="">
+
+Keyboard and ARIA
+
+</template>
+
+<template v-slot:description="">
+
+Arrow-key navigation, a labeled date grid and managed focus.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-languages">
+<template v-slot:title="">
+
+Intl locales
+
+</template>
+
+<template v-slot:description="">
+
+Day names, month names and week start from the browser, plus labels for every string.
+
+</template>
+</u-page-feature>
+
+<u-page-feature icon="i-lucide-puzzle">
+<template v-slot:title="">
+
+Slots
+
+</template>
+
+<template v-slot:description="">
+
+Replace the day cell, arrows, footer, clear button and inputs.
+
+</template>
+</u-page-feature>
+</template>
+</u-page-section>
+
+## Resources for Agents
+
+- [API catalog: every service document this site publishes](https://manukminasyan.github.io/vue-functional-calendar/.well-known/api-catalog)
+- [Sitemap (XML)](https://manukminasyan.github.io/vue-functional-calendar/sitemap.xml)
+- [Sitemap (Markdown): every page on the site](https://manukminasyan.github.io/vue-functional-calendar/sitemap.md)
+- [MCP server card: MCP endpoint at https://manukminasyan.github.io/vue-functional-calendar/mcp](https://manukminasyan.github.io/vue-functional-calendar/.well-known/mcp/server-card.json)
+- [MCP endpoint (streamable HTTP)](https://manukminasyan.github.io/vue-functional-calendar/mcp)
+- [llms.txt: index of the documentation for LLMs](https://manukminasyan.github.io/vue-functional-calendar/llms.txt)
+- [llms-full.txt: the full documentation as a single file](https://manukminasyan.github.io/vue-functional-calendar/llms-full.txt)
+- [OpenAPI document: every route this site serves to agents](https://manukminasyan.github.io/vue-functional-calendar/openapi.json)
