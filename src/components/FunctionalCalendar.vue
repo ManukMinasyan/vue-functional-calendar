@@ -952,25 +952,38 @@ export default {
       }
 
       const { minSelDays, maxSelDays } = this.fConfigs
-      let span = null
+      const isShort = minSelDays && diffDays < minSelDays
+      const isLong = !isShort && maxSelDays && diffDays >= maxSelDays
 
-      if (minSelDays && diffDays < minSelDays) {
-        span = minSelDays - 1
-      } else if (maxSelDays && diffDays >= maxSelDays) {
-        span = maxSelDays - 1
+      if (!isShort && !isLong) return
+
+      const step = itemTime >= startDate.getTime() ? 1 : -1
+      const edgeKey = step === 1 ? 'end' : 'start'
+      let edge = dayStart(
+        startDate,
+        step * ((isShort ? minSelDays : maxSelDays) - 1)
+      )
+
+      if (isShort) {
+        edge = this.lastOpenDay(
+          helpCalendar.getDateFromFormat(range[edgeKey]),
+          edge,
+          step
+        )
       }
 
-      if (span === null) return
+      range[edgeKey] = this.withTimeSuffix(helpCalendar.formatDate(edge))
+    },
+    lastOpenDay(from, target, step) {
+      let day = from
 
-      if (itemTime >= startDate.getTime()) {
-        range.end = this.withTimeSuffix(
-          helpCalendar.formatDate(dayStart(startDate, span))
-        )
-      } else {
-        range.start = this.withTimeSuffix(
-          helpCalendar.formatDate(dayStart(startDate, -span))
-        )
+      while (daysBetween(day, target) * step > 0) {
+        const next = dayStart(day, step)
+        if (this.isDateBlocked(this.helpCalendar.formatDate(next))) break
+        day = next
       }
+
+      return day
     },
     resolvePreset(entry, now) {
       const isKey = typeof entry === 'string'

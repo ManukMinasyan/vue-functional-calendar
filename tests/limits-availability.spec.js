@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
   mountCalendar,
   clickDay,
+  clickDays,
   findDay,
   findDayAny,
   calendarTitle,
@@ -256,5 +257,79 @@ describe('disabledDayNames', () => {
     await clickDay(wrapper, 12)
 
     expect(lastValue(wrapper).selectedDate).toBe('12/10/2026')
+  })
+})
+
+describe('range clamps', () => {
+  const minFive = { isDateRange: true, minSelDays: 5 }
+
+  it('stops the minSelDays extension at the max limit', async () => {
+    const { wrapper } = mountCalendar({
+      ...minFive,
+      limits: { min: '1/10/2026', max: '12/10/2026' }
+    })
+
+    await clickDays(wrapper, [10, 11])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '12/10/2026'
+    })
+  })
+
+  it('stops the minSelDays extension at the min limit when chosen backwards', async () => {
+    const { wrapper } = mountCalendar({
+      ...minFive,
+      limits: { min: '9/10/2026', max: '30/10/2026' }
+    })
+
+    await clickDays(wrapper, [12, 11])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '9/10/2026',
+      end: '12/10/2026'
+    })
+  })
+
+  it('stops the minSelDays extension before a disabled day', async () => {
+    const { wrapper } = mountCalendar({
+      ...minFive,
+      disabledDates: ['13/10/2026']
+    })
+
+    await clickDays(wrapper, [10, 11])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '12/10/2026'
+    })
+  })
+
+  it('stops the minSelDays extension before a disabled day name', async () => {
+    const { wrapper } = mountCalendar({
+      ...minFive,
+      disabledDayNames: ['Mo']
+    })
+
+    await clickDays(wrapper, [10, 11])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '11/10/2026'
+    })
+  })
+
+  it('keeps a range chosen across a disabled day when it already reaches minSelDays', async () => {
+    const { wrapper } = mountCalendar({
+      ...minFive,
+      disabledDates: ['12/10/2026']
+    })
+
+    await clickDays(wrapper, [10, 15])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '15/10/2026'
+    })
   })
 })
