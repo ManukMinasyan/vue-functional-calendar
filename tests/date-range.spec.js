@@ -170,6 +170,155 @@ describe('date range', () => {
   })
 })
 
+describe('date range selection rules', () => {
+  it('selects a single day range when the same day is clicked twice', async () => {
+    const { wrapper, events } = mountCalendar({ isDateRange: true })
+
+    await clickDays(wrapper, [10, 10])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '10/10/2026'
+    })
+    expect(eventsNamed(events, 'selectedDaysCount')).toEqual([0])
+  })
+
+  it('extends a single day range to minSelDays', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, minSelDays: 3 })
+
+    await clickDays(wrapper, [10, 10])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '12/10/2026'
+    })
+  })
+
+  it('keeps a range that already reaches minSelDays', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, minSelDays: 3 })
+
+    await clickDays(wrapper, [10, 12])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '12/10/2026'
+    })
+  })
+
+  it('emits the selected days count before the minSelDays extension', async () => {
+    const { wrapper, events } = mountCalendar({
+      isDateRange: true,
+      minSelDays: 5
+    })
+
+    await clickDays(wrapper, [10, 12])
+
+    expect(eventsNamed(events, 'selectedDaysCount')).toEqual([2])
+  })
+
+  it('keeps a range that stays within maxSelDays', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, maxSelDays: 3 })
+
+    await clickDays(wrapper, [10, 12])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026',
+      end: '12/10/2026'
+    })
+  })
+
+  it('moves the start forward to maxSelDays when the range is chosen backwards', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, maxSelDays: 3 })
+
+    await clickDays(wrapper, [20, 10])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '18/10/2026',
+      end: '20/10/2026'
+    })
+  })
+
+  it('starts a new range after a clamped range', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, maxSelDays: 3 })
+
+    await clickDays(wrapper, [10, 20, 25])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '25/10/2026',
+      end: ''
+    })
+  })
+})
+
+describe('date range with a time picker', () => {
+  const options = { isDateRange: true, withTimePicker: true }
+
+  const clickWithTime = async (wrapper, days) => {
+    for (const day of days) {
+      await clickDay(wrapper, day)
+      await wrapper.find('.vfc-close').trigger('click')
+    }
+  }
+
+  it('appends a time to both ends', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickWithTime(wrapper, [10, 14])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026 00:00',
+      end: '14/10/2026 00:00'
+    })
+  })
+
+  it('swaps the dates with their times when the second click is before the start', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickWithTime(wrapper, [14, 10])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026 00:00',
+      end: '14/10/2026 00:00'
+    })
+  })
+
+  it('starts a new range with a time on the third click', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickWithTime(wrapper, [10, 14, 20])
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '20/10/2026 00:00',
+      end: ''
+    })
+  })
+
+  it('keeps the edited start time when the end is chosen', async () => {
+    const { wrapper } = mountCalendar(options)
+    await clickDay(wrapper, 10)
+    await wrapper
+      .findAll('.vfc-time-picker__list--hours .vfc-time-picker__item')
+      .find(item => item.text() === '05')
+      .trigger('click')
+    await wrapper.find('.vfc-close').trigger('click')
+
+    await clickDay(wrapper, 14)
+
+    expect(wrapper.vm.calendar.dateRange).toEqual({
+      start: '10/10/2026 05:00',
+      end: '14/10/2026 00:00'
+    })
+  })
+
+  it('counts the days of a range chosen backwards', async () => {
+    const { wrapper, events } = mountCalendar(options)
+
+    await clickWithTime(wrapper, [14, 10])
+
+    expect(eventsNamed(events, 'selectedDaysCount')).toEqual([4])
+  })
+})
+
 describe('clearing a range', () => {
   it('renders no clear button without canClearRange', () => {
     const { wrapper } = mountCalendar({ isDateRange: true })

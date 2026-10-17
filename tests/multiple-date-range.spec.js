@@ -228,3 +228,75 @@ describe('multiple date ranges', () => {
     expect(button.classes()).toContain('disabled')
   })
 })
+
+describe('multiple date range selection rules', () => {
+  it('selects a single day range when the same day is clicked twice', async () => {
+    const { wrapper, events } = mountCalendar(options)
+
+    await clickDays(wrapper, [10, 10])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '10/10/2026' }
+    ])
+    expect(eventsNamed(events, 'selectedDaysCount')).toEqual([0])
+  })
+
+  it('extends a short range to minSelDays', async () => {
+    const { wrapper } = mountCalendar({ ...options, minSelDays: 5 })
+
+    await clickDays(wrapper, [10, 12])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '14/10/2026' }
+    ])
+  })
+
+  it('moves the start back to reach minSelDays when the range is chosen backwards', async () => {
+    const { wrapper } = mountCalendar({ ...options, minSelDays: 5 })
+
+    await clickDays(wrapper, [12, 10])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '8/10/2026', end: '12/10/2026' }
+    ])
+  })
+
+  it('emits the selected days count before the minSelDays extension', async () => {
+    const { wrapper, events } = mountCalendar({ ...options, minSelDays: 5 })
+
+    await clickDays(wrapper, [10, 12])
+
+    expect(eventsNamed(events, 'selectedDaysCount')).toEqual([2])
+  })
+
+  it('clamps a long range to maxSelDays', async () => {
+    const { wrapper } = mountCalendar({ ...options, maxSelDays: 3 })
+
+    await clickDays(wrapper, [10, 20])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+
+  it('moves the start forward to maxSelDays when the range is chosen backwards', async () => {
+    const { wrapper } = mountCalendar({ ...options, maxSelDays: 3 })
+
+    await clickDays(wrapper, [20, 10])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '18/10/2026', end: '20/10/2026' }
+    ])
+  })
+
+  it('clamps only the range being completed', async () => {
+    const { wrapper } = mountCalendar({ ...options, maxSelDays: 3 })
+
+    await clickDays(wrapper, [3, 5, 10, 20])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '3/10/2026', end: '5/10/2026' },
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+})
