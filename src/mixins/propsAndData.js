@@ -2,6 +2,21 @@ import { DEFAULT_LABELS } from '../utils/locale'
 
 const undefinedGenerator = () => undefined
 
+export const createCalendarState = () => ({
+  currentDate: new Date(),
+  selectedDate: false,
+  selectedDateTime: false,
+  selectedHour: '00',
+  selectedMinute: '00',
+  selectedDatesItem: '',
+  selectedDates: [],
+  dateRange: {
+    start: '',
+    end: ''
+  },
+  multipleDateRange: []
+})
+
 export const propsAndData = {
   props: {
     activeHours: {
@@ -214,20 +229,7 @@ export const propsAndData = {
       hoveredObject: null,
       presetNow: new Date(),
       batchingModel: false,
-      calendar: {
-        currentDate: new Date(),
-        selectedDate: false,
-        selectedDateTime: false,
-        selectedHour: '00',
-        selectedMinute: '00',
-        selectedDatesItem: '',
-        selectedDates: [],
-        dateRange: {
-          start: '',
-          end: ''
-        },
-        multipleDateRange: []
-      },
+      calendar: createCalendarState(),
       transitionPrefix: 'left',
       showCalendar: true,
       showMonthPicker: false,

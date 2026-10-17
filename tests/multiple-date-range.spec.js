@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
+import { h, nextTick, reactive } from 'vue'
+import { mount } from '@vue/test-utils'
+import FunctionalCalendar from '../index.js'
 import {
+  FIXED_DATE,
   mountCalendar,
   mountCalendarReady,
   clickDay,
@@ -146,6 +150,33 @@ describe('multiple date ranges', () => {
     wrapper.vm.$.appContext.config.errorHandler = original
 
     expect(thrown?.message).toBe('Invalid Data Range')
+  })
+
+  it('keeps working when a parent binds a multipleDateRange-only model one way', async () => {
+    const errors = []
+    const model = reactive({ multipleDateRange: [] })
+    const wrapper = mount(
+      {
+        render: () =>
+          h(FunctionalCalendar, {
+            ...options,
+            newCurrentDate: FIXED_DATE,
+            modelValue: model
+          })
+      },
+      {
+        attachTo: document.body,
+        global: { config: { errorHandler: error => errors.push(error) } }
+      }
+    )
+    await nextTick()
+
+    await clickDay(wrapper, 3)
+    await clickDay(wrapper, 5)
+    await clickDay(wrapper, 10)
+
+    expect(errors).toEqual([])
+    expect(model.multipleDateRange).toEqual([])
   })
 
   it('clears every range with the Clear Ranges button', async () => {

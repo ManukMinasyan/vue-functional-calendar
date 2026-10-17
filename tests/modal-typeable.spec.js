@@ -6,6 +6,7 @@ import {
   mountCalendar,
   mountCalendarReady,
   clickDay,
+  findDay,
   eventsNamed,
   lastValue
 } from './helpers.js'
@@ -947,6 +948,77 @@ describe('empty model', () => {
     expect(model.value.selectedDates.map(date => date.date)).toEqual([
       '5/1/2027'
     ])
+  })
+})
+
+describe('model intake', () => {
+  const mountWithErrors = async props => {
+    const errors = []
+    const mounted = mountCalendar(props, {
+      global: { config: { errorHandler: error => errors.push(error) } }
+    })
+    await nextTick()
+    return { ...mounted, errors }
+  }
+
+  const isMarked = (wrapper, text) =>
+    findDay(wrapper, text).classList.contains('vfc-marked')
+
+  it('clears the selection when the model is reset to an empty object', async () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      modelValue: emptyModel()
+    })
+    await clickDay(wrapper, 10)
+    expect(isMarked(wrapper, 10)).toBe(true)
+
+    await wrapper.setProps({ modelValue: {} })
+
+    expect(isMarked(wrapper, 10)).toBe(false)
+  })
+
+  it('clears the selection when the model is reset to a full empty model', async () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      modelValue: emptyModel()
+    })
+    await clickDay(wrapper, 10)
+
+    await wrapper.setProps({ modelValue: emptyModel() })
+
+    expect(isMarked(wrapper, 10)).toBe(false)
+  })
+
+  it('stays usable when the model is null', async () => {
+    const { wrapper, errors } = await mountWithErrors({
+      isDatePicker: true,
+      modelValue: null
+    })
+
+    await clickDay(wrapper, 10)
+
+    expect(errors).toEqual([])
+    expect(lastValue(wrapper).selectedDate).toBe('10/10/2026')
+  })
+
+  it('mounts with a model that has no dateRange', async () => {
+    const { wrapper, errors } = await mountWithErrors({
+      isDatePicker: true,
+      modelValue: { selectedDate: '10/10/2026' }
+    })
+
+    expect(errors).toEqual([])
+    expect(isMarked(wrapper, 10)).toBe(true)
+  })
+
+  it('mounts with a dateRange whose start and end are false', async () => {
+    const { wrapper, errors } = await mountWithErrors({
+      isDateRange: true,
+      modelValue: { ...emptyModel(), dateRange: { start: false, end: false } }
+    })
+
+    expect(errors).toEqual([])
+    expect(wrapper.find('.vfc-calendar').exists()).toBe(true)
   })
 })
 

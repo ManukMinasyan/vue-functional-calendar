@@ -262,7 +262,7 @@
 
 <script>
 import helpCalendarClass from '../assets/js/helpCalendar'
-import { propsAndData } from '../mixins/propsAndData'
+import { propsAndData, createCalendarState } from '../mixins/propsAndData'
 import TimePicker from '../components/TimePicker.vue'
 import Arrows from '../components/Arrows.vue'
 import WeekNumbers from '../components/WeekNumbers.vue'
@@ -467,35 +467,15 @@ export default {
     this.$watch(
       'modelValue',
       function (value) {
+        if (!value || typeof value !== 'object') return
         if (toRaw(value) !== toRaw(this.calendar)) this.focusedDate = ''
-        if (
-          typeof value === 'object' &&
-          (value.hasOwnProperty('dateRange') ||
-            value.hasOwnProperty('selectedDate'))
-        ) {
-          this.calendar = value
+
+        if (this.isMultipleDateRangeOnly(value)) {
+          this.copyMultipleDateRange(value.multipleDateRange)
           return
         }
 
-        if (
-          typeof value === 'object' &&
-          value.hasOwnProperty('multipleDateRange')
-        ) {
-          this.calendar.multipleDateRange = value.multipleDateRange
-          const lastElement =
-            this.calendar.multipleDateRange[
-              Math.max(0, this.calendar.multipleDateRange.length - 1)
-            ]
-          if (
-            lastElement &&
-            ((lastElement.start && !lastElement.end) ||
-              (!lastElement.start && lastElement.end))
-          ) {
-            throw new Error('Invalid Data Range')
-          }
-        }
-
-        this.$emit('update:modelValue', this.calendar)
+        this.adoptModel(value)
       },
       { immediate: true, deep: true }
     )
@@ -566,6 +546,34 @@ export default {
     }
   },
   methods: {
+    isMultipleDateRangeOnly(value) {
+      return (
+        Object.prototype.hasOwnProperty.call(value, 'multipleDateRange') &&
+        !Object.prototype.hasOwnProperty.call(value, 'dateRange') &&
+        !Object.prototype.hasOwnProperty.call(value, 'selectedDate')
+      )
+    },
+    copyMultipleDateRange(ranges) {
+      const lastElement = ranges[ranges.length - 1]
+      if (
+        lastElement &&
+        ((lastElement.start && !lastElement.end) ||
+          (!lastElement.start && lastElement.end))
+      ) {
+        throw new Error('Invalid Data Range')
+      }
+      this.calendar.multipleDateRange = ranges.map(range => ({ ...range }))
+    },
+    adoptModel(value) {
+      const defaults = createCalendarState()
+      defaults.currentDate = this.calendar.currentDate
+      Object.keys(defaults).forEach(key => {
+        if (value[key] == null) value[key] = defaults[key]
+      })
+      value.dateRange.start = value.dateRange.start || ''
+      value.dateRange.end = value.dateRange.end || ''
+      this.calendar = value
+    },
     initCalendar() {
       this.setCalendarData()
       this.listRendering()

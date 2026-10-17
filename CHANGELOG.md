@@ -35,6 +35,8 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - Text typed after the date in a `displayTimeInput` field is kept, and the input is long enough to hold the time.
 - ArrowDown no longer opens the calendar while an IME composes, or when the input already handled the key.
 - A navigation arrow slot that renders a focusable component is no longer wrapped in a second button.
+- A model that is `null`, `{}` or missing keys such as `dateRange` no longer breaks the calendar. The calendar fills in the missing keys on your object, and resetting the model to `{}` clears the selection (#75, #117, #132).
+- A parent that binds a model holding only `multipleDateRange` can pick ranges without an `Invalid Data Range` error.
 - An empty `{}` v-model receives typed dates, time picker changes and cleared values.
 
 ## 2.10.0 - 2026-10-17
