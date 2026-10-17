@@ -189,6 +189,39 @@ describe('enabledDates', () => {
   })
 })
 
+describe.each([
+  ['Monday', false],
+  ['Sunday', true]
+])('disabledDayNames with a %s week start', (_, sundayStart) => {
+  const options = {
+    isDatePicker: true,
+    disabledDayNames: ['Su'],
+    sundayStart
+  }
+
+  it('hides and blocks only Sundays', () => {
+    const { wrapper } = mountCalendar(options)
+
+    ;[4, 11, 18].forEach(day => {
+      expect(findDayAny(wrapper, day).classList).toContain('vfc-hide')
+    })
+    ;[3, 5, 10].forEach(day => {
+      expect(findDayAny(wrapper, day).classList).not.toContain('vfc-hide')
+    })
+  })
+
+  it('ignores clicks on Sundays and accepts the other days', async () => {
+    const { wrapper, events } = mountCalendar(options)
+
+    findDayAny(wrapper, 11).click()
+    await wrapper.vm.$nextTick()
+    expect(eventsNamed(events, 'choseDay')).toHaveLength(0)
+
+    await clickDay(wrapper, 10)
+    expect(lastValue(wrapper).selectedDate).toBe('10/10/2026')
+  })
+})
+
 describe('disabledDayNames', () => {
   const options = { isDatePicker: true, disabledDayNames: ['Sa', 'Su'] }
 

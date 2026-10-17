@@ -32,9 +32,11 @@
 </template>
 
 <script>
+import { CALENDAR_KEY } from '../utils/injectionKeys'
+
 export default {
   name: 'Arrows',
-  inject: { calendarRoot: 'calendar' },
+  inject: { calendarRoot: CALENDAR_KEY },
   props: {
     fConfigs: {
       type: Object,

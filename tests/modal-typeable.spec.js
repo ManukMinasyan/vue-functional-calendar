@@ -230,6 +230,39 @@ describe('typeable inputs', () => {
     })
   })
 
+  it('accepts a typed date in January', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDatePicker: true,
+      isTypeable: true,
+      modelValue: model
+    })
+
+    await wrapper.find('input.vfc-single-input').setValue('15/1/2027')
+
+    expect(model.selectedDate).toBe('15/1/2027')
+  })
+
+  it('accepts typed January dates in the range inputs', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isTypeable: true,
+      modelValue: model
+    })
+    const [start, end] = wrapper.findAll('.vfc-multiple-input input')
+
+    await start.setValue('5/1/2027')
+    await end.setValue('18/1/2027')
+
+    expect(model.dateRange).toEqual({
+      start: '5/1/2027',
+      end: '18/1/2027'
+    })
+  })
+
   it('leaves the inputs read-only unless isTypeable is set', () => {
     const { wrapper } = mountCalendar({ isModal: true, isDateRange: true })
 

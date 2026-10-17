@@ -156,7 +156,7 @@
                       v-for="(day, day_key) in week.days"
                       ref="day"
                       :key="key + week_key + day_key + 1"
-                      :isMultipleDateRange="isMultipleDateRange"
+                      :isMultipleDateRange="fConfigs.isMultipleDateRange"
                       :day="day"
                       :fConfigs="fConfigs"
                       :calendar="calendar"
@@ -201,7 +201,9 @@
                     <span
                       :class="[rangeIsSelected ? 'active' : 'disabled']"
                       @click="cleanRange"
-                      >Clear Range{{ isMultipleDateRange ? 's' : '' }}</span
+                      >Clear Range{{
+                        fConfigs.isMultipleDateRange ? 's' : ''
+                      }}</span
                     >
                   </div>
                 </slot>
@@ -228,6 +230,7 @@ import PickerInputs from '../components/PickerInputs.vue'
 import Footer from '../components/Footer.vue'
 
 import { hElContains, hUniqueID } from '../utils/helpers'
+import { CALENDAR_KEY } from '../utils/injectionKeys'
 // import calendarMethods from '../utils/calendarMethods'
 
 export default {
@@ -243,7 +246,7 @@ export default {
   },
   mixins: [propsAndData],
   provide() {
-    return { calendar: this }
+    return { [CALENDAR_KEY]: this }
   },
   emits: [
     'update:modelValue',
@@ -272,7 +275,7 @@ export default {
       return ''
     },
     rangeIsSelected() {
-      if (!this.isMultipleDateRange)
+      if (!this.fConfigs.isMultipleDateRange)
         return !!(this.calendar.dateRange.end && this.calendar.dateRange.start)
       return this.calendar.multipleDateRange.length > 0
     },
@@ -323,7 +326,7 @@ export default {
       },
       set(newValue) {
         newValue = this.helpCalendar.mask(newValue)
-        if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+        if (this.helpCalendar.checkValidDate(newValue)) {
           this.calendar.selectedDate = newValue
         }
       }
@@ -632,12 +635,9 @@ export default {
       //Disabled Dates - Start
 
       // Disable days of week if set in configuration
-      let dateDay = this.helpCalendar.getDateFromFormat(item.date).getDay() - 1
-      if (dateDay === -1) {
-        dateDay = 6
-      }
-
-      let dayOfWeekString = this.fConfigs.dayNames[dateDay]
+      let dayOfWeekString = this.helpCalendar.getDayName(
+        this.helpCalendar.getDateFromFormat(item.date)
+      )
       if (
         this.fConfigs.disabledDayNames.includes(dayOfWeekString) ||
         isDisabledDate(item.date)
@@ -1093,13 +1093,9 @@ export default {
                     thisDate < startDate.getTime()) ||
                   (itemDate === thisDate && thisDate > startDate.getTime())
 
-                let dateDay =
-                  this.helpCalendar.getDateFromFormat(item.date).getDay() - 1
-                if (dateDay === -1) {
-                  dateDay = 6
-                }
-
-                let dayOfWeekString = this.fConfigs.dayNames[dateDay]
+                let dayOfWeekString = this.helpCalendar.getDayName(
+                  this.helpCalendar.getDateFromFormat(item.date)
+                )
                 if (
                   !this.fConfigs.disabledDayNames.includes(dayOfWeekString) &&
                   ((itemDate > startDate.getTime() && itemDate < thisDate) ||
@@ -1246,13 +1242,9 @@ export default {
                       thisDate < startDate.getTime()) ||
                     (itemDate === thisDate && thisDate > startDate.getTime())
 
-                  let dateDay =
-                    this.helpCalendar.getDateFromFormat(item.date).getDay() - 1
-                  if (dateDay === -1) {
-                    dateDay = 6
-                  }
-
-                  let dayOfWeekString = this.fConfigs.dayNames[dateDay]
+                  let dayOfWeekString = this.helpCalendar.getDayName(
+                    this.helpCalendar.getDateFromFormat(item.date)
+                  )
                   if (
                     !this.fConfigs.disabledDayNames.includes(dayOfWeekString) &&
                     ((itemDate > startDate.getTime() && itemDate < thisDate) ||
@@ -1687,7 +1679,7 @@ export default {
       return date === this.fConfigs.markedDateRange.start
     },
     cleanRange() {
-      if (!this.isMultipleDateRange) {
+      if (!this.fConfigs.isMultipleDateRange) {
         this.calendar.dateRange.end = ''
         this.calendar.dateRange.start = ''
         return

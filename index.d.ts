@@ -1,4 +1,10 @@
-import type { DefineComponent, Plugin } from 'vue'
+import type {
+  App,
+  DefineComponent,
+  EmitsToProps,
+  PublicProps,
+  SlotsType
+} from 'vue'
 
 export interface FunctionalCalendarDateRange {
   start: string
@@ -86,15 +92,78 @@ export type FunctionalCalendarOptions = Partial<
   Omit<FunctionalCalendarProps, 'modelValue' | 'configs'>
 >
 
-export const FunctionalCalendar: DefineComponent<
+export interface FunctionalCalendarDay {
+  day: number
+  date: string
+  hide: boolean
+  isMouseToLeft: boolean
+  isMouseToRight: boolean
+  isHovered: boolean
+  isDateRangeStart: boolean
+  isDateRangeEnd: boolean
+  hideLeftAndRightDays: boolean
+  isToday: boolean
+  isMarked: boolean
+}
+
+export interface FunctionalCalendarWeek {
+  year: number
+  start: number
+  end: number
+  number: number
+  days: FunctionalCalendarDay[]
+}
+
+export type FunctionalCalendarEmits = {
+  'update:modelValue': (value: FunctionalCalendarValue) => void
+  opened: () => void
+  closed: () => void
+  dayClicked: (day: FunctionalCalendarDay) => void
+  choseDay: (day: FunctionalCalendarDay) => void
+  selectedDaysCount: (count: number) => void
+  dayMouseOver: (date: string) => void
+  changedMonth: (date: Date) => void
+  changedYear: (date: Date) => void
+}
+
+export type FunctionalCalendarSlots = SlotsType<{
+  default: (props: {
+    week: FunctionalCalendarWeek
+    day: FunctionalCalendarDay
+  }) => any
+  navigationArrowLeft: () => any
+  navigationArrowRight: () => any
+  cleaner: () => any
+  footer: () => any
+  dateRangeInputs: (props: {
+    startDate: string
+    endDate: string
+    isTypeable: boolean
+  }) => any
+  datePickerInput: (props: { selectedDate: string; isTypeable: boolean }) => any
+}>
+
+export type FunctionalCalendarComponent = DefineComponent<
   FunctionalCalendarProps,
   {},
   {},
   {},
-  FunctionalCalendarMethods
+  FunctionalCalendarMethods,
+  {},
+  {},
+  FunctionalCalendarEmits,
+  string,
+  PublicProps,
+  Readonly<FunctionalCalendarProps> & EmitsToProps<FunctionalCalendarEmits>,
+  {},
+  FunctionalCalendarSlots
 >
 
-declare const plugin: Plugin<[FunctionalCalendarOptions?]> &
-  typeof FunctionalCalendar
+export const FunctionalCalendar: FunctionalCalendarComponent
+
+declare const plugin: FunctionalCalendarComponent & {
+  install(app: App, options?: FunctionalCalendarOptions): void
+  FunctionalCalendar: FunctionalCalendarComponent
+}
 
 export default plugin

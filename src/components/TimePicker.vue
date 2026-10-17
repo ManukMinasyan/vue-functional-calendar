@@ -70,9 +70,11 @@
 </template>
 
 <script>
+import { CALENDAR_KEY } from '../utils/injectionKeys'
+
 export default {
   name: 'TimePicker',
-  inject: { calendarRoot: 'calendar' },
+  inject: { calendarRoot: CALENDAR_KEY },
   data() {
     return {
       startDateActive: true,
@@ -273,15 +275,11 @@ export default {
       return minute == this.formatTime(i)
     },
     setStyles() {
-      //let container = this.calendarRoot.$refs.mainContainer
-
       this.setScrollPosition()
 
-      let timeLineHeight = +this.height - 35 - 85 // - paddings - titles height
-      document.getElementsByClassName('vfc-time-picker__list')[0].style.height =
-        timeLineHeight + 'px'
-      document.getElementsByClassName('vfc-time-picker__list')[1].style.height =
-        timeLineHeight + 'px'
+      const timeLineHeight = +this.height - 35 - 85
+      this.$refs.hourList.style.height = `${timeLineHeight}px`
+      this.$refs.minuteList.style.height = `${timeLineHeight}px`
     },
     setScrollPosition() {
       let container = this.calendarRoot.$refs.mainContainer

@@ -10,6 +10,27 @@ import {
   FIXED_DATE
 } from './helpers.js'
 
+describe('provide key', () => {
+  it('does not shadow a calendar key provided by the app', () => {
+    const Probe = {
+      inject: ['calendar'],
+      render() {
+        return h('i', { class: 'probe' }, String(this.calendar))
+      }
+    }
+
+    const { wrapper } = mountCalendar(
+      { isDatePicker: true },
+      {
+        global: { provide: { calendar: 'from-app' } },
+        slots: { default: () => h(Probe) }
+      }
+    )
+
+    expect(wrapper.find('.probe').text()).toBe('from-app')
+  })
+})
+
 describe('default day slot', () => {
   it('renders the slot once per displayed day with week and day props', () => {
     const received = []

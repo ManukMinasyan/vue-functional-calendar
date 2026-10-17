@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import { CALENDAR_KEY } from '../utils/injectionKeys'
+
 import { Comment, Fragment } from 'vue'
 
 const hasContent = vnodes =>
@@ -36,7 +38,7 @@ const hasContent = vnodes =>
 
 export default {
   name: 'Day',
-  inject: { calendarRoot: 'calendar' },
+  inject: { calendarRoot: CALENDAR_KEY },
   props: {
     day_key: {
       type: Number,
@@ -300,11 +302,9 @@ export default {
       }
 
       // Disable days of week if set in configuration
-      let dateDay = this.helpCalendar.getDateFromFormat(day.date).getDay() - 1
-      if (dateDay === -1) {
-        dateDay = 6
-      }
-      let dayOfWeekString = this.fConfigs.dayNames[dateDay]
+      let dayOfWeekString = this.helpCalendar.getDayName(
+        this.helpCalendar.getDateFromFormat(day.date)
+      )
       if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
         day.hide = true
         classes.push('vfc-cursor-not-allowed')

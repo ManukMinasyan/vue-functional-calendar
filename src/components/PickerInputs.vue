@@ -81,9 +81,11 @@
 </template>
 
 <script>
+import { CALENDAR_KEY } from '../utils/injectionKeys'
+
 export default {
   name: 'PickerInputs',
-  inject: { calendarRoot: 'calendar' },
+  inject: { calendarRoot: CALENDAR_KEY },
   props: {
     fConfigs: {
       type: Object,
@@ -108,7 +110,7 @@ export default {
       set(newValue) {
         const helpCalendar = this.calendarRoot.helpCalendar
         newValue = helpCalendar.mask(newValue)
-        if (helpCalendar.getDateFromFormat(newValue).getMonth()) {
+        if (helpCalendar.checkValidDate(newValue)) {
           this.calendar.dateRange.start = newValue
         }
       }
@@ -120,7 +122,7 @@ export default {
       set(newValue) {
         const helpCalendar = this.calendarRoot.helpCalendar
         newValue = helpCalendar.mask(newValue)
-        if (helpCalendar.getDateFromFormat(newValue).getMonth()) {
+        if (helpCalendar.checkValidDate(newValue)) {
           this.calendar.dateRange.end = newValue
         }
       }

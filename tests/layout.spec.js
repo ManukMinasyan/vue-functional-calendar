@@ -21,6 +21,31 @@ describe('showWeekNumbers', () => {
     })
   })
 
+  it('numbers the first week of October 2026 as ISO week 40', () => {
+    const { wrapper } = mountCalendar({ showWeekNumbers: true })
+
+    expect(wrapper.find('.vfc-week-number').text()).toBe('40')
+  })
+
+  it.each([
+    [new Date(2021, 0, 1), 53],
+    [new Date(2021, 0, 4), 1],
+    [new Date(2025, 11, 29), 1],
+    [new Date(2026, 9, 1), 40],
+    [new Date(2026, 0, 1), 1],
+    [new Date(2024, 11, 30), 1]
+  ])('computes the ISO week of %s as %i', (date, week) => {
+    expect(date.getWeekNumber(false)).toBe(week)
+  })
+
+  it('does not change the date it is called on', () => {
+    const date = new Date(2026, 9, 1)
+
+    date.getWeekNumber(false)
+
+    expect(date.getTime()).toBe(new Date(2026, 9, 1).getTime())
+  })
+
   it('adds an empty cell to the day name row for the number column', () => {
     const { wrapper } = mountCalendar({ showWeekNumbers: true })
 

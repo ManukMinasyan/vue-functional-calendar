@@ -52,15 +52,21 @@
   "unpkg": "./dist/vue-functional-calendar.umd.js",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./dist/vue-functional-calendar.js",
-      "require": "./dist/vue-functional-calendar.cjs"
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./dist/vue-functional-calendar.js"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./dist/vue-functional-calendar.cjs"
+      }
     },
     "./style.css": "./dist/style.css"
   },
   "files": [
     "dist",
     "index.d.ts",
+    "index.d.cts",
     "README.md",
     "LICENSE"
   ],
@@ -81,6 +87,7 @@
     "@eslint/js": "^9.39",
     "@vitejs/plugin-vue": "^6.0",
     "@vue/test-utils": "^2.5",
+    "autoprefixer": "^10.4",
     "eslint": "^9.39",
     "eslint-plugin-vue": "^10.11",
     "globals": "^17.13",
@@ -90,5 +97,10 @@
     "vite": "^8.3",
     "vitest": "^5.0",
     "vue": "^3.5"
-  }
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

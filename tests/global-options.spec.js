@@ -89,6 +89,30 @@ describe('global options', () => {
   })
 })
 
+describe('configs prop with multiple date ranges', () => {
+  const options = {
+    configs: { isDateRange: true, isMultipleDateRange: true },
+    canClearRange: true
+  }
+
+  it('labels the cleaner for several ranges', () => {
+    const { wrapper } = mountCalendar(options)
+
+    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear Ranges')
+  })
+
+  it('clears every range', async () => {
+    const { wrapper } = mountCalendar(options)
+    await clickDay(wrapper, 3)
+    await clickDay(wrapper, 5)
+    expect(wrapper.vm.calendar.multipleDateRange).toHaveLength(1)
+
+    await wrapper.find('.rangeCleaner span').trigger('click')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([])
+  })
+})
+
 describe('configs prop', () => {
   it('reads settings from configs', () => {
     const { wrapper } = mountCalendar({

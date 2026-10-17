@@ -1,5 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
+import { mount } from '@vue/test-utils'
+import FunctionalCalendar from '../index.js'
 import {
   mountCalendar,
   clickDay,
@@ -21,6 +23,60 @@ const pick = async (wrapper, list, text) => {
     .find(item => item.text() === text)
     .trigger('click')
 }
+
+describe('time picker list height', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  const listHeights = wrapper =>
+    wrapper
+      .findAll('.vfc-time-picker__list')
+      .map(list => list.element.style.height)
+
+  it('sizes the lists when the calendar is not attached to the document', async () => {
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(400)
+    const wrapper = mount(FunctionalCalendar, {
+      props: {
+        isDatePicker: true,
+        withTimePicker: true,
+        newCurrentDate: new Date(2026, 9, 1)
+      }
+    })
+
+    await clickDay(wrapper, 10)
+
+    expect(listHeights(wrapper)).toEqual(['280px', '280px'])
+    wrapper.unmount()
+  })
+
+  it('sizes the lists of each calendar on a page separately', async () => {
+    let second
+    vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(
+      function () {
+        return this === second?.element ? 300 : 400
+      }
+    )
+    const options = {
+      attachTo: document.body,
+      props: {
+        isDatePicker: true,
+        withTimePicker: true,
+        newCurrentDate: new Date(2026, 9, 1)
+      }
+    }
+    const first = mount(FunctionalCalendar, options)
+    second = mount(FunctionalCalendar, options)
+
+    await clickDay(first, 10)
+    await clickDay(second, 10)
+
+    expect(listHeights(first)).toEqual(['280px', '280px'])
+    expect(listHeights(second)).toEqual(['180px', '180px'])
+    first.unmount()
+    second.unmount()
+  })
+})
 
 describe('time picker with a date picker', () => {
   it('opens in place of the calendar after a day is chosen', async () => {
