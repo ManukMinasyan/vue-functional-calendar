@@ -25,6 +25,15 @@
 </template>
 
 <script>
+import { Comment, Fragment } from 'vue'
+
+const hasContent = vnodes =>
+  vnodes.some(vnode =>
+    vnode.type === Fragment
+      ? hasContent(vnode.children)
+      : vnode.type !== Comment
+  )
+
 export default {
   name: 'Day',
   inject: { calendarRoot: 'calendar' },
@@ -249,7 +258,10 @@ export default {
       this.$emit('dayMouseOver', this.day.date)
     },
     hasSlot(name = 'default') {
-      return !!this.calendarRoot.$slots[name]
+      const slot = this.calendarRoot.$slots[name]
+      if (!slot) return false
+      const props = name === 'default' ? { week: this.week, day: this.day } : {}
+      return hasContent(slot(props))
     },
     isDisabledDate(date) {
       const datesCollection = this.fConfigs.disabledDates

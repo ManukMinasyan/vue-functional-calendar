@@ -65,7 +65,7 @@
           <a
             href="#"
             class="vfc-tags-input-remove"
-            @click.prevent="removeFromSelectedDates(index)"
+            @click.prevent="calendarRoot.removeFromSelectedDates(index)"
           ></a>
         </span>
 
@@ -106,8 +106,9 @@ export default {
           : ''
       },
       set(newValue) {
-        newValue = this.helpCalendar.mask(newValue)
-        if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+        const helpCalendar = this.calendarRoot.helpCalendar
+        newValue = helpCalendar.mask(newValue)
+        if (helpCalendar.getDateFromFormat(newValue).getMonth()) {
           this.calendar.dateRange.start = newValue
         }
       }
@@ -117,8 +118,9 @@ export default {
         return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
       },
       set(newValue) {
-        newValue = this.helpCalendar.mask(newValue)
-        if (this.helpCalendar.getDateFromFormat(newValue).getMonth()) {
+        const helpCalendar = this.calendarRoot.helpCalendar
+        newValue = helpCalendar.mask(newValue)
+        if (helpCalendar.getDateFromFormat(newValue).getMonth()) {
           this.calendar.dateRange.end = newValue
         }
       }

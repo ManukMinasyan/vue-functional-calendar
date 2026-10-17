@@ -1,0 +1,159 @@
+import { describe, it, expect } from 'vitest'
+import {
+  mountCalendar,
+  mountCalendarReady,
+  clickDay,
+  clickDays,
+  findDay,
+  eventsNamed,
+  lastValue
+} from './helpers.js'
+
+const options = { isDateRange: true, isMultipleDateRange: true }
+
+describe('multiple date ranges', () => {
+  it('collects each completed range in multipleDateRange', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5, 10, 12])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '3/10/2026', end: '5/10/2026' },
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+
+  it('leaves the single dateRange empty', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5])
+
+    expect(lastValue(wrapper).dateRange).toEqual({ start: '', end: '' })
+  })
+
+  it('keeps an unfinished range with only a start', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5, 10])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '3/10/2026', end: '5/10/2026' },
+      { start: '10/10/2026', end: '' }
+    ])
+  })
+
+  it('swaps a range chosen backwards', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [12, 10])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+
+  it('emits selectedDaysCount as ranges complete, as 2.x does', async () => {
+    const { wrapper, events } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5, 10, 14])
+
+    expect(eventsNamed(events, 'selectedDaysCount')).toEqual([2, 2, 4])
+  })
+
+  it('marks the days inside each range', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 6, 10, 12])
+
+    expect(findDay(wrapper, 3).classList).toContain('vfc-start-marked')
+    expect(findDay(wrapper, 6).classList).toContain('vfc-end-marked')
+    expect(findDay(wrapper, 4).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 11).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 8).classList).not.toContain('vfc-marked')
+  })
+
+  it('shows a remove button only on the end day of a range', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5, 10, 12])
+
+    const buttons = wrapper.findAll('.vfc-day .times')
+    expect(buttons).toHaveLength(2)
+    buttons.forEach(button => {
+      expect(button.element.parentElement.classList).toContain('vfc-end-marked')
+    })
+  })
+
+  it('removes a range when its end day button is clicked', async () => {
+    const { wrapper } = mountCalendar(options)
+    await clickDays(wrapper, [3, 5, 10, 12])
+
+    await wrapper.findAll('.vfc-day .times')[0].trigger('click')
+
+    expect(lastValue(wrapper)).toBeDefined()
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+
+  it('numbers the range markers', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5, 10, 12])
+
+    const numbers = wrapper.findAll('.vfc-day .number').map(node => node.text())
+    expect(numbers).toHaveLength(4)
+  })
+
+  it('shows ranges passed through the model', async () => {
+    const model = {
+      currentDate: new Date(2026, 9, 1),
+      selectedDate: false,
+      selectedDateTime: false,
+      selectedHour: '00',
+      selectedMinute: '00',
+      selectedDatesItem: '',
+      selectedDates: [],
+      dateRange: { start: '', end: '' },
+      multipleDateRange: [{ start: '6/10/2026', end: '9/10/2026' }]
+    }
+    const { wrapper } = await mountCalendarReady({
+      ...options,
+      modelValue: model
+    })
+
+    expect(findDay(wrapper, 6).classList).toContain('vfc-start-marked')
+    expect(findDay(wrapper, 9).classList).toContain('vfc-end-marked')
+    expect(findDay(wrapper, 7).classList).toContain('vfc-marked')
+  })
+
+  it('throws on a model whose last range has only one end', async () => {
+    const { wrapper } = mountCalendar(options)
+    let thrown
+    const original = wrapper.vm.$.appContext.config.errorHandler
+    wrapper.vm.$.appContext.config.errorHandler = err => {
+      thrown = err
+    }
+
+    await wrapper.setProps({
+      modelValue: { multipleDateRange: [{ start: '3/10/2026', end: '' }] }
+    })
+    wrapper.vm.$.appContext.config.errorHandler = original
+
+    expect(thrown?.message).toBe('Invalid Data Range')
+  })
+
+  it('clears every range with the Clear Ranges button', async () => {
+    const { wrapper } = mountCalendar({ ...options, canClearRange: true })
+    await clickDay(wrapper, 3)
+    await clickDay(wrapper, 5)
+    const button = wrapper.find('.rangeCleaner span')
+    expect(button.text()).toBe('Clear Ranges')
+    expect(button.classes()).toContain('active')
+
+    await button.trigger('click')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([])
+    expect(button.classes()).toContain('disabled')
+  })
+})

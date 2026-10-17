@@ -1,0 +1,632 @@
+{
+  "_meta": {
+    "source": "vue-functional-calendar 2.10.0 (Vue 2.7.16) in Chromium, captured 2026-10-17",
+    "newCurrentDate": "new Date(2026, 9, 1)",
+    "clickRule": "for each day string, click the first '.vfc-day .vfc-span-day' element whose trimmed textContent equals it and that lacks the 'vfc-hide' class, then await nextTick",
+    "valueRule": "last emitted value with currentDate removed",
+    "eventsRecorded": [
+      "choseDay (payload.date)",
+      "selectedDaysCount"
+    ]
+  },
+  "scenarios": {
+    "datePicker": {
+      "props": {
+        "isDatePicker": true
+      },
+      "days": [
+        "10"
+      ],
+      "value": {
+        "selectedDate": "10/10/2026",
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "10/10/2026"
+        ]
+      ]
+    },
+    "datePickerFormat": {
+      "props": {
+        "isDatePicker": true,
+        "dateFormat": "yyyy-mm-dd"
+      },
+      "days": [
+        "10"
+      ],
+      "value": {
+        "selectedDate": "2026-10-10",
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "2026-10-10"
+        ]
+      ]
+    },
+    "multipleDatePicker": {
+      "props": {
+        "isMultipleDatePicker": true
+      },
+      "days": [
+        "3",
+        "7",
+        "12"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [
+          {
+            "date": "3/10/2026",
+            "dateTime": false,
+            "hour": "00",
+            "minute": "00"
+          },
+          {
+            "date": "7/10/2026",
+            "dateTime": false,
+            "hour": "00",
+            "minute": "00"
+          },
+          {
+            "date": "12/10/2026",
+            "dateTime": false,
+            "hour": "00",
+            "minute": "00"
+          }
+        ],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "3/10/2026"
+        ],
+        [
+          "choseDay",
+          "7/10/2026"
+        ],
+        [
+          "choseDay",
+          "12/10/2026"
+        ]
+      ]
+    },
+    "multipleDatePickerToggle": {
+      "props": {
+        "isMultipleDatePicker": true
+      },
+      "days": [
+        "3",
+        "7",
+        "3"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [
+          {
+            "date": "7/10/2026",
+            "dateTime": false,
+            "hour": "00",
+            "minute": "00"
+          }
+        ],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "3/10/2026"
+        ],
+        [
+          "choseDay",
+          "7/10/2026"
+        ],
+        [
+          "choseDay",
+          "3/10/2026"
+        ]
+      ]
+    },
+    "dateRange": {
+      "props": {
+        "isDateRange": true
+      },
+      "days": [
+        "10",
+        "14"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "10/10/2026",
+          "end": "14/10/2026"
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "10/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          4
+        ],
+        [
+          "choseDay",
+          "14/10/2026"
+        ]
+      ]
+    },
+    "dateRangeReversed": {
+      "props": {
+        "isDateRange": true
+      },
+      "days": [
+        "14",
+        "10"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "10/10/2026",
+          "end": "14/10/2026"
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "14/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          4
+        ],
+        [
+          "choseDay",
+          "10/10/2026"
+        ]
+      ]
+    },
+    "multipleDateRange": {
+      "props": {
+        "isDateRange": true,
+        "isMultipleDateRange": true
+      },
+      "days": [
+        "3",
+        "5",
+        "10",
+        "12"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": [
+          {
+            "end": "5/10/2026",
+            "start": "3/10/2026"
+          },
+          {
+            "end": "12/10/2026",
+            "start": "10/10/2026"
+          }
+        ]
+      },
+      "events": [
+        [
+          "choseDay",
+          "3/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          2
+        ],
+        [
+          "choseDay",
+          "5/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          2
+        ],
+        [
+          "choseDay",
+          "10/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          2
+        ],
+        [
+          "choseDay",
+          "12/10/2026"
+        ]
+      ]
+    },
+    "limits": {
+      "props": {
+        "isDatePicker": true,
+        "limits": {
+          "min": "05/10/2026",
+          "max": "20/10/2026"
+        }
+      },
+      "days": [
+        "3",
+        "15",
+        "25"
+      ],
+      "value": {
+        "selectedDate": "15/10/2026",
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "15/10/2026"
+        ]
+      ]
+    },
+    "disabledDayNames": {
+      "props": {
+        "isDatePicker": true,
+        "disabledDayNames": [
+          "Sa",
+          "Su"
+        ]
+      },
+      "days": [
+        "10",
+        "12"
+      ],
+      "value": {
+        "selectedDate": "12/10/2026",
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "12/10/2026"
+        ]
+      ]
+    },
+    "sundayStartRange": {
+      "props": {
+        "isDateRange": true,
+        "sundayStart": true
+      },
+      "days": [
+        "4",
+        "6"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "4/10/2026",
+          "end": "6/10/2026"
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "4/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          2
+        ],
+        [
+          "choseDay",
+          "6/10/2026"
+        ]
+      ]
+    },
+    "multipleCalendarsRange": {
+      "props": {
+        "isDateRange": true,
+        "isMultiple": true,
+        "calendarsCount": 2
+      },
+      "days": [
+        "28",
+        "3"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "3/10/2026",
+          "end": "28/10/2026"
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "28/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          25
+        ],
+        [
+          "choseDay",
+          "3/10/2026"
+        ]
+      ]
+    },
+    "rangeMaxSelDays": {
+      "props": {
+        "isDateRange": true,
+        "maxSelDays": 3
+      },
+      "days": [
+        "10",
+        "20"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "10/10/2026",
+          "end": "12/10/2026"
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "10/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          10
+        ],
+        [
+          "choseDay",
+          "20/10/2026"
+        ]
+      ]
+    },
+    "rangeMinSelDays": {
+      "props": {
+        "isDateRange": true,
+        "minSelDays": 5
+      },
+      "days": [
+        "10",
+        "12"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "10/10/2026",
+          "end": "14/10/2026"
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "10/10/2026"
+        ],
+        [
+          "selectedDaysCount",
+          2
+        ],
+        [
+          "choseDay",
+          "12/10/2026"
+        ]
+      ]
+    },
+    "disabledDate": {
+      "props": {
+        "isDatePicker": true,
+        "disabledDates": [
+          "10/10/2026"
+        ]
+      },
+      "days": [
+        "10"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": []
+    },
+    "enabledDates": {
+      "props": {
+        "isDatePicker": true,
+        "enabledDates": [
+          "12/10/2026"
+        ]
+      },
+      "days": [
+        "10",
+        "12"
+      ],
+      "value": {
+        "selectedDate": "12/10/2026",
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "12/10/2026"
+        ]
+      ]
+    },
+    "datePickerTime": {
+      "props": {
+        "isDatePicker": true,
+        "withTimePicker": true
+      },
+      "days": [
+        "10"
+      ],
+      "value": {
+        "selectedDate": "10/10/2026",
+        "selectedDateTime": "10/10/2026 00:00",
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "10/10/2026"
+        ]
+      ]
+    },
+    "rangeTime": {
+      "props": {
+        "isDateRange": true,
+        "withTimePicker": true
+      },
+      "days": [
+        "10",
+        "14"
+      ],
+      "value": {
+        "selectedDate": false,
+        "selectedDateTime": false,
+        "selectedHour": "00",
+        "selectedMinute": "00",
+        "selectedDatesItem": "",
+        "selectedDates": [],
+        "dateRange": {
+          "start": "10/10/2026 00:00",
+          "end": ""
+        },
+        "multipleDateRange": []
+      },
+      "events": [
+        [
+          "choseDay",
+          "10/10/2026"
+        ]
+      ]
+    }
+  }
+}
