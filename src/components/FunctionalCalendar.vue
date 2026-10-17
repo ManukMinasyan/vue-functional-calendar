@@ -296,6 +296,7 @@ import {
 } from '../utils/presets'
 import {
   DEFAULT_DAY_NAMES,
+  gregorianOptions,
   resolveLocale,
   localeDayNames,
   localeMonthNames,
@@ -357,7 +358,10 @@ export default {
       return resolveLocale(this.fConfigs.locale)
     },
     fullDateFormatter() {
-      return new Intl.DateTimeFormat(this.activeLocale, { dateStyle: 'full' })
+      return new Intl.DateTimeFormat(
+        this.activeLocale,
+        gregorianOptions({ dateStyle: 'full' })
+      )
     },
     rovingDates() {
       return this.listCalendars.map(calendarItem => {

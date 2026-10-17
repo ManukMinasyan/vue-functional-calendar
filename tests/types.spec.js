@@ -20,6 +20,14 @@ describe('type declarations', () => {
     expect(declarations).toMatch(/FunctionalCalendarPlugin = [\s\S]*install\(/)
   })
 
+  it('types the names props in both declaration files', () => {
+    ;['../index.d.ts', '../index.d.cts'].forEach(path => {
+      expect(read(path)).toContain('dayNames?: string[]')
+      expect(read(path)).toContain('monthNames?: string[]')
+      expect(read(path)).toContain('shortMonthNames?: string[]')
+    })
+  })
+
   it('points each export condition at its own declaration file', () => {
     const { exports, files } = JSON.parse(read('../package.json'))
 

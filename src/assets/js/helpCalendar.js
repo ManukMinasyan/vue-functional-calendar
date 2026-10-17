@@ -2,17 +2,19 @@ const toWeekStart = value => (typeof value === 'number' ? value : value ? 0 : 1)
 
 Date.prototype.getWeekNumber = function (weekStartOrSundayStart) {
   const weekStart = toWeekStart(weekStartOrSundayStart)
-  const date = new Date(this.getFullYear(), this.getMonth(), this.getDate())
-  const sinceWeekStart = day => (day - weekStart + 7) % 7
-
-  if (weekStart === 1) {
-    date.setDate(date.getDate() - sinceWeekStart(date.getDay()) + 3)
-  }
-
-  const january4 = new Date(date.getFullYear(), 0, 4)
-  const january4Day = sinceWeekStart(january4.getDay())
-  const days = Math.round((date - january4) / 86400000)
-  return Math.ceil((days + january4Day + 1) / 7)
+  const sinceWeekStart = (this.getDay() - weekStart + 7) % 7
+  const thursdayOffset = ((4 - weekStart + 7) % 7) - sinceWeekStart
+  const thursday = new Date(
+    this.getFullYear(),
+    this.getMonth(),
+    this.getDate() + thursdayOffset
+  )
+  const dayOfYear = Math.round(
+    (Date.UTC(thursday.getFullYear(), thursday.getMonth(), thursday.getDate()) -
+      Date.UTC(thursday.getFullYear(), 0, 1)) /
+      86400000
+  )
+  return Math.floor(dayOfYear / 7) + 1
 }
 
 export default class helpCalendar {

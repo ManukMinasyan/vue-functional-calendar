@@ -153,7 +153,7 @@ describe('locale names', () => {
   })
 
   it('ignores a malformed locale', () => {
-    const { wrapper } = mountCalendar({ locale: 'not_a_locale' })
+    const { wrapper } = mountCalendar({ locale: 'not a locale' })
 
     expect(dayNameTexts(wrapper)[0]).toBe('Mo')
     expect(calendarTitle(wrapper)).toBe('October 2026')
@@ -173,6 +173,126 @@ describe('locale names', () => {
     expect(
       wrapper.findAll('.vfc-week-number .vfc-span-day').map(el => el.text())
     ).toEqual(['40', '41', '42', '43', '44'])
+  })
+})
+
+describe('locale spelling', () => {
+  it('reads an underscore tag such as de_DE', () => {
+    const { wrapper } = mountCalendar({ locale: 'de_DE' })
+
+    expect(calendarTitle(wrapper)).toBe('Oktober 2026')
+    expect(dayNameTexts(wrapper)).toEqual([
+      'Mo',
+      'Di',
+      'Mi',
+      'Do',
+      'Fr',
+      'Sa',
+      'So'
+    ])
+  })
+})
+
+describe('gregorian dates in non-gregorian locales', () => {
+  const january = { newCurrentDate: new Date(2026, 0, 1) }
+
+  it('names January in fa-IR with the Gregorian month', async () => {
+    const { wrapper } = mountCalendar({ locale: 'fa-IR', ...january })
+
+    expect(calendarTitle(wrapper)).toBe('ژانویه 2026')
+    expect(await monthNameCells({ locale: 'fa-IR' })).toContain('ژانویه')
+  })
+
+  it('names January in ar-SA with the Gregorian month', () => {
+    const { wrapper } = mountCalendar({ locale: 'ar-SA', ...january })
+
+    expect(calendarTitle(wrapper)).toBe('يناير 2026')
+  })
+
+  it('writes a Gregorian year in the th-TH day label', () => {
+    const { wrapper } = mountCalendar({ locale: 'th-TH', ...january })
+
+    expect(findDay(wrapper, 14).getAttribute('aria-label')).toBe(
+      'วันพุธที่ 14 มกราคม ค.ศ. 2026'
+    )
+  })
+
+  it('writes the fa-IR day label with a Gregorian month and year', () => {
+    const { wrapper } = mountCalendar({ locale: 'fa-IR', ...january })
+
+    expect(findDay(wrapper, 14).getAttribute('aria-label')).toBe(
+      'چهارشنبه ۱۴ ژانویهٔ ۲۰۲۶'
+    )
+  })
+})
+
+describe('week numbers', () => {
+  const rowNumber = (wrapper, dates) => {
+    const row = wrapper.findAll('.vfc-week').find(week => {
+      const days = week.findAll('.vfc-span-day').map(day => day.text())
+      const last = days.indexOf(dates[0])
+      return last !== -1 && days[last + 1] === dates[1]
+    })
+    return row.find('.vfc-week-number').text()
+  }
+
+  const weekStarts = [
+    ['Monday', { sundayStart: false }],
+    ['Sunday', { sundayStart: true }],
+    ['Saturday', { locale: 'ar-EG' }]
+  ]
+
+  it.each(weekStarts)(
+    'numbers the row holding Oct 1 2026 as week 40 with a %s start',
+    (_, options) => {
+      const { wrapper } = mountCalendar({ showWeekNumbers: true, ...options })
+
+      expect(rowNumber(wrapper, ['30', '1'])).toBe('40')
+    }
+  )
+
+  it.each(weekStarts)(
+    'numbers the Dec 2025 and Jan 2026 row the same in both views with a %s start',
+    (_, options) => {
+      const numbers = [new Date(2025, 11, 1), new Date(2026, 0, 1)].map(
+        newCurrentDate =>
+          rowNumber(
+            mountCalendar({ showWeekNumbers: true, newCurrentDate, ...options })
+              .wrapper,
+            ['31', '1']
+          )
+      )
+
+      expect(numbers).toEqual(['1', '1'])
+    }
+  )
+
+  it.each(weekStarts)(
+    'numbers the Dec 2020 and Jan 2021 row as week 53 in both views with a %s start',
+    (_, options) => {
+      const numbers = [new Date(2020, 11, 1), new Date(2021, 0, 1)].map(
+        newCurrentDate =>
+          rowNumber(
+            mountCalendar({ showWeekNumbers: true, newCurrentDate, ...options })
+              .wrapper,
+            ['31', '1']
+          )
+      )
+
+      expect(numbers).toEqual(['53', '53'])
+    }
+  )
+
+  it.each([
+    [0, new Date(2026, 9, 1), 40],
+    [6, new Date(2026, 9, 1), 40],
+    [0, new Date(2026, 9, 4), 41],
+    [6, new Date(2026, 9, 3), 41],
+    [1, new Date(2026, 9, 5), 41],
+    [0, new Date(2025, 11, 28), 1],
+    [6, new Date(2025, 11, 27), 1]
+  ])('weekStart %i gives %s the week %i', (weekStart, date, week) => {
+    expect(date.getWeekNumber(weekStart)).toBe(week)
   })
 })
 
@@ -269,16 +389,38 @@ describe('week start source', () => {
     expect(dayNameTexts(wrapper)[0]).toBe(weekdays('de-DE')[5])
   })
 
-  it('falls back to sundayStart when the engine reports no week info', () => {
-    vi.spyOn(Intl.Locale.prototype, 'weekInfo', 'get').mockReturnValue(
-      undefined
-    )
+  describe('without getWeekInfo or weekInfo', () => {
+    const firstDayName = locale => {
+      const { wrapper } = mountCalendar({ locale })
+      return dayNameTexts(wrapper)[0]
+    }
 
-    const monday = mountCalendar({ locale: 'en-US' })
-    expect(dayNameTexts(monday.wrapper)[0]).toBe(weekdays('en-US')[0])
+    const withoutWeekInfo = () =>
+      vi
+        .spyOn(Intl.Locale.prototype, 'weekInfo', 'get')
+        .mockReturnValue(undefined)
 
-    const sunday = mountCalendar({ locale: 'en-US', sundayStart: true })
-    expect(dayNameTexts(sunday.wrapper)[0]).toBe(weekdays('en-US')[6])
+    it('starts the en-US week on Sunday', () => {
+      withoutWeekInfo()
+
+      expect(firstDayName('en-US')).toBe(weekdays('en-US')[6])
+      expect(firstDayName('en')).toBe(weekdays('en')[6])
+    })
+
+    it('starts de-DE on Monday and ar-EG on Saturday', () => {
+      withoutWeekInfo()
+
+      expect(firstDayName('de-DE')).toBe(weekdays('de-DE')[0])
+      expect(firstDayName('ar-EG')).toBe(weekdays('ar-EG')[5])
+    })
+
+    it('lets an explicit sundayStart win', () => {
+      withoutWeekInfo()
+
+      const { wrapper } = mountCalendar({ locale: 'de-DE', sundayStart: true })
+
+      expect(dayNameTexts(wrapper)[0]).toBe(weekdays('de-DE')[6])
+    })
   })
 
   it('maps a Sunday first day reported as 7', () => {
