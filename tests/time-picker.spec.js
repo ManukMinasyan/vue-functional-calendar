@@ -327,6 +327,26 @@ describe('time picker with a clamped date range', () => {
   })
 })
 
+describe('time picker with multiple date ranges', () => {
+  it('does not open and leaves the ranges without times', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      isMultipleDateRange: true,
+      withTimePicker: true
+    })
+
+    await clickDay(wrapper, 3)
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+    await clickDay(wrapper, 5)
+
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '3/10/2026', end: '5/10/2026' }
+    ])
+    expect(lastValue(wrapper).dateRange).toEqual({ start: '', end: '' })
+  })
+})
+
 describe('time picker with multiple dates', () => {
   it('stores a time on each selected date', async () => {
     const { wrapper } = mountCalendar({

@@ -1156,7 +1156,9 @@ export default {
       this.returnFocusIfClosed()
     },
     withTimeSuffix(date) {
-      return this.fConfigs.withTimePicker && this.fConfigs.isDateRange
+      return this.fConfigs.withTimePicker &&
+        this.fConfigs.isDateRange &&
+        !this.fConfigs.isMultipleDateRange
         ? `${date} 00:00`
         : date
     },
@@ -1723,6 +1725,8 @@ export default {
       }
     },
     openTimePicker() {
+      if (this.fConfigs.isMultipleDateRange) return
+
       this.showTimePicker = true
     },
     closeTimePicker() {
