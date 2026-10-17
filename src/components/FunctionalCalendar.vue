@@ -2321,6 +2321,7 @@ export default {
         return (this.showCalendar =
           this.showMonthPicker =
           this.showYearPicker =
+          this.showTimePicker =
             false)
       }
     },

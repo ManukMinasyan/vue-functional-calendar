@@ -157,6 +157,23 @@ describe('modal mode', () => {
     expect(isHidden(wrapper)).toBe(true)
   })
 
+  it('shows the grid again when the modal reopens after focus left with the time picker open', async () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDatePicker: true,
+      withTimePicker: true
+    })
+    await wrapper.trigger('focusin')
+    await clickDay(wrapper, 10)
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(true)
+
+    await wrapper.trigger('focusout', { relatedTarget: document.body })
+    await wrapper.trigger('focusin')
+
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+    expect(wrapper.find('.vfc-calendar').exists()).toBe(true)
+  })
+
   it('closes the modal when Escape closes the time picker of a completed range', async () => {
     const { wrapper } = mountCalendar({
       isModal: true,
