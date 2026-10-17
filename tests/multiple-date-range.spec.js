@@ -212,6 +212,17 @@ describe('multiple date ranges', () => {
 
     expect(errors).toEqual([])
     expect(model.multipleDateRange).toEqual([])
+    expect(findDay(wrapper, 3).classList).toContain('vfc-start-marked')
+    expect(findDay(wrapper, 4).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 5).classList).toContain('vfc-end-marked')
+    expect(findDay(wrapper, 10).classList).toContain('vfc-start-marked')
+    const emitted = wrapper
+      .findComponent(FunctionalCalendar)
+      .emitted('update:modelValue')
+    expect(emitted.at(-1)[0].multipleDateRange).toEqual([
+      { start: '3/10/2026', end: '5/10/2026' },
+      { start: '10/10/2026', end: '' }
+    ])
   })
 
   it('clears every range with the Clear Ranges button', async () => {

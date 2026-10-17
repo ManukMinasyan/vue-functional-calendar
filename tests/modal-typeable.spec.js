@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { h, nextTick, ref } from 'vue'
+import { createSSRApp, h, nextTick, readonly, ref } from 'vue'
+import { renderToString } from '@vue/server-renderer'
 import { mount } from '@vue/test-utils'
 import FunctionalCalendar from '../index.js'
 import {
@@ -1077,6 +1078,147 @@ describe('model intake', () => {
 
     expect(errors).toEqual([])
     expect(wrapper.find('.vfc-calendar').exists()).toBe(true)
+  })
+})
+
+describe('model intake with unusual values', () => {
+  const mountModel = async (modelValue, props = { isDatePicker: true }) => {
+    const errors = []
+    const mounted = mountCalendar(
+      { ...props, modelValue },
+      { global: { config: { errorHandler: error => errors.push(error) } } }
+    )
+    await nextTick()
+    return { ...mounted, errors }
+  }
+
+  const isMarked = (wrapper, text) =>
+    findDay(wrapper, text).classList.contains('vfc-marked')
+
+  it('shows the selection of a readonly model without writing to it', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { wrapper, errors } = await mountModel(
+      readonly({ selectedDate: '10/10/2026' })
+    )
+
+    await clickDay(wrapper, 12)
+
+    expect(errors).toEqual([])
+    expect(warn).not.toHaveBeenCalled()
+    expect(lastValue(wrapper).selectedDate).toBe('12/10/2026')
+    warn.mockRestore()
+  })
+
+  it('works with a readonly empty model', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const { wrapper, errors } = await mountModel(readonly({}))
+
+    await clickDay(wrapper, 12)
+
+    expect(errors).toEqual([])
+    expect(warn).not.toHaveBeenCalled()
+    expect(isMarked(wrapper, 12)).toBe(true)
+    warn.mockRestore()
+  })
+
+  it('works with a frozen model and leaves it untouched', async () => {
+    const model = Object.freeze({ selectedDate: '10/10/2026' })
+    const { wrapper, errors } = await mountModel(model)
+
+    expect(isMarked(wrapper, 10)).toBe(true)
+    await clickDay(wrapper, 12)
+
+    expect(errors).toEqual([])
+    expect(isMarked(wrapper, 12)).toBe(true)
+    expect(model).toEqual({ selectedDate: '10/10/2026' })
+  })
+
+  it('works with a frozen empty model', async () => {
+    const { wrapper, errors } = await mountModel(Object.freeze({}))
+
+    await clickDay(wrapper, 12)
+
+    expect(errors).toEqual([])
+    expect(isMarked(wrapper, 12)).toBe(true)
+  })
+
+  it('does not adopt a Date as the model', async () => {
+    const model = new Date()
+    const { wrapper, errors } = await mountModel(model)
+
+    await clickDay(wrapper, 12)
+
+    expect(errors).toEqual([])
+    expect(isMarked(wrapper, 12)).toBe(true)
+    expect(Object.keys(model)).toEqual([])
+  })
+
+  it.each([false, '', 0, null])(
+    'mounts with a dateRange of %j',
+    async dateRange => {
+      const { wrapper, errors } = await mountModel(
+        { selectedDate: '10/10/2026', dateRange },
+        { isDatePicker: true }
+      )
+
+      expect(errors).toEqual([])
+      expect(isMarked(wrapper, 10)).toBe(true)
+    }
+  )
+
+  it('mounts with a null multipleDateRange', async () => {
+    const { wrapper, errors } = await mountModel(
+      { multipleDateRange: null },
+      { isDateRange: true, isMultipleDateRange: true }
+    )
+
+    await clickDay(wrapper, 3)
+    await clickDay(wrapper, 5)
+
+    expect(errors).toEqual([])
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '3/10/2026', end: '5/10/2026' }
+    ])
+  })
+})
+
+describe('model intake at creation', () => {
+  it('keeps a preloaded range when newCurrentDate is set', async () => {
+    const model = ref({
+      dateRange: { start: '05/10/2026', end: '20/10/2026' }
+    })
+    const wrapper = mount(
+      {
+        render: () =>
+          h(FunctionalCalendar, {
+            isDateRange: true,
+            newCurrentDate: new Date(2026, 9, 1),
+            modelValue: model.value,
+            'onUpdate:modelValue': value => (model.value = value)
+          })
+      },
+      { attachTo: document.body }
+    )
+    await nextTick()
+    await nextTick()
+
+    expect(wrapper.findAll('.vfc-marked').length).toBeGreaterThan(0)
+    expect(model.value.dateRange).toEqual({
+      start: '05/10/2026',
+      end: '20/10/2026'
+    })
+  })
+
+  it('renders the bound selection on the server', async () => {
+    const app = createSSRApp(FunctionalCalendar, {
+      isDatePicker: true,
+      newCurrentDate: new Date(2026, 9, 1),
+      modelValue: { selectedDate: '10/10/2026' }
+    })
+
+    const html = await renderToString(app)
+
+    expect(html).toContain('aria-selected="true"')
   })
 })
 

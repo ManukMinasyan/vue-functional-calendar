@@ -272,9 +272,35 @@ import PickerInputs from '../components/PickerInputs.vue'
 import Footer from '../components/Footer.vue'
 import Presets from '../components/Presets.vue'
 
-import { toRaw } from 'vue'
+import { isReadonly, toRaw } from 'vue'
 import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
+
+const listKeys = ['selectedDates', 'multipleDateRange']
+
+const hasModelKey = (value, key) => {
+  const entry = value[key]
+  if (entry == null) return false
+  if (key === 'dateRange') return typeof entry === 'object'
+  if (listKeys.includes(key)) return Array.isArray(entry)
+  return true
+}
+
+const isMultipleDateRangeOnly = value =>
+  hasModelKey(value, 'multipleDateRange') &&
+  !hasModelKey(value, 'dateRange') &&
+  !hasModelKey(value, 'selectedDate')
+
+const isAdoptable = value =>
+  Object.prototype.toString.call(toRaw(value)) === '[object Object]' &&
+  !isReadonly(value) &&
+  Object.isExtensible(toRaw(value))
+
+const copyModelKey = entry => {
+  if (Array.isArray(entry)) return entry.map(item => ({ ...item }))
+  if (entry instanceof Date) return new Date(entry)
+  return typeof entry === 'object' ? { ...entry } : entry
+}
 import {
   PRESET_KEYS,
   PRESET_DAY_KEYWORDS,
@@ -444,7 +470,12 @@ export default {
   },
   created() {
     this.setConfigs()
+    this.applyModel(this.modelValue)
+    if (typeof this.newCurrentDate !== 'undefined') {
+      this.calendar.currentDate = this.newCurrentDate
+    }
     this.initCalendar()
+    this.$watch('modelValue', this.applyModel, { deep: true })
   },
   mounted() {
     //show time placeholder
@@ -462,23 +493,6 @@ export default {
     window.addEventListener('click', this.hideMonthYearPicker, {
       capture: true
     })
-
-    // Reacts to external selected dates
-    this.$watch(
-      'modelValue',
-      function (value) {
-        if (!value || typeof value !== 'object') return
-        if (toRaw(value) !== toRaw(this.calendar)) this.focusedDate = ''
-
-        if (this.isMultipleDateRangeOnly(value)) {
-          this.copyMultipleDateRange(value.multipleDateRange)
-          return
-        }
-
-        this.adoptModel(value)
-      },
-      { immediate: true, deep: true }
-    )
 
     this.$watch(
       'showCalendar',
@@ -546,12 +560,21 @@ export default {
     }
   },
   methods: {
-    isMultipleDateRangeOnly(value) {
-      return (
-        Object.prototype.hasOwnProperty.call(value, 'multipleDateRange') &&
-        !Object.prototype.hasOwnProperty.call(value, 'dateRange') &&
-        !Object.prototype.hasOwnProperty.call(value, 'selectedDate')
-      )
+    applyModel(value) {
+      if (!value || typeof value !== 'object') return
+      if (toRaw(value) !== toRaw(this.calendar)) this.focusedDate = ''
+
+      if (isMultipleDateRangeOnly(value)) {
+        this.copyMultipleDateRange(value.multipleDateRange)
+        return
+      }
+
+      if (isAdoptable(value)) {
+        this.adoptModel(value)
+        return
+      }
+
+      this.copyModel(value)
     },
     copyMultipleDateRange(ranges) {
       const lastElement = ranges[ranges.length - 1]
@@ -565,14 +588,27 @@ export default {
       this.calendar.multipleDateRange = ranges.map(range => ({ ...range }))
     },
     adoptModel(value) {
-      const defaults = createCalendarState()
-      defaults.currentDate = this.calendar.currentDate
+      const defaults = this.freshState()
       Object.keys(defaults).forEach(key => {
-        if (value[key] == null) value[key] = defaults[key]
+        if (!hasModelKey(value, key)) value[key] = defaults[key]
       })
       value.dateRange.start = value.dateRange.start || ''
       value.dateRange.end = value.dateRange.end || ''
       this.calendar = value
+    },
+    copyModel(value) {
+      const state = this.freshState()
+      Object.keys(state).forEach(key => {
+        if (hasModelKey(value, key)) state[key] = copyModelKey(value[key])
+      })
+      state.dateRange.start = state.dateRange.start || ''
+      state.dateRange.end = state.dateRange.end || ''
+      this.calendar = state
+    },
+    freshState() {
+      const state = createCalendarState()
+      state.currentDate = this.calendar.currentDate
+      return state
     },
     initCalendar() {
       this.setCalendarData()
@@ -687,10 +723,6 @@ export default {
       // Placeholder
       if (!this.fConfigs.placeholder)
         this.fConfigs.placeholder = this.fConfigs.dateFormat
-
-      if (typeof this.newCurrentDate !== 'undefined') {
-        this.calendar.currentDate = this.newCurrentDate
-      }
 
       // Week Start
       const shift = (this.weekStart + 6) % 7
