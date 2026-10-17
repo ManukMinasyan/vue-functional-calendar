@@ -74,6 +74,74 @@ describe('arrow navigation', () => {
   })
 })
 
+describe('changedYear on month arrows', () => {
+  it('emits changedYear when NextMonth crosses into the next year', async () => {
+    const { wrapper, events } = mountCalendar({
+      newCurrentDate: new Date(2026, 11, 1)
+    })
+
+    await arrow(wrapper, 'right').trigger('click')
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2027, 0, 1)])
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 0, 1)])
+  })
+
+  it('emits changedYear when PreMonth crosses into the previous year', async () => {
+    const { wrapper, events } = mountCalendar({
+      newCurrentDate: new Date(2026, 0, 1)
+    })
+
+    await arrow(wrapper, 'left').trigger('click')
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2025, 11, 1)])
+  })
+
+  it('emits changedYear when a changeMonthStep move changes the year', async () => {
+    const { wrapper, events } = mountCalendar({ changeMonthStep: 3 })
+
+    await arrow(wrapper, 'right').trigger('click')
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 0, 1)])
+  })
+
+  it('emits no changedYear while the year stays the same', async () => {
+    const { wrapper, events } = mountCalendar()
+
+    await arrow(wrapper, 'right').trigger('click')
+    await arrow(wrapper, 'left').trigger('click')
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+  })
+
+  it('follows the first calendar when several calendars cross the year', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 10, 1)
+    })
+
+    await arrow(wrapper, 'right').trigger('click')
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+
+    await arrow(wrapper, 'right').trigger('click')
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 0, 1)])
+  })
+
+  it('follows the moved calendar with isSeparately', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 10, 1)
+    })
+
+    wrapper.vm.NextMonth(1)
+    await nextTick()
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 0, 1)])
+  })
+})
+
 describe('month picker', () => {
   it('opens from the month title when changeMonthFunction is set', () => {
     const { wrapper } = mountCalendar({ changeMonthFunction: true })

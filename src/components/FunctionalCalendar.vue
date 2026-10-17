@@ -1641,11 +1641,16 @@ export default {
       return this.showYearPicker ? this.fConfigs.changeYearStep : 1
     },
     changeMonth(calendarKey, months, transition) {
+      const previous =
+        this.listCalendars[calendarKey !== null ? calendarKey : 0].date
       const target = this.moveMonths(calendarKey, months)
       if (!target) return false
 
       this.transitionPrefix = transition
       this.$emit('changedMonth', target)
+      if (target.getFullYear() !== previous.getFullYear()) {
+        this.$emit('changedYear', target)
+      }
     },
     changeYear(calendarKey, years) {
       const target = this.moveMonths(calendarKey, years * 12)
@@ -1653,8 +1658,11 @@ export default {
 
       this.$emit('changedYear', target)
     },
+    gridAt(calendarKey) {
+      return this.listCalendars[calendarKey !== null ? calendarKey : 0]
+    },
     moveMonths(calendarKey, months) {
-      const grid = this.listCalendars[calendarKey !== null ? calendarKey : 0]
+      const grid = this.gridAt(calendarKey)
       const target = new Date(
         grid.date.getFullYear(),
         grid.date.getMonth() + months,
