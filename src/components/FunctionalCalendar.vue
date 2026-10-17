@@ -474,7 +474,10 @@ export default {
             value.hasOwnProperty('selectedDate'))
         ) {
           this.calendar = value
-        } else if (
+          return
+        }
+
+        if (
           typeof value === 'object' &&
           value.hasOwnProperty('multipleDateRange')
         ) {
@@ -491,6 +494,8 @@ export default {
             throw new Error('Invalid Data Range')
           }
         }
+
+        this.$emit('update:modelValue', this.calendar)
       },
       { immediate: true, deep: true }
     )

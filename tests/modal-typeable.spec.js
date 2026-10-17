@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick, ref } from 'vue'
+import { mount } from '@vue/test-utils'
+import FunctionalCalendar from '../index.js'
 import {
   mountCalendar,
   mountCalendarReady,
@@ -899,6 +901,52 @@ describe('listener cleanup', () => {
     popover.dispatchEvent(new FocusEvent('focusin'))
 
     expect(vm.showCalendar).toBe(false)
+  })
+})
+
+describe('empty model', () => {
+  const mountWithEmptyModel = async props => {
+    const model = ref({})
+    const wrapper = mount(
+      {
+        render: () =>
+          h(FunctionalCalendar, {
+            ...props,
+            modelValue: model.value,
+            'onUpdate:modelValue': value => (model.value = value)
+          })
+      },
+      { attachTo: document.body }
+    )
+    await nextTick()
+    return { model, wrapper }
+  }
+
+  it('writes a typed date to an empty model', async () => {
+    const { model, wrapper } = await mountWithEmptyModel({
+      isModal: true,
+      isDatePicker: true,
+      isTypeable: true
+    })
+
+    await wrapper.find('input.vfc-single-input').setValue('15/01/2027')
+
+    expect(model.value.selectedDate).toBe('15/1/2027')
+  })
+
+  it('writes a date added in the tags input to an empty model', async () => {
+    const { model, wrapper } = await mountWithEmptyModel({
+      isModal: true,
+      isMultipleDatePicker: true
+    })
+    const input = wrapper.find('.vfc-tags-input input')
+
+    await input.setValue('05/01/2027')
+    await input.trigger('keydown.enter')
+
+    expect(model.value.selectedDates.map(date => date.date)).toEqual([
+      '5/1/2027'
+    ])
   })
 })
 
