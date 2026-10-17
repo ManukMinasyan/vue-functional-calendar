@@ -272,6 +272,22 @@
           data-testid="presets-picker"
         ></functional-calendar>
       </div>
+      <div class="playground-calendars">
+        <div style="width: 320px" data-testid="presets-narrow">
+          <functional-calendar
+            :is-date-range="true"
+            :presets="true"
+          ></functional-calendar>
+        </div>
+        <div style="width: 600px" data-testid="presets-three">
+          <functional-calendar
+            :is-date-range="true"
+            :is-multiple="true"
+            :calendars-count="3"
+            :presets="true"
+          ></functional-calendar>
+        </div>
+      </div>
       <span>{{ JSON.stringify(presetRange.dateRange) }}</span>
     </section>
 

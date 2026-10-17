@@ -290,7 +290,9 @@ import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
 import {
   PRESET_KEYS,
+  PRESET_DAY_KEYWORDS,
   builtInRange,
+  daysBetween,
   eachDay,
   isValidRange
 } from '../utils/presets'
@@ -382,30 +384,15 @@ export default {
       return this.presetItems.length > 0 && !this.showTimePicker
     },
     presetItems() {
-      const { presets, isDateRange, isDatePicker, labels } = this.fConfigs
+      const { presets, isDateRange, isDatePicker } = this.fConfigs
       if (!presets || !(isDateRange || isDatePicker)) return []
       if (!this.checkHiddenElement('presets')) return []
 
       const entries = presets === true ? PRESET_KEYS : presets
       if (!Array.isArray(entries)) return []
 
-      const now = new Date()
       return entries
-        .map(entry => {
-          const isKey = typeof entry === 'string'
-          const label = isKey ? labels.presets[entry] : entry && entry.label
-          const range = isKey
-            ? builtInRange(entry, now)
-            : entry && typeof entry.range === 'function' && entry.range()
-          if (!label || !isValidRange(range)) return null
-
-          return {
-            label,
-            start: range.start,
-            end: range.end,
-            disabled: this.isPresetBlocked(range)
-          }
-        })
+        .map(entry => this.resolvePreset(entry, this.presetNow))
         .filter(Boolean)
     },
     rangeIsSelected() {
@@ -523,8 +510,10 @@ export default {
     this.$watch(
       'showCalendar',
       function (value) {
-        if (value) this.$emit('opened')
-        else {
+        if (value) {
+          this.presetNow = new Date()
+          this.$emit('opened')
+        } else {
           this.focusedDate = ''
           this.$emit('closed')
         }
@@ -806,9 +795,7 @@ export default {
       })
     },
     clickDay(item, isDisabledDate) {
-      if (this.fConfigs.withTimePicker && this.fConfigs.isDateRange) {
-        item.date = item.date + ' 00:00'
-      }
+      item.date = this.withTimeSuffix(item.date)
       this.$emit('dayClicked', item)
 
       if (
@@ -849,10 +836,14 @@ export default {
         }
       }
 
+      this.selectDate(item.date)
+      this.$emit('choseDay', item)
+    },
+    selectDate(date) {
       // Date Multiple Range
       if (this.fConfigs.isMultipleDateRange) {
         let clickDate = this.helpCalendar
-          .getDateFromFormat(item.date.split(' ')[0])
+          .getDateFromFormat(date.split(' ')[0])
           .getTime()
         let rangesLength = this.calendar.multipleDateRange.length
         let lastRange = this.calendar.multipleDateRange[rangesLength - 1]
@@ -873,15 +864,15 @@ export default {
 
         // Two dates is not empty
         if (lastRange.start !== '' && lastRange.end !== '') {
-          this.calendar.multipleDateRange.push({ end: '', start: item.date })
-          // lastRange.start = item.date
+          this.calendar.multipleDateRange.push({ end: '', start: date })
+          // lastRange.start = date
           // lastRange.end = ''
           // Not date selected
         } else if (lastRange.start === '' && lastRange.end === '') {
-          lastRange.start = item.date
+          lastRange.start = date
           // Start Date not empty, chose date > start date
         } else if (lastRange.end === '' && clickDate > startDate.getTime()) {
-          lastRange.end = item.date
+          lastRange.end = date
           // Start date not empty, chose date <= start date (also same date range select)
         } else if (lastRange.start !== '' && clickDate <= startDate.getTime()) {
           this.$nextTick(() => {
@@ -890,7 +881,7 @@ export default {
             }
           })
           lastRange.end = lastRange.start
-          lastRange.start = item.date
+          lastRange.start = date
         }
 
         //Get number of days between date range dates
@@ -901,9 +892,7 @@ export default {
           let diffDays = Math.round(
             Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
           )
-          let itemTime = this.helpCalendar
-            .getDateFromFormat(item.date)
-            .getTime()
+          let itemTime = this.helpCalendar.getDateFromFormat(date).getTime()
 
           this.$emit('selectedDaysCount', diffDays)
 
@@ -955,11 +944,11 @@ export default {
           }
         }
 
-        this.$emit('update:modelValue', this.calendar)
+        this.emitModel()
       } // Date Range
       else if (this.fConfigs.isDateRange) {
         let clickDate = this.helpCalendar
-          .getDateFromFormat(item.date.split(' ')[0])
+          .getDateFromFormat(date.split(' ')[0])
           .getTime()
 
         let startDate = ''
@@ -974,20 +963,20 @@ export default {
           this.calendar.dateRange.start !== '' &&
           this.calendar.dateRange.end !== ''
         ) {
-          this.calendar.dateRange.start = item.date
+          this.calendar.dateRange.start = date
           this.calendar.dateRange.end = ''
           // Not date selected
         } else if (
           this.calendar.dateRange.start === '' &&
           this.calendar.dateRange.end === ''
         ) {
-          this.calendar.dateRange.start = item.date
+          this.calendar.dateRange.start = date
           // Start Date not empty, chose date > start date
         } else if (
           this.calendar.dateRange.end === '' &&
           clickDate > startDate.getTime()
         ) {
-          this.calendar.dateRange.end = item.date
+          this.calendar.dateRange.end = date
           // Start date not empty, chose date <= start date (also same date range select)
         } else if (
           this.calendar.dateRange.start !== '' &&
@@ -999,7 +988,7 @@ export default {
             }
           })
           this.calendar.dateRange.end = this.calendar.dateRange.start
-          this.calendar.dateRange.start = item.date
+          this.calendar.dateRange.start = date
         }
 
         //Get number of days between date range dates
@@ -1017,9 +1006,7 @@ export default {
           let diffDays = Math.round(
             Math.abs((firstDate.getTime() - secondDate.getTime()) / oneDay)
           )
-          let itemTime = this.helpCalendar
-            .getDateFromFormat(item.date)
-            .getTime()
+          let itemTime = this.helpCalendar.getDateFromFormat(date).getTime()
 
           this.$emit('selectedDaysCount', diffDays)
 
@@ -1075,10 +1062,10 @@ export default {
           }
         }
 
-        this.$emit('update:modelValue', this.calendar)
+        this.emitModel()
       } else if (this.fConfigs.isDatePicker) {
-        this.calendar.selectedDate = item.date
-        this.$emit('update:modelValue', this.calendar)
+        this.calendar.selectedDate = date
+        this.emitModel()
 
         // Is Auto Closeable
         if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
@@ -1087,24 +1074,24 @@ export default {
       } else if (this.fConfigs.isMultipleDatePicker) {
         if (
           this.calendar.hasOwnProperty('selectedDates') &&
-          this.calendar.selectedDates.find(date => date.date === item.date)
+          this.calendar.selectedDates.find(entry => entry.date === date)
         ) {
           let dateIndex = this.calendar.selectedDates.findIndex(
-            date => date.date === item.date
+            entry => entry.date === date
           )
           this.calendar.selectedDates.splice(dateIndex, 1)
         } else {
-          let date = Object.assign({}, this.defaultDateFormat)
-          date.date = item.date
+          let selected = Object.assign({}, this.defaultDateFormat)
+          selected.date = date
 
           if (!this.calendar.hasOwnProperty('selectedDates')) {
             this.calendar.selectedDates = []
           }
 
-          this.calendar.selectedDates.push(date)
+          this.calendar.selectedDates.push(selected)
         }
 
-        this.$emit('update:modelValue', this.calendar)
+        this.emitModel()
       }
 
       this.markChooseDays()
@@ -1116,50 +1103,162 @@ export default {
         }
 
         if (
-          this.calendar.selectedDates.find(date => date.date === item.date) &&
+          this.calendar.selectedDates.find(entry => entry.date === date) &&
           this.fConfigs.isMultipleDatePicker
         ) {
           this.openTimePicker()
         }
       }
+    },
+    resolvePreset(entry, now) {
+      const isKey = typeof entry === 'string'
+      const label = isKey ? this.fConfigs.labels.presets[entry] : entry?.label
+      let range = null
+      try {
+        range = isKey
+          ? builtInRange(entry, now)
+          : typeof entry?.range === 'function' && entry.range()
+      } catch {
+        return null
+      }
+      if (!label || !isValidRange(range)) return null
 
-      this.$emit('choseDay', item)
+      return {
+        entry,
+        label,
+        start: range.start,
+        end: range.end,
+        disabled: this.isPresetBlocked(range)
+      }
+    },
+    isRangePreset() {
+      return this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange
     },
     isPresetBlocked({ start, end }) {
-      const isRange =
-        this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange
-      const days = eachDay(start, isRange ? end : start)
+      const isRange = this.isRangePreset()
+      const last = isRange ? end : start
+      const length = daysBetween(start, last) + 1
       const { minSelDays, maxSelDays } = this.fConfigs
 
       if (
-        days.some(day => this.isDateBlocked(this.helpCalendar.formatDate(day)))
+        isRange &&
+        ((minSelDays && length < minSelDays) ||
+          (maxSelDays && length > maxSelDays))
       ) {
         return true
       }
 
       return (
-        isRange &&
-        ((minSelDays && days.length < minSelDays) ||
-          (maxSelDays && days.length > maxSelDays))
+        this.isPresetOutsideLimits(start, last) ||
+        this.hasDisabledDateIn(start, last) ||
+        this.hasDisabledDayNameIn(start, last) ||
+        this.hasUnavailableDateIn(start, last, length)
       )
     },
+    isPresetOutsideLimits(start, last) {
+      const { limits } = this.fConfigs
+      if (!limits) return false
+
+      return (
+        start < this.helpCalendar.getDateFromFormat(limits.min) ||
+        last > this.helpCalendar.getDateFromFormat(limits.max)
+      )
+    },
+    hasDisabledDateIn(start, last) {
+      const { disabledDates } = this.fConfigs
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+
+      if (disabledDates.includes('beforeToday') && start < today) return true
+      if (disabledDates.includes('afterToday') && last > today) return true
+
+      return disabledDates.some(entry => {
+        const date = this.helpCalendar.getDateFromFormat(entry)
+        return (
+          date >= start &&
+          date <= last &&
+          this.helpCalendar.formatDate(date) === entry
+        )
+      })
+    },
+    hasDisabledDayNameIn(start, last) {
+      const { disabledDayNames } = this.fConfigs
+      if (!disabledDayNames.length) return false
+
+      const weekEnd = new Date(
+        start.getFullYear(),
+        start.getMonth(),
+        start.getDate() + 6
+      )
+      return eachDay(start, last < weekEnd ? last : weekEnd).some(day =>
+        this.helpCalendar.isDayNameDisabled(day, disabledDayNames)
+      )
+    },
+    hasUnavailableDateIn(start, last, length) {
+      const { enabledDates } = this.fConfigs
+      if (!enabledDates.length) return false
+
+      const hasKeyword = enabledDates.some(entry =>
+        PRESET_DAY_KEYWORDS.includes(entry)
+      )
+      if (!hasKeyword && length > enabledDates.length) return true
+
+      return eachDay(start, last).some(
+        day => !this.isEnabledDate(this.helpCalendar.formatDate(day))
+      )
+    },
+    isPresetSelected(preset) {
+      const { calendar } = this
+      const start = this.helpCalendar.formatDate(preset.start)
+
+      if (!this.isRangePreset()) return calendar.selectedDate === start
+
+      const end = this.helpCalendar.formatDate(preset.end)
+      const matches = range =>
+        range.start.split(' ')[0] === start && range.end.split(' ')[0] === end
+      return this.fConfigs.isMultipleDateRange
+        ? calendar.multipleDateRange.some(matches)
+        : matches(calendar.dateRange)
+    },
     applyPreset(preset) {
-      if (preset.disabled) return
+      this.presetNow = new Date()
+      const current = this.resolvePreset(preset.entry, this.presetNow)
+      if (!current || current.disabled) return
 
-      const dayItem = date => ({ date: this.helpCalendar.formatDate(date) })
+      const dateOf = date =>
+        this.withTimeSuffix(this.helpCalendar.formatDate(date))
+      const isShown = this.isMonthShown(current.start)
 
-      if (this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange) {
-        this.discardOpenRange()
-        this.clickDay(dayItem(preset.start), this.isDisabledDate)
-        this.clickDay(dayItem(preset.end), this.isDisabledDate)
-      } else {
-        this.clickDay(dayItem(preset.start), this.isDisabledDate)
+      this.batchingModel = true
+      try {
+        if (this.isRangePreset()) {
+          this.discardOpenRange()
+          this.selectDate(dateOf(current.start))
+          this.selectDate(dateOf(current.end))
+        } else {
+          this.selectDate(dateOf(current.start))
+        }
+      } finally {
+        this.batchingModel = false
       }
 
-      this.revealMonth(preset.start)
+      if (isShown) {
+        this.$emit('update:modelValue', this.calendar)
+      } else {
+        this.revealMonth(current.start)
+      }
       this.returnFocusIfClosed()
     },
+    withTimeSuffix(date) {
+      return this.fConfigs.withTimePicker && this.fConfigs.isDateRange
+        ? `${date} 00:00`
+        : date
+    },
+    emitModel() {
+      if (!this.batchingModel) this.$emit('update:modelValue', this.calendar)
+    },
     discardOpenRange() {
+      this.clearHover()
       if (!this.fConfigs.isMultipleDateRange) {
         this.cleanRange()
         return
@@ -1169,13 +1268,30 @@ export default {
       const last = ranges[ranges.length - 1]
       if (last && !(last.start && last.end)) ranges.pop()
     },
-    revealMonth(date) {
-      const isShown = this.listCalendars.some(
+    clearHover() {
+      this.listCalendars.forEach(calendar =>
+        calendar.weeks.forEach(week =>
+          week.days.forEach(day => (day.isHovered = false))
+        )
+      )
+    },
+    isMonthShown(date) {
+      return this.listCalendars.some(
         item =>
           item.date.getFullYear() === date.getFullYear() &&
           item.date.getMonth() === date.getMonth()
       )
-      if (!isShown) this.ChooseDate(this.helpCalendar.formatDate(date))
+    },
+    revealMonth(date) {
+      const previous = this.listCalendars[0].date
+      this.transitionPrefix = date > previous ? 'left' : 'right'
+      this.ChooseDate(this.helpCalendar.formatDate(date))
+
+      const first = this.listCalendars[0].date
+      this.$emit('changedMonth', first)
+      if (first.getFullYear() !== previous.getFullYear()) {
+        this.$emit('changedYear', first)
+      }
     },
     markChooseDays() {
       let startDate = this.startDMY

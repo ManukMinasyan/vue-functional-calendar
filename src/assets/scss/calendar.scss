@@ -196,35 +196,25 @@
 
     &.vfc-has-presets {
       display: flex;
+      flex-wrap: wrap;
+      overflow: hidden;
 
       > .vfc-calendars-container {
-        flex: 1 1 auto;
-        min-width: 0;
-      }
-
-      @media (max-width: 479.98px) {
-        flex-direction: column;
+        flex: 1000 1 calc(var(--_vfc-day-size) * 7 + var(--_vfc-space-4) * 2);
+        min-width: calc(var(--_vfc-day-size) * 7 + var(--_vfc-space-4) * 2);
       }
     }
   }
 
   &-presets {
-    display: flex;
-    flex: 0 0 auto;
-    flex-direction: column;
+    display: grid;
+    flex: 1 0 140px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 104px), 1fr));
+    align-content: start;
     gap: var(--_vfc-space-2);
     box-sizing: border-box;
-    width: 148px;
-    padding: var(--_vfc-space-4);
-    border-inline-end: 1px solid var(--_vfc-border);
-
-    @media (max-width: 479.98px) {
-      flex-flow: row wrap;
-      width: auto;
-      padding-bottom: var(--_vfc-space-3);
-      border-inline-end: 0;
-      border-bottom: 1px solid var(--_vfc-border);
-    }
+    padding: var(--_vfc-space-4) var(--_vfc-space-3);
+    background-color: var(--_vfc-hover);
   }
 
   &-preset {
@@ -234,15 +224,20 @@
     font-weight: var(--_vfc-font-weight-medium);
     line-height: 24px;
     color: var(--_vfc-text);
-    text-align: start;
+    text-align: center;
     cursor: pointer;
     appearance: none;
-    background: none;
+    background-color: var(--_vfc-bg);
     border: 1px solid var(--_vfc-border-strong);
     border-radius: var(--_vfc-radius);
 
     &:hover {
-      background-color: var(--_vfc-hover);
+      background-color: var(--_vfc-range);
+    }
+
+    &[aria-pressed='true'] {
+      font-weight: var(--_vfc-font-weight-strong);
+      border-color: var(--_vfc-primary);
     }
 
     &:focus-visible {
@@ -256,7 +251,7 @@
       border-color: var(--_vfc-border);
 
       &:hover {
-        background-color: transparent;
+        background-color: var(--_vfc-bg);
       }
     }
   }

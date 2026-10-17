@@ -214,6 +214,8 @@ export const propsAndData = {
         minute: '00'
       },
       hoveredObject: null,
+      presetNow: new Date(),
+      batchingModel: false,
       calendar: {
         currentDate: new Date(),
         selectedDate: false,

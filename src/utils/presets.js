@@ -56,3 +56,14 @@ export const eachDay = (start, end) => {
   }
   return days
 }
+
+export const PRESET_DAY_KEYWORDS = ['beforeToday', 'afterToday']
+
+const DAY_MS = 86400000
+
+export const daysBetween = (start, end) =>
+  Math.round(
+    (Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()) -
+      Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())) /
+      DAY_MS
+  )

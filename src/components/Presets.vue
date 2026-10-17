@@ -10,6 +10,8 @@
       type="button"
       class="vfc-preset"
       :aria-disabled="preset.disabled"
+      :aria-pressed="calendarRoot.isPresetSelected(preset)"
+      @mousedown.prevent
       @click="calendarRoot.applyPreset(preset)"
     >
       {{ preset.label }}

@@ -848,3 +848,541 @@ describe('modal calendars', () => {
     )
   })
 })
+
+describe('events', () => {
+  it('emits no dayClicked or choseDay for a range preset', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper, events } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(eventsNamed(events, 'dayClicked')).toEqual([])
+    expect(eventsNamed(events, 'choseDay')).toEqual([])
+  })
+
+  it('emits no dayClicked or choseDay for a date picker preset', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper, events } = await mountCalendarReady({
+      isDatePicker: true,
+      presets: true
+    })
+
+    await choose(wrapper, 'Today')
+
+    expect(eventsNamed(events, 'dayClicked')).toEqual([])
+    expect(eventsNamed(events, 'choseDay')).toEqual([])
+  })
+
+  it('still emits dayClicked and choseDay with the real day when clicking', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper, events } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+
+    await clickDays(wrapper, [9, 15])
+
+    expect(eventsNamed(events, 'dayClicked')).toHaveLength(2)
+    expect(eventsNamed(events, 'choseDay')).toHaveLength(2)
+    expect(eventsNamed(events, 'choseDay')[0]).toMatchObject({
+      date: '9/10/2026',
+      day: 9
+    })
+  })
+
+  it('emits one update:modelValue per range preset', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+    const before = wrapper.emitted('update:modelValue').length
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(before + 1)
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '9/10/2026',
+      end: '15/10/2026'
+    })
+  })
+
+  it('emits one update:modelValue per multiple range preset', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      isMultipleDateRange: true,
+      presets: true
+    })
+    const before = wrapper.emitted('update:modelValue').length
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(before + 1)
+  })
+
+  it('emits one update:modelValue when the preset moves the calendar', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: [
+        {
+          label: 'March',
+          range: () => ({
+            start: new Date(2027, 2, 3),
+            end: new Date(2027, 2, 9)
+          })
+        }
+      ]
+    })
+    const before = wrapper.emitted('update:modelValue').length
+
+    await choose(wrapper, 'March')
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(before + 1)
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '3/3/2027',
+      end: '9/3/2027'
+    })
+  })
+
+  it('emits changedMonth and changedYear when the preset changes the year', async () => {
+    const { wrapper, events } = await mountCalendarReady({
+      isDateRange: true,
+      presets: [
+        {
+          label: 'March',
+          range: () => ({
+            start: new Date(2027, 2, 3),
+            end: new Date(2027, 2, 9)
+          })
+        }
+      ]
+    })
+
+    await choose(wrapper, 'March')
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2027, 2, 1)])
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 2, 1)])
+  })
+
+  it('emits changedMonth without changedYear inside the same year', async () => {
+    const { wrapper, events } = await mountCalendarReady({
+      isDateRange: true,
+      presets: [
+        {
+          label: 'December',
+          range: () => ({
+            start: new Date(2026, 11, 3),
+            end: new Date(2026, 11, 9)
+          })
+        }
+      ]
+    })
+
+    await choose(wrapper, 'December')
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2026, 11, 1)])
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+  })
+
+  it('emits no navigation events when the start month is visible', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper, events } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([])
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+  })
+})
+
+describe('clock', () => {
+  const fixedDay = {
+    label: 'Fixed',
+    range: () => ({ start: new Date(2026, 9, 15), end: new Date(2026, 9, 15) })
+  }
+
+  const mountBeforeMidnight = async props => {
+    setToday(2026, 9, 15, 23, 59)
+    return mountCalendarReady({
+      isDateRange: true,
+      disabledDates: ['beforeToday'],
+      presets: ['today', fixedDay],
+      ...props
+    })
+  }
+
+  it('does nothing when midnight made the preset blocked, keeping the selection', async () => {
+    const { wrapper } = await mountBeforeMidnight()
+    await clickDays(wrapper, [20, 22])
+    expect(presetButton(wrapper, 'Fixed').attributes('aria-disabled')).toBe(
+      'false'
+    )
+    const emitted = wrapper.emitted('update:modelValue').length
+    vi.setSystemTime(new Date(2026, 9, 16, 0, 1))
+
+    wrapper.vm.applyPreset(wrapper.vm.presetItems[1])
+    await nextTick()
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '20/10/2026',
+      end: '22/10/2026'
+    })
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(emitted)
+  })
+
+  it('applies a built-in preset against the new day after midnight', async () => {
+    const { wrapper } = await mountBeforeMidnight()
+    vi.setSystemTime(new Date(2026, 9, 16, 0, 1))
+
+    wrapper.vm.applyPreset(wrapper.vm.presetItems[0])
+    await nextTick()
+
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '16/10/2026',
+      end: '16/10/2026'
+    })
+  })
+
+  it('refreshes the preset list when a modal calendar opens', async () => {
+    const { wrapper } = await mountBeforeMidnight({ isModal: true })
+    expect(presetButton(wrapper, 'Fixed').attributes('aria-disabled')).toBe(
+      'false'
+    )
+    vi.setSystemTime(new Date(2026, 9, 16, 0, 1))
+
+    await wrapper.trigger('focusin')
+    await nextTick()
+
+    expect(presetButton(wrapper, 'Fixed').attributes('aria-disabled')).toBe(
+      'true'
+    )
+  })
+
+  it('skips a custom preset whose range throws', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: [
+        {
+          label: 'Boom',
+          range: () => {
+            throw new Error('no range')
+          }
+        },
+        'today'
+      ]
+    })
+
+    expect(presetButtons(wrapper).map(button => button.text())).toEqual([
+      'Today'
+    ])
+  })
+})
+
+describe('blocked check cost and parity', () => {
+  const range = (start, end) => ({ start, end })
+
+  const bruteForce = (wrapper, { start, end }, isRange = true) => {
+    const { minSelDays, maxSelDays } = wrapper.vm.fConfigs
+    const days = []
+    const last = isRange ? end : start
+    for (let day = new Date(start); day <= last;) {
+      days.push(new Date(day))
+      day = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1)
+    }
+    return (
+      days.some(day =>
+        wrapper.vm.isDateBlocked(wrapper.vm.helpCalendar.formatDate(day))
+      ) ||
+      !!(isRange && minSelDays && days.length < minSelDays) ||
+      !!(isRange && maxSelDays && days.length > maxSelDays)
+    )
+  }
+
+  const samples = [
+    range(new Date(2026, 9, 15), new Date(2026, 9, 15)),
+    range(new Date(2026, 9, 9), new Date(2026, 9, 15)),
+    range(new Date(2026, 8, 16), new Date(2026, 9, 15)),
+    range(new Date(2026, 9, 1), new Date(2026, 9, 31)),
+    range(new Date(2026, 9, 12), new Date(2026, 9, 18)),
+    range(new Date(2026, 9, 18), new Date(2026, 9, 18)),
+    range(new Date(2026, 9, 20), new Date(2026, 9, 21))
+  ]
+
+  const configs = {
+    none: {},
+    limits: { limits: { min: '10/10/2026', max: '20/10/2026' } },
+    disabledDates: { disabledDates: ['12/10/2026', '3/9/2026'] },
+    disabledKeywords: { disabledDates: ['beforeToday'] },
+    disabledAfter: { disabledDates: ['afterToday'] },
+    enabledDates: { enabledDates: ['15/10/2026', '14/10/2026'] },
+    enabledKeyword: { enabledDates: ['beforeToday'] },
+    enabledMixed: { enabledDates: ['afterToday', '15/10/2026'] },
+    dayNames: { disabledDayNames: ['Th'] },
+    unknownDayName: { disabledDayNames: ['Xx'] },
+    minMax: { minSelDays: 3, maxSelDays: 20 },
+    padded: { disabledDates: ['09/10/2026'] }
+  }
+
+  it.each(Object.entries(configs))(
+    'matches a day-by-day check for %s',
+    async (name, props) => {
+      setToday(2026, 9, 15, 10)
+      const { wrapper } = await mountCalendarReady({
+        isDateRange: true,
+        presets: true,
+        ...props
+      })
+
+      samples.forEach(sample => {
+        expect(wrapper.vm.isPresetBlocked(sample)).toBe(
+          bruteForce(wrapper, sample)
+        )
+      })
+    }
+  )
+
+  it('matches a day-by-day check for a date picker', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      presets: true,
+      disabledDates: ['9/10/2026']
+    })
+
+    samples.forEach(sample => {
+      expect(wrapper.vm.isPresetBlocked(sample)).toBe(
+        bruteForce(wrapper, sample, false)
+      )
+    })
+  })
+
+  it('evaluates a 25 year range without per-day rules in under 10ms', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      limits: { min: '1/1/2000', max: '31/12/2040' },
+      presets: true
+    })
+    const decades = range(new Date(2005, 0, 1), new Date(2030, 0, 1))
+
+    const startedAt = performance.now()
+    const blocked = wrapper.vm.isPresetBlocked(decades)
+    const elapsed = performance.now() - startedAt
+
+    expect(blocked).toBe(false)
+    expect(elapsed).toBeLessThan(10)
+  })
+
+  it('blocks a 25 year range from the endpoints and the length alone', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      limits: { min: '1/1/2010', max: '31/12/2040' },
+      maxSelDays: 400,
+      presets: true
+    })
+
+    expect(
+      wrapper.vm.isPresetBlocked(
+        range(new Date(2005, 0, 1), new Date(2008, 0, 1))
+      )
+    ).toBe(true)
+    expect(
+      wrapper.vm.isPresetBlocked(
+        range(new Date(2011, 0, 1), new Date(2030, 0, 1))
+      )
+    ).toBe(true)
+  })
+
+  it('blocks any week-long range when a day name is disabled', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      disabledDayNames: ['Su'],
+      presets: true
+    })
+
+    expect(
+      wrapper.vm.isPresetBlocked(
+        range(new Date(2026, 9, 5), new Date(2026, 9, 11))
+      )
+    ).toBe(true)
+    expect(
+      wrapper.vm.isPresetBlocked(
+        range(new Date(2026, 9, 5), new Date(2026, 9, 10))
+      )
+    ).toBe(false)
+  })
+})
+
+describe('hover state', () => {
+  it('clears the hover tails of an abandoned half-open range', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      minSelDays: 5,
+      presets: true
+    })
+    await clickDays(wrapper, [10])
+    wrapper.vm.dayMouseOver('11/10/2026')
+    const hoveredDays = () =>
+      wrapper.vm.listCalendars
+        .flatMap(item => item.weeks)
+        .flatMap(week => week.days)
+        .filter(day => day.isHovered)
+    expect(hoveredDays().length).toBeGreaterThan(0)
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(hoveredDays()).toEqual([])
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '9/10/2026',
+      end: '15/10/2026'
+    })
+  })
+})
+
+describe('pressed state', () => {
+  const pressed = wrapper =>
+    presetButtons(wrapper)
+      .filter(button => button.attributes('aria-pressed') === 'true')
+      .map(button => button.text())
+
+  it('presses nothing before a selection', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+
+    expect(pressed(wrapper)).toEqual([])
+    expect(presetButtons(wrapper)[0].attributes('aria-pressed')).toBe('false')
+  })
+
+  it('presses the preset that matches the range', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(pressed(wrapper)).toEqual(['Last 7 days'])
+  })
+
+  it('moves the pressed state when another preset is chosen', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+    await choose(wrapper, 'Last 7 days')
+
+    await choose(wrapper, 'Yesterday')
+
+    expect(pressed(wrapper)).toEqual(['Yesterday'])
+  })
+
+  it('presses nothing after a different range is clicked', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+    await choose(wrapper, 'Last 7 days')
+
+    await clickDays(wrapper, [1, 3])
+
+    expect(pressed(wrapper)).toEqual([])
+  })
+
+  it('presses the preset equal to a range chosen by clicking', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true
+    })
+
+    await clickDays(wrapper, [9, 15])
+
+    expect(pressed(wrapper)).toEqual(['Last 7 days'])
+  })
+
+  it('presses the preset that matches any of several ranges', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      isMultipleDateRange: true,
+      presets: true
+    })
+    await clickDays(wrapper, [1, 3])
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(pressed(wrapper)).toEqual(['Last 7 days'])
+  })
+
+  it('presses the preset that matches the selected date', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      presets: true
+    })
+
+    await choose(wrapper, 'Last 7 days')
+
+    expect(pressed(wrapper)).toEqual(['Last 7 days'])
+  })
+
+  it('ignores the time part of the selection', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      withTimePicker: true,
+      presets: true
+    })
+
+    await choose(wrapper, 'Today')
+    wrapper.vm.showTimePicker = false
+    await nextTick()
+
+    expect(pressed(wrapper)).toEqual(['Today'])
+  })
+})
+
+describe('focus on mouse down', () => {
+  it('keeps focus where it is so a modal does not close before the click', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isAutoCloseable: true,
+      presets: true
+    })
+    const input = wrapper.find('input').element
+    input.focus()
+    await nextTick()
+    const button = presetButton(wrapper, 'Last 7 days').element
+
+    const mousedown = new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true
+    })
+    button.dispatchEvent(mousedown)
+
+    expect(mousedown.defaultPrevented).toBe(true)
+    expect(isHidden(wrapper)).toBe(false)
+    expect(document.activeElement).toBe(input)
+
+    button.click()
+    await nextTick()
+
+    expect(isHidden(wrapper)).toBe(true)
+    expect(document.activeElement).toBe(input)
+  })
+})
