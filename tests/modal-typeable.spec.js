@@ -682,6 +682,120 @@ describe('typing at the caret', () => {
 
     expect(model.selectedDate).toBe('2027-1-5')
   })
+
+  const withSelectedTime = {
+    dateFormat: 'dd/mm/yyyy hh:mm',
+    displayTimeInput: true,
+    modelValue: {
+      ...emptyModel(),
+      selectedDate: '15/1/2027',
+      selectedHour: '10',
+      selectedMinute: '30'
+    }
+  }
+
+  it('reorders a pasted ISO date into the format', async () => {
+    const { model, input } = await mountTypeable()
+
+    await edit(input, '2027-01-15', 10, 'insertFromPaste')
+
+    expect(model.selectedDate).toBe('15/1/2027')
+    expect(input.value).toBe('15/1/2027')
+  })
+
+  it('keeps pasted text that is not a date as given', async () => {
+    const { model, input } = await mountTypeable()
+
+    await edit(input, '15 Jan 2027', 11, 'insertFromPaste')
+
+    expect(input.value).toBe('15 Jan 2027')
+    expect(model.selectedDate).toBe(false)
+  })
+
+  it('commits an autofilled date', async () => {
+    const { model, input } = await mountTypeable()
+
+    input.value = '2027-01-15'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+
+    expect(model.selectedDate).toBe('15/1/2027')
+  })
+
+  it('leaves the input alone while an IME composes', async () => {
+    const { model, input } = await mountTypeable()
+
+    input.value = '１５/０１/２０２７'
+    input.dispatchEvent(
+      new InputEvent('input', {
+        inputType: 'insertCompositionText',
+        isComposing: true,
+        bubbles: true
+      })
+    )
+    await nextTick()
+
+    expect(input.value).toBe('１５/０１/２０２７')
+    expect(model.selectedDate).toBe(false)
+  })
+
+  it('converts full-width digits once the composition ends', async () => {
+    const { model, input } = await mountTypeable()
+
+    input.value = '１５/０１/２０２７'
+    input.dispatchEvent(
+      new CompositionEvent('compositionend', { bubbles: true })
+    )
+    await nextTick()
+
+    expect(model.selectedDate).toBe('15/1/2027')
+  })
+
+  it('converts full-width digits in a range input once the composition ends', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isTypeable: true,
+      modelValue: model
+    })
+    const [start] = wrapper.findAll('.vfc-multiple-input input')
+
+    start.element.value = '０５/０１/２０２７'
+    start.element.dispatchEvent(
+      new CompositionEvent('compositionend', { bubbles: true })
+    )
+    await nextTick()
+
+    expect(model.dateRange.start).toBe('5/1/2027')
+  })
+
+  it('leaves digits typed into the time alone', async () => {
+    const { input } = await mountTypeable(withSelectedTime)
+
+    await edit(input, '15/1/2027 10:3', 14)
+
+    expect(input.value).toBe('15/1/2027 10:3')
+    expect(input.selectionStart).toBe(14)
+  })
+
+  it('keeps a space typed after a complete date', async () => {
+    const { input } = await mountTypeable(withSelectedTime)
+
+    await edit(input, '15/1/2027 ', 10)
+
+    expect(input.value).toBe('15/1/2027 ')
+  })
+
+  it('leaves room for the time in the input length', async () => {
+    const { input } = await mountTypeable({
+      dateFormat: 'dd/mm/yyyy',
+      displayTimeInput: true,
+      withTimePicker: true
+    })
+
+    expect(input.maxLength).toBe('dd/mm/yyyy hh:mm'.length)
+  })
 })
 
 describe('multiple date picker input', () => {

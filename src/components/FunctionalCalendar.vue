@@ -2320,6 +2320,8 @@ export default {
       if (
         !this.fConfigs.isModal ||
         e.key !== 'ArrowDown' ||
+        e.isComposing ||
+        e.defaultPrevented ||
         e.ctrlKey ||
         e.metaKey ||
         e.shiftKey ||

@@ -18,9 +18,10 @@
           :aria-expanded="calendarRoot.showCalendar"
           :value="dateRangeSelectedStartDate"
           @input="typeRangeDate($event, 'start')"
+          @compositionend="typeRangeDate($event, 'start')"
           :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
-          :maxlength="fConfigs.dateFormat.length"
+          :maxlength="maxLength"
         />
         <input
           type="text"
@@ -29,9 +30,10 @@
           :aria-expanded="calendarRoot.showCalendar"
           :value="dateRangeSelectedEndDate"
           @input="typeRangeDate($event, 'end')"
+          @compositionend="typeRangeDate($event, 'end')"
           :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
-          :maxlength="fConfigs.dateFormat.length"
+          :maxlength="maxLength"
         />
       </slot>
     </div>
@@ -52,9 +54,10 @@
           :aria-expanded="calendarRoot.showCalendar"
           :value="singleSelectedDate"
           @input="typeSingleDate"
+          @compositionend="typeSingleDate"
           :placeholder="fConfigs.placeholder"
           :readonly="!fConfigs.isTypeable"
-          :maxlength="fConfigs.dateFormat.length"
+          :maxlength="maxLength"
         />
       </slot>
     </div>
@@ -116,6 +119,12 @@ export default {
     },
     dateRangeSelectedEndDate() {
       return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
+    },
+    maxLength() {
+      const dateLength = this.fConfigs.dateFormat.split(' ')[0].length
+      return this.calendarRoot.displayTimeInput
+        ? dateLength + ' hh:mm'.length
+        : dateLength
     }
   },
   methods: {
@@ -134,9 +143,13 @@ export default {
       return input.value
     },
     typeSingleDate(event) {
+      if (event.isComposing) return
+
       this.calendarRoot.singleSelectedDate = this.cleanTypedInput(event)
     },
     typeRangeDate(event, edge) {
+      if (event.isComposing) return
+
       const date = this.calendarRoot.helpCalendar.parseTypedDate(
         this.cleanTypedInput(event)
       )

@@ -1,5 +1,12 @@
 const toWeekStart = value => (typeof value === 'number' ? value : value ? 0 : 1)
 
+const FULL_WIDTH_OFFSET = 0xfee0
+
+const toAsciiDigits = value =>
+  value.replace(/[\uFF0D-\uFF19]/g, char =>
+    String.fromCharCode(char.charCodeAt(0) - FULL_WIDTH_OFFSET)
+  )
+
 Date.prototype.getWeekNumber = function (weekStartOrSundayStart) {
   const weekStart = toWeekStart(weekStartOrSundayStart)
   const sinceWeekStart = (this.getDay() - weekStart + 7) % 7
@@ -288,23 +295,20 @@ export default class helpCalendar {
     return roundTrips ? this.formatDate(date) : ''
   }
 
-  cleanTypedInput(value, caret, inputType, data) {
+  cleanTypedInput(rawValue, caret, inputType, data) {
+    if (typeof inputType === 'string' && inputType.startsWith('delete')) {
+      return { value: rawValue, caret }
+    }
+
     const { separator, tokens } = this.getFormatParts()
-    const timeMatch = value.match(/\s+\d{1,2}:\d{2}.*$/)
-    const time = timeMatch ? timeMatch[0] : ''
-    const head = value.slice(0, value.length - time.length)
+    const value = toAsciiDigits(rawValue)
+    const [head, time] = this.splitTime(value)
     const isTyping =
       inputType === 'insertText' && (data == null || data.length === 1)
     const isSeparator = char => /[-./ ]/.test(char)
 
-    if (typeof inputType === 'string' && inputType.startsWith('delete')) {
-      return { value, caret }
-    }
-
-    if (!isTyping || caret > head.length || caret < 1) {
-      const masked = this.mask(head.replace(/[-./ ]/g, separator))
-      return { value: masked + time, caret: masked.length }
-    }
+    if (!isTyping || caret < 1) return this.cleanInsertedText(value, caret)
+    if (caret > head.length) return { value, caret }
 
     const maxLengths = tokens.map(token => (token === 'yyyy' ? 4 : 2))
     const typed = head[caret - 1]
@@ -339,5 +343,48 @@ export default class helpCalendar {
       value: `${head.slice(0, caret - 1)}${separator}${typed}${time}`,
       caret: caret + 1
     }
+  }
+
+  splitTime(value) {
+    const { tokens } = this.getFormatParts()
+    let end = value.indexOf(' ')
+
+    while (end !== -1) {
+      const parts = value.slice(0, end).split(/[-./ ]/)
+      if (parts.length === tokens.length && parts.every(Boolean)) break
+      end = value.indexOf(' ', end + 1)
+    }
+
+    return end === -1 ? [value, ''] : [value.slice(0, end), value.slice(end)]
+  }
+
+  cleanInsertedText(value, caret) {
+    const { separator } = this.getFormatParts()
+    const [head, time] = this.splitTime(value)
+    const normalized = head.replace(/[-./ ]/g, separator)
+
+    for (const candidate of [normalized, this.reorderIsoDate(head)]) {
+      const masked = this.mask(candidate)
+      if (this.parseTypedDate(masked)) {
+        return { value: masked + time, caret: masked.length }
+      }
+    }
+
+    const masked = this.mask(normalized)
+    const withoutSeparators = text => text.replace(/[-./ ]/g, '')
+    if (withoutSeparators(masked) === withoutSeparators(head)) {
+      return { value: masked + time, caret: masked.length }
+    }
+
+    return { value, caret }
+  }
+
+  reorderIsoDate(value) {
+    const { separator, tokens } = this.getFormatParts()
+    const iso = value.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)
+    if (!iso) return value
+
+    const [, yyyy, mm, dd] = iso
+    return tokens.map(token => ({ yyyy, mm, dd })[token]).join(separator)
   }
 }

@@ -1214,6 +1214,29 @@ describe('Enter in a typeable modal input', () => {
     expect(event.defaultPrevented).toBe(false)
     expect(active()).toBe(input.element)
   })
+
+  it('ignores ArrowDown while an IME composes', async () => {
+    const { input } = await mountTypeable()
+    const event = keyEvent('ArrowDown', { isComposing: true })
+
+    input.element.dispatchEvent(event)
+    await nextTick()
+    await nextTick()
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(active()).toBe(input.element)
+  })
+
+  it('ignores an ArrowDown the input already handled', async () => {
+    const { input } = await mountTypeable()
+    input.element.addEventListener('keydown', e => e.preventDefault())
+
+    input.element.dispatchEvent(keyEvent('ArrowDown'))
+    await nextTick()
+    await nextTick()
+
+    expect(active()).toBe(input.element)
+  })
 })
 
 describe('roving day reset', () => {
