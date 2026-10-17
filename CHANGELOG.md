@@ -30,6 +30,12 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 
 - Week numbers with `sundayStart` follow ISO numbering of each row's Thursday. They were one lower.
 - Typed dates are validated. `31/02/2026` is rejected, padded dates such as `05/03/2026` are accepted, and a value commits only when the date is complete.
+- A pasted or autofilled ISO date is reordered to `dateFormat`, and pasted text that is not a date stays as pasted.
+- Typing with an input method editor no longer breaks the composition, and full-width digits are converted when it ends.
+- Text typed after the date in a `displayTimeInput` field is kept, and the input is long enough to hold the time.
+- ArrowDown no longer opens the calendar while an IME composes, or when the input already handled the key.
+- A navigation arrow slot that renders a focusable component is no longer wrapped in a second button.
+- An empty `{}` v-model receives typed dates, time picker changes and cleared values.
 
 ## 2.10.0 - 2026-10-17
 
