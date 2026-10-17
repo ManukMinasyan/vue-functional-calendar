@@ -390,6 +390,18 @@ describe('week start source', () => {
     expect(dayNameTexts(wrapper)[0]).toBe(weekdays('de-DE')[5])
   })
 
+  it('falls back when Intl.Locale is unavailable', () => {
+    const IntlLocale = Intl.Locale
+    Intl.Locale = undefined
+    try {
+      const { wrapper } = mountCalendar({ locale: 'de-DE' })
+
+      expect(dayNameTexts(wrapper)[0]).toBe(weekdays('de-DE')[0])
+    } finally {
+      Intl.Locale = IntlLocale
+    }
+  })
+
   describe('without getWeekInfo or weekInfo', () => {
     const firstDayName = locale => {
       const { wrapper } = mountCalendar({ locale })

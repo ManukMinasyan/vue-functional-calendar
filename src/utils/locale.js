@@ -92,11 +92,18 @@ const regionFirstDay = intlLocale => {
 }
 
 export const localeFirstDay = locale => {
-  const intlLocale = new Intl.Locale(locale)
-  const info =
-    typeof intlLocale.getWeekInfo === 'function'
-      ? intlLocale.getWeekInfo()
-      : intlLocale.weekInfo
-  const firstDay = info && info.firstDay
-  return Number.isInteger(firstDay) ? firstDay % 7 : regionFirstDay(intlLocale)
+  if (typeof Intl.Locale !== 'function') return undefined
+  try {
+    const intlLocale = new Intl.Locale(locale)
+    const info =
+      typeof intlLocale.getWeekInfo === 'function'
+        ? intlLocale.getWeekInfo()
+        : intlLocale.weekInfo
+    const firstDay = info && info.firstDay
+    return Number.isInteger(firstDay)
+      ? firstDay % 7
+      : regionFirstDay(intlLocale)
+  } catch {
+    return undefined
+  }
 }
