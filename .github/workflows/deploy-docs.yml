@@ -1,0 +1,156 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches: ["3.x", "2.x"]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+  # A merge performed with GITHUB_TOKEN does not trigger `on: push`, so every
+  # auto-merged docs bump lands without deploying. This reconciles the site with
+  # whatever is on the branch, whoever merged it.
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version branch to deploy (e.g., 3.x, 2.x)'
+        required: true
+        type: choice
+        options:
+          - '3.x'
+          - '2.x'
+
+# Prevent concurrent deploys to avoid push conflicts
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          # On a schedule GITHUB_REF is the default branch, which is the one to reconcile.
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "branch=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+          else
+            echo "branch=${GITHUB_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set version config
+        id: config
+        env:
+          BRANCH: ${{ steps.version.outputs.branch }}
+        run: |
+          case $BRANCH in
+            3.x)
+              echo "dest_folder=." >> $GITHUB_OUTPUT
+              echo "base_url=/vue-functional-calendar/" >> $GITHUB_OUTPUT
+              echo "is_latest=true" >> $GITHUB_OUTPUT
+              ;;
+            2.x)
+              echo "dest_folder=v2" >> $GITHUB_OUTPUT
+              echo "base_url=/vue-functional-calendar/v2/" >> $GITHUB_OUTPUT
+              echo "is_latest=false" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown branch: $BRANCH"
+              exit 1
+              ;;
+          esac
+
+      - name: Checkout source branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.version.outputs.branch }}
+          persist-credentials: false
+
+      - name: Checkout gh-pages
+        # zizmor: ignore[artipacked] the deploy commit below pushes with this credential
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: 'docs/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./docs
+        run: npm ci
+
+      - name: Build documentation
+        working-directory: ./docs
+        run: npm run generate
+        env:
+          NUXT_APP_BASE_URL: ${{ steps.config.outputs.base_url }}
+          NUXT_SITE_URL: https://manukminasyan.github.io
+          DOCS_VERSION: ${{ steps.version.outputs.branch }}
+
+      - name: Deploy to gh-pages
+        env:
+          DEST: ${{ steps.config.outputs.dest_folder }}
+          IS_LATEST: ${{ steps.config.outputs.is_latest }}
+        run: |
+          if [ "$IS_LATEST" == "true" ]; then
+            echo "Deploying latest version to root..."
+            cd gh-pages
+            # List of items to preserve
+            PRESERVE="v2 versions.json .nojekyll README.md .git"
+            # Remove everything except preserved items
+            for item in *; do
+              if [ -e "$item" ]; then
+                SKIP=false
+                for keep in $PRESERVE; do
+                  if [ "$item" == "$keep" ]; then
+                    SKIP=true
+                    break
+                  fi
+                done
+                if [ "$SKIP" == "false" ]; then
+                  rm -rf "$item"
+                fi
+              fi
+            done
+            # Also remove hidden files except .git, .nojekyll
+            for item in .[!.]*; do
+              if [ -e "$item" ] && [ "$item" != ".git" ] && [ "$item" != ".nojekyll" ]; then
+                rm -rf "$item"
+              fi
+            done
+            cd ..
+            # Copy new build to root
+            cp -r docs/.output/public/* gh-pages/
+          else
+            echo "Deploying to $DEST subfolder..."
+            rm -rf "gh-pages/$DEST"
+            cp -r docs/.output/public "gh-pages/$DEST"
+          fi
+
+      - name: Commit and push
+        working-directory: ./gh-pages
+        env:
+          BRANCH: ${{ steps.version.outputs.branch }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to deploy"
+          else
+            git commit -m "Deploy $BRANCH docs"
+            git push
+          fi
