@@ -42,6 +42,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - A `locale` on an engine without `Intl.Locale` no longer throws while mounting. The first day of the week falls back to the default.
 - `minSelDays` and `maxSelDays` keep the times of a range with `withTimePicker`, and the time picker no longer throws on a range edge without a time.
 - The `minSelDays` extension of a range stops at `limits` and before disabled days instead of running past them.
+- `disabledDates` and `enabledDates` apply to range clicks with `withTimePicker`. A disabled date was selectable and an enabled one was rejected.
 
 ## 2.10.0 - 2026-10-17
 

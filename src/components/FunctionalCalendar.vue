@@ -797,7 +797,8 @@ export default {
       })
     },
     clickDay(item, isDisabledDate) {
-      item.date = this.withTimeSuffix(item.date)
+      const day = item.date
+      item.date = this.withTimeSuffix(day)
       this.$emit('dayClicked', item)
 
       if (
@@ -813,10 +814,10 @@ export default {
       // Disable days of week if set in configuration
       if (
         this.helpCalendar.isDayNameDisabled(
-          this.helpCalendar.getDateFromFormat(item.date),
+          this.helpCalendar.getDateFromFormat(day),
           this.fConfigs.disabledDayNames
         ) ||
-        isDisabledDate(item.date)
+        isDisabledDate(day)
       ) {
         return false
       }
@@ -831,7 +832,7 @@ export default {
         let max = this.helpCalendar
           .getDateFromFormat(this.fConfigs.limits.max)
           .getTime()
-        let date = this.helpCalendar.getDateFromFormat(item.date).getTime()
+        let date = this.helpCalendar.getDateFromFormat(day).getTime()
 
         if (date < min || date > max) {
           return false

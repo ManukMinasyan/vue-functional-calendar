@@ -333,3 +333,41 @@ describe('range clamps', () => {
     })
   })
 })
+
+describe('availability with a time picker range', () => {
+  const options = { isDateRange: true, withTimePicker: true }
+
+  it('ignores a click on a disabled date', async () => {
+    const { wrapper } = mountCalendar({
+      ...options,
+      disabledDates: ['10/10/2026']
+    })
+
+    await clickDay(wrapper, 10)
+
+    expect(wrapper.vm.calendar.dateRange.start).toBe('')
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+  })
+
+  it('accepts a click on an enabled date', async () => {
+    const { wrapper } = mountCalendar({
+      ...options,
+      enabledDates: ['10/10/2026', '12/10/2026']
+    })
+
+    await clickDay(wrapper, 10)
+
+    expect(wrapper.vm.calendar.dateRange.start).toBe('10/10/2026 00:00')
+  })
+
+  it('ignores a click on a date that is not enabled', async () => {
+    const { wrapper } = mountCalendar({
+      ...options,
+      enabledDates: ['10/10/2026', '12/10/2026']
+    })
+
+    await clickDay(wrapper, 11)
+
+    expect(wrapper.vm.calendar.dateRange.start).toBe('')
+  })
+})
