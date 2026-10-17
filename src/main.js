@@ -1,14 +1,10 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import FunctionalCalendar from '../index'
-import Demo from './Demo'
-Vue.use(FunctionalCalendar, {
-  showWeekNumbers: false,
-  dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
-})
-Vue.config.productionTip = false
+import Demo from './Demo.vue'
 
-new Vue({
-  el: '#app',
-  template: '<Demo/>',
-  components: { Demo }
-})
+createApp(Demo)
+  .use(FunctionalCalendar, {
+    showWeekNumbers: false,
+    dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+  })
+  .mount('#app')

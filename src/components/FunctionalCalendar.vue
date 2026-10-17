@@ -93,7 +93,7 @@
                   </template>
                 </Arrows>
 
-                <transition tag="div" :name="getTransition_()" appear>
+                <transition :name="getTransition_()" appear>
                   <div
                     class="vfc-top-date"
                     :class="'vfc-' + fConfigs.titlePosition"
@@ -127,7 +127,7 @@
                     </span>
                   </div>
                 </transition>
-                <transition tag="div" :name="getTransition_()" appear>
+                <transition :name="getTransition_()" appear>
                   <div class="vfc-dayNames">
                     <span v-if="fConfigs.showWeekNumbers"></span>
                     <span
@@ -174,7 +174,7 @@
                   <template
                     v-if="
                       calendarItem.weeks.length < 6 &&
-                        !fConfigs.isLayoutExpandable
+                      !fConfigs.isLayoutExpandable
                     "
                   >
                     <!-- stabilizator -->
@@ -242,6 +242,20 @@ export default {
     WeekNumbers
   },
   mixins: [propsAndData],
+  provide() {
+    return { calendar: this }
+  },
+  emits: [
+    'update:modelValue',
+    'opened',
+    'closed',
+    'dayClicked',
+    'choseDay',
+    'selectedDaysCount',
+    'dayMouseOver',
+    'changedMonth',
+    'changedYear'
+  ],
   computed: {
     startDMY() {
       //start only with Day Month and Year
@@ -338,8 +352,8 @@ export default {
 
     // Reacts to external selected dates
     this.$watch(
-      'value',
-      function(value) {
+      'modelValue',
+      function (value) {
         if (
           typeof value === 'object' &&
           (value.hasOwnProperty('dateRange') ||
@@ -351,9 +365,10 @@ export default {
           value.hasOwnProperty('multipleDateRange')
         ) {
           this.calendar.multipleDateRange = value.multipleDateRange
-          const lastElement = this.calendar.multipleDateRange[
-            Math.max(0, this.calendar.multipleDateRange.length - 1)
-          ]
+          const lastElement =
+            this.calendar.multipleDateRange[
+              Math.max(0, this.calendar.multipleDateRange.length - 1)
+            ]
           if (
             lastElement &&
             ((lastElement.start && !lastElement.end) ||
@@ -368,14 +383,14 @@ export default {
 
     this.$watch(
       'showCalendar',
-      function(value) {
+      function (value) {
         if (value) this.$emit('opened')
         else this.$emit('closed')
       },
       { immediate: true, deep: true }
     )
   },
-  beforeDestroy: function() {
+  beforeUnmount() {
     window.removeEventListener('focusin', this.onFocusIn)
     window.removeEventListener('focusout', this.onFocusOut)
     window.removeEventListener('click', this.hideMonthYearPicker)
@@ -383,13 +398,13 @@ export default {
   watch: {
     enabledDates: {
       handler() {
-        this.fConfigs.enabledDates = this.enabledDates;
+        this.fConfigs.enabledDates = this.enabledDates
       },
       deep: true
     },
     'configs.enabledDates': {
       handler() {
-        this.fConfigs.enabledDates = this.configs.enabledDates;
+        this.fConfigs.enabledDates = this.configs.enabledDates
       },
       deep: true
     },
@@ -409,7 +424,7 @@ export default {
     },
     'calendar.currentDate': {
       handler(value) {
-        this.$emit('input', this.calendar)
+        this.$emit('update:modelValue', this.calendar)
         this.checkLimits(value)
       }
     }
@@ -464,7 +479,7 @@ export default {
         let calendar = this.listCalendars[i]
         let date = calendar.date
 
-        this.$set(this.listCalendars, i, {
+        this.listCalendars[i] = {
           key: calendar.key,
           date: date,
           dateTop: `${
@@ -476,7 +491,7 @@ export default {
             date.getMonth(),
             date.getFullYear()
           )
-        })
+        }
 
         if (!this.fConfigs.isMultiple) {
           break
@@ -490,7 +505,7 @@ export default {
         globalOptions = this.$getOptions()
         Object.keys(globalOptions).forEach(objectKey => {
           if (typeof this.fConfigs[objectKey] !== 'undefined') {
-            this.$set(this.fConfigs, objectKey, globalOptions[objectKey])
+            this.fConfigs[objectKey] = globalOptions[objectKey]
           }
         })
       }
@@ -499,7 +514,7 @@ export default {
         Object.keys(this.fConfigs).forEach(objectKey => {
           if (typeof this.configs[objectKey] !== 'undefined') {
             // Get From Configs
-            this.$set(this.fConfigs, objectKey, this.configs[objectKey])
+            this.fConfigs[objectKey] = this.configs[objectKey]
           }
         })
       } else {
@@ -508,7 +523,7 @@ export default {
             typeof this.fConfigs[objectKey] !== 'undefined' &&
             typeof this.$props[objectKey] !== 'undefined'
           ) {
-            this.$set(this.fConfigs, objectKey, this.$props[objectKey])
+            this.fConfigs[objectKey] = this.$props[objectKey]
           }
         })
       }
@@ -751,7 +766,7 @@ export default {
           }
         }
 
-        this.$emit('input', this.calendar)
+        this.$emit('update:modelValue', this.calendar)
       } // Date Range
       else if (this.fConfigs.isDateRange) {
         let clickDate = this.helpCalendar
@@ -833,9 +848,8 @@ export default {
             diffDays < minSelDays
           ) {
             startDate.setDate(startDate.getDate() + (minSelDays - 1))
-            this.calendar.dateRange.end = this.helpCalendar.formatDate(
-              startDate
-            )
+            this.calendar.dateRange.end =
+              this.helpCalendar.formatDate(startDate)
           }
 
           if (
@@ -844,9 +858,8 @@ export default {
             diffDays < minSelDays
           ) {
             startDate.setDate(startDate.getDate() - (minSelDays - 1))
-            this.calendar.dateRange.start = this.helpCalendar.formatDate(
-              startDate
-            )
+            this.calendar.dateRange.start =
+              this.helpCalendar.formatDate(startDate)
           }
 
           // Maximum Selected Days
@@ -858,9 +871,8 @@ export default {
             diffDays >= maxSelDays
           ) {
             startDate.setDate(startDate.getDate() + (maxSelDays - 1))
-            this.calendar.dateRange.end = this.helpCalendar.formatDate(
-              startDate
-            )
+            this.calendar.dateRange.end =
+              this.helpCalendar.formatDate(startDate)
           }
 
           if (
@@ -869,16 +881,15 @@ export default {
             diffDays >= maxSelDays
           ) {
             startDate.setDate(startDate.getDate() - (maxSelDays - 1))
-            this.calendar.dateRange.start = this.helpCalendar.formatDate(
-              startDate
-            )
+            this.calendar.dateRange.start =
+              this.helpCalendar.formatDate(startDate)
           }
         }
 
-        this.$emit('input', this.calendar)
+        this.$emit('update:modelValue', this.calendar)
       } else if (this.fConfigs.isDatePicker) {
         this.calendar.selectedDate = item.date
-        this.$emit('input', this.calendar)
+        this.$emit('update:modelValue', this.calendar)
 
         // Is Auto Closeable
         if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
@@ -904,7 +915,7 @@ export default {
           this.calendar.selectedDates.push(date)
         }
 
-        this.$emit('input', this.calendar)
+        this.$emit('update:modelValue', this.calendar)
       }
 
       this.markChooseDays()
@@ -1164,9 +1175,8 @@ export default {
                       this.helpCalendar.formatDate(maxDateToLeft) === item.date
                     ) {
                       this.listCalendars[e].weeks[f].days[i].isHovered = true
-                      this.listCalendars[e].weeks[f].days[
-                        i
-                      ].isMouseToLeft = true
+                      this.listCalendars[e].weeks[f].days[i].isMouseToLeft =
+                        true
                     }
                   }
 
@@ -1175,9 +1185,8 @@ export default {
                       this.helpCalendar.formatDate(maxDateToRight) === item.date
                     ) {
                       this.listCalendars[e].weeks[f].days[i].isHovered = true
-                      this.listCalendars[e].weeks[f].days[
-                        i
-                      ].isMouseToRight = true
+                      this.listCalendars[e].weeks[f].days[i].isMouseToRight =
+                        true
                     }
                   }
                 }
@@ -1187,9 +1196,10 @@ export default {
         }
       }
       if (this.calendar.multipleDateRange) {
-        let range = this.calendar.multipleDateRange[
-          this.calendar.multipleDateRange.length - 1
-        ]
+        let range =
+          this.calendar.multipleDateRange[
+            this.calendar.multipleDateRange.length - 1
+          ]
         if (!range) return
         // this.calendar.multipleDateRange.forEach((range, index) => {
         if (
@@ -1271,18 +1281,16 @@ export default {
                       this.helpCalendar.formatDate(minDateToLeft) === item.date
                     ) {
                       this.listCalendars[e].weeks[f].days[i].isMarked = false
-                      this.listCalendars[e].weeks[f].days[
-                        i
-                      ].isMouseToLeft = true
+                      this.listCalendars[e].weeks[f].days[i].isMouseToLeft =
+                        true
                       this.listCalendars[e].weeks[f].days[i].isHovered = true
                     } else if (
                       thisDate <= minDateToRight.getTime() &&
                       this.helpCalendar.formatDate(minDateToRight) === item.date
                     ) {
                       this.listCalendars[e].weeks[f].days[i].isMarked = false
-                      this.listCalendars[e].weeks[f].days[
-                        i
-                      ].isMouseToRight = true
+                      this.listCalendars[e].weeks[f].days[i].isMouseToRight =
+                        true
                       this.listCalendars[e].weeks[f].days[i].isHovered = true
                     }
                   }
@@ -1291,9 +1299,8 @@ export default {
                     this.listCalendars[e].weeks[f].days[i].isMarked = false
                     this.listCalendars[e].weeks[f].days[i].isHovered = false
                     this.listCalendars[e].weeks[f].days[i].isMouseToLeft = false
-                    this.listCalendars[e].weeks[f].days[
-                      i
-                    ].isMouseToRight = false
+                    this.listCalendars[e].weeks[f].days[i].isMouseToRight =
+                      false
 
                     let maxDateToLeft, maxDateToRight
                     maxDateToLeft = new Date(startDate.getTime())
@@ -1311,9 +1318,8 @@ export default {
                         item.date
                       ) {
                         this.listCalendars[e].weeks[f].days[i].isHovered = true
-                        this.listCalendars[e].weeks[f].days[
-                          i
-                        ].isMouseToLeft = true
+                        this.listCalendars[e].weeks[f].days[i].isMouseToLeft =
+                          true
                       }
                     }
 
@@ -1323,9 +1329,8 @@ export default {
                         item.date
                       ) {
                         this.listCalendars[e].weeks[f].days[i].isHovered = true
-                        this.listCalendars[e].weeks[f].days[
-                          i
-                        ].isMouseToRight = true
+                        this.listCalendars[e].weeks[f].days[i].isMouseToRight =
+                          true
                       }
                     }
                   }
@@ -1486,7 +1491,7 @@ export default {
       }
 
       let currentCalendar = this.listCalendars[calendarKey]
-      this.$emit('changedMonth', currentCalendar.date);
+      this.$emit('changedMonth', currentCalendar.date)
       this.updateCalendar()
     },
     pickYear(year, calendarKey) {
@@ -1643,7 +1648,10 @@ export default {
         this.fConfigs.isModal &&
         !hElContains(this.popoverElement, e.relatedTarget)
       ) {
-        return (this.showCalendar = this.showMonthPicker = this.showYearPicker = false)
+        return (this.showCalendar =
+          this.showMonthPicker =
+          this.showYearPicker =
+            false)
       }
     },
 
@@ -1693,7 +1701,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../assets/scss/calendar.scss';
+@use '../assets/scss/calendar.scss';
 .rangeCleaner {
   padding: 5px 0 10px;
   display: flex;

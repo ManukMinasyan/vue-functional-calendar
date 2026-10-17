@@ -6,7 +6,7 @@
       v-if="oneArrows || manyArrows"
     >
       <div
-        @click="$parent.PreMonth(oneArrows ? 0 : calendarKey)"
+        @click="calendarRoot.PreMonth(oneArrows ? 0 : calendarKey)"
         :class="{ 'vfc-cursor-pointer': allowPreDate }"
       >
         <slot name="navigationArrowLeft">
@@ -17,7 +17,7 @@
         </slot>
       </div>
       <div
-        @click="$parent.NextMonth(oneArrows ? 0 : calendarKey)"
+        @click="calendarRoot.NextMonth(oneArrows ? 0 : calendarKey)"
         :class="{ 'vfc-cursor-pointer': allowNextDate }"
       >
         <slot name="navigationArrowRight">
@@ -34,6 +34,7 @@
 <script>
 export default {
   name: 'Arrows',
+  inject: { calendarRoot: 'calendar' },
   props: {
     fConfigs: {
       type: Object,

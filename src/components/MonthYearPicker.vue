@@ -10,41 +10,41 @@
           @click="delta = 0"
         >
           <span class="vfc-popover-caret"></span>
-          {{ $parent.listCalendars[calendarKey].date.getFullYear() }}
+          {{ calendarRoot.listCalendars[calendarKey].date.getFullYear() }}
         </h2>
         <div @click="changePicker('right')">
           <div class="vfc-arrow-right"></div>
         </div>
       </div>
       <div class="vfc-months">
-        <template v-if="$parent.showMonthPicker">
+        <template v-if="calendarRoot.showMonthPicker">
           <div
             class="vfc-item"
-            v-for="(month, key) in $parent.fConfigs.shortMonthNames"
+            v-for="(month, key) in calendarRoot.fConfigs.shortMonthNames"
             :key="key"
             :class="{
               'vfc-selected':
-                $parent.listCalendars[calendarKey].date.getMonth() === key
+                calendarRoot.listCalendars[calendarKey].date.getMonth() === key
             }"
-            @click="$parent.pickMonth(key, calendarKey)"
+            @click="calendarRoot.pickMonth(key, calendarKey)"
           >
             {{ month }}
           </div>
         </template>
-        <template v-else-if="$parent.showYearPicker">
+        <template v-else-if="calendarRoot.showYearPicker">
           <div
             class="vfc-item"
-            v-for="(year, key) in $parent.getYearList(
-              $parent.listCalendars[calendarKey].date,
+            v-for="(year, key) in calendarRoot.getYearList(
+              calendarRoot.listCalendars[calendarKey].date,
               delta
             )"
             :key="key"
             :class="{
               'vfc-selected':
-                $parent.listCalendars[calendarKey].date.getFullYear() ===
+                calendarRoot.listCalendars[calendarKey].date.getFullYear() ===
                 year.year
             }"
-            @click="$parent.pickYear(year.year, calendarKey)"
+            @click="calendarRoot.pickYear(year.year, calendarKey)"
           >
             {{ year.year }}
           </div>
@@ -57,6 +57,7 @@
 <script>
 export default {
   name: 'MonthYearPicker',
+  inject: { calendarRoot: 'calendar' },
   props: {
     calendarKey: {
       type: Number,
@@ -79,9 +80,9 @@ export default {
   },
   methods: {
     changePicker(to) {
-      if (this.$parent.showMonthPicker) {
-        if (to === 'right') this.$parent.NextYear(this.calendarKey)
-        else this.$parent.PreYear(this.calendarKey)
+      if (this.calendarRoot.showMonthPicker) {
+        if (to === 'right') this.calendarRoot.NextYear(this.calendarKey)
+        else this.calendarRoot.PreYear(this.calendarKey)
         return
       }
 

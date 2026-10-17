@@ -1,4 +1,4 @@
-@import './variables.scss';
+@use './variables.scss' as *;
 
 .vfc {
   &-popover-container {
@@ -643,7 +643,7 @@
       transition-duration: 0s;
     }
 
-    &-slide-left-enter,
+    &-slide-left-enter-from,
     &-slide-right-leave-to {
       opacity: 0;
       -webkit-transform: translateX(25px);
@@ -651,20 +651,20 @@
     }
 
     &-slide-left-leave-to,
-    &-slide-right-enter {
+    &-slide-right-enter-from {
       opacity: 0;
       -webkit-transform: translateX(-25px);
       transform: translateX(-25px);
     }
 
     &-slide-down-leave-to,
-    &-slide-up-enter {
+    &-slide-up-enter-from {
       opacity: 0;
       -webkit-transform: translateY(20px);
       transform: translateY(20px);
     }
 
-    &-slide-down-enter,
+    &-slide-down-enter-from,
     &-slide-up-leave-to {
       opacity: 0;
       -webkit-transform: translateY(-20px);

@@ -10,11 +10,6 @@
       v-model="rangesData"
       :is-multiple-date-range="false"
     >
-      <!-- <template v-slot:cleaner>
-        <button>
-          Clear
-        </button>
-      </template> -->
     </functional-calendar>
     <span style="color: white">
       {{ JSON.stringify(rangesData) }}
@@ -22,7 +17,12 @@
     <table style="width: 100%">
       <tr>
         <td>
-          <button class="btn" @click="enabledDates = ['28/10/2020', '29/10/2020']">Change</button>
+          <button
+            class="btn"
+            @click="enabledDates = ['28/10/2020', '29/10/2020']"
+          >
+            Change
+          </button>
           <functional-calendar
             :is-date-picker="true"
             :enabled-dates="enabledDates"
@@ -136,7 +136,7 @@
             :is-date-range="true"
           >
             <template v-slot:cleaner>
-              <div style="display: flex; justify-content: center;">
+              <div style="display: flex; justify-content: center">
                 <button>Cancel</button>
               </div>
             </template>
@@ -295,7 +295,7 @@
         <div>→</div>
       </template>
       <template v-slot:cleaner>
-        <div style="display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: center">
           <button @click="test">Cancel</button>
         </div>
       </template>
@@ -362,7 +362,7 @@
         <div>→</div>
       </template>
       <template v-slot:cleaner>
-        <div style="display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: center">
           <button @click="test">Cancel</button>
         </div>
       </template>
@@ -541,7 +541,6 @@
 </template>
 
 <script>
-  
 import { FunctionalCalendar } from '../index'
 /* eslint-disable */
 export default {
@@ -830,8 +829,17 @@ body {
 }
 
 pre {
-  font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono,
-    DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+  font-family:
+    Consolas,
+    Menlo,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New,
+    monospace,
+    serif;
   margin-bottom: 10px;
   overflow: auto;
   width: auto;

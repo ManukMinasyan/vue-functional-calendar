@@ -5,7 +5,7 @@
     <span
       v-if="!day.hideLeftAndRightDays"
       :class="getClassNames(day)"
-      @click.self="$parent.$parent.clickDay(day, isDisabledDate)"
+      @click.self="calendarRoot.clickDay(day, isDisabledDate)"
       @mouseover="dayMouseOver"
     >
       <slot :week="week" :day="day">{{ day.day }}</slot>
@@ -27,6 +27,7 @@
 <script>
 export default {
   name: 'Day',
+  inject: { calendarRoot: 'calendar' },
   props: {
     day_key: {
       type: Number,
@@ -57,6 +58,7 @@ export default {
       default: false
     }
   },
+  emits: ['dayMouseOver'],
   data() {
     return {
       toolTip: false,
@@ -76,9 +78,10 @@ export default {
 
       const inAnyRange = this.day.date.inRange(this.calendar.multipleDateRange)
 
-      const lastElement = this.calendar.multipleDateRange[
-        this.calendar.multipleDateRange.length - 1
-      ]
+      const lastElement =
+        this.calendar.multipleDateRange[
+          this.calendar.multipleDateRange.length - 1
+        ]
       if (!lastElement) return inAnyRange
       const lastHasDayStart = ~this.calendar.multipleDateRange
         .map(range => range.start)
@@ -118,9 +121,10 @@ export default {
 
       const inAnyRange = this.day.date.inRange(this.calendar.multipleDateRange)
 
-      const lastElement = this.calendar.multipleDateRange[
-        this.calendar.multipleDateRange.length - 1
-      ]
+      const lastElement =
+        this.calendar.multipleDateRange[
+          this.calendar.multipleDateRange.length - 1
+        ]
       if (!lastElement) return inAnyRange
 
       const lastHasDayStart = ~this.calendar.multipleDateRange
@@ -220,7 +224,7 @@ export default {
     inRangeInit() {
       //!!!!\\
       const helpCalendar = this.helpCalendar
-      String.prototype.inRange = function(arr) {
+      String.prototype.inRange = function (arr) {
         let res = false
         arr.forEach(el => {
           const start = +helpCalendar.getDateFromFormat(el.start.split(' ')[0])
@@ -245,10 +249,7 @@ export default {
       this.$emit('dayMouseOver', this.day.date)
     },
     hasSlot(name = 'default') {
-      return (
-        !!this.$parent.$parent.$slots[name] ||
-        !!this.$parent.$parent.$scopedSlots[name]
-      )
+      return !!this.calendarRoot.$slots[name]
     },
     isDisabledDate(date) {
       const datesCollection = this.fConfigs.disabledDates

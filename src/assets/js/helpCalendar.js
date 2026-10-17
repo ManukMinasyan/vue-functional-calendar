@@ -1,4 +1,4 @@
-Date.prototype.getWeekNumber = function(sundayStart) {
+Date.prototype.getWeekNumber = function (sundayStart) {
   if (!sundayStart) {
     // ISO week date weeks start on monday
     // so correct the day number
@@ -218,9 +218,7 @@ export default class helpCalendar {
   }
 
   mask(value) {
-    let dayLength = this.getDateFromFormat(value)
-      .getDate()
-      .toString().length
+    let dayLength = this.getDateFromFormat(value).getDate().toString().length
     let month = this.getDateFromFormat(value).getMonth()
 
     let dayMask = '00'
@@ -242,7 +240,7 @@ export default class helpCalendar {
     let numberPattern = /[0-9]/
     let newValue = ''
 
-    for (let vId = 0, mId = 0; mId < mask.length; ) {
+    for (let vId = 0, mId = 0; mId < mask.length;) {
       if (mId >= value.length) break
 
       // Number expected but got a different value, store only the valid portion

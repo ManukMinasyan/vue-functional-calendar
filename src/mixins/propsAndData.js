@@ -146,7 +146,7 @@ export const propsAndData = {
       type: Boolean,
       default: undefinedGenerator
     },
-    value: {
+    modelValue: {
       type: Object
     },
     transition: {

@@ -12,7 +12,7 @@ export default {
   name: 'WeekNumbers',
   props: {
     number: {
-      tyoe: Number,
+      type: Number,
       required: true
     },
     borderColor: {

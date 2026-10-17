@@ -4,25 +4,27 @@
     <div class="vfc-modal-time-mechanic">
       <div id="time-line" class="vfc-modal-time-line">
         <span>
-          <template v-if="$parent.fConfigs.isDateRange">
+          <template v-if="calendarRoot.fConfigs.isDateRange">
             <span
               @click="startDateActive = true"
               :class="{ 'vfc-active': startDateActive }"
-              >{{ $parent.calendar.dateRange.start }}</span
+              >{{ calendarRoot.calendar.dateRange.start }}</span
             >
-            <template v-if="$parent.calendar.dateRange.end">
+            <template v-if="calendarRoot.calendar.dateRange.end">
               <span>-</span>
               <span
                 @click="startDateActive = false"
                 :class="{ 'vfc-active': !startDateActive }"
-                >{{ $parent.calendar.dateRange.end }}</span
+                >{{ calendarRoot.calendar.dateRange.end }}</span
               >
             </template>
           </template>
-          <template v-else-if="$parent.fConfigs.isMultipleDatePicker">{{
+          <template v-else-if="calendarRoot.fConfigs.isMultipleDatePicker">{{
             getCurrentDateTime
           }}</template>
-          <template v-else>{{ $parent.calendar.selectedDateTime }}</template>
+          <template v-else>{{
+            calendarRoot.calendar.selectedDateTime
+          }}</template>
         </span>
       </div>
       <div class="titles">
@@ -70,6 +72,7 @@
 <script>
 export default {
   name: 'TimePicker',
+  inject: { calendarRoot: 'calendar' },
   data() {
     return {
       startDateActive: true,
@@ -82,22 +85,22 @@ export default {
       required: true
     },
     hours: {
-        type: Array,
-        default: function() {
-            return [...Array(24).keys()]
-        },
-        required: false
+      type: Array,
+      default: function () {
+        return [...Array(24).keys()]
+      },
+      required: false
     },
     minutes: {
-        type: Array,
-        default: function() {
-            return [...Array(60).keys()]
-        },
-        required: false
+      type: Array,
+      default: function () {
+        return [...Array(60).keys()]
+      },
+      required: false
     }
   },
   watch: {
-    startDateActive: function() {
+    startDateActive: function () {
       this.setScrollPosition()
     }
   },
@@ -110,16 +113,16 @@ export default {
     }
   },
   created() {
-    let selectedDates = this.$parent.calendar.selectedDates
+    let selectedDates = this.calendarRoot.calendar.selectedDates
     this.currentSelectedDate = selectedDates[selectedDates.length - 1]
   },
   mounted() {
-    let startDate = this.$parent.calendar.dateRange.start.split(' ')[0]
-    let endDate = this.$parent.calendar.dateRange.end.split(' ')[0]
+    let startDate = this.calendarRoot.calendar.dateRange.start.split(' ')[0]
+    let endDate = this.calendarRoot.calendar.dateRange.end.split(' ')[0]
     if (
       startDate &&
-      this.$parent.helpCalendar.getDateFromFormat(startDate) <
-        this.$parent.helpCalendar.getDateFromFormat(endDate)
+      this.calendarRoot.helpCalendar.getDateFromFormat(startDate) <
+        this.calendarRoot.helpCalendar.getDateFromFormat(endDate)
     ) {
       this.startDateActive = false
     } else {
@@ -134,7 +137,7 @@ export default {
       return i < 10 ? '0' + i : i
     },
     close() {
-      this.$parent.showTimePicker = false
+      this.calendarRoot.showTimePicker = false
     },
     addMinuteHour(what, val, to) {
       let res = ''
@@ -149,69 +152,69 @@ export default {
       return res
     },
     changeHour(hour) {
-      if (this.$parent.fConfigs.isDateRange) {
+      if (this.calendarRoot.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          this.$parent.calendar.dateRange.start = this.addMinuteHour(
+          this.calendarRoot.calendar.dateRange.start = this.addMinuteHour(
             'hour',
-            this.$parent.calendar.dateRange.start,
+            this.calendarRoot.calendar.dateRange.start,
             hour
           )
         } else {
-          this.$parent.calendar.dateRange.end = this.addMinuteHour(
+          this.calendarRoot.calendar.dateRange.end = this.addMinuteHour(
             'hour',
-            this.$parent.calendar.dateRange.end,
+            this.calendarRoot.calendar.dateRange.end,
             hour
           )
         }
-      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
-        let currentDate = this.$parent.calendar.selectedDates.find(
+      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
+        let currentDate = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         )
         currentDate.hour = hour
       } else {
-        this.$parent.calendar.selectedHour = hour
+        this.calendarRoot.calendar.selectedHour = hour
       }
 
       this.setSelectedDateTime()
       this.setScrollPosition()
     },
     changeMinute(minute) {
-      if (this.$parent.fConfigs.isDateRange) {
+      if (this.calendarRoot.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          this.$parent.calendar.dateRange.start = this.addMinuteHour(
+          this.calendarRoot.calendar.dateRange.start = this.addMinuteHour(
             'minute',
-            this.$parent.calendar.dateRange.start,
+            this.calendarRoot.calendar.dateRange.start,
             minute
           )
         } else {
-          this.$parent.calendar.dateRange.end = this.addMinuteHour(
+          this.calendarRoot.calendar.dateRange.end = this.addMinuteHour(
             'minute',
-            this.$parent.calendar.dateRange.end,
+            this.calendarRoot.calendar.dateRange.end,
             minute
           )
         }
-      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
-        let currentDate = this.$parent.calendar.selectedDates.find(
+      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
+        let currentDate = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         )
         currentDate.minute = minute
       } else {
-        this.$parent.calendar.selectedMinute = minute
+        this.calendarRoot.calendar.selectedMinute = minute
       }
 
       this.setSelectedDateTime()
       this.setScrollPosition()
     },
     setSelectedDateTime() {
-      if (this.$parent.fConfigs.isDatePicker) {
-        this.$parent.calendar.selectedDateTime =
-          this.$parent.calendar.selectedDate +
+      if (this.calendarRoot.fConfigs.isDatePicker) {
+        this.calendarRoot.calendar.selectedDateTime =
+          this.calendarRoot.calendar.selectedDate +
           ' ' +
-          this.$parent.calendar.selectedHour +
+          this.calendarRoot.calendar.selectedHour +
           ':' +
-          this.$parent.calendar.selectedMinute
-      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
-        let currentDate = this.$parent.calendar.selectedDates.find(
+          this.calendarRoot.calendar.selectedMinute
+      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
+        let currentDate = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         )
         currentDate.dateTime =
@@ -223,20 +226,22 @@ export default {
     },
     checkHourActiveClass(i) {
       let hour
-      if (this.$parent.fConfigs.isDateRange) {
+      if (this.calendarRoot.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          hour = this.$parent.calendar.dateRange.start
+          hour = this.calendarRoot.calendar.dateRange.start
             .split(' ')[1]
             .split(':')[0]
         } else {
-          hour = this.$parent.calendar.dateRange.end.split(' ')[1].split(':')[0]
+          hour = this.calendarRoot.calendar.dateRange.end
+            .split(' ')[1]
+            .split(':')[0]
         }
-      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
-        hour = this.$parent.calendar.selectedDates.find(
+      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
+        hour = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         ).hour
       } else {
-        hour = this.$parent.calendar.selectedHour
+        hour = this.calendarRoot.calendar.selectedHour
       }
 
       if (this.hours.length && !this.hours.some(el => el == hour)) {
@@ -247,18 +252,18 @@ export default {
     },
     checkMinuteActiveClass(i) {
       let minute
-      if (this.$parent.fConfigs.isDateRange) {
+      if (this.calendarRoot.fConfigs.isDateRange) {
         if (this.checkStartDate()) {
-          minute = this.$parent.calendar.dateRange.start.split(':')[1]
+          minute = this.calendarRoot.calendar.dateRange.start.split(':')[1]
         } else {
-          minute = this.$parent.calendar.dateRange.end.split(':')[1]
+          minute = this.calendarRoot.calendar.dateRange.end.split(':')[1]
         }
-      } else if (this.$parent.fConfigs.isMultipleDatePicker) {
-        minute = this.$parent.calendar.selectedDates.find(
+      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
+        minute = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
         ).minute
       } else {
-        minute = this.$parent.calendar.selectedMinute
+        minute = this.calendarRoot.calendar.selectedMinute
       }
 
       if (this.minutes.length && !this.minutes.some(el => el == minute)) {
@@ -268,7 +273,7 @@ export default {
       return minute == this.formatTime(i)
     },
     setStyles() {
-      //let container = this.$parent.$refs.mainContainer
+      //let container = this.calendarRoot.$refs.mainContainer
 
       this.setScrollPosition()
 
@@ -279,9 +284,9 @@ export default {
         timeLineHeight + 'px'
     },
     setScrollPosition() {
-      let container = this.$parent.$refs.mainContainer
+      let container = this.calendarRoot.$refs.mainContainer
 
-      this.$nextTick(function() {
+      this.$nextTick(function () {
         const selectedHour = this.$refs.hourList.querySelector(
           '.vfc-time-picker__item--selected'
         )

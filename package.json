@@ -6,7 +6,7 @@
   },
   "name": "vue-functional-calendar",
   "description": "Lightweight, high-performance calendar component based on Vue.js",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -45,69 +45,50 @@
     "pkg"
   ],
   "private": false,
-  "main": "./index.js",
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --target lib --dest dist --name FunctionalCalendar src/components/FunctionalCalendar.vue",
-    "test": "npm run build",
-    "lint": "vue-cli-service lint"
+  "type": "module",
+  "main": "./dist/vue-functional-calendar.cjs",
+  "module": "./dist/vue-functional-calendar.js",
+  "types": "./index.d.ts",
+  "unpkg": "./dist/vue-functional-calendar.umd.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/vue-functional-calendar.js",
+      "require": "./dist/vue-functional-calendar.cjs"
+    },
+    "./style.css": "./dist/style.css"
   },
-  "dependencies": {
-    "core-js": "^2.6.5",
-    "vue": "^2.5.21"
+  "files": [
+    "dist",
+    "index.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vite build --config vite.umd.config.js",
+    "test": "vitest run --passWithNoTests",
+    "lint": "eslint src tests index.js --no-error-on-unmatched-pattern",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "vue": "^3.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@vue/babel-preset-app": "^3.7.0",
-    "@vue/cli-plugin-babel": "^3.7.0",
-    "@vue/cli-plugin-eslint": "^3.7.0",
-    "@vue/cli-service": "^3.7.0",
-    "babel-loader": "^8.0.6",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
-    "css-loader": "^1.0.1",
-    "grunt": ">=0.4.0",
-    "grunt-coveralls": "^2.0.0",
-    "jest": "^16.0.2",
-    "less": "^3.8.1",
-    "less-loader": "^4.1.0",
-    "node-sass": "^4.12.0",
-    "sass-loader": "^7.1.0",
-    "sass-resources-loader": "^1.3.4",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "terser": "3.14.1",
-    "thread-loader": "^1.2.0",
-    "vue-loader": "^15.4.2",
-    "vue-style-loader": "^4.1.2",
-    "vue-template-compiler": "^2.5.21"
-  },
-  "resolutions": {
-    "terser": "3.14.1"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
-    ],
-    "rules": {
-      "no-console": "off"
-    },
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
-  "postcss": {
-    "plugins": {
-      "autoprefixer": {}
-    }
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "@eslint/js": "^9.39",
+    "@vitejs/plugin-vue": "^6.0",
+    "@vue/test-utils": "^2.5",
+    "eslint": "^9.39",
+    "eslint-plugin-vue": "^10.11",
+    "globals": "^17.13",
+    "jsdom": "^30.1",
+    "prettier": "^3.9",
+    "sass": "^1.105",
+    "vite": "^8.3",
+    "vitest": "^5.0",
+    "vue": "^3.5"
+  }
 }

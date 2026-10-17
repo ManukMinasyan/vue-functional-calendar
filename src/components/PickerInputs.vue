@@ -42,7 +42,8 @@
           class="vfc-single-input"
           type="text"
           title="Date"
-          v-model="singleSelectedDate"
+          :value="singleSelectedDate"
+          @input="calendarRoot.singleSelectedDate = $event.target.value"
           :placeholder="fConfigs.placeholder"
           :readonly="!fConfigs.isTypeable"
           :maxlength="fConfigs.dateFormat.length"
@@ -70,7 +71,7 @@
 
         <input
           v-model="calendar.selectedDatesItem"
-          @keydown.enter.prevent="$parent.addToSelectedDates"
+          @keydown.enter.prevent="calendarRoot.addToSelectedDates"
           type="text"
           placeholder="Add a date"
         />
@@ -82,6 +83,7 @@
 <script>
 export default {
   name: 'PickerInputs',
+  inject: { calendarRoot: 'calendar' },
   props: {
     fConfigs: {
       type: Object,

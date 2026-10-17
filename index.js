@@ -1,18 +1,12 @@
-// Import vue component
 import FunctionalCalendar from './src/components/FunctionalCalendar.vue'
 
-// Creating a module value for Vue.use ()
-const FunctionalCalendarPlugin = {
-  install(Vue, options = []) {
-    Vue.prototype.$getOptions = function() {
-      return options
-    }
-
-    Vue.component('FunctionalCalendar', FunctionalCalendar)
-  },
-  FunctionalCalendar
+FunctionalCalendar.install = function (app, options = {}) {
+  app.config.globalProperties.$getOptions = () => options
+  app.provide('functionalCalendarOptions', options)
+  app.component('FunctionalCalendar', FunctionalCalendar)
 }
 
-// Export component for use as a module (npm / webpack / etc.)
-export default FunctionalCalendarPlugin
+FunctionalCalendar.FunctionalCalendar = FunctionalCalendar
+
+export default FunctionalCalendar
 export { FunctionalCalendar }
