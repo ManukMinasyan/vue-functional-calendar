@@ -233,6 +233,100 @@ describe('time picker with a date range', () => {
   })
 })
 
+describe('time picker with a clamped date range', () => {
+  const clickWithTime = async (wrapper, days) => {
+    for (const day of days) {
+      await clickDay(wrapper, day)
+      await wrapper.find('.vfc-close').trigger('click')
+    }
+  }
+
+  it('keeps the times when minSelDays extends the end', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      withTimePicker: true,
+      minSelDays: 5
+    })
+
+    await clickWithTime(wrapper, [10, 11])
+
+    expect(wrapper.vm.calendar.dateRange).toEqual({
+      start: '10/10/2026 00:00',
+      end: '14/10/2026 00:00'
+    })
+    expect(lastValue(wrapper).dateRange).toEqual({
+      start: '10/10/2026 00:00',
+      end: '14/10/2026 00:00'
+    })
+  })
+
+  it('keeps the times when minSelDays moves the start back', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      withTimePicker: true,
+      minSelDays: 5
+    })
+
+    await clickWithTime(wrapper, [12, 10])
+
+    expect(wrapper.vm.calendar.dateRange).toEqual({
+      start: '8/10/2026 00:00',
+      end: '12/10/2026 00:00'
+    })
+  })
+
+  it('keeps the times when maxSelDays moves the start forward', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      withTimePicker: true,
+      maxSelDays: 3
+    })
+
+    await clickWithTime(wrapper, [20, 10])
+
+    expect(wrapper.vm.calendar.dateRange).toEqual({
+      start: '18/10/2026 00:00',
+      end: '20/10/2026 00:00'
+    })
+  })
+
+  it('keeps the edited start time when minSelDays extends the end', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      withTimePicker: true,
+      minSelDays: 5
+    })
+    await clickDay(wrapper, 10)
+    await pick(wrapper, 'hours', '05')
+    await wrapper.find('.vfc-close').trigger('click')
+
+    await clickDay(wrapper, 11)
+
+    expect(wrapper.vm.calendar.dateRange).toEqual({
+      start: '10/10/2026 05:00',
+      end: '14/10/2026 00:00'
+    })
+  })
+
+  it('shows the time lists for range edges that carry no time', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      withTimePicker: true
+    })
+    await clickDay(wrapper, 10)
+
+    wrapper.vm.calendar.dateRange.start = '10/10/2026'
+    await nextTick()
+
+    expect(selectedText(wrapper, 'hours')).toEqual(['00'])
+    expect(selectedText(wrapper, 'minutes')).toEqual(['00'])
+
+    await pick(wrapper, 'hours', '07')
+
+    expect(wrapper.vm.calendar.dateRange.start).toBe('10/10/2026 07:00')
+  })
+})
+
 describe('time picker with multiple dates', () => {
   it('stores a time on each selected date', async () => {
     const { wrapper } = mountCalendar({

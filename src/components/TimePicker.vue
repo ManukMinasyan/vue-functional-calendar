@@ -198,17 +198,14 @@ export default {
         select(this.formatTime(values[current]))
       }
     },
+    timeOf(value) {
+      const [hour, minute] = (value.split(' ')[1] || '').split(':')
+      return { hour: hour || '00', minute: minute || '00' }
+    },
     addMinuteHour(what, val, to) {
-      let res = ''
-      res += val.split(' ')[0]
-      if (what == 'hour') {
-        res += ' ' + to + ':'
-        res += val.split(' ')[1].split(':')[1]
-      } else {
-        res += ' ' + val.split(' ')[1].split(':')[0] + ':'
-        res += to
-      }
-      return res
+      const { hour, minute } = this.timeOf(val)
+      const time = what == 'hour' ? `${to}:${minute}` : `${hour}:${to}`
+      return `${val.split(' ')[0]} ${time}`
     },
     changeHour(hour) {
       if (this.calendarRoot.fConfigs.isDateRange) {
@@ -283,18 +280,14 @@ export default {
     checkStartDate() {
       return this.startDateActive
     },
+    activeRangeEdge() {
+      const { dateRange } = this.calendarRoot.calendar
+      return this.checkStartDate() ? dateRange.start : dateRange.end
+    },
     checkHourActiveClass(i) {
       let hour
       if (this.calendarRoot.fConfigs.isDateRange) {
-        if (this.checkStartDate()) {
-          hour = this.calendarRoot.calendar.dateRange.start
-            .split(' ')[1]
-            .split(':')[0]
-        } else {
-          hour = this.calendarRoot.calendar.dateRange.end
-            .split(' ')[1]
-            .split(':')[0]
-        }
+        hour = this.timeOf(this.activeRangeEdge()).hour
       } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
         hour = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate
@@ -312,11 +305,7 @@ export default {
     checkMinuteActiveClass(i) {
       let minute
       if (this.calendarRoot.fConfigs.isDateRange) {
-        if (this.checkStartDate()) {
-          minute = this.calendarRoot.calendar.dateRange.start.split(':')[1]
-        } else {
-          minute = this.calendarRoot.calendar.dateRange.end.split(':')[1]
-        }
+        minute = this.timeOf(this.activeRangeEdge()).minute
       } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
         minute = this.calendarRoot.calendar.selectedDates.find(
           date => date.date === this.getCurrentDate

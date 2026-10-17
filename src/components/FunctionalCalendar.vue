@@ -952,41 +952,24 @@ export default {
       }
 
       const { minSelDays, maxSelDays } = this.fConfigs
+      let span = null
 
-      if (
-        minSelDays &&
-        itemTime >= startDate.getTime() &&
-        diffDays < minSelDays
-      ) {
-        startDate.setDate(startDate.getDate() + (minSelDays - 1))
-        range.end = helpCalendar.formatDate(startDate)
+      if (minSelDays && diffDays < minSelDays) {
+        span = minSelDays - 1
+      } else if (maxSelDays && diffDays >= maxSelDays) {
+        span = maxSelDays - 1
       }
 
-      if (
-        minSelDays &&
-        itemTime < startDate.getTime() &&
-        diffDays < minSelDays
-      ) {
-        startDate.setDate(startDate.getDate() - (minSelDays - 1))
-        range.start = helpCalendar.formatDate(startDate)
-      }
+      if (span === null) return
 
-      if (
-        maxSelDays &&
-        itemTime >= startDate.getTime() &&
-        diffDays >= maxSelDays
-      ) {
-        startDate.setDate(startDate.getDate() + (maxSelDays - 1))
-        range.end = helpCalendar.formatDate(startDate)
-      }
-
-      if (
-        maxSelDays &&
-        itemTime < startDate.getTime() &&
-        diffDays >= maxSelDays
-      ) {
-        startDate.setDate(startDate.getDate() - (maxSelDays - 1))
-        range.start = helpCalendar.formatDate(startDate)
+      if (itemTime >= startDate.getTime()) {
+        range.end = this.withTimeSuffix(
+          helpCalendar.formatDate(dayStart(startDate, span))
+        )
+      } else {
+        range.start = this.withTimeSuffix(
+          helpCalendar.formatDate(dayStart(startDate, -span))
+        )
       }
     },
     resolvePreset(entry, now) {
