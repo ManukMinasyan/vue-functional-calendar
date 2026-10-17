@@ -100,12 +100,16 @@ export default {
   },
   computed: {
     previousLabel() {
+      const { labels } = this.calendarRoot.fConfigs
       return this.calendarRoot.showMonthPicker
-        ? 'Previous year'
-        : 'Previous years'
+        ? labels.previousYear
+        : labels.previousYears
     },
     nextLabel() {
-      return this.calendarRoot.showMonthPicker ? 'Next year' : 'Next years'
+      const { labels } = this.calendarRoot.fConfigs
+      return this.calendarRoot.showMonthPicker
+        ? labels.nextYear
+        : labels.nextYears
     }
   },
   watch: {

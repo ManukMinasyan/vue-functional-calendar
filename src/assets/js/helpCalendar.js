@@ -1,25 +1,33 @@
-Date.prototype.getWeekNumber = function (sundayStart) {
-  const date = new Date(this.getFullYear(), this.getMonth(), this.getDate())
-  const mondayBasedDay = day => (day + 6) % 7
+const toWeekStart = value => (typeof value === 'number' ? value : value ? 0 : 1)
 
-  if (!sundayStart) {
-    date.setDate(date.getDate() - mondayBasedDay(date.getDay()) + 3)
+Date.prototype.getWeekNumber = function (weekStartOrSundayStart) {
+  const weekStart = toWeekStart(weekStartOrSundayStart)
+  const date = new Date(this.getFullYear(), this.getMonth(), this.getDate())
+  const sinceWeekStart = day => (day - weekStart + 7) % 7
+
+  if (weekStart === 1) {
+    date.setDate(date.getDate() - sinceWeekStart(date.getDay()) + 3)
   }
 
   const january4 = new Date(date.getFullYear(), 0, 4)
-  const january4Day = sundayStart
-    ? january4.getDay()
-    : mondayBasedDay(january4.getDay())
+  const january4Day = sinceWeekStart(january4.getDay())
   const days = Math.round((date - january4) / 86400000)
   return Math.ceil((days + january4Day + 1) / 7)
 }
 
 export default class helpCalendar {
-  constructor(sundayStart, leftAndRightDays, dateFormat, dayNames) {
-    this.sundayStart = sundayStart
+  constructor(
+    weekStart,
+    leftAndRightDays,
+    dateFormat,
+    dayNames,
+    fallbackDayNames = null
+  ) {
+    this.weekStart = toWeekStart(weekStart)
     this.leftAndRightDays = leftAndRightDays
     this.dateFormat = dateFormat
     this.dayNames = dayNames
+    this.fallbackDayNames = fallbackDayNames
   }
 
   formatDate(date) {
@@ -59,9 +67,20 @@ export default class helpCalendar {
     return !isNaN(this.getDateFromFormat(val).getTime())
   }
 
+  daysSinceWeekStart(date) {
+    return (date.getDay() - this.weekStart + 7) % 7
+  }
+
   getDayName(date) {
-    const index = this.sundayStart ? date.getDay() : (date.getDay() + 6) % 7
-    return this.dayNames[index]
+    return this.dayNames[this.daysSinceWeekStart(date)]
+  }
+
+  isDayNameDisabled(date, disabledDayNames) {
+    if (disabledDayNames.includes(this.getDayName(date))) return true
+    if (!this.fallbackDayNames) return false
+    return disabledDayNames.includes(
+      this.fallbackDayNames[(date.getDay() + 6) % 7]
+    )
   }
 
   getWeeksInMonth(month, year) {
@@ -72,18 +91,14 @@ export default class helpCalendar {
 
     let start = 1
 
-    let end = !this.sundayStart
-      ? firstDate.getDay() === 0
-        ? 1
-        : 7 - firstDate.getDay() + 1
-      : 7 - firstDate.getDay()
+    let end = 7 - this.daysSinceWeekStart(firstDate)
 
     while (start <= numDays) {
       weeks.push({
         year,
         start,
         end,
-        number: new Date(year, month, start).getWeekNumber(this.sundayStart),
+        number: new Date(year, month, start).getWeekNumber(this.weekStart),
         days: []
       })
       start = end + 1

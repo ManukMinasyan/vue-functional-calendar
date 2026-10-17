@@ -28,8 +28,8 @@
         </span>
       </div>
       <div class="titles">
-        <div>Hour</div>
-        <div>Minute</div>
+        <div>{{ calendarRoot.fConfigs.labels.hour }}</div>
+        <div>{{ calendarRoot.fConfigs.labels.minute }}</div>
       </div>
       <div class="vfc-time-picker">
         <div

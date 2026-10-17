@@ -330,10 +330,11 @@ export default {
       }
 
       // Disable days of week if set in configuration
-      let dayOfWeekString = this.helpCalendar.getDayName(
-        this.helpCalendar.getDateFromFormat(day.date)
+      const isDayNameDisabled = this.helpCalendar.isDayNameDisabled(
+        this.helpCalendar.getDateFromFormat(day.date),
+        this.fConfigs.disabledDayNames
       )
-      if (this.fConfigs.disabledDayNames.includes(dayOfWeekString)) {
+      if (isDayNameDisabled) {
         day.hide = true
         classes.push('vfc-cursor-not-allowed')
       }
@@ -369,10 +370,7 @@ export default {
       if (day.isToday) {
         classes.push('vfc-today')
       }
-      if (
-        !day.hideLeftAndRightDays &&
-        !this.fConfigs.disabledDayNames.includes(dayOfWeekString)
-      ) {
+      if (!day.hideLeftAndRightDays && !isDayNameDisabled) {
         // Mark Date
         if (day.isMarked) {
           classes.push('vfc-marked')

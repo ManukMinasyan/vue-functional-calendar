@@ -1,3 +1,5 @@
+import { DEFAULT_LABELS } from '../utils/locale'
+
 const undefinedGenerator = () => undefined
 
 export const propsAndData = {
@@ -24,6 +26,14 @@ export const propsAndData = {
     },
     sundayStart: {
       type: Boolean,
+      default: undefinedGenerator
+    },
+    locale: {
+      type: String,
+      default: undefinedGenerator
+    },
+    labels: {
+      type: Object,
       default: undefinedGenerator
     },
     placeholder: {
@@ -216,8 +226,11 @@ export const propsAndData = {
       allowPreDate: true,
       allowNextDate: true,
       listCalendars: [],
+      weekStart: 1,
       fConfigs: {
         sundayStart: false,
+        locale: '',
+        labels: { ...DEFAULT_LABELS },
         placeholder: false,
         dateFormat: 'dd/mm/yyyy hh:MM',
         isMultipleDateRange: false,

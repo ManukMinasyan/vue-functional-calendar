@@ -216,6 +216,29 @@
       </div>
     </section>
 
+    <section class="playground">
+      <h2>Locale</h2>
+      <div class="playground-controls">
+        <label>
+          Locale
+          <select v-model="locale" data-testid="locale-select">
+            <option v-for="item in locales" :key="item" :value="item">
+              {{ item }}
+            </option>
+          </select>
+        </label>
+      </div>
+      <div class="playground-calendars">
+        <functional-calendar
+          :key="locale"
+          :locale="locale"
+          :is-date-picker="true"
+          :show-week-numbers="true"
+          :disabled-day-names="['Su']"
+        ></functional-calendar>
+      </div>
+    </section>
+
     <hr />
     <hr />
     <hr />
@@ -592,6 +615,8 @@ export default {
   components: { FunctionalCalendar },
   data() {
     return {
+      locale: 'en-US',
+      locales: ['en-US', 'de-DE', 'fr-FR', 'ar-EG', 'ja-JP'],
       playground: { primary: '#264ad9', radius: 8, daySize: 36, dark: false },
       rangesData: {
         multipleDateRange: [{ end: '17/7/2020', start: '3/7/2020' }]

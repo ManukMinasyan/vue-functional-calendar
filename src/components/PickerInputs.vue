@@ -13,7 +13,7 @@
       >
         <input
           type="text"
-          title="Start Date"
+          :title="fConfigs.labels.startDate"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
           v-model="dateRangeSelectedStartDate"
@@ -23,7 +23,7 @@
         />
         <input
           type="text"
-          title="End Date"
+          :title="fConfigs.labels.endDate"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
           v-model="dateRangeSelectedEndDate"
@@ -45,7 +45,7 @@
         <input
           class="vfc-single-input"
           type="text"
-          title="Date"
+          :title="fConfigs.labels.date"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
           :value="singleSelectedDate"
@@ -81,7 +81,7 @@
           type="text"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
-          placeholder="Add a date"
+          :placeholder="fConfigs.labels.addDate"
         />
       </div>
     </div>

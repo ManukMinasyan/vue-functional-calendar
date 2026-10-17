@@ -30,6 +30,24 @@ export interface FunctionalCalendarValue {
   multipleDateRange: FunctionalCalendarDateRange[]
 }
 
+export interface FunctionalCalendarLabels {
+  previousMonth: string
+  nextMonth: string
+  previousYear: string
+  nextYear: string
+  previousYears: string
+  nextYears: string
+  calendar: string
+  clearRange: string
+  clearRanges: string
+  startDate: string
+  endDate: string
+  date: string
+  addDate: string
+  hour: string
+  minute: string
+}
+
 export interface FunctionalCalendarProps {
   modelValue?: Partial<FunctionalCalendarValue>
   configs?: Record<string, unknown>
@@ -38,6 +56,8 @@ export interface FunctionalCalendarProps {
   borderColor?: string
   displayTimeInput?: boolean
   sundayStart?: boolean
+  locale?: string
+  labels?: Partial<FunctionalCalendarLabels>
   placeholder?: string | boolean
   dateFormat?: string
   canClearRange?: boolean

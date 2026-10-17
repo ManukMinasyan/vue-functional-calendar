@@ -7,7 +7,7 @@
     >
       <button
         type="button"
-        aria-label="Previous month"
+        :aria-label="fConfigs.labels.previousMonth"
         :aria-disabled="!allowPreDate"
         @click="calendarRoot.PreMonth(oneArrows ? 0 : calendarKey)"
         :class="{ 'vfc-cursor-pointer': allowPreDate }"
@@ -21,7 +21,7 @@
       </button>
       <button
         type="button"
-        aria-label="Next month"
+        :aria-label="fConfigs.labels.nextMonth"
         :aria-disabled="!allowNextDate"
         @click="calendarRoot.NextMonth(oneArrows ? 0 : calendarKey)"
         :class="{ 'vfc-cursor-pointer': allowNextDate }"

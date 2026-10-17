@@ -35,7 +35,7 @@
       v-show="showCalendar"
       ref="mainContainer"
       :role="isModalPicker ? 'dialog' : null"
-      :aria-label="isModalPicker ? 'Calendar' : null"
+      :aria-label="isModalPicker ? fConfigs.labels.calendar : null"
       :class="{
         'vfc-modal': isModalPicker,
         'vfc-dark': fConfigs.isDark
@@ -243,8 +243,10 @@
                     <span
                       :class="[rangeIsSelected ? 'active' : 'disabled']"
                       @click="cleanRange"
-                      >Clear Range{{
-                        fConfigs.isMultipleDateRange ? 's' : ''
+                      >{{
+                        fConfigs.isMultipleDateRange
+                          ? fConfigs.labels.clearRanges
+                          : fConfigs.labels.clearRange
                       }}</span
                     >
                   </div>
@@ -273,6 +275,13 @@ import Footer from '../components/Footer.vue'
 
 import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
+import {
+  DEFAULT_DAY_NAMES,
+  resolveLocale,
+  localeDayNames,
+  localeMonthNames,
+  localeFirstDay
+} from '../utils/locale'
 // import calendarMethods from '../utils/calendarMethods'
 
 export default {
@@ -324,8 +333,11 @@ export default {
           this.fConfigs.isMultipleDatePicker)
       )
     },
+    activeLocale() {
+      return resolveLocale(this.fConfigs.locale)
+    },
     fullDateFormatter() {
-      return new Intl.DateTimeFormat(undefined, { dateStyle: 'full' })
+      return new Intl.DateTimeFormat(this.activeLocale, { dateStyle: 'full' })
     },
     rovingDates() {
       return this.listCalendars.map(calendarItem => {
@@ -349,10 +361,11 @@ export default {
     },
     helpCalendar() {
       return new helpCalendarClass(
-        this.fConfigs.sundayStart,
+        this.weekStart,
         this.checkHiddenElement('leftAndRightDays'),
         this.fConfigs.dateFormat,
-        this.fConfigs.dayNames
+        this.fConfigs.dayNames,
+        this.activeLocale ? DEFAULT_DAY_NAMES : null
       )
     },
     singleSelectedDate: {
@@ -572,13 +585,19 @@ export default {
       }
     },
     setConfigs() {
-      let globalOptions
+      const explicit = new Set()
+      const apply = (key, value) => {
+        this.fConfigs[key] =
+          key === 'labels' ? { ...this.fConfigs.labels, ...value } : value
+        if (typeof value !== 'undefined') explicit.add(key)
+      }
+
       if (typeof this.$getOptions !== 'undefined') {
         // Global Options
-        globalOptions = this.$getOptions()
+        const globalOptions = this.$getOptions()
         Object.keys(globalOptions).forEach(objectKey => {
           if (typeof this.fConfigs[objectKey] !== 'undefined') {
-            this.fConfigs[objectKey] = globalOptions[objectKey]
+            apply(objectKey, globalOptions[objectKey])
           }
         })
       }
@@ -587,7 +606,7 @@ export default {
         Object.keys(this.fConfigs).forEach(objectKey => {
           if (typeof this.configs[objectKey] !== 'undefined') {
             // Get From Configs
-            this.fConfigs[objectKey] = this.configs[objectKey]
+            apply(objectKey, this.configs[objectKey])
           }
         })
       } else {
@@ -596,10 +615,12 @@ export default {
             typeof this.fConfigs[objectKey] !== 'undefined' &&
             typeof this.$props[objectKey] !== 'undefined'
           ) {
-            this.fConfigs[objectKey] = this.$props[objectKey]
+            apply(objectKey, this.$props[objectKey])
           }
         })
       }
+
+      this.applyLocale(explicit)
 
       // Is Modal
       if (this.fConfigs.isModal) this.showCalendar = false
@@ -612,13 +633,35 @@ export default {
         this.calendar.currentDate = this.newCurrentDate
       }
 
-      // Sunday Start
-      if (this.fConfigs.sundayStart) {
-        let dayNames = [...this.fConfigs.dayNames]
-        let sundayName = dayNames[dayNames.length - 1]
-        dayNames.splice(dayNames.length - 1, 1)
-        dayNames.unshift(sundayName)
-        this.fConfigs.dayNames = dayNames
+      // Week Start
+      const shift = (this.weekStart + 6) % 7
+      if (shift) {
+        const dayNames = this.fConfigs.dayNames
+        this.fConfigs.dayNames = [
+          ...dayNames.slice(shift),
+          ...dayNames.slice(0, shift)
+        ]
+      }
+    },
+    applyLocale(explicit) {
+      const locale = this.activeLocale
+      const derivedFirstDay = locale ? localeFirstDay(locale) : undefined
+
+      if (locale) {
+        const derived = {
+          dayNames: localeDayNames(locale),
+          monthNames: localeMonthNames(locale, 'long'),
+          shortMonthNames: localeMonthNames(locale, 'short')
+        }
+        Object.keys(derived).forEach(key => {
+          if (!explicit.has(key)) this.fConfigs[key] = derived[key]
+        })
+      }
+
+      if (explicit.has('sundayStart')) {
+        this.weekStart = this.fConfigs.sundayStart ? 0 : 1
+      } else if (typeof derivedFirstDay !== 'undefined') {
+        this.weekStart = derivedFirstDay
       }
     },
     listRendering() {
@@ -703,11 +746,11 @@ export default {
       //Disabled Dates - Start
 
       // Disable days of week if set in configuration
-      let dayOfWeekString = this.helpCalendar.getDayName(
-        this.helpCalendar.getDateFromFormat(item.date)
-      )
       if (
-        this.fConfigs.disabledDayNames.includes(dayOfWeekString) ||
+        this.helpCalendar.isDayNameDisabled(
+          this.helpCalendar.getDateFromFormat(item.date),
+          this.fConfigs.disabledDayNames
+        ) ||
         isDisabledDate(item.date)
       ) {
         return false
@@ -1161,11 +1204,11 @@ export default {
                     thisDate < startDate.getTime()) ||
                   (itemDate === thisDate && thisDate > startDate.getTime())
 
-                let dayOfWeekString = this.helpCalendar.getDayName(
-                  this.helpCalendar.getDateFromFormat(item.date)
-                )
                 if (
-                  !this.fConfigs.disabledDayNames.includes(dayOfWeekString) &&
+                  !this.helpCalendar.isDayNameDisabled(
+                    this.helpCalendar.getDateFromFormat(item.date),
+                    this.fConfigs.disabledDayNames
+                  ) &&
                   ((itemDate > startDate.getTime() && itemDate < thisDate) ||
                     (itemDate < startDate.getTime() && itemDate > thisDate))
                 ) {
@@ -1310,11 +1353,11 @@ export default {
                       thisDate < startDate.getTime()) ||
                     (itemDate === thisDate && thisDate > startDate.getTime())
 
-                  let dayOfWeekString = this.helpCalendar.getDayName(
-                    this.helpCalendar.getDateFromFormat(item.date)
-                  )
                   if (
-                    !this.fConfigs.disabledDayNames.includes(dayOfWeekString) &&
+                    !this.helpCalendar.isDayNameDisabled(
+                      this.helpCalendar.getDateFromFormat(item.date),
+                      this.fConfigs.disabledDayNames
+                    ) &&
                     ((itemDate > startDate.getTime() && itemDate < thisDate) ||
                       (itemDate < startDate.getTime() && itemDate > thisDate))
                   ) {
@@ -1734,10 +1777,12 @@ export default {
     },
     isDateBlocked(date) {
       const dateObj = this.helpCalendar.getDateFromFormat(date)
-      const dayName = this.helpCalendar.getDayName(dateObj)
 
       if (
-        this.fConfigs.disabledDayNames.includes(dayName) ||
+        this.helpCalendar.isDayNameDisabled(
+          dateObj,
+          this.fConfigs.disabledDayNames
+        ) ||
         this.isDisabledDate(date)
       ) {
         return true
@@ -1841,9 +1886,7 @@ export default {
     weekEdge(from, offset) {
       const year = from.getFullYear()
       const month = from.getMonth()
-      const sinceWeekStart = this.fConfigs.sundayStart
-        ? from.getDay()
-        : (from.getDay() + 6) % 7
+      const sinceWeekStart = this.helpCalendar.daysSinceWeekStart(from)
       const edge = new Date(
         year,
         month,
