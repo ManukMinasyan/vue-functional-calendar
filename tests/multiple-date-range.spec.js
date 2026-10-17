@@ -300,6 +300,17 @@ describe('multiple date range selection rules', () => {
     ])
   })
 
+  it('leaves a range extended to minSelDays unchanged when the next range starts', async () => {
+    const { wrapper } = mountCalendar({ ...options, minSelDays: 5 })
+
+    await clickDays(wrapper, [10, 11, 5])
+
+    expect(lastValue(wrapper).multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '14/10/2026' },
+      { start: '5/10/2026', end: '' }
+    ])
+  })
+
   it('clamps only the range being completed', async () => {
     const { wrapper } = mountCalendar({ ...options, maxSelDays: 3 })
 

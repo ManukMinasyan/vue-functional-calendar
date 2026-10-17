@@ -885,11 +885,7 @@ export default {
           ranges.push({ end: '', start: date })
         } else if (lastRange.start !== '' && lastRange.end !== '') {
           ranges.push({ end: '', start: date })
-          this.settleRange(
-            lastRange,
-            date,
-            this.helpCalendar.getDateFromFormat(lastRange.start)
-          )
+          this.announceRange(lastRange)
         } else {
           this.applyRangeClick(lastRange, date)
         }
@@ -965,9 +961,9 @@ export default {
 
       if (range.start === '' || range.end === '') return
 
-      this.settleRange(range, date, startDate)
+      this.clampRange(range, date, startDate, this.announceRange(range))
     },
-    settleRange(range, date, startDate) {
+    announceRange(range) {
       const { helpCalendar } = this
       const diffDays = Math.abs(
         daysBetween(
@@ -975,12 +971,16 @@ export default {
           helpCalendar.getDateFromFormat(range.end)
         )
       )
-      const itemTime = helpCalendar.getDateFromFormat(date).getTime()
 
       this.$emit('selectedDaysCount', diffDays)
 
       if (!this.fConfigs.withTimePicker) this.autoCloseModal()
 
+      return diffDays
+    },
+    clampRange(range, date, startDate, diffDays) {
+      const { helpCalendar } = this
+      const itemTime = helpCalendar.getDateFromFormat(date).getTime()
       const { minSelDays, maxSelDays } = this.fConfigs
       const isShort = minSelDays && diffDays < minSelDays
       const isLong = !isShort && maxSelDays && diffDays >= maxSelDays
