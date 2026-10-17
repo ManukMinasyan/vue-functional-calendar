@@ -4,11 +4,19 @@ module.exports = {
   runtimeCompiler: true,
   publicPath: '',
   css: {
-    extract: false
+    extract: false,
+    loaderOptions: {
+      sass: {
+        implementation: require('sass')
+      }
+    }
   },
   outputDir: 'dist',
   filenameHashing: false,
   configureWebpack: {
+    output: {
+      libraryExport: 'default'
+    },
     resolve: {
       alias: {
         '@': path.resolve('src')
