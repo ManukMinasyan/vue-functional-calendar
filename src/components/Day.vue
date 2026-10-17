@@ -145,9 +145,10 @@ export default {
           !this.day.hideLeftAndRightDays
         )
 
-      if (!''.inRange) this.inRangeInit()
-
-      const inAnyRange = this.day.date.inRange(this.calendar.multipleDateRange)
+      const inAnyRange = this.helpCalendar.isInsideRanges(
+        this.day.date,
+        this.calendar.multipleDateRange
+      )
 
       const lastElement =
         this.calendar.multipleDateRange[
@@ -188,9 +189,10 @@ export default {
           !this.day.hideLeftAndRightDays
         )
 
-      if (!''.inRange) this.inRangeInit()
-
-      const inAnyRange = this.day.date.inRange(this.calendar.multipleDateRange)
+      const inAnyRange = this.helpCalendar.isInsideRanges(
+        this.day.date,
+        this.calendar.multipleDateRange
+      )
 
       const lastElement =
         this.calendar.multipleDateRange[
@@ -292,23 +294,6 @@ export default {
       }
       return numbers.sort((a, b) => a - b)
     },
-    inRangeInit() {
-      //!!!!\\
-      const helpCalendar = this.helpCalendar
-      String.prototype.inRange = function (arr) {
-        let res = false
-        arr.forEach(el => {
-          const start = +helpCalendar.getDateFromFormat(el.start.split(' ')[0])
-          const end = +helpCalendar.getDateFromFormat(el.end.split(' ')[0])
-          const current = +helpCalendar.getDateFromFormat(this.split(' ')[0])
-          if (start === end) return
-          if (start && end) res = res || (start < current && current < end)
-        })
-        return res
-      }
-      //!!!!\\
-    },
-
     clearRange() {
       //$emit
       const removeIndex = this.calendar.multipleDateRange.findIndex(
@@ -465,8 +450,6 @@ export default {
       }
       //Date Multiple Range
       if (this.fConfigs.isMultipleDateRange) {
-        if (!''.inRange) this.inRangeInit()
-        // console.log(day.date.inRange(this.calendar.multipleDateRange))
         if (
           day.isMarked ||
           ~this.calendar.multipleDateRange
@@ -475,7 +458,10 @@ export default {
           ~this.calendar.multipleDateRange
             .map(range => range.end.split(' ')[0])
             .indexOf(day.date) ||
-          day.date.inRange(this.calendar.multipleDateRange)
+          this.helpCalendar.isInsideRanges(
+            day.date,
+            this.calendar.multipleDateRange
+          )
         ) {
           classes.push('vfc-marked')
         }

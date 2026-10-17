@@ -136,6 +136,41 @@ describe('multiple date ranges', () => {
     expect(findDay(wrapper, 7).classList).toContain('vfc-marked')
   })
 
+  it('draws ranges on two calendars with different date formats', async () => {
+    const modelWith = range => ({
+      currentDate: new Date(2026, 9, 1),
+      selectedDate: false,
+      selectedDateTime: false,
+      selectedHour: '00',
+      selectedMinute: '00',
+      selectedDatesItem: '',
+      selectedDates: [],
+      dateRange: { start: '', end: '' },
+      multipleDateRange: [range]
+    })
+    const { wrapper: monthFirst } = await mountCalendarReady({
+      ...options,
+      dateFormat: 'mm/dd/yyyy',
+      modelValue: modelWith({ start: '9/30/2026', end: '10/2/2026' })
+    })
+    const { wrapper: dayFirst } = await mountCalendarReady({
+      ...options,
+      modelValue: modelWith({ start: '29/9/2026', end: '2/10/2026' })
+    })
+
+    const band = (wrapper, day) =>
+      findDay(wrapper, day).parentElement.querySelector('.vfc-base-start')
+    expect(band(monthFirst, 1)).not.toBeNull()
+    expect(band(dayFirst, 1)).not.toBeNull()
+  })
+
+  it('installs no helpers on String or Date prototypes', async () => {
+    await mountCalendarReady(options)
+
+    expect(String.prototype.inRange).toBeUndefined()
+    expect(Date.prototype.getWeekNumber).toBeUndefined()
+  })
+
   it('throws on a model whose last range has only one end', async () => {
     const { wrapper } = mountCalendar(options)
     let thrown

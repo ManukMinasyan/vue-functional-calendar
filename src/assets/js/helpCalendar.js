@@ -7,14 +7,14 @@ const toAsciiDigits = value =>
     String.fromCharCode(char.charCodeAt(0) - FULL_WIDTH_OFFSET)
   )
 
-Date.prototype.getWeekNumber = function (weekStartOrSundayStart) {
+export const getWeekNumber = (date, weekStartOrSundayStart) => {
   const weekStart = toWeekStart(weekStartOrSundayStart)
-  const sinceWeekStart = (this.getDay() - weekStart + 7) % 7
+  const sinceWeekStart = (date.getDay() - weekStart + 7) % 7
   const thursdayOffset = ((4 - weekStart + 7) % 7) - sinceWeekStart
   const thursday = new Date(
-    this.getFullYear(),
-    this.getMonth(),
-    this.getDate() + thursdayOffset
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate() + thursdayOffset
   )
   const dayOfYear = Math.round(
     (Date.UTC(thursday.getFullYear(), thursday.getMonth(), thursday.getDate()) -
@@ -72,6 +72,15 @@ export default class helpCalendar {
     return new Date(date[year], date[month] - 1, date[day])
   }
 
+  isInsideRanges(date, ranges) {
+    const current = +this.getDateFromFormat(date.split(' ')[0])
+    return ranges.some(range => {
+      const start = +this.getDateFromFormat(range.start.split(' ')[0])
+      const end = +this.getDateFromFormat(range.end.split(' ')[0])
+      return start !== end && start && end && start < current && current < end
+    })
+  }
+
   checkValidDate(val) {
     return !isNaN(this.getDateFromFormat(val).getTime())
   }
@@ -107,7 +116,7 @@ export default class helpCalendar {
         year,
         start,
         end,
-        number: new Date(year, month, start).getWeekNumber(this.weekStart),
+        number: getWeekNumber(new Date(year, month, start), this.weekStart),
         days: []
       })
       start = end + 1

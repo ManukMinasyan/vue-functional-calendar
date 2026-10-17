@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
 import FunctionalCalendar from '../index.js'
+import { getWeekNumber } from '../src/assets/js/helpCalendar.js'
 import {
   mountCalendar,
   mountCalendarReady,
@@ -292,7 +293,7 @@ describe('week numbers', () => {
     [0, new Date(2025, 11, 28), 1],
     [6, new Date(2025, 11, 27), 1]
   ])('weekStart %i gives %s the week %i', (weekStart, date, week) => {
-    expect(date.getWeekNumber(weekStart)).toBe(week)
+    expect(getWeekNumber(date, weekStart)).toBe(week)
   })
 })
 

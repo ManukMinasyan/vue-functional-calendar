@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { getWeekNumber } from '../src/assets/js/helpCalendar.js'
 import {
   mountCalendar,
   dayElements,
@@ -32,13 +33,13 @@ describe('showWeekNumbers', () => {
     [new Date(2026, 0, 1), 1],
     [new Date(2024, 11, 30), 1]
   ])('computes the ISO week of %s as %i', (date, week) => {
-    expect(date.getWeekNumber(false)).toBe(week)
+    expect(getWeekNumber(date, false)).toBe(week)
   })
 
   it('does not change the date it is called on', () => {
     const date = new Date(2026, 9, 1)
 
-    date.getWeekNumber(false)
+    getWeekNumber(date, false)
 
     expect(date.getTime()).toBe(new Date(2026, 9, 1).getTime())
   })
