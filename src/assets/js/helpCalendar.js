@@ -267,16 +267,29 @@ export default class helpCalendar {
 
   parseTypedDate(value) {
     const { separator, tokens } = this.getFormatParts()
-    const masked = this.mask(value)
-    const parts = masked.split(separator)
-    const year = parts[tokens.indexOf('yyyy')]
+    const parts = this.mask(value).split(separator)
+    if (parts.length !== tokens.length || parts.some(part => !part)) return ''
 
-    if (parts.length !== tokens.length || year.length !== 4) return ''
-    if (!this.checkValidDate(masked)) return ''
+    const partOf = token => parts[tokens.indexOf(token)]
+    if (partOf('yyyy').length !== 4) return ''
 
-    const date = this.getDateFromFormat(masked)
-    if (date.getFullYear() !== Number(year)) return ''
+    const year = Number(partOf('yyyy'))
+    const month = Number(partOf('mm'))
+    const day = Number(partOf('dd'))
+    const date = new Date(year, month - 1, day)
 
-    return this.formatDate(date)
+    const roundTrips =
+      date.getFullYear() === year &&
+      date.getMonth() === month - 1 &&
+      date.getDate() === day
+
+    return roundTrips ? this.formatDate(date) : ''
+  }
+
+  maskTypedValue(value) {
+    const [date, ...time] = value.split(' ')
+    const masked = this.mask(date)
+
+    return masked === date ? value : [masked, ...time].join(' ')
   }
 }

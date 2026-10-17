@@ -16,7 +16,8 @@
           :title="fConfigs.labels.startDate"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
-          v-model="dateRangeSelectedStartDate"
+          :value="dateRangeSelectedStartDate"
+          @input="typeRangeDate($event, 'start')"
           :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
           :maxlength="fConfigs.dateFormat.length"
@@ -26,7 +27,8 @@
           :title="fConfigs.labels.endDate"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
-          v-model="dateRangeSelectedEndDate"
+          :value="dateRangeSelectedEndDate"
+          @input="typeRangeDate($event, 'end')"
           :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
           :maxlength="fConfigs.dateFormat.length"
@@ -49,7 +51,7 @@
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
           :value="singleSelectedDate"
-          @input="calendarRoot.singleSelectedDate = $event.target.value"
+          @input="typeSingleDate"
           :placeholder="fConfigs.placeholder"
           :readonly="!fConfigs.isTypeable"
           :maxlength="fConfigs.dateFormat.length"
@@ -109,29 +111,28 @@ export default {
     }
   },
   computed: {
-    dateRangeSelectedStartDate: {
-      get() {
-        return this.calendar.dateRange.start
-          ? this.calendar.dateRange.start
-          : ''
-      },
-      set(newValue) {
-        const date = this.calendarRoot.helpCalendar.parseTypedDate(newValue)
-        if (date) {
-          this.calendar.dateRange.start = date
-        }
-      }
+    dateRangeSelectedStartDate() {
+      return this.calendar.dateRange.start ? this.calendar.dateRange.start : ''
     },
-    dateRangeSelectedEndDate: {
-      get() {
-        return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
-      },
-      set(newValue) {
-        const date = this.calendarRoot.helpCalendar.parseTypedDate(newValue)
-        if (date) {
-          this.calendar.dateRange.end = date
-        }
-      }
+    dateRangeSelectedEndDate() {
+      return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
+    }
+  },
+  methods: {
+    capTypedValue(input) {
+      const capped = this.calendarRoot.helpCalendar.maskTypedValue(input.value)
+      if (capped !== input.value) input.value = capped
+    },
+    typeSingleDate(event) {
+      this.calendarRoot.singleSelectedDate = event.target.value
+      this.capTypedValue(event.target)
+    },
+    typeRangeDate(event, edge) {
+      const date = this.calendarRoot.helpCalendar.parseTypedDate(
+        event.target.value
+      )
+      if (date) this.calendar.dateRange[edge] = date
+      this.capTypedValue(event.target)
     }
   }
 }

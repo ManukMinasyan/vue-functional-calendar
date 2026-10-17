@@ -11,6 +11,7 @@ export const DEFAULT_LABELS = {
   previousYears: 'Previous years',
   nextYears: 'Next years',
   calendar: 'Calendar',
+  close: 'Close',
   clearRange: 'Clear Range',
   clearRanges: 'Clear Ranges',
   startDate: 'Start Date',
@@ -20,6 +21,7 @@ export const DEFAULT_LABELS = {
   hour: 'Hour',
   minute: 'Minute',
   quickRanges: 'Quick ranges',
+  range: 'Range',
   presets: {
     today: 'Today',
     yesterday: 'Yesterday',

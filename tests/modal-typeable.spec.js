@@ -382,6 +382,185 @@ describe('typeable inputs', () => {
   })
 })
 
+const FORMATS = [
+  ['dd/mm/yyyy', (d, m, y) => `${d}/${m}/${y}`],
+  ['mm/dd/yyyy', (d, m, y) => `${m}/${d}/${y}`],
+  ['yyyy-mm-dd', (d, m, y) => `${y}-${m}-${d}`],
+  ['dd.mm.yyyy', (d, m, y) => `${d}.${m}.${y}`]
+].flatMap(([format, build]) => [
+  [format, build],
+  [`${format} hh:mm`, build]
+])
+
+describe.each(FORMATS)('typed dates with dateFormat %s', (format, build) => {
+  const mountTyped = () => {
+    const model = emptyModel()
+    return mountCalendarReady({
+      isModal: true,
+      isDatePicker: true,
+      isTypeable: true,
+      dateFormat: format,
+      modelValue: model
+    }).then(({ wrapper }) => ({
+      model,
+      input: wrapper.find('input.vfc-single-input')
+    }))
+  }
+
+  it('stores a zero-padded date unpadded', async () => {
+    const { model, input } = await mountTyped()
+
+    await input.setValue(build('05', '01', '2027'))
+
+    expect(model.selectedDate).toBe(build('5', '1', '2027'))
+  })
+
+  it.each([
+    ['31', '02', '2027'],
+    ['29', '2', '2027'],
+    ['32', '01', '2027'],
+    ['00', '05', '2027'],
+    ['15', '13', '2027'],
+    ['15', '00', '2027'],
+    ['15', '05', '0099']
+  ])('rejects %s/%s/%s', async (day, month, year) => {
+    const { model, input } = await mountTyped()
+
+    await input.setValue(build(day, month, year))
+
+    expect(model.selectedDate).toBe(false)
+  })
+
+  it('accepts February 29 in a leap year', async () => {
+    const { model, input } = await mountTyped()
+
+    await input.setValue(build('29', '02', '2028'))
+
+    expect(model.selectedDate).toBe(build('29', '2', '2028'))
+  })
+
+  it('does not commit while a part is still empty', async () => {
+    const { model, input } = await mountTyped()
+    const [first] = build('12', '11', '2027').split(/[/.-]/)
+    const separator = build('1', '1', '2027').match(/[/.-]/)[0]
+
+    await input.setValue(`${first}${separator}`)
+    await input.setValue(
+      build('12', '11', '2027').split(separator).slice(0, 2).join(separator) +
+        separator
+    )
+
+    expect(model.selectedDate).toBe(false)
+  })
+
+  const yearLast = build('1', '1', '2027').endsWith('2027')
+
+  it.skipIf(!yearLast)('never shows a fifth year digit', async () => {
+    const { input } = await mountTyped()
+
+    await input.setValue(`${build('05', '01', '2027')}7`)
+
+    expect(input.element.value).toBe(build('5', '1', '2027'))
+  })
+
+  it.skipIf(yearLast)(
+    'rolls a fifth year digit into the next part',
+    async () => {
+      const { model, input } = await mountTyped()
+
+      await input.setValue('20277')
+
+      expect(input.element.value).toBe('2027-7')
+      expect(model.selectedDate).toBe(false)
+    }
+  )
+})
+
+describe('typed input filtering', () => {
+  it('drops characters the format cannot hold', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDatePicker: true,
+      isTypeable: true,
+      modelValue: model
+    })
+    const input = wrapper.find('input.vfc-single-input')
+
+    await input.setValue('15/01/2027abc')
+
+    expect(input.element.value).toBe('15/1/2027')
+    expect(model.selectedDate).toBe('15/1/2027')
+  })
+
+  it('caps the year in both range inputs', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isTypeable: true,
+      modelValue: model
+    })
+    const [start, end] = wrapper.findAll('.vfc-multiple-input input')
+
+    await start.setValue('05/01/20277')
+    await end.setValue('18/01/20277')
+
+    expect([start.element.value, end.element.value]).toEqual([
+      '5/1/2027',
+      '18/1/2027'
+    ])
+    expect(model.dateRange).toEqual({ start: '5/1/2027', end: '18/1/2027' })
+  })
+
+  it('rejects an impossible date in a range input', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isTypeable: true,
+      modelValue: model
+    })
+    const [start] = wrapper.findAll('.vfc-multiple-input input')
+
+    await start.setValue('31/02/2027')
+
+    expect(model.dateRange.start).toBe('')
+  })
+})
+
+describe('multiple date picker input', () => {
+  const addDate = async text => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isMultipleDatePicker: true,
+      modelValue: model
+    })
+    const input = wrapper.find('.vfc-tags-input input')
+    await input.setValue(text)
+    await input.trigger('keydown.enter')
+    return model
+  }
+
+  it('stores a zero-padded date unpadded', async () => {
+    const model = await addDate('05/01/2027')
+
+    expect(model.selectedDates.map(date => date.date)).toEqual(['5/1/2027'])
+    expect(model.selectedDatesItem).toBe('')
+  })
+
+  it.each(['31/02/2027', '29/2/2027', '00/05/2027', '15/1/2'])(
+    'rejects %s',
+    async text => {
+      const model = await addDate(text)
+
+      expect(model.selectedDates).toEqual([])
+      expect(model.selectedDatesItem).toBe(text)
+    }
+  )
+})
+
 describe('listener cleanup', () => {
   afterEach(() => {
     vi.restoreAllMocks()

@@ -28,6 +28,7 @@
         <template v-if="calendarRoot.showMonthPicker">
           <div
             class="vfc-item"
+            :data-focus-id="`picker:${calendarKey}`"
             role="button"
             tabindex="0"
             v-for="(month, key) in calendarRoot.fConfigs.shortMonthNames"
@@ -40,7 +41,9 @@
               calendarRoot.listCalendars[calendarKey].date.getMonth() === key
             "
             @click="calendarRoot.pickMonth(key, calendarKey)"
-            @keydown.enter.space.prevent="pickWithKeyboard('pickMonth', key)"
+            @keydown.enter.space.prevent="
+              calendarRoot.pickMonth(key, calendarKey)
+            "
           >
             {{ month }}
           </div>
@@ -48,6 +51,7 @@
         <template v-else-if="calendarRoot.showYearPicker">
           <div
             class="vfc-item"
+            :data-focus-id="`picker:${calendarKey}`"
             role="button"
             tabindex="0"
             v-for="(year, key) in calendarRoot.getYearList(
@@ -66,7 +70,7 @@
             "
             @click="calendarRoot.pickYear(year.year, calendarKey)"
             @keydown.enter.space.prevent="
-              pickWithKeyboard('pickYear', year.year)
+              calendarRoot.pickYear(year.year, calendarKey)
             "
           >
             {{ year.year }}
@@ -118,10 +122,6 @@ export default {
     }
   },
   methods: {
-    pickWithKeyboard(method, value) {
-      this.calendarRoot[method](value, this.calendarKey)
-      this.$nextTick(() => this.calendarRoot.focusRovingDay(this.calendarKey))
-    },
     changePicker(to) {
       if (this.calendarRoot.showMonthPicker) {
         if (to === 'right') this.calendarRoot.NextYear(this.calendarKey)

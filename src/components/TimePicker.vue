@@ -1,19 +1,32 @@
 <template>
   <div class="vfc-time-picker-container">
-    <div class="vfc-close" @click="close()"></div>
+    <div
+      class="vfc-close"
+      role="button"
+      tabindex="0"
+      :aria-label="calendarRoot.fConfigs.labels.close"
+      @click="close()"
+      @keydown.enter.space.prevent="close()"
+    ></div>
     <div class="vfc-modal-time-mechanic">
       <div id="time-line" class="vfc-modal-time-line">
         <span>
           <template v-if="calendarRoot.fConfigs.isDateRange">
             <span
+              role="button"
+              tabindex="0"
               @click="startDateActive = true"
+              @keydown.enter.space.prevent="startDateActive = true"
               :class="{ 'vfc-active': startDateActive }"
               >{{ calendarRoot.calendar.dateRange.start }}</span
             >
             <template v-if="calendarRoot.calendar.dateRange.end">
               <span>-</span>
               <span
+                role="button"
+                tabindex="0"
                 @click="startDateActive = false"
+                @keydown.enter.space.prevent="startDateActive = false"
                 :class="{ 'vfc-active': !startDateActive }"
                 >{{ calendarRoot.calendar.dateRange.end }}</span
               >
@@ -35,14 +48,20 @@
         <div
           class="vfc-time-picker__list vfc-time-picker__list--hours"
           ref="hourList"
+          role="listbox"
+          :aria-label="calendarRoot.fConfigs.labels.hour"
+          @keydown="onListKeydown($event, 'hour')"
         >
           <div
             class="vfc-time-picker__item"
             :class="{
               'vfc-time-picker__item--selected': checkHourActiveClass(i)
             }"
-            v-for="i in hours"
+            v-for="(i, index) in hours"
             :key="i"
+            role="option"
+            :tabindex="tabStop('hour', index) ? 0 : -1"
+            :aria-selected="checkHourActiveClass(i)"
             @click="changeHour(formatTime(i))"
           >
             {{ formatTime(i) }}
@@ -51,14 +70,20 @@
         <div
           class="vfc-time-picker__list vfc-time-picker__list--minutes"
           ref="minuteList"
+          role="listbox"
+          :aria-label="calendarRoot.fConfigs.labels.minute"
+          @keydown="onListKeydown($event, 'minute')"
         >
           <div
             class="vfc-time-picker__item"
             :class="{
               'vfc-time-picker__item--selected': checkMinuteActiveClass(i)
             }"
-            v-for="i in minutes"
+            v-for="(i, index) in minutes"
             :key="i"
+            role="option"
+            :tabindex="tabStop('minute', index) ? 0 : -1"
+            :aria-selected="checkMinuteActiveClass(i)"
             @click="changeMinute(formatTime(i))"
           >
             {{ formatTime(i) }}
@@ -140,6 +165,38 @@ export default {
     },
     close() {
       this.calendarRoot.showTimePicker = false
+    },
+    tabStop(kind, index) {
+      const values = kind === 'hour' ? this.hours : this.minutes
+      const selected = values.findIndex(value =>
+        kind === 'hour'
+          ? this.checkHourActiveClass(value)
+          : this.checkMinuteActiveClass(value)
+      )
+      return index === (selected === -1 ? 0 : selected)
+    },
+    onListKeydown(event, kind) {
+      const list = event.currentTarget
+      const items = [...list.querySelectorAll('[role="option"]')]
+      const current = items.indexOf(document.activeElement)
+      if (current === -1) return
+
+      const select = kind === 'hour' ? this.changeHour : this.changeMinute
+      const values = kind === 'hour' ? this.hours : this.minutes
+      const moves = {
+        ArrowDown: Math.min(current + 1, items.length - 1),
+        ArrowUp: Math.max(current - 1, 0),
+        Home: 0,
+        End: items.length - 1
+      }
+
+      if (event.key in moves) {
+        event.preventDefault()
+        items[moves[event.key]].focus()
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        select(this.formatTime(values[current]))
+      }
     },
     addMinuteHour(what, val, to) {
       let res = ''

@@ -55,6 +55,7 @@ export interface FunctionalCalendarLabels {
   previousYears: string
   nextYears: string
   calendar: string
+  close: string
   clearRange: string
   clearRanges: string
   startDate: string
@@ -64,6 +65,7 @@ export interface FunctionalCalendarLabels {
   hour: string
   minute: string
   quickRanges: string
+  range: string
   presets: Record<FunctionalCalendarPresetKey, string>
 }
 

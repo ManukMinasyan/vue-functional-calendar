@@ -10,6 +10,8 @@
       :aria-selected="isSelectable ? isSelected : null"
       :aria-disabled="isBlocked"
       :aria-label="ariaLabel"
+      :aria-keyshortcuts="rangeNumbers.length ? 'Delete' : null"
+      :data-focus-id="`day:${gridKey}:${day.date}`"
       :class="getClassNames(day)"
       @click.self="calendarRoot.clickDay(day, isDisabledDate)"
       @keydown="onKeydown"
@@ -17,36 +19,33 @@
       @mouseover="dayMouseOver"
     >
       <slot :week="week" :day="day">{{ day.day }}</slot>
-      <span v-if="timesShow" @click="clearRange" class="times">&times;</span>
+      <span
+        v-if="timesShow"
+        @click="clearRange"
+        class="times"
+        aria-hidden="true"
+        >&times;</span
+      >
       <span
         v-if="numberShow"
         @mouseover="toolTip && (onNumber = true)"
         @mouseleave="onNumber = false"
         class="number"
+        aria-hidden="true"
         >{{ getDaysNumber }}
         <div v-show="toolTip && onNumber" class="toolTip">
           {{ toolTipTxt().join('&nbsp;') }}
         </div>
       </span>
     </span>
+    <span v-else role="gridcell" aria-hidden="true"></span>
   </div>
 </template>
 
 <script>
 import { CALENDAR_KEY } from '../utils/injectionKeys'
 
-import { Comment, Fragment } from 'vue'
-
-const flatten = vnodes =>
-  vnodes.flatMap(vnode =>
-    vnode.type === Fragment ? flatten(vnode.children) : [vnode]
-  )
-
-const vIfPlaceholders = ['v-if', '']
-
-// Vue renders a false v-if as <!--v-if--> in dev and <!----> in production builds
-const isHtmlComment = vnode =>
-  vnode.type === Comment && !vIfPlaceholders.includes(vnode.children)
+import { hasSlotContent } from '../utils/slots'
 
 export default {
   name: 'Day',
@@ -116,11 +115,28 @@ export default {
     isBlocked() {
       return this.calendarRoot.isDateBlocked(this.day.date)
     },
+    rangeNumbers() {
+      const ranges = this.calendar.multipleDateRange
+      if (!this.fConfigs.isMultipleDateRange || !ranges) return []
+
+      const date = this.day.date
+      return ranges
+        .map((range, index) =>
+          range.start.split(' ')[0] === date || range.end.split(' ')[0] === date
+            ? index + 1
+            : 0
+        )
+        .filter(Boolean)
+    },
     ariaLabel() {
       if (this.day.hideLeftAndRightDays) return null
-      return this.calendarRoot.formatFullDate(
+
+      const label = this.calendarRoot.formatFullDate(
         this.helpCalendar.getDateFromFormat(this.day.date)
       )
+      if (!this.rangeNumbers.length) return label
+
+      return `${label}, ${this.fConfigs.labels.range} ${this.rangeNumbers.join(', ')}`
     },
     startActive() {
       if (!this.fConfigs.isMultipleDateRange)
@@ -304,11 +320,8 @@ export default {
       this.$emit('dayMouseOver', this.day.date)
     },
     hasSlot(name = 'default') {
-      const slot = this.calendarRoot.$slots[name]
-      if (!slot) return false
       const props = name === 'default' ? { week: this.week, day: this.day } : {}
-      const vnodes = flatten(slot(props))
-      return !(vnodes.length && vnodes.every(isHtmlComment))
+      return hasSlotContent(this.calendarRoot.$slots[name], props)
     },
     isDisabledDate(date) {
       return this.calendarRoot.isDisabledDate(date)
@@ -318,6 +331,14 @@ export default {
         event.preventDefault()
         this.calendarRoot.clickDay(this.day, this.isDisabledDate)
         this.calendarRoot.returnFocusIfClosed()
+        return
+      }
+      if (
+        (event.key === 'Delete' || event.key === 'Backspace') &&
+        this.fConfigs.isMultipleDateRange
+      ) {
+        event.preventDefault()
+        this.calendarRoot.removeRangeAt(this.day.date)
         return
       }
       this.calendarRoot.onDayKeydown(event, this.day, this.gridKey)

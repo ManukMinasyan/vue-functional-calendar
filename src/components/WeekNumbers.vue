@@ -1,6 +1,7 @@
 <template>
   <div
     class="vfc-day vfc-week-number"
+    role="rowheader"
     :style="{ borderRightColor: borderColor }"
   >
     <span class="vfc-span-day">{{ number }}</span>

@@ -60,10 +60,13 @@ describe('grid semantics', () => {
 
     const grid = wrapper.find('[role="grid"]')
 
+    const header = wrapper.find('.vfc-dayNames')
+
     expect(grid.attributes('aria-label')).toBe('October 2026')
     expect(grid.findAll('[role="row"]').length).toBeGreaterThan(1)
-    expect(grid.find('.vfc-dayNames').attributes('role')).toBe('row')
-    expect(grid.findAll('[role="columnheader"]')).toHaveLength(7)
+    expect(grid.attributes('aria-owns')).toBe(header.attributes('id'))
+    expect(header.attributes('role')).toBe('row')
+    expect(header.findAll('[role="columnheader"]')).toHaveLength(7)
   })
 
   it('labels every day cell with the full date', async () => {
@@ -144,23 +147,31 @@ describe('grid semantics', () => {
     expect(calendarTitle(wrapper)).toBe('November 2026')
   })
 
-  it('still renders custom arrow slots inside the buttons', async () => {
+  it('renders a custom arrow slot in a div button instead of nesting it in a button', async () => {
     const { wrapper } = await mountCalendarReady(
       {},
       {
         slots: {
-          navigationArrowLeft: '<i class="custom-left"></i>',
-          navigationArrowRight: '<i class="custom-right"></i>'
+          navigationArrowLeft: '<a class="custom-left" href="#">p</a>',
+          navigationArrowRight: '<button class="custom-right">n</button>'
         }
       }
     )
 
-    expect(
-      wrapper.find('button[aria-label="Previous month"] .custom-left').exists()
-    ).toBe(true)
-    expect(
-      wrapper.find('button[aria-label="Next month"] .custom-right').exists()
-    ).toBe(true)
+    const previous = wrapper.find('div[aria-label="Previous month"]')
+    const next = wrapper.find('div[aria-label="Next month"]')
+
+    expect(previous.attributes('role')).toBe('button')
+    expect(previous.attributes('tabindex')).toBe('0')
+    expect(previous.find('.custom-left').exists()).toBe(true)
+    expect(wrapper.find('button button').exists()).toBe(false)
+
+    next.element.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })
+    )
+    await nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('November 2026')
   })
 
   it('keeps focus reachable on an arrow that is at its limit', async () => {
@@ -888,5 +899,519 @@ describe('month and year pickers', () => {
       true
     )
     expect(picker.find('button[aria-label="Next year"]').exists()).toBe(true)
+  })
+})
+
+const emptyModel = (extra = {}) => ({
+  currentDate: new Date(2026, 9, 1),
+  selectedDate: false,
+  selectedDateTime: false,
+  selectedHour: '00',
+  selectedMinute: '00',
+  selectedDatesItem: '',
+  selectedDates: [],
+  dateRange: { start: '', end: '' },
+  multipleDateRange: [],
+  ...extra
+})
+
+const keyEvent = (key, init = {}) =>
+  new KeyboardEvent('keydown', {
+    key,
+    bubbles: true,
+    cancelable: true,
+    ...init
+  })
+
+describe('focus retention', () => {
+  it('keeps focus on the same arrow after a separate grid re-keys', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2
+    })
+    wrapper.find('.vfc-multiple-input input').element.focus()
+    await nextTick()
+    const grid = () => wrapper.findAll('.vfc-calendar')[0]
+    const next = () => grid().find('button[aria-label="Next month"]').element
+    const before = next()
+    before.focus()
+
+    before.click()
+    await nextTick()
+    await nextTick()
+
+    expect(before.isConnected).toBe(false)
+    expect(active()).toBe(next())
+    expect(calendarTitle(wrapper, 0)).toBe('November 2026')
+    expect(isHidden(wrapper)).toBe(false)
+  })
+
+  it('does not close the modal when a removed focused node fires focusout', async () => {
+    const original = Node.prototype.removeChild
+    const spy = vi
+      .spyOn(Node.prototype, 'removeChild')
+      .mockImplementation(function (child) {
+        if (child.contains(document.activeElement)) {
+          child.dispatchEvent(
+            new FocusEvent('focusout', { bubbles: true, relatedTarget: null })
+          )
+        }
+        return original.call(this, child)
+      })
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true
+    })
+    wrapper.find('.vfc-multiple-input input').element.focus()
+    await nextTick()
+
+    await press(focusDay(wrapper, 31), 'ArrowRight')
+    spy.mockRestore()
+
+    expect(isHidden(wrapper)).toBe(false)
+    expect(focusedLabel()).toBe(fullDate(2026, 10, 1))
+  })
+
+  it('moves focus to the roving day after a mouse month pick', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      changeMonthFunction: true
+    })
+    wrapper.vm.openMonthPicker(1)
+    await nextTick()
+    const march = wrapper
+      .findAll('.vfc-months .vfc-item')
+      .find(item => item.text() === 'Mar')
+    march.element.focus()
+
+    await march.trigger('click')
+    await nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('March 2026')
+    expect(active().getAttribute('role')).toBe('gridcell')
+    expect(active().getAttribute('tabindex')).toBe('0')
+  })
+
+  it('moves focus into the time picker and back to the grid', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      withTimePicker: true
+    })
+
+    await press(focusDay(wrapper, 12), 'Enter')
+
+    const timePicker = wrapper.find('.vfc-time-picker-container').element
+    expect(timePicker.contains(active())).toBe(true)
+    expect(active().getAttribute('role')).toBe('option')
+
+    await press(active(), 'Escape')
+
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+    expect(active().getAttribute('role')).toBe('gridcell')
+  })
+
+  it('never leaves focus on the body after the time picker closes', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      withTimePicker: true
+    })
+    await press(focusDay(wrapper, 12), 'Enter')
+
+    wrapper.find('.vfc-close').element.focus()
+    await wrapper.find('.vfc-close').trigger('click')
+    await nextTick()
+
+    expect(active()).not.toBe(document.body)
+    expect(wrapper.element.contains(active())).toBe(true)
+  })
+})
+
+describe('time picker keyboard', () => {
+  const openTimePicker = async () => {
+    const mounted = await mountCalendarReady({
+      isDatePicker: true,
+      withTimePicker: true
+    })
+    await press(focusDay(mounted.wrapper, 12), 'Enter')
+    return mounted
+  }
+
+  it('exposes the hour and minute lists as listboxes of options', async () => {
+    const { wrapper } = await openTimePicker()
+
+    const lists = wrapper.findAll('[role="listbox"]')
+
+    expect(lists.map(list => list.attributes('aria-label'))).toEqual([
+      'Hour',
+      'Minute'
+    ])
+    expect(lists[0].findAll('[role="option"]')).toHaveLength(24)
+    expect(lists[1].findAll('[role="option"]')).toHaveLength(60)
+    expect(lists[0].findAll('[role="option"][tabindex="0"]').length).toBe(1)
+  })
+
+  it('moves with the arrow keys and selects with Enter', async () => {
+    const { wrapper } = await openTimePicker()
+
+    await press(active(), 'ArrowDown')
+    await press(active(), 'ArrowDown')
+    expect(active().textContent.trim()).toBe('02')
+
+    await press(active(), 'Enter')
+
+    expect(wrapper.vm.calendar.selectedHour).toBe('02')
+    expect(active().getAttribute('aria-selected')).toBe('true')
+  })
+
+  it('jumps with Home and End', async () => {
+    const { wrapper } = await openTimePicker()
+
+    await press(active(), 'End')
+    expect(active().textContent.trim()).toBe('23')
+
+    await press(active(), 'Home')
+    expect(active().textContent.trim()).toBe('00')
+    expect(wrapper.find('[role="listbox"]').exists()).toBe(true)
+  })
+
+  it('selects a minute from the minute list', async () => {
+    const { wrapper } = await openTimePicker()
+    const minute = wrapper
+      .findAll('[role="listbox"]')[1]
+      .findAll('[role="option"]')[5].element
+    minute.focus()
+
+    await press(minute, 'Enter')
+
+    expect(wrapper.vm.calendar.selectedMinute).toBe('05')
+  })
+
+  it('closes with Enter on the close control', async () => {
+    const { wrapper } = await openTimePicker()
+
+    await press(wrapper.find('.vfc-close').element, 'Enter')
+
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+  })
+})
+
+describe('Enter in a typeable modal input', () => {
+  const mountTypeable = async () => {
+    const mounted = await mountCalendarReady({
+      isModal: true,
+      isDatePicker: true,
+      isTypeable: true,
+      modelValue: emptyModel()
+    })
+    const input = mounted.wrapper.find('input.vfc-single-input')
+    input.element.focus()
+    await nextTick()
+    return { ...mounted, input }
+  }
+
+  it('leaves Enter alone right after typing so the form can submit', async () => {
+    const { input, wrapper } = await mountTypeable()
+    await input.setValue('15/01/2027')
+    const event = keyEvent('Enter')
+
+    input.element.dispatchEvent(event)
+    await nextTick()
+
+    expect(event.defaultPrevented).toBe(false)
+    expect(active()).toBe(input.element)
+    expect(wrapper.element.contains(active())).toBe(true)
+  })
+
+  it('opens on the next Enter once the input is unchanged', async () => {
+    const { input, wrapper } = await mountTypeable()
+    await input.setValue('15/01/2027')
+    input.element.dispatchEvent(keyEvent('Enter'))
+    await nextTick()
+    const event = keyEvent('Enter')
+
+    input.element.dispatchEvent(event)
+    await nextTick()
+    await nextTick()
+
+    expect(event.defaultPrevented).toBe(true)
+    expect(active().getAttribute('role')).toBe('gridcell')
+    expect(isHidden(wrapper)).toBe(false)
+  })
+
+  it('moves into the grid on ArrowDown even after typing', async () => {
+    const { input } = await mountTypeable()
+    await input.setValue('15/01/2027')
+
+    input.element.dispatchEvent(keyEvent('ArrowDown'))
+    await nextTick()
+    await nextTick()
+
+    expect(active().getAttribute('role')).toBe('gridcell')
+  })
+
+  it('treats Enter on an empty input as open', async () => {
+    const { input } = await mountTypeable()
+    await input.setValue('')
+    const event = keyEvent('Enter')
+
+    input.element.dispatchEvent(event)
+    await nextTick()
+    await nextTick()
+
+    expect(event.defaultPrevented).toBe(true)
+    expect(active().getAttribute('role')).toBe('gridcell')
+  })
+})
+
+describe('roving day reset', () => {
+  it('forgets the focused day when the popover closes', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDatePicker: true,
+      modelValue: emptyModel({ selectedDate: '20/10/2026' })
+    })
+    wrapper.find('input.vfc-single-input').element.focus()
+    await nextTick()
+    await press(focusDay(wrapper, 22), 'ArrowRight')
+    expect(tabStops(wrapper)).toEqual([findDay(wrapper, 23)])
+
+    await press(active(), 'Escape')
+
+    expect(tabStops(wrapper)).toEqual([findDay(wrapper, 20)])
+  })
+
+  it('prefers the selection after the model is replaced from outside', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      modelValue: emptyModel()
+    })
+    focusDay(wrapper, 22)
+    await nextTick()
+    expect(tabStops(wrapper)).toEqual([findDay(wrapper, 22)])
+
+    await wrapper.setProps({
+      modelValue: emptyModel({ selectedDate: '20/10/2026' })
+    })
+
+    expect(tabStops(wrapper)).toEqual([findDay(wrapper, 20)])
+  })
+})
+
+describe('hidden adjacent days and week numbers', () => {
+  it('keeps seven gridcells in every row when adjacent days are hidden', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      hiddenElements: ['leftAndRightDays']
+    })
+
+    wrapper.findAll('.vfc-week').forEach(week => {
+      expect(week.findAll('[role="gridcell"]')).toHaveLength(7)
+    })
+    expect(
+      wrapper.findAll('[role="gridcell"][aria-hidden="true"]').length
+    ).toBe(wrapper.findAll('.vfc-week').length * 7 - 31)
+  })
+
+  it('gives each week number a rowheader cell', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      showWeekNumbers: true
+    })
+
+    const numbers = wrapper.findAll('.vfc-week-number')
+
+    expect(numbers.length).toBeGreaterThan(0)
+    numbers.forEach(number => {
+      expect(number.attributes('role')).toBe('rowheader')
+    })
+  })
+})
+
+describe('picker titles', () => {
+  it('returns focus to the year title on Escape with only changeYearFunction', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      changeYearFunction: true
+    })
+    const [year] = wrapper.findAll('.vfc-top-date [role="button"]')
+    await press(year.element, 'Enter')
+    expect(active().getAttribute('role')).toBe('button')
+
+    await press(active(), 'Escape')
+
+    expect(active()).toBe(year.element)
+    expect(year.attributes('aria-expanded')).toBe('false')
+  })
+})
+
+describe('day labels with custom month names', () => {
+  const monthNames = Array.from({ length: 12 }, (_, i) => `Mes${i + 1}`)
+
+  it('names the grid and the days with the same month', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      monthNames
+    })
+
+    expect(wrapper.find('[role="grid"]').attributes('aria-label')).toBe(
+      'Mes10 2026'
+    )
+    expect(findDay(wrapper, 15).getAttribute('aria-label')).toContain('Mes10')
+    expect(findDay(wrapper, 15).getAttribute('aria-label')).toContain('15')
+  })
+
+  it('keeps the locale month in the day label without custom names', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      locale: 'de-DE'
+    })
+
+    expect(findDay(wrapper, 15).getAttribute('aria-label')).toBe(
+      'Donnerstag, 15. Oktober 2026'
+    )
+  })
+})
+
+describe('multiple date ranges', () => {
+  const mountRanges = async () => {
+    const mounted = await mountCalendarReady({
+      isDateRange: true,
+      isMultipleDateRange: true
+    })
+    for (const day of [10, 13, 20, 24]) {
+      findDay(mounted.wrapper, day).click()
+      await nextTick()
+    }
+    return mounted
+  }
+
+  it('numbers the range in the day label', async () => {
+    const { wrapper } = await mountRanges()
+
+    expect(findDay(wrapper, 10).getAttribute('aria-label')).toBe(
+      `${fullDate(2026, 9, 10)}, Range 1`
+    )
+    expect(findDay(wrapper, 24).getAttribute('aria-label')).toBe(
+      `${fullDate(2026, 9, 24)}, Range 2`
+    )
+    expect(findDay(wrapper, 10).getAttribute('aria-keyshortcuts')).toBe(
+      'Delete'
+    )
+    expect(findDay(wrapper, 15).hasAttribute('aria-keyshortcuts')).toBe(false)
+  })
+
+  it('removes the range of a focused day with Delete', async () => {
+    const { wrapper } = await mountRanges()
+
+    await press(focusDay(wrapper, 11), 'Delete')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([
+      { start: '20/10/2026', end: '24/10/2026' }
+    ])
+  })
+
+  it('removes the range of an endpoint with Backspace', async () => {
+    const { wrapper } = await mountRanges()
+
+    await press(focusDay(wrapper, 24), 'Backspace')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '13/10/2026' }
+    ])
+  })
+
+  it('ignores Delete on a calendar without multiple ranges', async () => {
+    const { wrapper } = await mountCalendarReady({ isDateRange: true })
+    const event = keyEvent('Delete')
+
+    focusDay(wrapper, 11).dispatchEvent(event)
+
+    expect(event.defaultPrevented).toBe(false)
+  })
+})
+
+describe('clear range control', () => {
+  it('clears the range with Enter and Space and keeps its classes', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      canClearRange: true
+    })
+    findDay(wrapper, 10).click()
+    await nextTick()
+    findDay(wrapper, 13).click()
+    await nextTick()
+    const clear = wrapper.find('.rangeCleaner span')
+
+    expect(clear.attributes('role')).toBe('button')
+    expect(clear.attributes('tabindex')).toBe('0')
+    expect(clear.classes()).toContain('active')
+
+    await press(clear.element, 'Enter')
+
+    expect(wrapper.vm.calendar.dateRange).toEqual({ start: '', end: '' })
+    expect(clear.attributes('aria-disabled')).toBe('true')
+    expect(clear.classes()).toContain('disabled')
+  })
+
+  it('clears every multiple range with Space', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      isMultipleDateRange: true,
+      canClearRange: true
+    })
+    findDay(wrapper, 10).click()
+    await nextTick()
+    findDay(wrapper, 13).click()
+    await nextTick()
+
+    await press(wrapper.find('.rangeCleaner span').element, ' ')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([])
+  })
+})
+
+describe('2.x DOM selectors', () => {
+  it('keeps the day names and weeks as the children 2.x css targets', async () => {
+    const { wrapper } = await mountCalendarReady(
+      { isDatePicker: true },
+      { global: { stubs: { transition: false, TransitionGroup: false } } }
+    )
+    const content = wrapper.find('.vfc-content:not(.vfc-content-MY-picker)')
+
+    expect(content.element.querySelector(':scope > .vfc-dayNames')).not.toBe(
+      null
+    )
+    expect(content.element.querySelector(':scope > div > .vfc-week')).not.toBe(
+      null
+    )
+    expect(content.element.lastElementChild.getAttribute('role')).toBe('grid')
+  })
+
+  it('gives every calendar instance its own day names id', async () => {
+    const first = await mountCalendarReady({ isDatePicker: true })
+    const second = await mountCalendarReady({ isDatePicker: true })
+
+    const ids = [first, second].map(({ wrapper }) =>
+      wrapper.find('.vfc-dayNames').attributes('id')
+    )
+
+    expect(new Set(ids).size).toBe(2)
+    expect(document.querySelectorAll(`[id="${ids[0]}"]`)).toHaveLength(1)
+  })
+
+  it('gives each grid of a multiple calendar its own id', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isMultiple: true,
+      calendarsCount: 3
+    })
+
+    const ids = wrapper
+      .findAll('.vfc-dayNames')
+      .map(header => header.attributes('id'))
+
+    expect(new Set(ids).size).toBe(3)
   })
 })

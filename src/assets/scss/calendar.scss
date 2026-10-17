@@ -178,6 +178,10 @@
     box-shadow: var(--_vfc-shadow-sm);
     user-select: none;
 
+    &:focus {
+      outline: none;
+    }
+
     &.vfc-modal {
       position: absolute;
       z-index: 1000;
@@ -518,8 +522,10 @@
 
     > button {
       padding: 0;
-      font-family: inherit;
+      font: inherit;
+      font-size: var(--_vfc-font-size-md);
       line-height: inherit;
+      letter-spacing: inherit;
       appearance: none;
       background: none;
       border: 0;
@@ -709,7 +715,8 @@
         .vfc-navigation-buttons {
           justify-content: space-between;
 
-          > div {
+          > div,
+          > button {
             cursor: pointer;
 
             &:hover {
@@ -1145,7 +1152,9 @@
     &-close,
     &-top-date span,
     &-navigation-buttons > div,
-    &-separately-navigation-buttons > div {
+    &-navigation-buttons > button,
+    &-separately-navigation-buttons > div,
+    &-separately-navigation-buttons > button {
       transition:
         background-color var(--_vfc-transition),
         color var(--_vfc-transition),

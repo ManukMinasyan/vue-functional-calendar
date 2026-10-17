@@ -4,6 +4,7 @@
     ref="popoverElement"
     tabindex="0"
     @keydown="onPopoverKeydown"
+    @input="inputEdited = true"
     @click="onPopoverClick"
   >
     <PickerInputs
@@ -34,6 +35,7 @@
       class="vfc-main-container"
       v-show="showCalendar"
       ref="mainContainer"
+      tabindex="-1"
       :role="isModalPicker ? 'dialog' : null"
       :aria-label="isModalPicker ? fConfigs.labels.calendar : null"
       :class="{
@@ -106,6 +108,7 @@
                     v-if="checkHiddenElement('month')"
                   >
                     <span
+                      :data-focus-id="`title-month:${key}`"
                       :role="canPickMonth(key) ? 'button' : null"
                       :tabindex="canPickMonth(key) ? 0 : null"
                       :aria-expanded="
@@ -128,6 +131,7 @@
                       {{ calendarItem.month }}</span
                     >
                     <span
+                      :data-focus-id="`title-year:${key}`"
                       :role="canPickYear(key) ? 'button' : null"
                       :tabindex="canPickYear(key) ? 0 : null"
                       :aria-expanded="
@@ -150,87 +154,88 @@
                     </span>
                   </div>
                 </transition>
-                <div role="grid" :aria-label="calendarItem.dateTop">
-                  <transition :name="getTransition_()" appear>
-                    <div
-                      class="vfc-dayNames"
-                      role="row"
-                      :aria-hidden="
-                        checkHiddenElement('dayNames') ? null : 'true'
-                      "
-                    >
-                      <span
-                        v-if="fConfigs.showWeekNumbers"
-                        role="presentation"
-                      ></span>
-                      <span
-                        v-for="(dayName, dayKey) in fConfigs.dayNames"
-                        :key="key + dayKey + 1"
-                        class="vfc-day"
-                        role="columnheader"
-                      >
-                        <template v-if="checkHiddenElement('dayNames')">
-                          {{ dayName }}
-                        </template>
-                      </span>
-                    </div>
-                  </transition>
-                  <transition-group
-                    tag="div"
-                    role="presentation"
-                    :name="getTransition_()"
-                    appear
+                <transition :name="getTransition_()" appear>
+                  <div
+                    class="vfc-dayNames"
+                    role="row"
+                    :id="dayNamesId(key)"
+                    :aria-hidden="
+                      checkHiddenElement('dayNames') ? null : 'true'
+                    "
                   >
+                    <span
+                      v-if="fConfigs.showWeekNumbers"
+                      role="presentation"
+                    ></span>
+                    <span
+                      v-for="(dayName, dayKey) in fConfigs.dayNames"
+                      :key="key + dayKey + 1"
+                      class="vfc-day"
+                      role="columnheader"
+                    >
+                      <template v-if="checkHiddenElement('dayNames')">
+                        {{ dayName }}
+                      </template>
+                    </span>
+                  </div>
+                </transition>
+                <transition-group
+                  tag="div"
+                  role="grid"
+                  :aria-label="calendarItem.dateTop"
+                  :aria-owns="dayNamesId(key)"
+                  :name="getTransition_()"
+                  appear
+                >
+                  <div
+                    class="vfc-week"
+                    role="row"
+                    v-for="(week, week_key) in calendarItem.weeks"
+                    :key="key + week_key + 1"
+                  >
+                    <WeekNumbers
+                      v-if="fConfigs.showWeekNumbers"
+                      :number="week.number"
+                      :borderColor="borderColor"
+                    />
+                    <Day
+                      v-for="(day, day_key) in week.days"
+                      ref="day"
+                      :key="key + week_key + day_key + 1"
+                      :isMultipleDateRange="fConfigs.isMultipleDateRange"
+                      :day="day"
+                      :fConfigs="fConfigs"
+                      :calendar="calendar"
+                      :helpCalendar="helpCalendar"
+                      :week="week"
+                      :day_key="day_key"
+                      :grid-key="key"
+                      @dayMouseOver="dayMouseOver"
+                      :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
+                    >
+                      <template v-slot:default="props">
+                        <slot :week="props.week" :day="props.day"></slot>
+                      </template>
+                    </Day>
+                  </div>
+                  <template
+                    v-if="
+                      calendarItem.weeks.length < 6 &&
+                      !fConfigs.isLayoutExpandable
+                    "
+                  >
+                    <!-- stabilizator -->
                     <div
-                      class="vfc-week"
-                      role="row"
-                      v-for="(week, week_key) in calendarItem.weeks"
-                      :key="key + week_key + 1"
+                      style="height: 32.6px"
+                      role="presentation"
+                      aria-hidden="true"
+                      v-for="moreWeekKey in 6 - calendarItem.weeks.length"
+                      :key="key + moreWeekKey + 'moreWeek'"
                     >
-                      <WeekNumbers
-                        v-if="fConfigs.showWeekNumbers"
-                        :number="week.number"
-                        :borderColor="borderColor"
-                      />
-                      <Day
-                        v-for="(day, day_key) in week.days"
-                        ref="day"
-                        :key="key + week_key + day_key + 1"
-                        :isMultipleDateRange="fConfigs.isMultipleDateRange"
-                        :day="day"
-                        :fConfigs="fConfigs"
-                        :calendar="calendar"
-                        :helpCalendar="helpCalendar"
-                        :week="week"
-                        :day_key="day_key"
-                        :grid-key="key"
-                        @dayMouseOver="dayMouseOver"
-                        :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
-                      >
-                        <template v-slot:default="props">
-                          <slot :week="props.week" :day="props.day"></slot>
-                        </template>
-                      </Day>
+                      &nbsp;
                     </div>
-                    <template
-                      v-if="
-                        calendarItem.weeks.length < 6 &&
-                        !fConfigs.isLayoutExpandable
-                      "
-                    >
-                      <!-- stabilizator -->
-                      <div
-                        style="height: 32.6px"
-                        role="presentation"
-                        aria-hidden="true"
-                        v-for="moreWeekKey in 6 - calendarItem.weeks.length"
-                        :key="key + moreWeekKey + 'moreWeek'"
-                      >
-                        &nbsp;
-                      </div>
-                    </template>
-                  </transition-group>
-                </div>
+                  </template>
+                </transition-group>
               </div>
             </div>
           </div>
@@ -243,8 +248,12 @@
                     class="rangeCleaner"
                   >
                     <span
+                      role="button"
+                      tabindex="0"
+                      :aria-disabled="!rangeIsSelected"
                       :class="[rangeIsSelected ? 'active' : 'disabled']"
                       @click="cleanRange"
+                      @keydown.enter.space.prevent="cleanRange"
                       >{{
                         fConfigs.isMultipleDateRange
                           ? fConfigs.labels.clearRanges
@@ -276,6 +285,7 @@ import PickerInputs from '../components/PickerInputs.vue'
 import Footer from '../components/Footer.vue'
 import Presets from '../components/Presets.vue'
 
+import { toRaw } from 'vue'
 import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
 import {
@@ -478,6 +488,7 @@ export default {
     this.$watch(
       'modelValue',
       function (value) {
+        if (value !== toRaw(this.calendar)) this.focusedDate = ''
         if (
           typeof value === 'object' &&
           (value.hasOwnProperty('dateRange') ||
@@ -509,10 +520,23 @@ export default {
       'showCalendar',
       function (value) {
         if (value) this.$emit('opened')
-        else this.$emit('closed')
+        else {
+          this.focusedDate = ''
+          this.$emit('closed')
+        }
       },
       { immediate: true, deep: true }
     )
+  },
+  beforeUpdate() {
+    this.patching = true
+    this.focusToken = this.captureFocus()
+  },
+  updated() {
+    this.patching = false
+    const token = this.focusToken
+    this.focusToken = null
+    if (token) this.restoreFocus(token)
   },
   beforeUnmount() {
     this.popoverElement.removeEventListener('focusin', this.onFocusIn)
@@ -660,6 +684,7 @@ export default {
       }
 
       this.applyLocale(explicit)
+      this.customMonthNames = explicit.has('monthNames')
 
       // Is Modal
       if (this.fConfigs.isModal) this.showCalendar = false
@@ -1733,9 +1758,12 @@ export default {
      * @param index
      */
     addToSelectedDates() {
-      if (this.helpCalendar.checkValidDate(this.calendar.selectedDatesItem)) {
+      const typed = this.helpCalendar.parseTypedDate(
+        this.calendar.selectedDatesItem
+      )
+      if (typed) {
         let date = Object.assign({}, this.defaultDateFormat)
-        date.date = this.calendar.selectedDatesItem
+        date.date = typed
         this.calendar.selectedDates.push(date)
         this.calendar.selectedDatesItem = ''
         this.markChooseDays()
@@ -1843,7 +1871,60 @@ export default {
       return !this.fConfigs.hiddenElements.includes(elementName)
     },
     formatFullDate(date) {
-      return this.fullDateFormatter.format(date)
+      if (!this.customMonthNames) return this.fullDateFormatter.format(date)
+
+      return this.fullDateFormatter
+        .formatToParts(date)
+        .map(part =>
+          part.type === 'month'
+            ? this.fConfigs.monthNames[date.getMonth()]
+            : part.value
+        )
+        .join('')
+    },
+    dayNamesId(key) {
+      return `vfc-${this.instanceId}-daynames-${key}`
+    },
+    captureFocus() {
+      const main = this.$refs.mainContainer
+      const active = document.activeElement
+      if (!main || active === main || !main.contains(active)) return null
+
+      const holder = active.closest('[data-focus-id]')
+      return holder ? holder.dataset.focusId : 'other:0'
+    },
+    restoreFocus(token) {
+      const main = this.$refs.mainContainer
+      if (!this.showCalendar || !main || main.contains(document.activeElement))
+        return
+
+      const [type, grid] = token.split(':')
+      const exact = [
+        'day',
+        'arrow-prev',
+        'arrow-next',
+        'title-month',
+        'title-year'
+      ]
+      const grids = main.querySelectorAll('.vfc-calendar')
+      const target =
+        (exact.includes(type) &&
+          main.querySelector(`[data-focus-id="${token}"]`)) ||
+        (grids[grid] &&
+          grids[grid].querySelector('[role="gridcell"][tabindex="0"]')) ||
+        main.querySelector('.vfc-time-picker__item[tabindex="0"]') ||
+        main
+
+      target.focus()
+    },
+    removeRangeAt(date) {
+      const ranges = this.calendar.multipleDateRange
+      const index = ranges.findIndex(range =>
+        range.end
+          ? this.isDateInRange(date, range.start, range.end)
+          : range.start === date
+      )
+      if (index !== -1) ranges.splice(index, 1)
     },
     isDisabledDate(date) {
       const datesCollection = this.fConfigs.disabledDates
@@ -2122,13 +2203,18 @@ export default {
         return
       }
 
-      const opensCalendar = e.key === 'Enter' || e.key === 'ArrowDown'
+      const isEnter = e.key === 'Enter'
       if (
         !this.fConfigs.isModal ||
-        !opensCalendar ||
+        !(isEnter || e.key === 'ArrowDown') ||
         e.defaultPrevented ||
         !this.isOutsideCalendar(e.target)
       ) {
+        return
+      }
+
+      if (isEnter && this.inputEdited && e.target.value !== '') {
+        this.inputEdited = false
         return
       }
 
@@ -2144,10 +2230,18 @@ export default {
         e.stopPropagation()
         const grid =
           this.$refs.calendars.querySelectorAll('.vfc-calendar')[pickerKey - 1]
-        const titles = grid.querySelectorAll('.vfc-top-date [role="button"]')
-        const title = titles[this.showMonthPicker ? 0 : 1]
+        const title = grid.querySelector(
+          '.vfc-top-date [role="button"][aria-expanded="true"]'
+        )
         this.showMonthPicker = this.showYearPicker = false
         if (title) title.focus()
+        return
+      }
+
+      if (this.showTimePicker) {
+        e.preventDefault()
+        e.stopPropagation()
+        this.showTimePicker = false
         return
       }
 
@@ -2175,6 +2269,7 @@ export default {
     onFocusIn(e) {
       if (!this.fConfigs.isModal || this.restoringFocus) return
 
+      this.inputEdited = false
       if (!this.showCalendar && this.isOutsideCalendar(e.target)) {
         this.popoverOpener = e.target
       }
@@ -2183,6 +2278,7 @@ export default {
     onFocusOut(e) {
       if (
         this.fConfigs.isModal &&
+        !this.patching &&
         !hElContains(this.popoverElement, e.relatedTarget)
       ) {
         return (this.showCalendar =
@@ -2261,6 +2357,10 @@ export default {
     &.disabled {
       color: var(--_vfc-text-disabled);
       border-color: var(--_vfc-border);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--_vfc-focus);
+      outline-offset: 2px;
     }
   }
 }

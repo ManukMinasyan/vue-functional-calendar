@@ -5,12 +5,15 @@
       :class="'vfc-' + fConfigs.arrowsPosition"
       v-if="oneArrows || manyArrows"
     >
-      <button
-        type="button"
+      <component
+        :is="usesButton('navigationArrowLeft') ? 'button' : 'div'"
+        v-bind="controlAttrs('navigationArrowLeft')"
         :aria-label="fConfigs.labels.previousMonth"
         :aria-disabled="!allowPreDate"
-        @click="calendarRoot.PreMonth(oneArrows ? 0 : calendarKey)"
+        :data-focus-id="`arrow-prev:${calendarKey}`"
         :class="{ 'vfc-cursor-pointer': allowPreDate }"
+        @click="calendarRoot.PreMonth(oneArrows ? 0 : calendarKey)"
+        @keydown="onKeydown($event, 'navigationArrowLeft', 'PreMonth')"
       >
         <slot name="navigationArrowLeft">
           <div
@@ -18,13 +21,16 @@
             :class="{ 'vfc-disabled': !allowPreDate }"
           ></div>
         </slot>
-      </button>
-      <button
-        type="button"
+      </component>
+      <component
+        :is="usesButton('navigationArrowRight') ? 'button' : 'div'"
+        v-bind="controlAttrs('navigationArrowRight')"
         :aria-label="fConfigs.labels.nextMonth"
         :aria-disabled="!allowNextDate"
-        @click="calendarRoot.NextMonth(oneArrows ? 0 : calendarKey)"
+        :data-focus-id="`arrow-next:${calendarKey}`"
         :class="{ 'vfc-cursor-pointer': allowNextDate }"
+        @click="calendarRoot.NextMonth(oneArrows ? 0 : calendarKey)"
+        @keydown="onKeydown($event, 'navigationArrowRight', 'NextMonth')"
       >
         <slot name="navigationArrowRight">
           <div
@@ -32,13 +38,14 @@
             :class="{ 'vfc-disabled': !allowNextDate }"
           ></div>
         </slot>
-      </button>
+      </component>
     </div>
   </div>
 </template>
 
 <script>
 import { CALENDAR_KEY } from '../utils/injectionKeys'
+import { hasSlotContent } from '../utils/slots'
 
 export default {
   name: 'Arrows',
@@ -71,6 +78,23 @@ export default {
     },
     manyArrows() {
       return this.fConfigs.isSeparately && this.isMultiple
+    }
+  },
+  methods: {
+    usesButton(name) {
+      return !hasSlotContent(this.calendarRoot.$slots[name])
+    },
+    onKeydown(event, name, method) {
+      if (this.usesButton(name)) return
+      if (event.key !== 'Enter' && event.key !== ' ') return
+
+      event.preventDefault()
+      this.calendarRoot[method](this.oneArrows ? 0 : this.calendarKey)
+    },
+    controlAttrs(name) {
+      return this.usesButton(name)
+        ? { type: 'button' }
+        : { role: 'button', tabindex: 0 }
     }
   }
 }
