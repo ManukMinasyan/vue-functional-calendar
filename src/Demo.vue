@@ -171,6 +171,51 @@
       </tr>
     </table>
 
+    <section class="playground" :style="playgroundStyle">
+      <h2>Theme playground</h2>
+      <div class="playground-controls">
+        <label>
+          Primary
+          <input type="color" v-model="playground.primary" />
+        </label>
+        <label>
+          Radius {{ playground.radius }}px
+          <input
+            type="range"
+            min="0"
+            max="16"
+            v-model.number="playground.radius"
+          />
+        </label>
+        <label>
+          Day size {{ playground.daySize }}px
+          <input
+            type="range"
+            min="28"
+            max="44"
+            step="4"
+            v-model.number="playground.daySize"
+          />
+        </label>
+        <label>
+          <input type="checkbox" v-model="playground.dark" />
+          Dark
+        </label>
+      </div>
+      <div class="playground-calendars">
+        <functional-calendar
+          :is-date-range="true"
+          :can-clear-range="true"
+          :is-dark="playground.dark"
+        ></functional-calendar>
+        <functional-calendar
+          :is-date-picker="true"
+          :show-week-numbers="true"
+          :is-dark="playground.dark"
+        ></functional-calendar>
+      </div>
+    </section>
+
     <hr />
     <hr />
     <hr />
@@ -547,6 +592,7 @@ export default {
   components: { FunctionalCalendar },
   data() {
     return {
+      playground: { primary: '#264ad9', radius: 8, daySize: 36, dark: false },
       rangesData: {
         multipleDateRange: [{ end: '17/7/2020', start: '3/7/2020' }]
       },
@@ -598,6 +644,23 @@ export default {
       calendarConfigs: {
         isMultipleDatePicker: true,
         dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
+      }
+    }
+  },
+  computed: {
+    playgroundStyle() {
+      const { primary, radius, daySize } = this.playground
+      const [r, g, b] = [1, 3, 5].map(i =>
+        parseInt(primary.slice(i, i + 2), 16)
+      )
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+      return {
+        '--pg-primary': primary,
+        '--pg-on-primary': luminance > 0.6 ? '#0f1220' : '#ffffff',
+        '--pg-radius': `${radius}px`,
+        '--pg-radius-lg': `${radius * 1.5}px`,
+        '--pg-radius-sm': `${radius * 0.75}px`,
+        '--pg-day-size': `${daySize}px`
       }
     }
   },
@@ -658,6 +721,54 @@ body {
   background-color: #000;
   padding: 0;
   margin: 0;
+}
+
+.playground {
+  max-width: 760px;
+  margin: 48px;
+  padding: 24px;
+  color: #151928;
+  background: #fff;
+  border-radius: 12px;
+
+  h2 {
+    margin: 0 0 16px;
+    font:
+      600 16px/24px system-ui,
+      sans-serif;
+  }
+
+  &-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+    margin-bottom: 24px;
+    font:
+      14px/24px system-ui,
+      sans-serif;
+
+    label {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+
+  &-calendars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .vfc-main-container {
+    --vfc-primary: var(--pg-primary);
+    --vfc-on-primary: var(--pg-on-primary);
+    --vfc-radius: var(--pg-radius);
+    --vfc-radius-lg: var(--pg-radius-lg);
+    --vfc-radius-sm: var(--pg-radius-sm);
+    --vfc-day-size: var(--pg-day-size);
+  }
 }
 
 .demo-calendar {

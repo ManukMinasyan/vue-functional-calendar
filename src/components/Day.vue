@@ -495,47 +495,46 @@ export default {
 <style scoped lang="scss">
 .vfc-day {
   position: relative;
-  .times {
-    position: absolute;
-    top: -5px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    width: 15px;
-    z-index: 20;
-    height: 15px;
-    line-height: 15px;
-    &:hover {
-      cursor: pointer;
-      background-color: rgb(199, 0, 0);
-    }
-  }
+  .times,
   .number {
     position: absolute;
-    top: -5px;
-    right: calc(50% + 7px);
-    background-color: green;
-    color: white;
-    font-size: 10px;
+    top: calc(var(--vfc-space-1) * -1);
+    z-index: 20;
+    width: 16px;
+    height: 16px;
+    font-size: var(--vfc-font-size-xs);
+    font-weight: var(--vfc-font-weight-strong);
+    line-height: 16px;
+    text-align: center;
     border-radius: 50%;
-    width: 15px;
+  }
+  .times {
+    left: calc(50% + var(--vfc-day-size) / 2 - 12px);
+    color: var(--vfc-on-danger);
+    cursor: pointer;
+    background-color: var(--vfc-danger);
+  }
+  .number {
     z-index: 30;
-    height: 15px;
-    line-height: 15px;
+    left: calc(50% - var(--vfc-day-size) / 2 - 4px);
+    color: var(--vfc-on-primary);
+    background-color: var(--vfc-primary);
     &:hover {
-      background-color: rgb(0, 94, 0);
+      background-color: var(--vfc-primary-hover);
     }
   }
   .toolTip {
     position: absolute;
-    top: -20px;
+    top: calc(var(--vfc-space-5) * -1);
     left: 0;
-    padding: 5px;
-    max-width: 108px;
-    word-wrap: break-word;
-    border-radius: 5px;
     z-index: 200;
-    background-color: rgb(0, 94, 0);
+    max-width: 108px;
+    padding: var(--vfc-space-1) var(--vfc-space-2);
+    color: var(--vfc-bg);
+    word-wrap: break-word;
+    background-color: var(--vfc-text);
+    border-radius: var(--vfc-radius-sm);
+    box-shadow: var(--vfc-shadow-md);
   }
 }
 </style>

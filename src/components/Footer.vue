@@ -15,6 +15,6 @@ export default {
 .footerCon {
   display: flex;
   justify-content: space-between;
-  margin: 0 20px 20px;
+  margin: var(--vfc-space-4) 0 0;
 }
 </style>

@@ -316,17 +316,19 @@ export default {
   }
   .titles {
     display: flex;
-    padding: 10px 0;
+    align-items: center;
+    height: 40px;
+    padding: 0 var(--vfc-space-2);
     > div {
       flex: 1;
+      font-size: var(--vfc-font-size-xs);
+      font-weight: var(--vfc-font-weight-strong);
+      color: var(--vfc-text-muted);
       text-align: center;
-      color: #66b3cc;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
       word-break: break-all;
-      font-size: 25px;
     }
-  }
-  .vfc-time-picker {
-    padding-bottom: 20px;
   }
 }
 </style>

@@ -1697,24 +1697,27 @@ export default {
 <style lang="scss">
 @use '../assets/scss/calendar.scss';
 .rangeCleaner {
-  padding: 5px 0 10px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 0;
   span {
-    color: white;
-    border-radius: 5px;
-    border: none;
-    padding: 5px;
+    padding: var(--vfc-space-1) var(--vfc-space-3);
+    font-size: var(--vfc-font-size-sm);
+    font-weight: var(--vfc-font-weight-medium);
+    line-height: 24px;
+    border: 1px solid var(--vfc-border-strong);
+    border-radius: var(--vfc-radius);
     &.active {
-      background-color: #66b3cc;
+      color: var(--vfc-text);
+      cursor: pointer;
       &:hover {
-        background-color: #4f8a9e;
-        cursor: pointer;
+        background-color: var(--vfc-hover);
       }
     }
     &.disabled {
-      background-color: rgb(148, 148, 148);
+      color: var(--vfc-text-disabled);
+      border-color: var(--vfc-border);
     }
   }
 }

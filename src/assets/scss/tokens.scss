@@ -1,0 +1,107 @@
+$light-hosts: '.vfc-main-container, .vfc-single-input, .vfc-multiple-input, .vfc-tags-input-root';
+$dark-hosts: '.vfc-main-container.vfc-dark, .vfc-dark .vfc-single-input, .vfc-multiple-input.vfc-dark, .vfc-tags-input-root.vfc-dark';
+
+:where(#{$light-hosts}) {
+  --vfc-primary: hsl(228 70% 50%);
+  --vfc-on-primary: hsl(0 0% 100%);
+  --vfc-bg: hsl(0 0% 100%);
+  --vfc-bg-raised: hsl(0 0% 100%);
+  --vfc-text: hsl(228 32% 12%);
+  --vfc-text-muted: #60636d;
+  --vfc-text-disabled: #b4b5ba;
+  --vfc-border: #e3e3e5;
+  --vfc-border-strong: #7e8189;
+  --vfc-hover: #f1f1f2;
+  --vfc-primary-hover: #2443c0;
+  --vfc-range-mix: 12%;
+  --vfc-range: #e5e9fa;
+  --vfc-range-strong: #d3daf7;
+  --vfc-today: var(--vfc-primary);
+  --vfc-focus: var(--vfc-primary);
+  --vfc-danger: hsl(0 70% 42%);
+  --vfc-on-danger: hsl(0 0% 100%);
+
+  --vfc-shadow-sm: 0 1px 2px hsl(228 40% 10% / 0.08);
+  --vfc-shadow-md:
+    0 4px 12px hsl(228 40% 10% / 0.1), 0 1px 3px hsl(228 40% 10% / 0.08);
+  --vfc-shadow-lg:
+    0 16px 32px hsl(228 40% 10% / 0.12), 0 4px 8px hsl(228 40% 10% / 0.08);
+
+  --vfc-radius-sm: 6px;
+  --vfc-radius: 8px;
+  --vfc-radius-lg: 12px;
+
+  --vfc-space-1: 4px;
+  --vfc-space-2: 8px;
+  --vfc-space-3: 12px;
+  --vfc-space-4: 16px;
+  --vfc-space-5: 24px;
+
+  --vfc-font:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --vfc-font-size-xs: 12px;
+  --vfc-font-size-sm: 14px;
+  --vfc-font-size-md: 16px;
+  --vfc-font-weight: 400;
+  --vfc-font-weight-medium: 500;
+  --vfc-font-weight-strong: 600;
+
+  --vfc-day-size: 36px;
+  --vfc-header-height: 40px;
+  --vfc-transition: 150ms ease;
+}
+
+:where(#{$dark-hosts}) {
+  --vfc-primary: hsl(228 88% 68%);
+  --vfc-on-primary: hsl(228 40% 8%);
+  --vfc-bg: hsl(228 24% 9%);
+  --vfc-bg-raised: #1c1f27;
+  --vfc-text: hsl(228 20% 96%);
+  --vfc-text-muted: #abacb1;
+  --vfc-text-disabled: #595c62;
+  --vfc-border: #2c2f36;
+  --vfc-border-strong: #82848a;
+  --vfc-hover: #23262e;
+  --vfc-primary-hover: #7a92f5;
+  --vfc-range-mix: 26%;
+  --vfc-range: #273154;
+  --vfc-range-strong: #37457c;
+  --vfc-danger: hsl(0 84% 68%);
+  --vfc-on-danger: hsl(228 40% 8%);
+
+  --vfc-shadow-sm: 0 1px 2px hsl(228 50% 2% / 0.4);
+  --vfc-shadow-md:
+    0 4px 12px hsl(228 50% 2% / 0.5), 0 1px 3px hsl(228 50% 2% / 0.4);
+  --vfc-shadow-lg:
+    0 16px 32px hsl(228 50% 2% / 0.6), 0 4px 8px hsl(228 50% 2% / 0.5);
+}
+
+@supports (color: color-mix(in srgb, red, blue)) {
+  :where(#{$light-hosts}, #{$dark-hosts}) {
+    --vfc-text-muted: color-mix(in srgb, var(--vfc-text) 68%, var(--vfc-bg));
+    --vfc-text-disabled: color-mix(in srgb, var(--vfc-text) 32%, var(--vfc-bg));
+    --vfc-border: color-mix(in srgb, var(--vfc-text) 12%, var(--vfc-bg));
+    --vfc-border-strong: color-mix(in srgb, var(--vfc-text) 55%, var(--vfc-bg));
+    --vfc-hover: color-mix(in srgb, var(--vfc-text) 7%, var(--vfc-bg));
+    --vfc-primary-hover: color-mix(
+      in srgb,
+      var(--vfc-primary) 86%,
+      var(--vfc-text)
+    );
+    --vfc-range: color-mix(
+      in srgb,
+      var(--vfc-primary) var(--vfc-range-mix),
+      var(--vfc-bg)
+    );
+    --vfc-range-strong: color-mix(
+      in srgb,
+      var(--vfc-primary) calc(var(--vfc-range-mix) * 1.7),
+      var(--vfc-bg)
+    );
+  }
+
+  :where(#{$dark-hosts}) {
+    --vfc-bg-raised: color-mix(in srgb, var(--vfc-text) 5%, var(--vfc-bg));
+  }
+}
