@@ -8,6 +8,10 @@
   "description": "Lightweight, high-performance calendar component based on Vue.js",
   "version": "3.1.0",
   "license": "MIT",
+  "homepage": "https://manukminasyan.github.io/vue-functional-calendar/",
+  "bugs": {
+    "url": "https://github.com/ManukMinasyan/vue-functional-calendar/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ManukMinasyan/vue-functional-calendar.git"
@@ -78,7 +82,9 @@
     "build": "vite build && vite build --config vite.umd.config.js",
     "test": "vitest run --passWithNoTests",
     "lint": "eslint src tests index.js --no-error-on-unmatched-pattern",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "docs:dev": "npm --prefix docs run dev",
+    "docs:build": "npm --prefix docs run generate"
   },
   "peerDependencies": {
     "vue": "^3.3.0"

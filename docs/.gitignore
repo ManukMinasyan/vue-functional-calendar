@@ -1,0 +1,43 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+.eslintcache
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# npm pack
+*.tgz
+
+# Temp files
+.tmp
+.profile
+*.0x
+
+#VSC
+.history
+.wrangler
+
+# Generated from the root CHANGELOG.md
+/content/5.community/2.changelog.md
+
+# The root .gitignore ignores lockfiles; the docs build needs npm ci
+!package-lock.json

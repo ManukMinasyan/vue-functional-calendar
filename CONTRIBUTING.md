@@ -13,7 +13,7 @@ We use github to have code, to follow issues and component demands, as well as a
 ## We Use [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow), So All Code Changes Happen Through Pull Requests
 Pull requests are the most ideal way to propose changes to the codebase (we use [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow)). We effectively welcome your draw demands:
 
-1. Fork the repo and make your branch from 'master'.
+1. Fork the repo and make your branch from '3.x'.
 2. Assuming you've added code that ought to be tried, add tests.
 3. On the off chance that you've changed APIs, update the documentation.
 4. Guarantee the test suite passes.
