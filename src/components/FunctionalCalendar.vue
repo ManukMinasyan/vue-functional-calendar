@@ -70,7 +70,7 @@
               <month-year-picker
                 ref="monthContainer"
                 :class="'vfc-' + fConfigs.titlePosition"
-                :changeYearStep="changeYearStep"
+                :changeYearStep="fConfigs.changeYearStep"
                 v-show="
                   showMonthPicker === key + 1 || showYearPicker === key + 1
                 "
@@ -148,7 +148,7 @@
                     :key="key + week_key + 1"
                   >
                     <WeekNumbers
-                      v-if="showWeekNumbers"
+                      v-if="fConfigs.showWeekNumbers"
                       :number="week.number"
                       :borderColor="borderColor"
                     />
@@ -447,7 +447,7 @@ export default {
       this.markChooseDays()
     },
     isNotSeparatelyAndFirst(key) {
-      return this.isSeparately || key == 0
+      return this.fConfigs.isSeparately || key == 0
     },
     setCalendarData() {
       let date = this.calendar.currentDate
@@ -1467,7 +1467,7 @@ export default {
     },
     pickMonth(key, calendarKey) {
       this.showMonthPicker = false
-      if (!this.isSeparately) {
+      if (!this.fConfigs.isSeparately) {
         this.listCalendars.forEach((currentCalendar, index) => {
           let date = currentCalendar.date
           currentCalendar.date = new Date(
@@ -1490,7 +1490,7 @@ export default {
     },
     pickYear(year, calendarKey) {
       this.showYearPicker = false
-      if (!this.isSeparately) {
+      if (!this.fConfigs.isSeparately) {
         this.listCalendars.forEach(currentCalendar => {
           let date = currentCalendar.date
           currentCalendar.date = new Date(year, date.getMonth() + 1, 0)

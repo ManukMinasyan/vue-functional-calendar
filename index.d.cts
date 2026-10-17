@@ -159,11 +159,13 @@ export type FunctionalCalendarComponent = DefineComponent<
   FunctionalCalendarSlots
 >
 
-export const FunctionalCalendar: FunctionalCalendarComponent
-
-declare const plugin: FunctionalCalendarComponent & {
+export type FunctionalCalendarPlugin = FunctionalCalendarComponent & {
   install(app: App, options?: FunctionalCalendarOptions): void
-  FunctionalCalendar: FunctionalCalendarComponent
+  FunctionalCalendar: FunctionalCalendarPlugin
 }
+
+export const FunctionalCalendar: FunctionalCalendarPlugin
+
+declare const plugin: FunctionalCalendarPlugin
 
 export default plugin

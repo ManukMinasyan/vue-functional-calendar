@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
-import { mountCalendar, calendarTitle, eventsNamed } from './helpers.js'
+import {
+  mountCalendar,
+  calendarTitle,
+  eventsNamed,
+  clickDay,
+  findDay,
+  lastValue
+} from './helpers.js'
 
 const arrow = (wrapper, direction) =>
   wrapper.find(`.vfc-separately-navigation-buttons .vfc-arrow-${direction}`)
@@ -55,12 +62,15 @@ describe('arrow navigation', () => {
 
   it('shows the selected day only in its own month', async () => {
     const { wrapper } = mountCalendar({ isDatePicker: true })
-    wrapper.findAll('.vfc-span-day')[12].element.click()
-    await nextTick()
+    await clickDay(wrapper, 13)
+    expect(lastValue(wrapper).selectedDate).toBe('13/10/2026')
+    expect(findDay(wrapper, 13).classList).toContain('vfc-marked')
 
     await arrow(wrapper, 'right').trigger('click')
-
     expect(wrapper.findAll('.vfc-marked')).toHaveLength(0)
+
+    await arrow(wrapper, 'left').trigger('click')
+    expect(findDay(wrapper, 13).classList).toContain('vfc-marked')
   })
 })
 

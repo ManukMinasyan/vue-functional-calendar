@@ -6,9 +6,11 @@ import {
   mountCalendar,
   mountCalendarReady,
   clickDay,
-  dayElements,
   FIXED_DATE
 } from './helpers.js'
+
+const daySpans = wrapper =>
+  wrapper.findAll('.vfc-calendar .vfc-day > span').map(span => span.element)
 
 describe('provide key', () => {
   it('does not shadow a calendar key provided by the app', () => {
@@ -32,7 +34,7 @@ describe('provide key', () => {
 })
 
 describe('default day slot', () => {
-  it('renders the slot once per displayed day with week and day props', () => {
+  it('renders the slot per displayed day, with one extra call per day to detect it', () => {
     const received = []
     const { wrapper } = mountCalendar(
       { isDatePicker: true },
@@ -48,6 +50,7 @@ describe('default day slot', () => {
 
     const rendered = wrapper.findAll('.custom-day')
     expect(rendered).toHaveLength(35)
+    expect(received).toHaveLength(70)
     expect(rendered[3].text()).toBe('1')
     const first = received.find(props => props.day.day === 1 && !props.day.hide)
     expect(first.day.date).toBe('1/10/2026')
@@ -55,13 +58,35 @@ describe('default day slot', () => {
     expect(first.week.days).toContain(first.day)
   })
 
-  it('drops the vfc-span-day class when a slot is given', () => {
+  it('drops the vfc-span-day class from every day when a slot is given', () => {
     const { wrapper } = mountCalendar(
       { isDatePicker: true },
       { slots: { default: () => h('b', 'x') } }
     )
 
-    expect(wrapper.findAll('.vfc-span-day')).toHaveLength(0)
+    expect(daySpans(wrapper)).toHaveLength(35)
+    daySpans(wrapper).forEach(span => {
+      expect(span.classList).not.toContain('vfc-span-day')
+    })
+  })
+
+  it('treats a conditional slot as present on every day', () => {
+    const wrapper = mount(
+      {
+        components: { FunctionalCalendar },
+        props: ['date'],
+        template: `<FunctionalCalendar :new-current-date="date" :marked-dates="['12/10/2026']">
+          <template #default="{ day }"><b v-if="day.isMarked">*</b></template>
+        </FunctionalCalendar>`
+      },
+      { props: { date: FIXED_DATE }, attachTo: document.body }
+    )
+
+    expect(wrapper.findAll('b')).toHaveLength(1)
+    expect(daySpans(wrapper)).toHaveLength(35)
+    daySpans(wrapper).forEach(span => {
+      expect(span.classList).not.toContain('vfc-span-day')
+    })
   })
 
   it('keeps the vfc-span-day class when alwaysUseDefaultClasses is set', () => {
@@ -79,9 +104,9 @@ describe('default day slot', () => {
       { slots: { default: () => [h(Comment, 'stray comment')] } }
     )
 
-    expect(dayElements(wrapper)).toHaveLength(35)
-    dayElements(wrapper).forEach(day => {
-      expect(day.classList).toContain('vfc-span-day')
+    expect(daySpans(wrapper)).toHaveLength(35)
+    daySpans(wrapper).forEach(span => {
+      expect(span.classList).toContain('vfc-span-day')
     })
   })
 
@@ -96,10 +121,20 @@ describe('default day slot', () => {
       { props: { date: FIXED_DATE } }
     )
 
+    expect(daySpans(wrapper)).toHaveLength(35)
     expect(wrapper.findAll('.vfc-span-day')).toHaveLength(35)
   })
 
-  it('keeps the vfc-span-day class when the slot content is a false v-if', () => {
+  it('drops the vfc-span-day class when a comment sits next to real content', () => {
+    const { wrapper } = mountCalendar(
+      { isDatePicker: true },
+      { slots: { default: () => [h(Comment, 'note'), h('b', 'x')] } }
+    )
+
+    expect(wrapper.findAll('.vfc-span-day')).toHaveLength(0)
+  })
+
+  it('keeps the vfc-span-day class when the default slot is conditionally not provided', () => {
     const wrapper = mount(
       {
         components: { FunctionalCalendar },

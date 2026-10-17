@@ -8,6 +8,18 @@ describe('type declarations', () => {
     expect(read('../index.d.cts')).toBe(read('../index.d.ts'))
   })
 
+  it('types the named export with install, like the default export', () => {
+    const declarations = read('../index.d.ts')
+
+    expect(declarations).toContain(
+      'export const FunctionalCalendar: FunctionalCalendarPlugin'
+    )
+    expect(declarations).toContain(
+      'declare const plugin: FunctionalCalendarPlugin'
+    )
+    expect(declarations).toMatch(/FunctionalCalendarPlugin = [\s\S]*install\(/)
+  })
+
   it('points each export condition at its own declaration file', () => {
     const { exports, files } = JSON.parse(read('../package.json'))
 

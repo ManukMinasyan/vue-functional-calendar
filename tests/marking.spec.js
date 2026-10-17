@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { mountCalendar, findDay } from './helpers.js'
+import { mountCalendar, findDay, clickDay, lastValue } from './helpers.js'
 
 const classesOf = (wrapper, day) => [...findDay(wrapper, day).classList]
 
@@ -38,13 +38,18 @@ describe('markedDates', () => {
     expect(classesOf(wrapper, 5)).toContain('vfc-marked')
   })
 
-  it('keeps marked dates marked next to a picked date', () => {
+  it('keeps marked dates marked next to a picked date', async () => {
     const { wrapper } = mountCalendar({
       isDatePicker: true,
       markedDates: ['5/10/2026']
     })
 
+    await clickDay(wrapper, 7)
+
+    expect(lastValue(wrapper).selectedDate).toBe('7/10/2026')
+    expect(classesOf(wrapper, 7)).toContain('vfc-marked')
     expect(classesOf(wrapper, 5)).toContain('vfc-marked')
+    expect(classesOf(wrapper, 5)).toContain('vfc-borderd')
   })
 })
 

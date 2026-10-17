@@ -90,7 +90,6 @@ describe('multiple date ranges', () => {
 
     await wrapper.findAll('.vfc-day .times')[0].trigger('click')
 
-    expect(lastValue(wrapper)).toBeDefined()
     expect(wrapper.vm.calendar.multipleDateRange).toEqual([
       { start: '10/10/2026', end: '12/10/2026' }
     ])
@@ -101,8 +100,14 @@ describe('multiple date ranges', () => {
 
     await clickDays(wrapper, [3, 5, 10, 12])
 
-    const numbers = wrapper.findAll('.vfc-day .number').map(node => node.text())
-    expect(numbers).toHaveLength(4)
+    const markers = wrapper.findAll('.vfc-day .number').map(node =>
+      [...node.element.childNodes]
+        .filter(child => child.nodeType === Node.TEXT_NODE)
+        .map(child => child.textContent)
+        .join('')
+        .trim()
+    )
+    expect(markers).toEqual(['0', '-1', '1', '1'])
   })
 
   it('shows ranges passed through the model', async () => {

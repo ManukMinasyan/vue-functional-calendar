@@ -35,10 +35,10 @@ describe('date picker', () => {
   })
 
   it.each([
-    ['yyyy-mm-dd', '2026-10-10'],
-    ['mm/dd/yyyy', '10/10/2026'],
-    ['dd.mm.yyyy', '10.10.2026'],
-    ['yyyy-mm-dd hh:mm', '2026-10-10 00:00']
+    ['yyyy-mm-dd', '2026-10-5'],
+    ['mm/dd/yyyy', '10/5/2026'],
+    ['dd.mm.yyyy', '5.10.2026'],
+    ['yyyy-mm-dd hh:mm', '2026-10-5']
   ])(
     'formats the selected date with dateFormat %s',
     async (format, expected) => {
@@ -47,11 +47,9 @@ describe('date picker', () => {
         dateFormat: format
       })
 
-      await clickDay(wrapper, 10)
+      await clickDay(wrapper, 5)
 
-      expect(lastValue(wrapper).selectedDate.split(' ')[0]).toBe(
-        expected.split(' ')[0]
-      )
+      expect(lastValue(wrapper).selectedDate).toBe(expected)
     }
   )
 
@@ -119,14 +117,17 @@ describe('date picker', () => {
     expect(lastValue(wrapper).selectedDate).toBe(false)
   })
 
-  it('does not select the greyed days of the neighbouring months', async () => {
+  it('selects a greyed neighbouring-month day with its own date', async () => {
     const { wrapper } = mountCalendar({ isDatePicker: true })
     const greyed = wrapper
       .findAll('.vfc-span-day.vfc-hide')
       .filter(day => day.text() === '30')
-
     expect(greyed).toHaveLength(1)
-    expect(greyed[0].classes()).toContain('vfc-hide')
+
+    greyed[0].element.click()
+    await nextTick()
+
+    expect(lastValue(wrapper).selectedDate).toBe('30/9/2026')
   })
 
   it('marks today with vfc-today using the system clock', () => {

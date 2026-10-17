@@ -147,6 +147,10 @@ describe('disabledDates', () => {
 })
 
 describe('enabledDates', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('disables every date that is not listed', async () => {
     const { wrapper } = mountCalendar({
       isDatePicker: true,
@@ -185,7 +189,6 @@ describe('enabledDates', () => {
 
     expect(findDay(wrapper, 15).classList).toContain('vfc-disabled')
     expect(findDay(wrapper, 16).classList).not.toContain('vfc-disabled')
-    vi.useRealTimers()
   })
 })
 

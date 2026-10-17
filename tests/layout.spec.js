@@ -9,16 +9,13 @@ import {
 } from './helpers.js'
 
 describe('showWeekNumbers', () => {
-  it('renders one week number per week row', () => {
+  it('renders one ISO week number per week row of October 2026', () => {
     const { wrapper } = mountCalendar({ showWeekNumbers: true })
 
-    const numbers = wrapper
-      .findAll('.vfc-week-number')
-      .map(cell => Number(cell.text()))
-    expect(numbers).toHaveLength(5)
-    numbers.forEach((number, index) => {
-      expect(number).toBe(numbers[0] + index)
-    })
+    expect(
+      wrapper.findAll('.vfc-week-number').map(cell => cell.text())
+    ).toEqual(['40', '41', '42', '43', '44'])
+    expect(wrapper.findAll('.vfc-week')).toHaveLength(5)
   })
 
   it('numbers the first week of October 2026 as ISO week 40', () => {

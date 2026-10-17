@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import FunctionalCalendar, { FunctionalCalendar as Named } from '../index.js'
-import { mountCalendar, dayNameTexts, clickDay, FIXED_DATE } from './helpers.js'
+import {
+  mountCalendar,
+  dayNameTexts,
+  clickDay,
+  calendarTitle,
+  FIXED_DATE
+} from './helpers.js'
 
 const globalDayNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 const propDayNames = ['1', '2', '3', '4', '5', '6', '7']
@@ -151,5 +158,67 @@ describe('configs prop', () => {
     expect(wrapper.emitted('update:modelValue').at(-1)[0].selectedDate).toBe(
       '2026-10-10'
     )
+  })
+
+  it('shows week numbers set only through configs', () => {
+    const { wrapper } = mountCalendar({ configs: { showWeekNumbers: true } })
+
+    expect(wrapper.findAll('.vfc-week-number')).toHaveLength(5)
+  })
+
+  it('lets every calendar open its month picker when isSeparately is set only through configs', () => {
+    const { wrapper } = mountCalendar({
+      configs: {
+        isMultiple: true,
+        calendarsCount: 2,
+        isSeparately: true,
+        changeMonthFunction: true
+      }
+    })
+
+    wrapper
+      .findAll('.vfc-calendar')[1]
+      .find('div.vfc-top-date span')
+      .element.click()
+
+    expect(wrapper.vm.showMonthPicker).toBe(2)
+  })
+
+  it('picks a month in one calendar only when isSeparately is set only through configs', async () => {
+    const { wrapper } = mountCalendar({
+      configs: {
+        isMultiple: true,
+        calendarsCount: 2,
+        isSeparately: true,
+        changeMonthFunction: true
+      }
+    })
+    wrapper.vm.openMonthPicker(2)
+    await nextTick()
+
+    await wrapper
+      .findAll('.vfc-calendar')[1]
+      .findAll('.vfc-months-container .vfc-item')[2]
+      .trigger('click')
+
+    expect(
+      wrapper
+        .findAll('.vfc-calendar')
+        .map((_, index) => calendarTitle(wrapper, index))
+    ).toEqual(['October 2026', 'March 2026'])
+  })
+
+  it('pages the year picker by a changeYearStep set only through configs', async () => {
+    const { wrapper } = mountCalendar({
+      configs: { changeYearFunction: true, changeYearStep: 5 }
+    })
+    wrapper.vm.openYearPicker(1)
+    await nextTick()
+
+    await wrapper
+      .find('.vfc-months-container .vfc-arrow-right')
+      .trigger('click')
+
+    expect(wrapper.find('.vfc-months-container .vfc-item').text()).toBe('2027')
   })
 })

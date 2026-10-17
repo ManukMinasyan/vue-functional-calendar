@@ -29,12 +29,13 @@ import { CALENDAR_KEY } from '../utils/injectionKeys'
 
 import { Comment, Fragment } from 'vue'
 
-const hasContent = vnodes =>
-  vnodes.some(vnode =>
-    vnode.type === Fragment
-      ? hasContent(vnode.children)
-      : vnode.type !== Comment
+const flatten = vnodes =>
+  vnodes.flatMap(vnode =>
+    vnode.type === Fragment ? flatten(vnode.children) : [vnode]
   )
+
+const isHtmlComment = vnode =>
+  vnode.type === Comment && vnode.children !== 'v-if'
 
 export default {
   name: 'Day',
@@ -263,7 +264,8 @@ export default {
       const slot = this.calendarRoot.$slots[name]
       if (!slot) return false
       const props = name === 'default' ? { week: this.week, day: this.day } : {}
-      return hasContent(slot(props))
+      const vnodes = flatten(slot(props))
+      return !(vnodes.length && vnodes.every(isHtmlComment))
     },
     isDisabledDate(date) {
       const datesCollection = this.fConfigs.disabledDates
