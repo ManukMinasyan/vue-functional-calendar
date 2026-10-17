@@ -1,5 +1,11 @@
 <template>
-  <div class="vfc-popover-container" ref="popoverElement" tabindex="0">
+  <div
+    class="vfc-popover-container"
+    ref="popoverElement"
+    tabindex="0"
+    @keydown="onPopoverKeydown"
+    @click="onPopoverClick"
+  >
     <PickerInputs
       :fConfigs="fConfigs"
       :singleSelectedDate="singleSelectedDate"
@@ -28,12 +34,10 @@
       class="vfc-main-container"
       v-show="showCalendar"
       ref="mainContainer"
+      :role="isModalPicker ? 'dialog' : null"
+      :aria-label="isModalPicker ? 'Calendar' : null"
       :class="{
-        'vfc-modal':
-          fConfigs.isModal &&
-          (fConfigs.isDatePicker ||
-            fConfigs.isDateRange ||
-            fConfigs.isMultipleDatePicker),
+        'vfc-modal': isModalPicker,
         'vfc-dark': fConfigs.isDark
       }"
     >
@@ -100,8 +104,17 @@
                     v-if="checkHiddenElement('month')"
                   >
                     <span
+                      :role="canPickMonth(key) ? 'button' : null"
+                      :tabindex="canPickMonth(key) ? 0 : null"
+                      :aria-expanded="
+                        canPickMonth(key) ? showMonthPicker === key + 1 : null
+                      "
                       @click.prevent="
                         isNotSeparatelyAndFirst(key) && openMonthPicker(key + 1)
+                      "
+                      @keydown.enter.space.prevent="
+                        canPickMonth(key) &&
+                        openPickerFromKeyboard('month', key)
                       "
                       :class="{
                         'vfc-cursor-pointer vfc-underline':
@@ -113,8 +126,16 @@
                       {{ calendarItem.month }}</span
                     >
                     <span
+                      :role="canPickYear(key) ? 'button' : null"
+                      :tabindex="canPickYear(key) ? 0 : null"
+                      :aria-expanded="
+                        canPickYear(key) ? showYearPicker === key + 1 : null
+                      "
                       @click.prevent="
                         isNotSeparatelyAndFirst(key) && openYearPicker(key + 1)
+                      "
+                      @keydown.enter.space.prevent="
+                        canPickYear(key) && openPickerFromKeyboard('year', key)
                       "
                       :class="{
                         'vfc-cursor-pointer vfc-underline':
@@ -127,66 +148,87 @@
                     </span>
                   </div>
                 </transition>
-                <transition :name="getTransition_()" appear>
-                  <div class="vfc-dayNames">
-                    <span v-if="fConfigs.showWeekNumbers"></span>
-                    <span
-                      v-for="(dayName, dayKey) in fConfigs.dayNames"
-                      :key="key + dayKey + 1"
-                      class="vfc-day"
-                    >
-                      <template v-if="checkHiddenElement('dayNames')">
-                        {{ dayName }}
-                      </template>
-                    </span>
-                  </div>
-                </transition>
-                <transition-group tag="div" :name="getTransition_()" appear>
-                  <div
-                    class="vfc-week"
-                    v-for="(week, week_key) in calendarItem.weeks"
-                    :key="key + week_key + 1"
-                  >
-                    <WeekNumbers
-                      v-if="fConfigs.showWeekNumbers"
-                      :number="week.number"
-                      :borderColor="borderColor"
-                    />
-                    <Day
-                      v-for="(day, day_key) in week.days"
-                      ref="day"
-                      :key="key + week_key + day_key + 1"
-                      :isMultipleDateRange="fConfigs.isMultipleDateRange"
-                      :day="day"
-                      :fConfigs="fConfigs"
-                      :calendar="calendar"
-                      :helpCalendar="helpCalendar"
-                      :week="week"
-                      :day_key="day_key"
-                      @dayMouseOver="dayMouseOver"
-                      :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
-                    >
-                      <template v-slot:default="props">
-                        <slot :week="props.week" :day="props.day"></slot>
-                      </template>
-                    </Day>
-                  </div>
-                  <template
-                    v-if="
-                      calendarItem.weeks.length < 6 &&
-                      !fConfigs.isLayoutExpandable
-                    "
-                  >
-                    <!-- stabilizator -->
+                <div role="grid" :aria-label="calendarItem.dateTop">
+                  <transition :name="getTransition_()" appear>
                     <div
-                      style="height: 32.6px"
-                      v-for="moreWeekKey in 6 - calendarItem.weeks.length"
-                      :key="key + moreWeekKey + 'moreWeek'"
+                      class="vfc-dayNames"
+                      role="row"
+                      :aria-hidden="
+                        checkHiddenElement('dayNames') ? null : 'true'
+                      "
                     >
-                      &nbsp;
+                      <span
+                        v-if="fConfigs.showWeekNumbers"
+                        role="presentation"
+                      ></span>
+                      <span
+                        v-for="(dayName, dayKey) in fConfigs.dayNames"
+                        :key="key + dayKey + 1"
+                        class="vfc-day"
+                        role="columnheader"
+                      >
+                        <template v-if="checkHiddenElement('dayNames')">
+                          {{ dayName }}
+                        </template>
+                      </span>
                     </div>
-                  </template>
-                </transition-group>
+                  </transition>
+                  <transition-group
+                    tag="div"
+                    role="presentation"
+                    :name="getTransition_()"
+                    appear
+                  >
+                    <div
+                      class="vfc-week"
+                      role="row"
+                      v-for="(week, week_key) in calendarItem.weeks"
+                      :key="key + week_key + 1"
+                    >
+                      <WeekNumbers
+                        v-if="fConfigs.showWeekNumbers"
+                        :number="week.number"
+                        :borderColor="borderColor"
+                      />
+                      <Day
+                        v-for="(day, day_key) in week.days"
+                        ref="day"
+                        :key="key + week_key + day_key + 1"
+                        :isMultipleDateRange="fConfigs.isMultipleDateRange"
+                        :day="day"
+                        :fConfigs="fConfigs"
+                        :calendar="calendar"
+                        :helpCalendar="helpCalendar"
+                        :week="week"
+                        :day_key="day_key"
+                        :grid-key="key"
+                        @dayMouseOver="dayMouseOver"
+                        :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
+                      >
+                        <template v-slot:default="props">
+                          <slot :week="props.week" :day="props.day"></slot>
+                        </template>
+                      </Day>
+                    </div>
+                    <template
+                      v-if="
+                        calendarItem.weeks.length < 6 &&
+                        !fConfigs.isLayoutExpandable
+                      "
+                    >
+                      <!-- stabilizator -->
+                      <div
+                        style="height: 32.6px"
+                        role="presentation"
+                        aria-hidden="true"
+                        v-for="moreWeekKey in 6 - calendarItem.weeks.length"
+                        :key="key + moreWeekKey + 'moreWeek'"
+                      >
+                        &nbsp;
+                      </div>
+                    </template>
+                  </transition-group>
+                </div>
               </div>
             </div>
           </div>
@@ -274,6 +316,32 @@ export default {
       }
       return ''
     },
+    isModalPicker() {
+      return (
+        this.fConfigs.isModal &&
+        (this.fConfigs.isDatePicker ||
+          this.fConfigs.isDateRange ||
+          this.fConfigs.isMultipleDatePicker)
+      )
+    },
+    fullDateFormatter() {
+      return new Intl.DateTimeFormat(undefined, { dateStyle: 'full' })
+    },
+    rovingDates() {
+      return this.listCalendars.map(calendarItem => {
+        const days = calendarItem.weeks
+          .flatMap(week => week.days)
+          .filter(day => this.isDayInMonth(day, calendarItem))
+        const roving =
+          days.find(day => day.date === this.focusedDate) ||
+          days.find(day => this.isDateSelected(day.date)) ||
+          days.find(day => day.isToday) ||
+          days.find(day => !this.isDateBlocked(day.date)) ||
+          days[0]
+
+        return roving ? roving.date : ''
+      })
+    },
     rangeIsSelected() {
       if (!this.fConfigs.isMultipleDateRange)
         return !!(this.calendar.dateRange.end && this.calendar.dateRange.start)
@@ -325,9 +393,9 @@ export default {
           : ''
       },
       set(newValue) {
-        newValue = this.helpCalendar.mask(newValue)
-        if (this.helpCalendar.checkValidDate(newValue)) {
-          this.calendar.selectedDate = newValue
+        const date = this.helpCalendar.parseTypedDate(newValue)
+        if (date) {
+          this.calendar.selectedDate = date
         }
       }
     }
@@ -1632,10 +1700,343 @@ export default {
     checkHiddenElement(elementName) {
       return !this.fConfigs.hiddenElements.includes(elementName)
     },
-    onFocusIn() {
-      if (this.fConfigs.isModal) {
+    formatFullDate(date) {
+      return this.fullDateFormatter.format(date)
+    },
+    isDisabledDate(date) {
+      const datesCollection = this.fConfigs.disabledDates
+
+      return (
+        this.isDateIncludedInDatesCollection(date, datesCollection) ||
+        !this.isEnabledDate(date)
+      )
+    },
+    isEnabledDate(date) {
+      const datesCollection = this.fConfigs.enabledDates
+
+      return (
+        !datesCollection.length ||
+        this.isDateIncludedInDatesCollection(date, datesCollection)
+      )
+    },
+    isDateIncludedInDatesCollection(date, datesCollection) {
+      let today = new Date()
+      today.setHours(0, 0, 0, 0)
+      let dateObj = this.helpCalendar.getDateFromFormat(date)
+
+      return (
+        datesCollection.includes(date) ||
+        (datesCollection.includes('beforeToday') &&
+          dateObj.getTime() < today.getTime()) ||
+        (datesCollection.includes('afterToday') &&
+          dateObj.getTime() > today.getTime())
+      )
+    },
+    isDateBlocked(date) {
+      const dateObj = this.helpCalendar.getDateFromFormat(date)
+      const dayName = this.helpCalendar.getDayName(dateObj)
+
+      if (
+        this.fConfigs.disabledDayNames.includes(dayName) ||
+        this.isDisabledDate(date)
+      ) {
+        return true
+      }
+
+      const { limits } = this.fConfigs
+      if (!limits) return false
+
+      const time = dateObj.getTime()
+      return (
+        time < this.helpCalendar.getDateFromFormat(limits.min).getTime() ||
+        time > this.helpCalendar.getDateFromFormat(limits.max).getTime()
+      )
+    },
+    isDateSelected(date) {
+      const { fConfigs, calendar } = this
+
+      if (fConfigs.isMultipleDateRange) {
+        return calendar.multipleDateRange.some(range =>
+          this.isDateInRange(date, range.start, range.end)
+        )
+      }
+      if (fConfigs.isDateRange) {
+        return this.isDateInRange(
+          date,
+          calendar.dateRange.start,
+          calendar.dateRange.end
+        )
+      }
+      if (fConfigs.isDatePicker) return calendar.selectedDate === date
+      if (fConfigs.isMultipleDatePicker) {
+        return (calendar.selectedDates || []).some(item => item.date === date)
+      }
+      return false
+    },
+    isDateInRange(date, start, end) {
+      if (!start) return false
+
+      const time = this.helpCalendar.getDateFromFormat(date).getTime()
+      const startTime = this.helpCalendar.getDateFromFormat(start).getTime()
+      if (!end) return time === startTime
+
+      return (
+        time >= startTime &&
+        time <= this.helpCalendar.getDateFromFormat(end).getTime()
+      )
+    },
+    isDayInMonth(day, calendarItem) {
+      if (day.hideLeftAndRightDays || !calendarItem) return false
+
+      const date = this.helpCalendar.getDateFromFormat(day.date)
+      return (
+        date.getMonth() === calendarItem.date.getMonth() &&
+        date.getFullYear() === calendarItem.date.getFullYear()
+      )
+    },
+    onDayKeydown(event, day, gridKey) {
+      if (event.altKey || event.ctrlKey || event.metaKey) return
+
+      const target = this.keyboardTarget(
+        event.key,
+        event.shiftKey,
+        this.helpCalendar.getDateFromFormat(day.date)
+      )
+      if (!target) return
+
+      event.preventDefault()
+      const movesByYear = event.shiftKey && event.key.startsWith('Page')
+      this.focusDate(
+        target,
+        gridKey,
+        movesByYear ? 'changedYear' : 'changedMonth'
+      )
+    },
+    keyboardTarget(key, shift, from) {
+      const year = from.getFullYear()
+      const month = from.getMonth()
+      const date = from.getDate()
+
+      switch (key) {
+        case 'ArrowLeft':
+          return new Date(year, month, date - 1)
+        case 'ArrowRight':
+          return new Date(year, month, date + 1)
+        case 'ArrowUp':
+          return new Date(year, month, date - 7)
+        case 'ArrowDown':
+          return new Date(year, month, date + 7)
+        case 'Home':
+          return this.weekEdge(from, 0)
+        case 'End':
+          return this.weekEdge(from, 6)
+        case 'PageUp':
+          return this.addMonths(from, shift ? -12 : -1)
+        case 'PageDown':
+          return this.addMonths(from, shift ? 12 : 1)
+        default:
+          return null
+      }
+    },
+    weekEdge(from, offset) {
+      const year = from.getFullYear()
+      const month = from.getMonth()
+      const sinceWeekStart = this.fConfigs.sundayStart
+        ? from.getDay()
+        : (from.getDay() + 6) % 7
+      const edge = new Date(
+        year,
+        month,
+        from.getDate() - sinceWeekStart + offset
+      )
+
+      if (edge.getMonth() === month) return edge
+
+      return offset ? new Date(year, month + 1, 0) : new Date(year, month, 1)
+    },
+    addMonths(from, count) {
+      const first = new Date(from.getFullYear(), from.getMonth() + count, 1)
+      const lastDay = new Date(
+        first.getFullYear(),
+        first.getMonth() + 1,
+        0
+      ).getDate()
+
+      return new Date(
+        first.getFullYear(),
+        first.getMonth(),
+        Math.min(from.getDate(), lastDay)
+      )
+    },
+    focusDate(target, gridKey, changeEvent) {
+      const date = this.helpCalendar.formatDate(target)
+      const focus = () => {
+        if (this.focusDay(date, gridKey)) this.dayMouseOver(date)
+      }
+
+      if (this.findDay(date, gridKey)) {
+        focus()
+        return
+      }
+      if (this.revealDate(target, gridKey, changeEvent)) {
+        this.$nextTick(focus)
+      }
+    },
+    findDay(date, gridKey) {
+      const separately = this.fConfigs.isSeparately
+
+      return (this.$refs.day || []).find(
+        item =>
+          item.isInMonth &&
+          item.day.date === date &&
+          (!separately || item.gridKey === gridKey)
+      )
+    },
+    focusDay(date, gridKey) {
+      const item = this.findDay(date, gridKey)
+      if (!item) return false
+
+      item.$refs.cell.focus()
+      return true
+    },
+    focusRovingDay(gridKey = 0) {
+      return this.focusDay(this.rovingDates[gridKey], gridKey)
+    },
+    isMonthAllowed(month) {
+      const { limits } = this.fConfigs
+      if (!limits) return true
+
+      const index = date => date.getFullYear() * 12 + date.getMonth()
+      const min = this.helpCalendar.getDateFromFormat(limits.min)
+      const max = this.helpCalendar.getDateFromFormat(limits.max)
+
+      return index(month) >= index(min) && index(month) <= index(max)
+    },
+    revealDate(target, gridKey, changeEvent) {
+      const month = new Date(target.getFullYear(), target.getMonth(), 1)
+      if (!this.isMonthAllowed(month)) return false
+
+      const separately = this.fConfigs.isSeparately
+      const grid = this.listCalendars[separately ? gridKey : 0]
+      const forward = month > grid.date
+      const start =
+        forward && !separately
+          ? new Date(
+              month.getFullYear(),
+              month.getMonth() - (this.listCalendars.length - 1),
+              1
+            )
+          : month
+
+      this.transitionPrefix = forward ? 'left' : 'right'
+      grid.date = start
+      grid.key += hUniqueID()
+      this.updateCalendar()
+
+      if (!separately) {
+        this.calendar.currentDate = start
+        this.initCalendar()
+      }
+
+      this.$emit(changeEvent, start)
+      return true
+    },
+    canPickMonth(key) {
+      return (
+        this.fConfigs.changeMonthFunction && this.isNotSeparatelyAndFirst(key)
+      )
+    },
+    canPickYear(key) {
+      return (
+        this.fConfigs.changeYearFunction && this.isNotSeparatelyAndFirst(key)
+      )
+    },
+    openPickerFromKeyboard(kind, key) {
+      if (kind === 'month') this.openMonthPicker(key + 1)
+      else this.openYearPicker(key + 1)
+
+      this.$nextTick(() => {
+        const picker = this.$refs.calendars.querySelectorAll(
+          '.vfc-months-container'
+        )[key]
+        const item = picker.querySelector('.vfc-item.vfc-selected')
+        if (item) item.focus()
+      })
+    },
+    isOutsideCalendar(element) {
+      return (
+        element.tagName === 'INPUT' &&
+        !hElContains(this.$refs.mainContainer, element)
+      )
+    },
+    onPopoverClick(e) {
+      if (this.fConfigs.isModal && this.isOutsideCalendar(e.target)) {
         this.showCalendar = true
       }
+    },
+    onPopoverKeydown(e) {
+      if (e.key === 'Escape') {
+        this.onEscape(e)
+        return
+      }
+
+      const opensCalendar = e.key === 'Enter' || e.key === 'ArrowDown'
+      if (
+        !this.fConfigs.isModal ||
+        !opensCalendar ||
+        e.defaultPrevented ||
+        !this.isOutsideCalendar(e.target)
+      ) {
+        return
+      }
+
+      e.preventDefault()
+      this.popoverOpener = e.target
+      this.showCalendar = true
+      this.$nextTick(() => this.focusRovingDay(0))
+    },
+    onEscape(e) {
+      const pickerKey = this.showMonthPicker || this.showYearPicker
+      if (pickerKey) {
+        e.preventDefault()
+        e.stopPropagation()
+        const grid =
+          this.$refs.calendars.querySelectorAll('.vfc-calendar')[pickerKey - 1]
+        const titles = grid.querySelectorAll('.vfc-top-date [role="button"]')
+        const title = titles[this.showMonthPicker ? 0 : 1]
+        this.showMonthPicker = this.showYearPicker = false
+        if (title) title.focus()
+        return
+      }
+
+      if (!this.fConfigs.isModal || !this.showCalendar) return
+
+      e.preventDefault()
+      e.stopPropagation()
+      this.showCalendar = false
+      this.focusOpener()
+    },
+    returnFocusIfClosed() {
+      if (this.fConfigs.isModal && !this.showCalendar) this.focusOpener()
+    },
+    focusOpener() {
+      const opener =
+        this.popoverOpener && this.popoverOpener.isConnected
+          ? this.popoverOpener
+          : this.popoverElement.querySelector('input')
+      if (!opener) return
+
+      this.restoringFocus = true
+      opener.focus()
+      this.restoringFocus = false
+    },
+    onFocusIn(e) {
+      if (!this.fConfigs.isModal || this.restoringFocus) return
+
+      if (!this.showCalendar && this.isOutsideCalendar(e.target)) {
+        this.popoverOpener = e.target
+      }
+      this.showCalendar = true
     },
     onFocusOut(e) {
       if (

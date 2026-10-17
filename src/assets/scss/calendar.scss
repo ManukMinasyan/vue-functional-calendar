@@ -422,7 +422,8 @@
       justify-content: space-between;
     }
 
-    div {
+    div,
+    button {
       position: relative;
       z-index: 200;
       display: flex;
@@ -447,6 +448,15 @@
         outline: 2px solid var(--_vfc-focus);
         outline-offset: 2px;
       }
+    }
+
+    button {
+      padding: 0;
+      font-family: inherit;
+      line-height: inherit;
+      appearance: none;
+      background: none;
+      border: 0;
     }
 
     .vfc-arrow-left,
@@ -945,7 +955,7 @@
     }
   }
 
-  &-calendar .vfc-content > div > div:not(.vfc-week)[style*='height'] {
+  &-calendar .vfc-content > div > div > div:not(.vfc-week)[style*='height'] {
     min-height: calc(var(--_vfc-day-size) + var(--_vfc-space-1));
     max-height: calc(var(--_vfc-day-size) + var(--_vfc-space-1));
   }

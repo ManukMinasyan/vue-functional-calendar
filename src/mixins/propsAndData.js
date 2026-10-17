@@ -184,6 +184,9 @@ export const propsAndData = {
   data() {
     return {
       popoverElement: '',
+      popoverOpener: null,
+      restoringFocus: false,
+      focusedDate: '',
       defaultDateFormat: {
         date: false,
         dateTime: false,

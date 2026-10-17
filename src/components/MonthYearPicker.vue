@@ -2,9 +2,13 @@
   <div class="vfc-months-container">
     <div class="vfc-content vfc-content-MY-picker">
       <div class="vfc-navigation-buttons">
-        <div @click="changePicker('left')">
+        <button
+          type="button"
+          :aria-label="previousLabel"
+          @click="changePicker('left')"
+        >
           <div class="vfc-arrow-left"></div>
-        </div>
+        </button>
         <h2
           :class="['vfc-top-date', delta !== 0 && 'vfc-top-date-has-delta']"
           @click="delta = 0"
@@ -12,21 +16,31 @@
           <span class="vfc-popover-caret"></span>
           {{ calendarRoot.listCalendars[calendarKey].date.getFullYear() }}
         </h2>
-        <div @click="changePicker('right')">
+        <button
+          type="button"
+          :aria-label="nextLabel"
+          @click="changePicker('right')"
+        >
           <div class="vfc-arrow-right"></div>
-        </div>
+        </button>
       </div>
       <div class="vfc-months">
         <template v-if="calendarRoot.showMonthPicker">
           <div
             class="vfc-item"
+            role="button"
+            tabindex="0"
             v-for="(month, key) in calendarRoot.fConfigs.shortMonthNames"
             :key="key"
             :class="{
               'vfc-selected':
                 calendarRoot.listCalendars[calendarKey].date.getMonth() === key
             }"
+            :aria-pressed="
+              calendarRoot.listCalendars[calendarKey].date.getMonth() === key
+            "
             @click="calendarRoot.pickMonth(key, calendarKey)"
+            @keydown.enter.space.prevent="pickWithKeyboard('pickMonth', key)"
           >
             {{ month }}
           </div>
@@ -34,6 +48,8 @@
         <template v-else-if="calendarRoot.showYearPicker">
           <div
             class="vfc-item"
+            role="button"
+            tabindex="0"
             v-for="(year, key) in calendarRoot.getYearList(
               calendarRoot.listCalendars[calendarKey].date,
               delta
@@ -44,7 +60,14 @@
                 calendarRoot.listCalendars[calendarKey].date.getFullYear() ===
                 year.year
             }"
+            :aria-pressed="
+              calendarRoot.listCalendars[calendarKey].date.getFullYear() ===
+              year.year
+            "
             @click="calendarRoot.pickYear(year.year, calendarKey)"
+            @keydown.enter.space.prevent="
+              pickWithKeyboard('pickYear', year.year)
+            "
           >
             {{ year.year }}
           </div>
@@ -75,12 +98,26 @@ export default {
       delta: 0
     }
   },
+  computed: {
+    previousLabel() {
+      return this.calendarRoot.showMonthPicker
+        ? 'Previous year'
+        : 'Previous years'
+    },
+    nextLabel() {
+      return this.calendarRoot.showMonthPicker ? 'Next year' : 'Next years'
+    }
+  },
   watch: {
     delta(newDelta) {
       if (newDelta < -new Date().getFullYear()) this.delta = 0
     }
   },
   methods: {
+    pickWithKeyboard(method, value) {
+      this.calendarRoot[method](value, this.calendarKey)
+      this.$nextTick(() => this.calendarRoot.focusRovingDay(this.calendarKey))
+    },
     changePicker(to) {
       if (this.calendarRoot.showMonthPicker) {
         if (to === 'right') this.calendarRoot.NextYear(this.calendarKey)

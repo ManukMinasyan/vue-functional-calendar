@@ -218,48 +218,50 @@ export default class helpCalendar {
     return monthWeeks.weeks
   }
 
+  getFormatParts() {
+    const format = this.dateFormat.split(' ')[0]
+    const separator = ['/', '-', '.'].find(char => format.includes(char))
+    return { separator, tokens: format.split(separator) }
+  }
+
   mask(value) {
-    let dayLength = this.getDateFromFormat(value).getDate().toString().length
-    let month = this.getDateFromFormat(value).getMonth()
+    const { separator, tokens } = this.getFormatParts()
+    const maxLengths = tokens.map(token => (token === 'yyyy' ? 4 : 2))
+    const parts = ['']
 
-    let dayMask = '00'
-    if (dayLength === 1) {
-      dayMask = '0'
-    }
+    for (const char of value.split(' ')[0]) {
+      const last = parts.length - 1
 
-    let monthMask = '00'
-    if (month + 1 <= 9) {
-      monthMask = '0'
-    }
-
-    let mask = this.dateFormat
-      .replace('dd', dayMask)
-      .replace('mm', monthMask)
-      .replace('yyyy', '0000')
-    // eslint-disable-next-line
-    let literalPattern = /[0\*]/
-    let numberPattern = /[0-9]/
-    let newValue = ''
-
-    for (let vId = 0, mId = 0; mId < mask.length;) {
-      if (mId >= value.length) break
-
-      // Number expected but got a different value, store only the valid portion
-      if (mask[mId] === '0' && value[vId].match(numberPattern) == null) {
-        break
+      if (/\d/.test(char)) {
+        if (parts[last].length < maxLengths[last]) {
+          parts[last] += char
+          continue
+        }
+        if (parts.length === maxLengths.length) break
+        parts.push(char)
+        continue
       }
 
-      // Found a literal
-      while (mask[mId].match(literalPattern) == null) {
-        if (value[vId] === mask[mId]) break
-        newValue += mask[mId++]
-      }
-
-      newValue += value[vId++]
-
-      mId++
+      const canSeparate = parts[last] && parts.length < maxLengths.length
+      if (char !== separator || !canSeparate) break
+      parts.push('')
     }
 
-    return newValue
+    return parts.join(separator)
+  }
+
+  parseTypedDate(value) {
+    const { separator, tokens } = this.getFormatParts()
+    const masked = this.mask(value)
+    const parts = masked.split(separator)
+    const year = parts[tokens.indexOf('yyyy')]
+
+    if (parts.length !== tokens.length || year.length !== 4) return ''
+    if (!this.checkValidDate(masked)) return ''
+
+    const date = this.getDateFromFormat(masked)
+    if (date.getFullYear() !== Number(year)) return ''
+
+    return this.formatDate(date)
   }
 }

@@ -14,6 +14,8 @@
         <input
           type="text"
           title="Start Date"
+          aria-haspopup="dialog"
+          :aria-expanded="calendarRoot.showCalendar"
           v-model="dateRangeSelectedStartDate"
           :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
@@ -22,6 +24,8 @@
         <input
           type="text"
           title="End Date"
+          aria-haspopup="dialog"
+          :aria-expanded="calendarRoot.showCalendar"
           v-model="dateRangeSelectedEndDate"
           :placeholder="fConfigs.placeholder.split(' ')[0]"
           :readonly="!fConfigs.isTypeable"
@@ -42,6 +46,8 @@
           class="vfc-single-input"
           type="text"
           title="Date"
+          aria-haspopup="dialog"
+          :aria-expanded="calendarRoot.showCalendar"
           :value="singleSelectedDate"
           @input="calendarRoot.singleSelectedDate = $event.target.value"
           :placeholder="fConfigs.placeholder"
@@ -73,6 +79,8 @@
           v-model="calendar.selectedDatesItem"
           @keydown.enter.prevent="calendarRoot.addToSelectedDates"
           type="text"
+          aria-haspopup="dialog"
+          :aria-expanded="calendarRoot.showCalendar"
           placeholder="Add a date"
         />
       </div>
@@ -108,10 +116,9 @@ export default {
           : ''
       },
       set(newValue) {
-        const helpCalendar = this.calendarRoot.helpCalendar
-        newValue = helpCalendar.mask(newValue)
-        if (helpCalendar.checkValidDate(newValue)) {
-          this.calendar.dateRange.start = newValue
+        const date = this.calendarRoot.helpCalendar.parseTypedDate(newValue)
+        if (date) {
+          this.calendar.dateRange.start = date
         }
       }
     },
@@ -120,10 +127,9 @@ export default {
         return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
       },
       set(newValue) {
-        const helpCalendar = this.calendarRoot.helpCalendar
-        newValue = helpCalendar.mask(newValue)
-        if (helpCalendar.checkValidDate(newValue)) {
-          this.calendar.dateRange.end = newValue
+        const date = this.calendarRoot.helpCalendar.parseTypedDate(newValue)
+        if (date) {
+          this.calendar.dateRange.end = date
         }
       }
     }

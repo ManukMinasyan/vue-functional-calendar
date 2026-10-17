@@ -5,7 +5,10 @@
       :class="'vfc-' + fConfigs.arrowsPosition"
       v-if="oneArrows || manyArrows"
     >
-      <div
+      <button
+        type="button"
+        aria-label="Previous month"
+        :aria-disabled="!allowPreDate"
         @click="calendarRoot.PreMonth(oneArrows ? 0 : calendarKey)"
         :class="{ 'vfc-cursor-pointer': allowPreDate }"
       >
@@ -15,8 +18,11 @@
             :class="{ 'vfc-disabled': !allowPreDate }"
           ></div>
         </slot>
-      </div>
-      <div
+      </button>
+      <button
+        type="button"
+        aria-label="Next month"
+        :aria-disabled="!allowNextDate"
         @click="calendarRoot.NextMonth(oneArrows ? 0 : calendarKey)"
         :class="{ 'vfc-cursor-pointer': allowNextDate }"
       >
@@ -26,7 +32,7 @@
             :class="{ 'vfc-disabled': !allowNextDate }"
           ></div>
         </slot>
-      </div>
+      </button>
     </div>
   </div>
 </template>

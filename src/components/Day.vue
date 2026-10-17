@@ -1,11 +1,19 @@
 <template>
-  <div class="vfc-day">
-    <div v-if="startActive" class="vfc-base-start"></div>
-    <div v-if="endActive" class="vfc-base-end"></div>
+  <div class="vfc-day" role="presentation">
+    <div v-if="startActive" class="vfc-base-start" aria-hidden="true"></div>
+    <div v-if="endActive" class="vfc-base-end" aria-hidden="true"></div>
     <span
       v-if="!day.hideLeftAndRightDays"
+      ref="cell"
+      role="gridcell"
+      :tabindex="isRoving ? 0 : -1"
+      :aria-selected="isSelectable ? isSelected : null"
+      :aria-disabled="isBlocked"
+      :aria-label="ariaLabel"
       :class="getClassNames(day)"
       @click.self="calendarRoot.clickDay(day, isDisabledDate)"
+      @keydown="onKeydown"
+      @focus="calendarRoot.focusedDate = day.date"
       @mouseover="dayMouseOver"
     >
       <slot :week="week" :day="day">{{ day.day }}</slot>
@@ -71,6 +79,10 @@ export default {
     alwaysUseDefaultClasses: {
       type: Boolean,
       default: false
+    },
+    gridKey: {
+      type: Number,
+      default: 0
     }
   },
   emits: ['dayMouseOver'],
@@ -82,6 +94,34 @@ export default {
     }
   },
   computed: {
+    isInMonth() {
+      return this.calendarRoot.isDayInMonth(
+        this.day,
+        this.calendarRoot.listCalendars[this.gridKey]
+      )
+    },
+    isRoving() {
+      return (
+        this.isInMonth &&
+        this.calendarRoot.rovingDates[this.gridKey] === this.day.date
+      )
+    },
+    isSelectable() {
+      const { isDatePicker, isDateRange, isMultipleDatePicker } = this.fConfigs
+      return isDatePicker || isDateRange || isMultipleDatePicker
+    },
+    isSelected() {
+      return this.calendarRoot.isDateSelected(this.day.date)
+    },
+    isBlocked() {
+      return this.calendarRoot.isDateBlocked(this.day.date)
+    },
+    ariaLabel() {
+      if (this.day.hideLeftAndRightDays) return null
+      return this.calendarRoot.formatFullDate(
+        this.helpCalendar.getDateFromFormat(this.day.date)
+      )
+    },
     startActive() {
       if (!this.fConfigs.isMultipleDateRange)
         return (
@@ -271,33 +311,16 @@ export default {
       return !(vnodes.length && vnodes.every(isHtmlComment))
     },
     isDisabledDate(date) {
-      const datesCollection = this.fConfigs.disabledDates
-
-      return (
-        this.isDateIncludedInDatesCollection(date, datesCollection) ||
-        !this.isEnabledDate(date)
-      )
+      return this.calendarRoot.isDisabledDate(date)
     },
-    isEnabledDate(date) {
-      const datesCollection = this.fConfigs.enabledDates
-
-      return (
-        !datesCollection.length ||
-        this.isDateIncludedInDatesCollection(date, datesCollection)
-      )
-    },
-    isDateIncludedInDatesCollection(date, datesCollection) {
-      let today = new Date()
-      today.setHours(0, 0, 0, 0)
-      let dateObj = this.helpCalendar.getDateFromFormat(date)
-
-      return (
-        datesCollection.includes(date) ||
-        (datesCollection.includes('beforeToday') &&
-          dateObj.getTime() < today.getTime()) ||
-        (datesCollection.includes('afterToday') &&
-          dateObj.getTime() > today.getTime())
-      )
+    onKeydown(event) {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        this.calendarRoot.clickDay(this.day, this.isDisabledDate)
+        this.calendarRoot.returnFocusIfClosed()
+        return
+      }
+      this.calendarRoot.onDayKeydown(event, this.day, this.gridKey)
     },
     getClassNames(day) {
       let classes = []
