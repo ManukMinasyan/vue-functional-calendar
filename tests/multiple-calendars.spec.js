@@ -177,6 +177,54 @@ describe('month picker without isSeparately', () => {
   })
 })
 
+describe('pickers without isSeparately', () => {
+  const december = {
+    isMultiple: true,
+    calendarsCount: 2,
+    newCurrentDate: new Date(2026, 11, 1)
+  }
+
+  it('keeps the calendars consecutive when a month is picked across a year boundary', async () => {
+    const { wrapper } = mountCalendar(december)
+
+    wrapper.vm.pickMonth(2, 0)
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual(['March 2026', 'April 2026'])
+  })
+
+  it('keeps the calendars consecutive when a year is picked', async () => {
+    const { wrapper } = mountCalendar(december)
+
+    wrapper.vm.pickYear(2030, 0)
+    await nextTick()
+
+    expect(titles(wrapper)).toEqual(['December 2030', 'January 2031'])
+  })
+
+  it('moves currentDate and emits the model when a month is picked', async () => {
+    const { wrapper } = mountCalendar(december)
+
+    wrapper.vm.pickMonth(2, 0)
+    await nextTick()
+
+    expect(wrapper.vm.calendar.currentDate).toEqual(new Date(2026, 2, 1))
+    expect(lastValue(wrapper).currentDate).toBe(
+      new Date(2026, 2, 1).toISOString()
+    )
+  })
+
+  it('moves currentDate when a year is picked and emits changedYear once', async () => {
+    const { wrapper, events } = mountCalendar(december)
+
+    wrapper.vm.pickYear(2030, 0)
+    await nextTick()
+
+    expect(wrapper.vm.calendar.currentDate).toEqual(new Date(2030, 11, 1))
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2030, 11, 1)])
+  })
+})
+
 describe('unique ids', () => {
   it('keeps grid keys distinct after back and forward', async () => {
     const { wrapper } = mountCalendar({

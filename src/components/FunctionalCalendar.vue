@@ -1713,44 +1713,22 @@ export default {
     },
     pickMonth(key, calendarKey) {
       this.showMonthPicker = false
-      if (!this.fConfigs.isSeparately) {
-        this.listCalendars.forEach((currentCalendar, index) => {
-          let date = currentCalendar.date
-          currentCalendar.date = new Date(
-            date.getFullYear(),
-            key + 1 + index,
-            0
-          )
-          currentCalendar.key = hUniqueID()
-        })
-      } else {
-        let currentCalendar = this.listCalendars[calendarKey]
-        let date = currentCalendar.date
-        currentCalendar.date = new Date(date.getFullYear(), key + 1, 0)
-        currentCalendar.key = hUniqueID()
-      }
+      const grid = this.pickerGrid(calendarKey)
+      const target = new Date(grid.date.getFullYear(), key, 1)
 
-      let currentCalendar = this.listCalendars[calendarKey]
-      this.$emit('changedMonth', currentCalendar.date)
-      this.updateCalendar()
+      this.showMonth(grid, target)
+      this.$emit('changedMonth', target)
     },
     pickYear(year, calendarKey) {
       this.showYearPicker = false
-      if (!this.fConfigs.isSeparately) {
-        this.listCalendars.forEach(currentCalendar => {
-          let date = currentCalendar.date
-          currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
-          currentCalendar.key = hUniqueID()
-          this.$emit('changedYear', currentCalendar.date)
-        })
-      } else {
-        let currentCalendar = this.listCalendars[calendarKey]
-        let date = currentCalendar.date
-        currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
-        currentCalendar.key = hUniqueID()
-        this.$emit('changedYear', currentCalendar.date)
-      }
-      this.updateCalendar()
+      const grid = this.pickerGrid(calendarKey)
+      const target = new Date(year, grid.date.getMonth(), 1)
+
+      this.showMonth(grid, target)
+      this.$emit('changedYear', target)
+    },
+    pickerGrid(calendarKey) {
+      return this.listCalendars[this.fConfigs.isSeparately ? calendarKey : 0]
     },
     getYearList(date, delta) {
       let years = []

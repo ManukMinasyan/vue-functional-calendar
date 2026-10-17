@@ -46,6 +46,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - The `minSelDays` extension of a range stops at `limits` and before disabled days instead of running past them.
 - `disabledDates` and `enabledDates` apply to range clicks with `withTimePicker`. A disabled date was selectable and an enabled one was rejected.
 - A modal with `isAutoCloseable` and `withTimePicker` stays open for the time picker and closes when the time picker is closed (#103, #49).
+- Picking a month or year with several calendars keeps them consecutive, updates `currentDate`, emits the model and re-checks `limits`. It emits `changedYear` once, and the dates of `changedMonth` and `changedYear` are the first of the month.
 
 ## 2.10.0 - 2026-10-17
 

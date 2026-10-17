@@ -100,6 +100,23 @@ describe('limits', () => {
   })
 })
 
+describe('limits after picking a month', () => {
+  it('re-checks the arrows for the picked month', async () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      limits: { min: '1/10/2026', max: '31/12/2027' }
+    })
+    expect(arrow(wrapper, 'left').classes()).toContain('vfc-disabled')
+
+    wrapper.vm.pickMonth(11, 0)
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('December 2026')
+    expect(wrapper.vm.calendar.currentDate.getMonth()).toBe(11)
+    expect(arrow(wrapper, 'left').classes()).not.toContain('vfc-disabled')
+  })
+})
+
 describe('disabledDates', () => {
   afterEach(() => {
     vi.useRealTimers()
