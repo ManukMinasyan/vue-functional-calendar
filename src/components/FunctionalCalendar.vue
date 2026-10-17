@@ -1702,22 +1702,22 @@ export default {
   justify-content: center;
   padding: 0;
   span {
-    padding: var(--vfc-space-1) var(--vfc-space-3);
-    font-size: var(--vfc-font-size-sm);
-    font-weight: var(--vfc-font-weight-medium);
+    padding: var(--_vfc-space-1) var(--_vfc-space-3);
+    font-size: var(--_vfc-font-size-sm);
+    font-weight: var(--_vfc-font-weight-medium);
     line-height: 24px;
-    border: 1px solid var(--vfc-border-strong);
-    border-radius: var(--vfc-radius);
+    border: 1px solid var(--_vfc-border-strong);
+    border-radius: var(--_vfc-radius);
     &.active {
-      color: var(--vfc-text);
+      color: var(--_vfc-text);
       cursor: pointer;
       &:hover {
-        background-color: var(--vfc-hover);
+        background-color: var(--_vfc-hover);
       }
     }
     &.disabled {
-      color: var(--vfc-text-disabled);
-      border-color: var(--vfc-border);
+      color: var(--_vfc-text-disabled);
+      border-color: var(--_vfc-border);
     }
   }
 }

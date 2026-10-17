@@ -503,43 +503,43 @@ export default {
   .times,
   .number {
     position: absolute;
-    top: calc(var(--vfc-space-1) * -1);
+    top: calc(var(--_vfc-space-1) * -1);
     z-index: 20;
     width: 16px;
     height: 16px;
-    font-size: var(--vfc-font-size-xs);
-    font-weight: var(--vfc-font-weight-strong);
+    font-size: var(--_vfc-font-size-xs);
+    font-weight: var(--_vfc-font-weight-strong);
     line-height: 16px;
     text-align: center;
     border-radius: 50%;
   }
   .times {
-    left: calc(50% + var(--vfc-day-size) / 2 - 12px);
-    color: var(--vfc-on-danger);
+    left: calc(50% + var(--_vfc-day-size) / 2 - 12px);
+    color: var(--_vfc-on-danger);
     cursor: pointer;
-    background-color: var(--vfc-danger);
+    background-color: var(--_vfc-danger);
   }
   .number {
     z-index: 30;
-    left: calc(50% - var(--vfc-day-size) / 2 - 4px);
-    color: var(--vfc-on-primary);
-    background-color: var(--vfc-primary);
+    left: calc(50% - var(--_vfc-day-size) / 2 - 4px);
+    color: var(--_vfc-on-primary);
+    background-color: var(--_vfc-primary);
     &:hover {
-      background-color: var(--vfc-primary-hover);
+      background-color: var(--_vfc-primary-hover);
     }
   }
   .toolTip {
     position: absolute;
-    top: calc(var(--vfc-space-5) * -1);
+    top: calc(var(--_vfc-space-5) * -1);
     left: 0;
     z-index: 200;
     max-width: 108px;
-    padding: var(--vfc-space-1) var(--vfc-space-2);
-    color: var(--vfc-bg);
+    padding: var(--_vfc-space-1) var(--_vfc-space-2);
+    color: var(--_vfc-bg);
     word-wrap: break-word;
-    background-color: var(--vfc-text);
-    border-radius: var(--vfc-radius-sm);
-    box-shadow: var(--vfc-shadow-md);
+    background-color: var(--_vfc-text);
+    border-radius: var(--_vfc-radius-sm);
+    box-shadow: var(--_vfc-shadow-md);
   }
 }
 </style>

@@ -318,12 +318,12 @@ export default {
     display: flex;
     align-items: center;
     height: 40px;
-    padding: 0 var(--vfc-space-2);
+    padding: 0 var(--_vfc-space-2);
     > div {
       flex: 1;
-      font-size: var(--vfc-font-size-xs);
-      font-weight: var(--vfc-font-weight-strong);
-      color: var(--vfc-text-muted);
+      font-size: var(--_vfc-font-size-xs);
+      font-weight: var(--_vfc-font-weight-strong);
+      color: var(--_vfc-text-muted);
       text-align: center;
       text-transform: uppercase;
       letter-spacing: 0.04em;
