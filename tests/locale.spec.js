@@ -394,9 +394,9 @@ describe('week start source', () => {
     const IntlLocale = Intl.Locale
     Intl.Locale = undefined
     try {
-      const { wrapper } = mountCalendar({ locale: 'de-DE' })
+      const { wrapper } = mountCalendar({ locale: 'en-US' })
 
-      expect(dayNameTexts(wrapper)[0]).toBe(weekdays('de-DE')[0])
+      expect(dayNameTexts(wrapper)[0]).toBe(weekdays('en-US')[0])
     } finally {
       Intl.Locale = IntlLocale
     }

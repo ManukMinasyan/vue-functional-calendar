@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { nextTick } from 'vue'
 import { hUniqueID } from '../src/utils/helpers.js'
 import {
   mountCalendar,
@@ -177,6 +178,37 @@ describe('month picker without isSeparately', () => {
 })
 
 describe('unique ids', () => {
+  it('keeps grid keys distinct after back and forward', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2
+    })
+
+    wrapper.vm.PreMonth(0)
+    wrapper.vm.PreMonth(1)
+    wrapper.vm.NextMonth(1)
+    wrapper.vm.NextMonth(0)
+    await nextTick()
+
+    expect(new Set(wrapper.vm.listCalendars.map(c => c.key)).size).toBe(2)
+  })
+
+  it('changes a grid key on every navigation', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 2 })
+    const keys = []
+
+    keys.push(wrapper.vm.listCalendars[0].key)
+    wrapper.vm.NextMonth()
+    await nextTick()
+    keys.push(wrapper.vm.listCalendars[0].key)
+    wrapper.vm.PreMonth()
+    await nextTick()
+    keys.push(wrapper.vm.listCalendars[0].key)
+
+    expect(new Set(keys).size).toBe(3)
+  })
+
   it('never repeats within the same millisecond', () => {
     const ids = Array.from({ length: 1000 }, () => hUniqueID())
 

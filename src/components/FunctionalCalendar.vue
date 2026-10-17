@@ -634,7 +634,7 @@ export default {
         date = new Date(date.getFullYear(), date.getMonth() + 1)
 
         let calendar = {
-          key: i + hUniqueID(),
+          key: hUniqueID(),
           date: date,
           dateTop: `${
             this.fConfigs.monthNames[date.getMonth()]
@@ -1612,7 +1612,7 @@ export default {
         currentCalendar.date.getFullYear(),
         currentCalendar.date.getMonth() - step
       )
-      currentCalendar.key -= hUniqueID()
+      currentCalendar.key = hUniqueID()
       this.updateCalendar()
 
       if (!this.fConfigs.isSeparately) {
@@ -1639,7 +1639,7 @@ export default {
         currentCalendar.date.getFullYear(),
         currentCalendar.date.getMonth() + step
       )
-      currentCalendar.key += hUniqueID()
+      currentCalendar.key = hUniqueID()
       this.updateCalendar()
 
       if (!this.fConfigs.isSeparately) {
@@ -1761,13 +1761,13 @@ export default {
             key + 1 + index,
             0
           )
-          currentCalendar.key += hUniqueID()
+          currentCalendar.key = hUniqueID()
         })
       } else {
         let currentCalendar = this.listCalendars[calendarKey]
         let date = currentCalendar.date
         currentCalendar.date = new Date(date.getFullYear(), key + 1, 0)
-        currentCalendar.key += hUniqueID()
+        currentCalendar.key = hUniqueID()
       }
 
       let currentCalendar = this.listCalendars[calendarKey]
@@ -1780,14 +1780,14 @@ export default {
         this.listCalendars.forEach(currentCalendar => {
           let date = currentCalendar.date
           currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
-          currentCalendar.key += hUniqueID()
+          currentCalendar.key = hUniqueID()
           this.$emit('changedYear', currentCalendar.date)
         })
       } else {
         let currentCalendar = this.listCalendars[calendarKey]
         let date = currentCalendar.date
         currentCalendar.date = new Date(year, date.getMonth() + 1, 0)
-        currentCalendar.key += hUniqueID()
+        currentCalendar.key = hUniqueID()
         this.$emit('changedYear', currentCalendar.date)
       }
       this.updateCalendar()
@@ -2208,7 +2208,7 @@ export default {
 
       this.transitionPrefix = forward ? 'left' : 'right'
       grid.date = start
-      grid.key += hUniqueID()
+      grid.key = hUniqueID()
       this.updateCalendar()
 
       if (!separately) {
