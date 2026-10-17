@@ -116,6 +116,64 @@ describe('modal mode', () => {
     expect(isHidden(wrapper)).toBe(true)
   })
 
+  it('keeps the modal open for the time picker and closes it with the picker', async () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDatePicker: true,
+      isAutoCloseable: true,
+      withTimePicker: true
+    })
+    await wrapper.trigger('focusin')
+
+    await clickDay(wrapper, 10)
+
+    expect(isHidden(wrapper)).toBe(false)
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(true)
+
+    await wrapper.find('.vfc-close').trigger('click')
+
+    expect(isHidden(wrapper)).toBe(true)
+  })
+
+  it('closes after the time picker of the completed range is closed', async () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDateRange: true,
+      isAutoCloseable: true,
+      withTimePicker: true
+    })
+    await wrapper.trigger('focusin')
+
+    await clickDay(wrapper, 10)
+    await wrapper.find('.vfc-close').trigger('click')
+    expect(isHidden(wrapper)).toBe(false)
+
+    await clickDay(wrapper, 14)
+    expect(isHidden(wrapper)).toBe(false)
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(true)
+
+    await wrapper.find('.vfc-close').trigger('click')
+    expect(isHidden(wrapper)).toBe(true)
+  })
+
+  it('closes the modal when Escape closes the time picker of a completed range', async () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDateRange: true,
+      isAutoCloseable: true,
+      withTimePicker: true
+    })
+    await wrapper.trigger('focusin')
+    await clickDay(wrapper, 10)
+    await wrapper.find('.vfc-close').trigger('click')
+    await clickDay(wrapper, 14)
+
+    await wrapper.trigger('keydown', { key: 'Escape' })
+
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
+    expect(isHidden(wrapper)).toBe(true)
+  })
+
   it('does not apply the vfc-modal class to a calendar that is not a picker', () => {
     const { wrapper } = mountCalendar({ isModal: true })
 

@@ -868,10 +868,7 @@ export default {
         this.calendar.selectedDate = date
         this.emitModel()
 
-        // Is Auto Closeable
-        if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
-          this.showCalendar = false
-        }
+        if (!this.fConfigs.withTimePicker) this.autoCloseModal()
       } else if (this.fConfigs.isMultipleDatePicker) {
         if (
           this.calendar.hasOwnProperty('selectedDates') &&
@@ -948,9 +945,7 @@ export default {
 
       this.$emit('selectedDaysCount', diffDays)
 
-      if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
-        this.showCalendar = false
-      }
+      if (!this.fConfigs.withTimePicker) this.autoCloseModal()
 
       const { minSelDays, maxSelDays } = this.fConfigs
       const isShort = minSelDays && diffDays < minSelDays
@@ -1697,6 +1692,33 @@ export default {
     openTimePicker() {
       this.showTimePicker = true
     },
+    closeTimePicker() {
+      this.showTimePicker = false
+
+      if (this.isSelectionComplete()) {
+        this.autoCloseModal()
+        this.returnFocusIfClosed()
+      }
+    },
+    isSelectionComplete() {
+      const { fConfigs, calendar } = this
+
+      if (fConfigs.isMultipleDateRange) {
+        const last = calendar.multipleDateRange.slice(-1)[0]
+        return !!last && !!last.start && !!last.end
+      }
+
+      if (fConfigs.isDateRange) {
+        return !!calendar.dateRange.start && !!calendar.dateRange.end
+      }
+
+      return !!fConfigs.isDatePicker
+    },
+    autoCloseModal() {
+      if (this.fConfigs.isModal && this.fConfigs.isAutoCloseable) {
+        this.showCalendar = false
+      }
+    },
     pickMonth(key, calendarKey) {
       this.showMonthPicker = false
       if (!this.fConfigs.isSeparately) {
@@ -2240,7 +2262,7 @@ export default {
       if (this.showTimePicker) {
         e.preventDefault()
         e.stopPropagation()
-        this.showTimePicker = false
+        this.closeTimePicker()
         return
       }
 

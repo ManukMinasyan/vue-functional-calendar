@@ -164,7 +164,7 @@ export default {
       return i < 10 ? '0' + i : i
     },
     close() {
-      this.calendarRoot.showTimePicker = false
+      this.calendarRoot.closeTimePicker()
     },
     tabStop(kind, index) {
       const values = kind === 'hour' ? this.hours : this.minutes
