@@ -1,0 +1,4 @@
+[
+  {"version": "3.x", "title": "v3 (Latest)", "path": "/vue-functional-calendar/", "branch": "3.x", "isLatest": true},
+  {"version": "2.x", "title": "v2 (Vue 2)", "path": "/vue-functional-calendar/v2/", "branch": "2.x", "isLatest": false}
+]
