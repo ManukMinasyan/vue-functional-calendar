@@ -1601,26 +1601,7 @@ export default {
     PreMonth(calendarKey = null) {
       if (!this.allowPreDate) return false
 
-      this.transitionPrefix = 'right'
-
-      let step = this.fConfigs.changeMonthStep
-
-      calendarKey = calendarKey !== null ? calendarKey : 0
-
-      let currentCalendar = this.listCalendars[calendarKey]
-      currentCalendar.date = new Date(
-        currentCalendar.date.getFullYear(),
-        currentCalendar.date.getMonth() - step
-      )
-      currentCalendar.key = hUniqueID()
-      this.updateCalendar()
-
-      if (!this.fConfigs.isSeparately) {
-        this.calendar.currentDate = currentCalendar.date
-        this.initCalendar()
-      }
-
-      this.$emit('changedMonth', currentCalendar.date)
+      this.changeMonth(calendarKey, -this.fConfigs.changeMonthStep, 'right')
     },
     /**
      * @return {boolean}
@@ -1628,26 +1609,7 @@ export default {
     NextMonth(calendarKey = null) {
       if (!this.allowNextDate) return false
 
-      this.transitionPrefix = 'left'
-
-      let step = this.fConfigs.changeMonthStep
-
-      calendarKey = calendarKey !== null ? calendarKey : 0
-
-      let currentCalendar = this.listCalendars[calendarKey]
-      currentCalendar.date = new Date(
-        currentCalendar.date.getFullYear(),
-        currentCalendar.date.getMonth() + step
-      )
-      currentCalendar.key = hUniqueID()
-      this.updateCalendar()
-
-      if (!this.fConfigs.isSeparately) {
-        this.calendar.currentDate = currentCalendar.date
-        this.initCalendar()
-      }
-
-      this.$emit('changedMonth', currentCalendar.date)
+      this.changeMonth(calendarKey, this.fConfigs.changeMonthStep, 'left')
     },
     /**
      * @return {boolean}
@@ -1655,23 +1617,7 @@ export default {
     PreYear(calendarKey = null) {
       if (!this.allowPreDate) return false
 
-      let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1
-
-      calendarKey = calendarKey !== null ? calendarKey : 0
-
-      let currentCalendar = this.listCalendars[calendarKey]
-      currentCalendar.date = new Date(
-        currentCalendar.date.getFullYear() - step,
-        currentCalendar.date.getMonth()
-      )
-      this.updateCalendar()
-
-      if (!this.fConfigs.isSeparately) {
-        this.calendar.currentDate = currentCalendar.date
-        this.initCalendar()
-      }
-
-      this.$emit('changedYear', currentCalendar.date)
+      this.changeYear(calendarKey, -this.yearStep())
     },
     /**
      * @return {boolean}
@@ -1679,23 +1625,39 @@ export default {
     NextYear(calendarKey = null) {
       if (!this.allowNextDate) return false
 
-      let step = this.showYearPicker ? this.fConfigs.changeYearStep : 1
-
-      calendarKey = calendarKey !== null ? calendarKey : 0
-
-      let currentCalendar = this.listCalendars[calendarKey]
-      currentCalendar.date = new Date(
-        currentCalendar.date.getFullYear() + step,
-        currentCalendar.date.getMonth()
+      this.changeYear(calendarKey, this.yearStep())
+    },
+    yearStep() {
+      return this.showYearPicker ? this.fConfigs.changeYearStep : 1
+    },
+    changeMonth(calendarKey, months, transition) {
+      this.transitionPrefix = transition
+      this.$emit('changedMonth', this.moveMonths(calendarKey, months))
+    },
+    changeYear(calendarKey, years) {
+      this.$emit('changedYear', this.moveMonths(calendarKey, years * 12))
+    },
+    moveMonths(calendarKey, months) {
+      const grid = this.listCalendars[calendarKey !== null ? calendarKey : 0]
+      const target = new Date(
+        grid.date.getFullYear(),
+        grid.date.getMonth() + months,
+        1
       )
-      this.updateCalendar()
 
-      if (!this.fConfigs.isSeparately) {
-        this.calendar.currentDate = currentCalendar.date
-        this.initCalendar()
+      this.showMonth(grid, target)
+      return target
+    },
+    showMonth(grid, date) {
+      if (this.fConfigs.isSeparately) {
+        grid.date = date
+        grid.key = hUniqueID()
+        this.updateCalendar()
+        return
       }
 
-      this.$emit('changedYear', currentCalendar.date)
+      this.calendar.currentDate = date
+      this.initCalendar()
     },
     ChooseDate(date) {
       let newDate = this.helpCalendar.getDateFromFormat(date)
@@ -1704,9 +1666,7 @@ export default {
         newDate = new Date()
       }
 
-      this.listCalendars[0].date = this.calendar.currentDate = newDate
-
-      this.updateCalendar()
+      this.calendar.currentDate = newDate
       this.initCalendar()
     },
     openMonthPicker(key) {
@@ -2207,14 +2167,7 @@ export default {
           : month
 
       this.transitionPrefix = forward ? 'left' : 'right'
-      grid.date = start
-      grid.key = hUniqueID()
-      this.updateCalendar()
-
-      if (!separately) {
-        this.calendar.currentDate = start
-        this.initCalendar()
-      }
+      this.showMonth(grid, start)
 
       this.$emit(changeEvent, start)
       return true

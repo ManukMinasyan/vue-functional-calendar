@@ -481,3 +481,50 @@ describe('month and year pickers with several calendars', () => {
     expect(titles(wrapper)).toEqual(['October 2030', 'November 2030'])
   })
 })
+
+describe('grid builds per navigation', () => {
+  it.each([
+    ['PreMonth', vm => vm.PreMonth()],
+    ['NextMonth', vm => vm.NextMonth()],
+    ['PreYear', vm => vm.PreYear()],
+    ['NextYear', vm => vm.NextYear()],
+    ['ChooseDate', vm => vm.ChooseDate('15/12/2027')],
+    ['pickMonth', vm => vm.pickMonth(3, 0)],
+    ['pickYear', vm => vm.pickYear(2030, 0)]
+  ])('builds the grids once for %s', async (_, move) => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 2 })
+    await nextTick()
+    const build = vi.spyOn(wrapper.vm.helpCalendar, 'getFinalizedWeeks')
+
+    move(wrapper.vm)
+    await nextTick()
+
+    expect(build).toHaveBeenCalledTimes(2)
+  })
+
+  it('builds the grids once for a keyboard move into another month', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 2 })
+    await nextTick()
+    const build = vi.spyOn(wrapper.vm.helpCalendar, 'getFinalizedWeeks')
+
+    wrapper.vm.revealDate(new Date(2027, 2, 1), 0, 'changedMonth')
+    await nextTick()
+
+    expect(build).toHaveBeenCalledTimes(2)
+  })
+
+  it('builds the grids once for a move with isSeparately', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2
+    })
+    await nextTick()
+    const build = vi.spyOn(wrapper.vm.helpCalendar, 'getFinalizedWeeks')
+
+    wrapper.vm.NextMonth(1)
+    await nextTick()
+
+    expect(build).toHaveBeenCalledTimes(2)
+  })
+})
