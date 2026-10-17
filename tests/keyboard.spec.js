@@ -1,5 +1,6 @@
+import { readFileSync } from 'node:fs'
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { nextTick } from 'vue'
+import { nextTick, reactive } from 'vue'
 import {
   mountCalendarReady,
   calendarTitle,
@@ -61,12 +62,17 @@ describe('grid semantics', () => {
     const grid = wrapper.find('[role="grid"]')
 
     const header = wrapper.find('.vfc-dayNames')
+    const rows = grid.findAll('.vfc-week')
 
     expect(grid.attributes('aria-label')).toBe('October 2026')
-    expect(grid.findAll('[role="row"]').length).toBeGreaterThan(1)
-    expect(grid.attributes('aria-owns')).toBe(header.attributes('id'))
-    expect(header.attributes('role')).toBe('row')
-    expect(header.findAll('[role="columnheader"]')).toHaveLength(7)
+    expect(grid.attributes('aria-owns')).toBeUndefined()
+    expect(header.attributes('aria-hidden')).toBe('true')
+    expect(header.attributes('id')).toBeUndefined()
+    expect(rows.length).toBeGreaterThan(1)
+    rows.forEach(row => {
+      expect(row.attributes('role')).toBe('row')
+      expect(row.findAll('[role="gridcell"]')).toHaveLength(7)
+    })
   })
 
   it('labels every day cell with the full date', async () => {
@@ -147,32 +153,49 @@ describe('grid semantics', () => {
     expect(calendarTitle(wrapper)).toBe('November 2026')
   })
 
-  it('renders a custom arrow slot in a div button instead of nesting it in a button', async () => {
+  it('renders a plain slot in a div role=button with key handling', async () => {
     const { wrapper } = await mountCalendarReady(
       {},
-      {
-        slots: {
-          navigationArrowLeft: '<a class="custom-left" href="#">p</a>',
-          navigationArrowRight: '<button class="custom-right">n</button>'
-        }
-      }
+      { slots: { navigationArrowRight: '<i class="custom-right">n</i>' } }
     )
-
-    const previous = wrapper.find('div[aria-label="Previous month"]')
     const next = wrapper.find('div[aria-label="Next month"]')
 
-    expect(previous.attributes('role')).toBe('button')
-    expect(previous.attributes('tabindex')).toBe('0')
-    expect(previous.find('.custom-left').exists()).toBe(true)
-    expect(wrapper.find('button button').exists()).toBe(false)
+    expect(next.attributes('role')).toBe('button')
+    expect(next.attributes('tabindex')).toBe('0')
+    expect(next.find('.custom-right').exists()).toBe(true)
 
-    next.element.dispatchEvent(
-      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })
-    )
+    next.element.dispatchEvent(keyEvent('Enter'))
     await nextTick()
 
     expect(calendarTitle(wrapper)).toBe('November 2026')
   })
+
+  it.each([
+    ['a', '<a class="custom" href="#">n</a>'],
+    ['button', '<button class="custom">n</button>'],
+    ['input', '<input class="custom" />'],
+    ['tabindex', '<span class="custom" tabindex="0">n</span>'],
+    ['nested', '<span><b><button class="custom">n</button></b></span>']
+  ])(
+    'leaves the %s in an arrow slot as the only tab stop',
+    async (_, markup) => {
+      const { wrapper } = await mountCalendarReady(
+        {},
+        { slots: { navigationArrowLeft: markup } }
+      )
+      const control = wrapper.find('.vfc-separately-navigation-buttons > div')
+
+      expect(control.attributes('role')).toBeUndefined()
+      expect(control.attributes('tabindex')).toBeUndefined()
+      expect(control.attributes('aria-label')).toBeUndefined()
+      expect(control.find('.custom').exists()).toBe(true)
+      expect(wrapper.find('button button').exists()).toBe(false)
+
+      await control.find('.custom').trigger('click')
+
+      expect(calendarTitle(wrapper)).toBe('September 2026')
+    }
+  )
 
   it('keeps focus reachable on an arrow that is at its limit', async () => {
     const { wrapper } = await mountCalendarReady({
@@ -705,7 +728,7 @@ describe('modal mode', () => {
     expect(active()).toBe(findDay(wrapper, 15))
   })
 
-  it('opens on Enter from the input and focuses the roving day', async () => {
+  it('opens on Alt+ArrowDown from the input and focuses the roving day', async () => {
     vi.useFakeTimers({ toFake: ['Date'] })
     vi.setSystemTime(new Date(2026, 9, 15, 12))
     const { wrapper } = await mountModal()
@@ -713,7 +736,7 @@ describe('modal mode', () => {
     input.focus()
     await press(input, 'Escape')
 
-    await press(input, 'Enter')
+    await press(input, 'ArrowDown', { altKey: true })
 
     expect(active()).toBe(findDay(wrapper, 15))
   })
@@ -1125,20 +1148,39 @@ describe('Enter in a typeable modal input', () => {
     expect(wrapper.element.contains(active())).toBe(true)
   })
 
-  it('opens on the next Enter once the input is unchanged', async () => {
+  it('never intercepts Enter, so a form can submit', async () => {
     const { input, wrapper } = await mountTypeable()
-    await input.setValue('15/01/2027')
-    input.element.dispatchEvent(keyEvent('Enter'))
-    await nextTick()
+
+    for (const text of ['15/01/2027', '']) {
+      await input.setValue(text)
+      const event = keyEvent('Enter')
+
+      input.element.dispatchEvent(event)
+      await nextTick()
+
+      expect(event.defaultPrevented).toBe(false)
+      expect(active()).toBe(input.element)
+    }
+    expect(wrapper.element.contains(active())).toBe(true)
+  })
+
+  it('lets Enter submit the surrounding form', async () => {
+    const submit = vi.fn(event => event.preventDefault())
+    const form = document.createElement('form')
+    form.addEventListener('submit', submit)
+    document.body.appendChild(form)
+    const { wrapper } = await mountCalendarReady(
+      { isModal: true, isDatePicker: true, isTypeable: true },
+      { attachTo: form }
+    )
+    const input = wrapper.find('input.vfc-single-input')
+    input.element.focus()
     const event = keyEvent('Enter')
 
     input.element.dispatchEvent(event)
-    await nextTick()
-    await nextTick()
 
-    expect(event.defaultPrevented).toBe(true)
-    expect(active().getAttribute('role')).toBe('gridcell')
-    expect(isHidden(wrapper)).toBe(false)
+    expect(event.defaultPrevented).toBe(false)
+    form.remove()
   })
 
   it('moves into the grid on ArrowDown even after typing', async () => {
@@ -1152,17 +1194,25 @@ describe('Enter in a typeable modal input', () => {
     expect(active().getAttribute('role')).toBe('gridcell')
   })
 
-  it('treats Enter on an empty input as open', async () => {
+  it('opens on Alt+ArrowDown too', async () => {
     const { input } = await mountTypeable()
-    await input.setValue('')
-    const event = keyEvent('Enter')
+
+    input.element.dispatchEvent(keyEvent('ArrowDown', { altKey: true }))
+    await nextTick()
+    await nextTick()
+
+    expect(active().getAttribute('role')).toBe('gridcell')
+  })
+
+  it('ignores ArrowDown with Ctrl or Shift', async () => {
+    const { input } = await mountTypeable()
+    const event = keyEvent('ArrowDown', { ctrlKey: true })
 
     input.element.dispatchEvent(event)
     await nextTick()
-    await nextTick()
 
-    expect(event.defaultPrevented).toBe(true)
-    expect(active().getAttribute('role')).toBe('gridcell')
+    expect(event.defaultPrevented).toBe(false)
+    expect(active()).toBe(input.element)
   })
 })
 
@@ -1201,7 +1251,7 @@ describe('roving day reset', () => {
 })
 
 describe('hidden adjacent days and week numbers', () => {
-  it('keeps seven gridcells in every row when adjacent days are hidden', async () => {
+  it('keeps seven visible gridcells in every row when adjacent days are hidden', async () => {
     const { wrapper } = await mountCalendarReady({
       isDatePicker: true,
       hiddenElements: ['leftAndRightDays']
@@ -1210,9 +1260,10 @@ describe('hidden adjacent days and week numbers', () => {
     wrapper.findAll('.vfc-week').forEach(week => {
       expect(week.findAll('[role="gridcell"]')).toHaveLength(7)
     })
-    expect(
-      wrapper.findAll('[role="gridcell"][aria-hidden="true"]').length
-    ).toBe(wrapper.findAll('.vfc-week').length * 7 - 31)
+    expect(wrapper.findAll('[role="gridcell"][aria-hidden]')).toHaveLength(0)
+    expect(wrapper.findAll('[role="gridcell"]:not([aria-label])').length).toBe(
+      wrapper.findAll('.vfc-week').length * 7 - 31
+    )
   })
 
   it('gives each week number a rowheader cell', async () => {
@@ -1390,28 +1441,120 @@ describe('2.x DOM selectors', () => {
     expect(content.element.lastElementChild.getAttribute('role')).toBe('grid')
   })
 
-  it('gives every calendar instance its own day names id', async () => {
-    const first = await mountCalendarReady({ isDatePicker: true })
-    const second = await mountCalendarReady({ isDatePicker: true })
-
-    const ids = [first, second].map(({ wrapper }) =>
-      wrapper.find('.vfc-dayNames').attributes('id')
+  it('matches the filler rows with the selector calendar.scss uses', async () => {
+    const { wrapper } = await mountCalendarReady(
+      { isDatePicker: true },
+      { global: { stubs: { transition: false, TransitionGroup: false } } }
     )
+    const scss = readFileSync('src/assets/scss/calendar.scss', 'utf8')
+    const selector = ".vfc-content > div > div:not(.vfc-week)[style*='height']"
 
-    expect(new Set(ids).size).toBe(2)
-    expect(document.querySelectorAll(`[id="${ids[0]}"]`)).toHaveLength(1)
+    expect(scss).toContain(`&-calendar ${selector}`)
+    expect(
+      wrapper.element.querySelectorAll(`.vfc-calendar ${selector}`)
+    ).toHaveLength(1)
   })
 
-  it('gives each grid of a multiple calendar its own id', async () => {
+  it('renders no ids or aria-owns for the day names', async () => {
     const { wrapper } = await mountCalendarReady({
       isMultiple: true,
       calendarsCount: 3
     })
 
-    const ids = wrapper
-      .findAll('.vfc-dayNames')
-      .map(header => header.attributes('id'))
+    expect(wrapper.findAll('.vfc-dayNames[id]')).toHaveLength(0)
+    expect(wrapper.findAll('[aria-owns]')).toHaveLength(0)
+    wrapper.findAll('.vfc-dayNames').forEach(header => {
+      expect(header.attributes('aria-hidden')).toBe('true')
+    })
+  })
+})
 
-    expect(new Set(ids).size).toBe(3)
+describe('roving day with a parent reactive model', () => {
+  it('keeps the focused day through a multiple date toggle', async () => {
+    const model = reactive(emptyModel())
+    const { wrapper } = await mountCalendarReady({
+      isMultipleDatePicker: true,
+      modelValue: model
+    })
+
+    await press(focusDay(wrapper, 22), 'Enter')
+    await press(active(), 'ArrowRight')
+    await press(active(), 'Enter')
+
+    expect(model.selectedDates.map(item => item.date)).toEqual([
+      '22/10/2026',
+      '23/10/2026'
+    ])
+    expect(tabStops(wrapper)).toEqual([findDay(wrapper, 23)])
+  })
+
+  it('keeps the focused day when the parent mutates a ref-style proxy', async () => {
+    const model = reactive(emptyModel({ selectedDate: '20/10/2026' }))
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      modelValue: model
+    })
+    focusDay(wrapper, 25)
+    await nextTick()
+
+    model.selectedHour = '05'
+    await nextTick()
+
+    expect(tabStops(wrapper)).toEqual([findDay(wrapper, 25)])
+  })
+})
+
+describe('removing a pending range', () => {
+  it('finds a pending range whose start carries a time', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      isMultipleDateRange: true
+    })
+    wrapper.vm.calendar.multipleDateRange = [
+      { start: '10/10/2026 00:00', end: '' }
+    ]
+
+    wrapper.vm.removeRangeAt('10/10/2026')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([])
+  })
+})
+
+describe('weekday in day labels', () => {
+  const dayNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+
+  it('uses the custom day name when no locale is set', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      dayNames
+    })
+
+    expect(findDay(wrapper, 15).getAttribute('aria-label')).toBe(
+      fullDate(2026, 9, 15).replace(/^[^,]+/, 'D')
+    )
+    expect(findDay(wrapper, 18).getAttribute('aria-label')).toMatch(/^G,/)
+  })
+
+  it('names the real weekday when the week starts on Sunday', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      dayNames,
+      sundayStart: true
+    })
+
+    expect(findDay(wrapper, 18).getAttribute('aria-label')).toMatch(/^G,/)
+    expect(findDay(wrapper, 15).getAttribute('aria-label')).toMatch(/^D,/)
+  })
+
+  it('keeps the locale weekday when a locale is set', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      locale: 'de-DE',
+      dayNames
+    })
+
+    expect(findDay(wrapper, 15).getAttribute('aria-label')).toBe(
+      'Donnerstag, 15. Oktober 2026'
+    )
   })
 })

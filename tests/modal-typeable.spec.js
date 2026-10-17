@@ -529,6 +529,161 @@ describe('typed input filtering', () => {
   })
 })
 
+describe('typing at the caret', () => {
+  const mountTypeable = async (props = {}) => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDatePicker: true,
+      isTypeable: true,
+      modelValue: model,
+      ...props
+    })
+    return { model, input: wrapper.find('input.vfc-single-input').element }
+  }
+
+  const edit = async (
+    input,
+    value,
+    caret,
+    inputType = 'insertText',
+    data = null
+  ) => {
+    input.value = value
+    input.setSelectionRange(caret, caret)
+    input.dispatchEvent(
+      new InputEvent('input', { inputType, data, bubbles: true })
+    )
+    await nextTick()
+  }
+
+  it('drops a digit typed into a full month without touching other parts', async () => {
+    const { input } = await mountTypeable()
+
+    await edit(input, '5/112/2027', 5)
+
+    expect(input.value).toBe('5/11/2027')
+    expect(input.selectionStart).toBe(4)
+  })
+
+  it('drops a third day digit typed mid-string', async () => {
+    const { input } = await mountTypeable()
+
+    await edit(input, '151/01/20', 3)
+
+    expect(input.value).toBe('15/01/20')
+    expect(input.selectionStart).toBe(2)
+  })
+
+  it('drops a fifth year digit typed at the end', async () => {
+    const { model, input } = await mountTypeable()
+
+    await edit(input, '12/03/20277', 11)
+
+    expect(model.selectedDate).toBe('12/3/2027')
+    expect(input.value).toBe('12/3/2027')
+  })
+
+  it('moves a digit that overflows the last typed part into the next part', async () => {
+    const { input } = await mountTypeable()
+
+    await edit(input, '151', 3)
+
+    expect(input.value).toBe('15/1')
+    expect(input.selectionStart).toBe(4)
+  })
+
+  it('removes a typed letter and keeps the caret in place', async () => {
+    const { input } = await mountTypeable()
+
+    await edit(input, '15a/01', 3)
+
+    expect(input.value).toBe('15/01')
+    expect(input.selectionStart).toBe(2)
+  })
+
+  it.each(['-', '.', ' '])(
+    'turns a typed %j into the format separator',
+    async char => {
+      const { input } = await mountTypeable()
+
+      await edit(input, `15${char}`, 3)
+
+      expect(input.value).toBe('15/')
+      expect(input.selectionStart).toBe(3)
+    }
+  )
+
+  it('rejects a second separator in a row', async () => {
+    const { input } = await mountTypeable()
+
+    await edit(input, '15//', 4)
+
+    expect(input.value).toBe('15/')
+  })
+
+  it('leaves deletions alone', async () => {
+    const { input } = await mountTypeable()
+
+    await edit(input, '5//2027', 2, 'deleteContentBackward')
+
+    expect(input.value).toBe('5//2027')
+    expect(input.selectionStart).toBe(2)
+  })
+
+  it('keeps a time suffix while editing the date', async () => {
+    const { input } = await mountTypeable({ dateFormat: 'dd/mm/yyyy hh:mm' })
+
+    await edit(input, '5/112/20 10:30', 5)
+
+    expect(input.value).toBe('5/11/20 10:30')
+    expect(input.selectionStart).toBe(4)
+  })
+
+  it.each([['15-01-2027'], ['15.01.2027'], ['15 01 2027'], ['15/01/2027']])(
+    'normalises a pasted %s',
+    async pasted => {
+      const { model, input } = await mountTypeable()
+
+      await edit(input, pasted, pasted.length, 'insertFromPaste')
+
+      expect(model.selectedDate).toBe('15/1/2027')
+      expect(input.value).toBe('15/1/2027')
+    }
+  )
+
+  it('treats a multi-character insertText as a paste', async () => {
+    const { model, input } = await mountTypeable()
+
+    await edit(input, '15-01-2027', 10, 'insertText', '15-01-2027')
+
+    expect(model.selectedDate).toBe('15/1/2027')
+  })
+
+  it('normalises pasted separators in a range input', async () => {
+    const model = emptyModel()
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true,
+      isTypeable: true,
+      modelValue: model
+    })
+    const [start] = wrapper.findAll('.vfc-multiple-input input')
+
+    await edit(start.element, '05.01.2027', 10, 'insertFromPaste')
+
+    expect(model.dateRange.start).toBe('5/1/2027')
+  })
+
+  it('normalises pasted separators into a year-first format', async () => {
+    const { model, input } = await mountTypeable({ dateFormat: 'yyyy-mm-dd' })
+
+    await edit(input, '2027/01/05', 10, 'insertFromPaste')
+
+    expect(model.selectedDate).toBe('2027-1-5')
+  })
+})
+
 describe('multiple date picker input', () => {
   const addDate = async text => {
     const model = emptyModel()

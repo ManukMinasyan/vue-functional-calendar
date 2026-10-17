@@ -1023,7 +1023,7 @@
     }
   }
 
-  &-calendar .vfc-content > div > div > div:not(.vfc-week)[style*='height'] {
+  &-calendar .vfc-content > div > div:not(.vfc-week)[style*='height'] {
     min-height: calc(var(--_vfc-day-size) + var(--_vfc-space-1));
     max-height: calc(var(--_vfc-day-size) + var(--_vfc-space-1));
   }

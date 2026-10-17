@@ -12,11 +12,3 @@ export const hElContains = (el, child) =>
  * @returns {number}
  */
 export const hUniqueID = () => new Date().getUTCMilliseconds()
-
-let instanceCounter = 0
-
-/**
- * Generate a per-instance id
- * @returns {number}
- */
-export const hNextInstanceId = () => ++instanceCounter

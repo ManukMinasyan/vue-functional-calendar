@@ -4,7 +4,6 @@
     ref="popoverElement"
     tabindex="0"
     @keydown="onPopoverKeydown"
-    @input="inputEdited = true"
     @click="onPopoverClick"
   >
     <PickerInputs
@@ -155,23 +154,12 @@
                   </div>
                 </transition>
                 <transition :name="getTransition_()" appear>
-                  <div
-                    class="vfc-dayNames"
-                    role="row"
-                    :id="dayNamesId(key)"
-                    :aria-hidden="
-                      checkHiddenElement('dayNames') ? null : 'true'
-                    "
-                  >
-                    <span
-                      v-if="fConfigs.showWeekNumbers"
-                      role="presentation"
-                    ></span>
+                  <div class="vfc-dayNames" aria-hidden="true">
+                    <span v-if="fConfigs.showWeekNumbers"></span>
                     <span
                       v-for="(dayName, dayKey) in fConfigs.dayNames"
                       :key="key + dayKey + 1"
                       class="vfc-day"
-                      role="columnheader"
                     >
                       <template v-if="checkHiddenElement('dayNames')">
                         {{ dayName }}
@@ -183,7 +171,6 @@
                   tag="div"
                   role="grid"
                   :aria-label="calendarItem.dateTop"
-                  :aria-owns="dayNamesId(key)"
                   :name="getTransition_()"
                   appear
                 >
@@ -479,7 +466,7 @@ export default {
     this.$watch(
       'modelValue',
       function (value) {
-        if (value !== toRaw(this.calendar)) this.focusedDate = ''
+        if (toRaw(value) !== toRaw(this.calendar)) this.focusedDate = ''
         if (
           typeof value === 'object' &&
           (value.hasOwnProperty('dateRange') ||
@@ -678,6 +665,7 @@ export default {
 
       this.applyLocale(explicit)
       this.customMonthNames = explicit.has('monthNames')
+      this.customDayNames = explicit.has('dayNames')
 
       // Is Modal
       if (this.fConfigs.isModal) this.showCalendar = false
@@ -1991,19 +1979,23 @@ export default {
       return !this.fConfigs.hiddenElements.includes(elementName)
     },
     formatFullDate(date) {
-      if (!this.customMonthNames) return this.fullDateFormatter.format(date)
+      const customWeekday = this.customDayNames && !this.activeLocale
+      if (!this.customMonthNames && !customWeekday) {
+        return this.fullDateFormatter.format(date)
+      }
 
       return this.fullDateFormatter
         .formatToParts(date)
-        .map(part =>
-          part.type === 'month'
-            ? this.fConfigs.monthNames[date.getMonth()]
-            : part.value
-        )
+        .map(part => {
+          if (part.type === 'month' && this.customMonthNames) {
+            return this.fConfigs.monthNames[date.getMonth()]
+          }
+          if (part.type === 'weekday' && customWeekday) {
+            return this.helpCalendar.getDayName(date)
+          }
+          return part.value
+        })
         .join('')
-    },
-    dayNamesId(key) {
-      return `vfc-${this.instanceId}-daynames-${key}`
     },
     captureFocus() {
       const main = this.$refs.mainContainer
@@ -2042,7 +2034,7 @@ export default {
       const index = ranges.findIndex(range =>
         range.end
           ? this.isDateInRange(date, range.start, range.end)
-          : range.start === date
+          : range.start.split(' ')[0] === date
       )
       if (index !== -1) ranges.splice(index, 1)
     },
@@ -2323,18 +2315,14 @@ export default {
         return
       }
 
-      const isEnter = e.key === 'Enter'
       if (
         !this.fConfigs.isModal ||
-        !(isEnter || e.key === 'ArrowDown') ||
-        e.defaultPrevented ||
+        e.key !== 'ArrowDown' ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.shiftKey ||
         !this.isOutsideCalendar(e.target)
       ) {
-        return
-      }
-
-      if (isEnter && this.inputEdited && e.target.value !== '') {
-        this.inputEdited = false
         return
       }
 
@@ -2389,7 +2377,6 @@ export default {
     onFocusIn(e) {
       if (!this.fConfigs.isModal || this.restoringFocus) return
 
-      this.inputEdited = false
       if (!this.showCalendar && this.isOutsideCalendar(e.target)) {
         this.popoverOpener = e.target
       }

@@ -38,7 +38,7 @@
         </div>
       </span>
     </span>
-    <span v-else role="gridcell" aria-hidden="true"></span>
+    <span v-else role="gridcell"></span>
   </div>
 </template>
 

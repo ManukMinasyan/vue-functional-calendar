@@ -1,5 +1,4 @@
 import { DEFAULT_LABELS } from '../utils/locale'
-import { hNextInstanceId } from '../utils/helpers'
 
 const undefinedGenerator = () => undefined
 
@@ -202,10 +201,9 @@ export const propsAndData = {
       popoverOpener: null,
       restoringFocus: false,
       focusedDate: '',
-      inputEdited: false,
       patching: false,
       focusToken: null,
-      instanceId: hNextInstanceId(),
+      customDayNames: false,
       customMonthNames: false,
       defaultDateFormat: {
         date: false,

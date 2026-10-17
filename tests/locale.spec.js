@@ -414,6 +414,19 @@ describe('week start source', () => {
       expect(firstDayName('ar-EG')).toBe(weekdays('ar-EG')[5])
     })
 
+    it.each([
+      ['is-IS', 6],
+      ['ar-AE', 0],
+      ['dv-MV', 4],
+      ['ar-SA', 6],
+      ['fa-IR', 5],
+      ['en-GB', 0]
+    ])('follows CLDR 48 for %s', (locale, index) => {
+      withoutWeekInfo()
+
+      expect(firstDayName(locale)).toBe(weekdays(locale)[index])
+    })
+
     it('lets an explicit sundayStart win', () => {
       withoutWeekInfo()
 

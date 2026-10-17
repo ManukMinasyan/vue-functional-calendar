@@ -69,14 +69,16 @@ export const localeMonthNames = (locale, month) =>
   )
 
 const SUNDAY_REGIONS = new Set(
-  'AG AS BD BR BS BT BW BZ CA CO DM DO ET GT GU HK HN ID IL IN JM JP KE KH KR LA MH MM MO MT MX MZ NI NP PA PE PH PK PR PT PY SA SG SV TH TT TW UM US VE VI WS YE ZA ZW'.split(
+  'AG AS BD BR BS BT BW BZ CA CO DM DO ET GT GU HK HN ID IL IN IS JM JP KE KH KR LA MH MM MO MT MX MZ NI NP PA PE PH PK PR PT PY SA SG SV TH TT TW UM US VE VI WS YE ZA ZW'.split(
     ' '
   )
 )
 
 const SATURDAY_REGIONS = new Set(
-  'AE AF BH DJ DZ EG IQ IR JO KW LY OM QA SD SY'.split(' ')
+  'AF BH DJ DZ EG IQ IR JO KW LY OM QA SD SY'.split(' ')
 )
+
+const FRIDAY_REGIONS = new Set(['MV'])
 
 const regionFirstDay = intlLocale => {
   const region =
@@ -85,6 +87,7 @@ const regionFirstDay = intlLocale => {
   if (!region) return undefined
   if (SUNDAY_REGIONS.has(region)) return 0
   if (SATURDAY_REGIONS.has(region)) return 6
+  if (FRIDAY_REGIONS.has(region)) return 5
   return 1
 }
 

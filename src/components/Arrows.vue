@@ -7,9 +7,13 @@
     >
       <component
         :is="usesButton('navigationArrowLeft') ? 'button' : 'div'"
-        v-bind="controlAttrs('navigationArrowLeft')"
-        :aria-label="fConfigs.labels.previousMonth"
-        :aria-disabled="!allowPreDate"
+        v-bind="
+          controlAttrs(
+            'navigationArrowLeft',
+            fConfigs.labels.previousMonth,
+            !allowPreDate
+          )
+        "
         :data-focus-id="`arrow-prev:${calendarKey}`"
         :class="{ 'vfc-cursor-pointer': allowPreDate }"
         @click="calendarRoot.PreMonth(oneArrows ? 0 : calendarKey)"
@@ -24,9 +28,13 @@
       </component>
       <component
         :is="usesButton('navigationArrowRight') ? 'button' : 'div'"
-        v-bind="controlAttrs('navigationArrowRight')"
-        :aria-label="fConfigs.labels.nextMonth"
-        :aria-disabled="!allowNextDate"
+        v-bind="
+          controlAttrs(
+            'navigationArrowRight',
+            fConfigs.labels.nextMonth,
+            !allowNextDate
+          )
+        "
         :data-focus-id="`arrow-next:${calendarKey}`"
         :class="{ 'vfc-cursor-pointer': allowNextDate }"
         @click="calendarRoot.NextMonth(oneArrows ? 0 : calendarKey)"
@@ -45,7 +53,7 @@
 
 <script>
 import { CALENDAR_KEY } from '../utils/injectionKeys'
-import { hasSlotContent } from '../utils/slots'
+import { hasSlotContent, slotHasInteractiveContent } from '../utils/slots'
 
 export default {
   name: 'Arrows',
@@ -85,16 +93,31 @@ export default {
       return !hasSlotContent(this.calendarRoot.$slots[name])
     },
     onKeydown(event, name, method) {
-      if (this.usesButton(name)) return
+      if (this.usesButton(name) || this.ownsFocus(name)) return
       if (event.key !== 'Enter' && event.key !== ' ') return
 
       event.preventDefault()
       this.calendarRoot[method](this.oneArrows ? 0 : this.calendarKey)
     },
-    controlAttrs(name) {
-      return this.usesButton(name)
-        ? { type: 'button' }
-        : { role: 'button', tabindex: 0 }
+    ownsFocus(name) {
+      return slotHasInteractiveContent(this.calendarRoot.$slots[name])
+    },
+    controlAttrs(name, label, disabled) {
+      if (this.usesButton(name)) {
+        return {
+          type: 'button',
+          'aria-label': label,
+          'aria-disabled': disabled
+        }
+      }
+      if (this.ownsFocus(name)) return {}
+
+      return {
+        role: 'button',
+        tabindex: 0,
+        'aria-label': label,
+        'aria-disabled': disabled
+      }
     }
   }
 }

@@ -288,10 +288,56 @@ export default class helpCalendar {
     return roundTrips ? this.formatDate(date) : ''
   }
 
-  maskTypedValue(value) {
-    const [date, ...time] = value.split(' ')
-    const masked = this.mask(date)
+  cleanTypedInput(value, caret, inputType, data) {
+    const { separator, tokens } = this.getFormatParts()
+    const timeMatch = value.match(/\s+\d{1,2}:\d{2}.*$/)
+    const time = timeMatch ? timeMatch[0] : ''
+    const head = value.slice(0, value.length - time.length)
+    const isTyping =
+      inputType === 'insertText' && (data == null || data.length === 1)
+    const isSeparator = char => /[-./ ]/.test(char)
 
-    return masked === date ? value : [masked, ...time].join(' ')
+    if (typeof inputType === 'string' && inputType.startsWith('delete')) {
+      return { value, caret }
+    }
+
+    if (!isTyping || caret > head.length || caret < 1) {
+      const masked = this.mask(head.replace(/[-./ ]/g, separator))
+      return { value: masked + time, caret: masked.length }
+    }
+
+    const maxLengths = tokens.map(token => (token === 'yyyy' ? 4 : 2))
+    const typed = head[caret - 1]
+    const drop = () => ({
+      value: head.slice(0, caret - 1) + head.slice(caret) + time,
+      caret: caret - 1
+    })
+
+    if (isSeparator(typed)) {
+      const text = head.slice(0, caret - 1) + separator + head.slice(caret)
+      const parts = text.split(separator)
+      const emptyPart = parts.slice(0, -1).some(part => !part)
+      if (parts.length > tokens.length || emptyPart) return drop()
+
+      return { value: text + time, caret }
+    }
+
+    if (!/\d/.test(typed)) return drop()
+
+    const parts = head.split(separator)
+    let offset = 0
+    const index = parts.findIndex(part => {
+      offset += part.length + 1
+      return caret <= offset - 1
+    })
+    if (parts[index].length <= maxLengths[index]) return { value, caret }
+
+    const atEnd = caret === head.length && index === parts.length - 1
+    if (!atEnd || parts.length === tokens.length) return drop()
+
+    return {
+      value: `${head.slice(0, caret - 1)}${separator}${typed}${time}`,
+      caret: caret + 1
+    }
   }
 }

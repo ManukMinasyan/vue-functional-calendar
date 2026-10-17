@@ -119,20 +119,28 @@ export default {
     }
   },
   methods: {
-    capTypedValue(input) {
-      const capped = this.calendarRoot.helpCalendar.maskTypedValue(input.value)
-      if (capped !== input.value) input.value = capped
+    cleanTypedInput(event) {
+      const input = event.target
+      const cleaned = this.calendarRoot.helpCalendar.cleanTypedInput(
+        input.value,
+        input.selectionStart,
+        event.inputType,
+        event.data
+      )
+      if (cleaned.value === input.value) return input.value
+
+      input.value = cleaned.value
+      input.setSelectionRange(cleaned.caret, cleaned.caret)
+      return input.value
     },
     typeSingleDate(event) {
-      this.calendarRoot.singleSelectedDate = event.target.value
-      this.capTypedValue(event.target)
+      this.calendarRoot.singleSelectedDate = this.cleanTypedInput(event)
     },
     typeRangeDate(event, edge) {
       const date = this.calendarRoot.helpCalendar.parseTypedDate(
-        event.target.value
+        this.cleanTypedInput(event)
       )
       if (date) this.calendar.dateRange[edge] = date
-      this.capTypedValue(event.target)
     }
   }
 }
