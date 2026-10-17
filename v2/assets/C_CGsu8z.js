@@ -1,1 +1,0 @@
-import{mt as e,qt as t,v as n,xt as r}from"./DVRkMeDb.js";import{k as i}from"#entry";import{t as a}from"./CUtCFOqn.js";var o={};function s(i,o){let s=a;return e(),n(s,null,{default:t(()=>[r(i.$slots,`default`)]),_:3})}var c=i(o,[[`render`,s]]);export{c as default};
