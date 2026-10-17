@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { h, Comment, createCommentVNode } from 'vue'
+import { h, nextTick, Comment, createCommentVNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import FunctionalCalendar from '../index.js'
 import {
@@ -280,6 +280,36 @@ describe('arrow slots', () => {
     await wrapper.find('.my-right').trigger('click')
 
     expect(events.filter(([name]) => name === 'changedMonth')).toHaveLength(1)
+  })
+
+  it('lets a slot component that renders a button own the focus', async () => {
+    const NextButton = {
+      render: () => h('button', { type: 'button', class: 'my-right' }, 'next')
+    }
+    const { wrapper } = await mountCalendarReady(
+      {},
+      { slots: { navigationArrowRight: () => h(NextButton) } }
+    )
+    await nextTick()
+
+    const holder = wrapper.find('.my-right').element.parentElement
+    expect(holder.hasAttribute('role')).toBe(false)
+    expect(holder.hasAttribute('tabindex')).toBe(false)
+    expect(holder.hasAttribute('data-focus-id')).toBe(false)
+  })
+
+  it('keeps a slot component without a control reachable by keyboard', async () => {
+    const NextIcon = { render: () => h('i', { class: 'my-right' }, 'next') }
+    const { wrapper } = await mountCalendarReady(
+      {},
+      { slots: { navigationArrowRight: () => h(NextIcon) } }
+    )
+    await nextTick()
+
+    const holder = wrapper.find('.my-right').element.parentElement
+    expect(holder.getAttribute('role')).toBe('button')
+    expect(holder.getAttribute('tabindex')).toBe('0')
+    expect(holder.getAttribute('data-focus-id')).toBe('arrow-next:0')
   })
 })
 

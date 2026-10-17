@@ -18,21 +18,8 @@ export const hasSlotContent = (slot, props = {}) => {
   return !(vnodes.length && vnodes.every(isHtmlComment))
 }
 
-const INTERACTIVE_TAGS = ['button', 'input', 'select', 'textarea']
+const FOCUSABLE =
+  'button, input, select, textarea, a[href], [tabindex], [contenteditable]'
 
-const isInteractive = vnode => {
-  if (!vnode || typeof vnode !== 'object') return false
-
-  const props = vnode.props || {}
-  if (typeof vnode.type === 'string') {
-    if (INTERACTIVE_TAGS.includes(vnode.type)) return true
-    if (vnode.type === 'a' && props.href !== undefined) return true
-    if (props.tabindex !== undefined || props.tabIndex !== undefined)
-      return true
-  }
-
-  return Array.isArray(vnode.children) && vnode.children.some(isInteractive)
-}
-
-export const slotHasInteractiveContent = (slot, props = {}) =>
-  !!slot && flatten(slot(props)).some(isInteractive)
+export const containsFocusable = element =>
+  !!element && !!element.querySelector(FOCUSABLE)
