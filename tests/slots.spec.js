@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { h, Comment } from 'vue'
+import { h, Comment, createCommentVNode } from 'vue'
 import { mount } from '@vue/test-utils'
 import FunctionalCalendar from '../index.js'
 import {
@@ -80,6 +80,24 @@ describe('default day slot', () => {
         </FunctionalCalendar>`
       },
       { props: { date: FIXED_DATE }, attachTo: document.body }
+    )
+
+    expect(wrapper.findAll('b')).toHaveLength(1)
+    expect(daySpans(wrapper)).toHaveLength(35)
+    daySpans(wrapper).forEach(span => {
+      expect(span.classList).not.toContain('vfc-span-day')
+    })
+  })
+
+  it('treats a conditional slot compiled for production as present on every day', () => {
+    const { wrapper } = mountCalendar(
+      { markedDates: ['12/10/2026'] },
+      {
+        slots: {
+          default: ({ day }) =>
+            day.isMarked ? h('b', '*') : createCommentVNode('', true)
+        }
+      }
     )
 
     expect(wrapper.findAll('b')).toHaveLength(1)

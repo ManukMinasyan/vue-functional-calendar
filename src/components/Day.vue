@@ -34,8 +34,11 @@ const flatten = vnodes =>
     vnode.type === Fragment ? flatten(vnode.children) : [vnode]
   )
 
+const vIfPlaceholders = ['v-if', '']
+
+// Vue renders a false v-if as <!--v-if--> in dev and <!----> in production builds
 const isHtmlComment = vnode =>
-  vnode.type === Comment && vnode.children !== 'v-if'
+  vnode.type === Comment && !vIfPlaceholders.includes(vnode.children)
 
 export default {
   name: 'Day',
