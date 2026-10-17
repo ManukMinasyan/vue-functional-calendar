@@ -53,14 +53,14 @@ jobs:
         run: |
           case $BRANCH in
             3.x)
-              echo "dest_folder=." >> $GITHUB_OUTPUT
-              echo "base_url=/vue-functional-calendar/" >> $GITHUB_OUTPUT
-              echo "is_latest=true" >> $GITHUB_OUTPUT
+              echo "dest_folder=." >> "$GITHUB_OUTPUT"
+              echo "base_url=/vue-functional-calendar/" >> "$GITHUB_OUTPUT"
+              echo "is_latest=true" >> "$GITHUB_OUTPUT"
               ;;
             2.x)
-              echo "dest_folder=v2" >> $GITHUB_OUTPUT
-              echo "base_url=/vue-functional-calendar/v2/" >> $GITHUB_OUTPUT
-              echo "is_latest=false" >> $GITHUB_OUTPUT
+              echo "dest_folder=v2" >> "$GITHUB_OUTPUT"
+              echo "base_url=/vue-functional-calendar/v2/" >> "$GITHUB_OUTPUT"
+              echo "is_latest=false" >> "$GITHUB_OUTPUT"
               ;;
             *)
               echo "Unknown branch: $BRANCH"
