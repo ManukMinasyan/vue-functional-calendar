@@ -36,6 +36,10 @@ export const propsAndData = {
       type: Object,
       default: undefinedGenerator
     },
+    presets: {
+      type: [Boolean, Array],
+      default: undefinedGenerator
+    },
     placeholder: {
       type: [String, Boolean],
       default: undefinedGenerator
@@ -231,6 +235,7 @@ export const propsAndData = {
         sundayStart: false,
         locale: '',
         labels: { ...DEFAULT_LABELS },
+        presets: false,
         placeholder: false,
         dateFormat: 'dd/mm/yyyy hh:MM',
         isMultipleDateRange: false,

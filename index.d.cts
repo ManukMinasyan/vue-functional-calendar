@@ -30,6 +30,23 @@ export interface FunctionalCalendarValue {
   multipleDateRange: FunctionalCalendarDateRange[]
 }
 
+export type FunctionalCalendarPresetKey =
+  | 'today'
+  | 'yesterday'
+  | 'last7Days'
+  | 'last30Days'
+  | 'thisMonth'
+  | 'lastMonth'
+
+export interface FunctionalCalendarCustomPreset {
+  label: string
+  range: () => { start: Date; end: Date }
+}
+
+export type FunctionalCalendarPreset =
+  | FunctionalCalendarPresetKey
+  | FunctionalCalendarCustomPreset
+
 export interface FunctionalCalendarLabels {
   previousMonth: string
   nextMonth: string
@@ -46,6 +63,8 @@ export interface FunctionalCalendarLabels {
   addDate: string
   hour: string
   minute: string
+  quickRanges: string
+  presets: Record<FunctionalCalendarPresetKey, string>
 }
 
 export interface FunctionalCalendarProps {
@@ -57,7 +76,12 @@ export interface FunctionalCalendarProps {
   displayTimeInput?: boolean
   sundayStart?: boolean
   locale?: string
-  labels?: Partial<FunctionalCalendarLabels>
+  labels?: Partial<
+    Omit<FunctionalCalendarLabels, 'presets'> & {
+      presets: Partial<FunctionalCalendarLabels['presets']>
+    }
+  >
+  presets?: boolean | FunctionalCalendarPreset[]
   placeholder?: string | boolean
   dateFormat?: string
   canClearRange?: boolean

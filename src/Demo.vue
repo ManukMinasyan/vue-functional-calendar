@@ -239,6 +239,42 @@
       </div>
     </section>
 
+    <section class="playground" data-testid="presets-demo">
+      <h2>Range presets</h2>
+      <div class="playground-calendars">
+        <functional-calendar
+          :is-date-range="true"
+          :can-clear-range="true"
+          :presets="true"
+          v-model="presetRange"
+          data-testid="presets-default"
+        ></functional-calendar>
+        <functional-calendar
+          :is-date-range="true"
+          :presets="['today', 'last7Days', 'thisMonth', nextTwoWeeks]"
+          :limits="presetLimits"
+          :is-dark="true"
+          data-testid="presets-limits"
+        ></functional-calendar>
+        <functional-calendar
+          :is-date-range="true"
+          :is-modal="true"
+          :is-auto-closeable="true"
+          :presets="true"
+          :labels="{ presets: { today: 'Heute', yesterday: 'Gestern' } }"
+          data-testid="presets-modal"
+        ></functional-calendar>
+        <functional-calendar
+          :is-date-picker="true"
+          :is-multiple="true"
+          :calendars-count="2"
+          :presets="['today', 'yesterday']"
+          data-testid="presets-picker"
+        ></functional-calendar>
+      </div>
+      <span>{{ JSON.stringify(presetRange.dateRange) }}</span>
+    </section>
+
     <hr />
     <hr />
     <hr />
@@ -617,6 +653,28 @@ export default {
     return {
       locale: 'en-US',
       locales: ['en-US', 'de-DE', 'fr-FR', 'ar-EG', 'ja-JP'],
+      presetRange: {},
+      presetLimits: (() => {
+        const format = date =>
+          `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+        const now = new Date()
+        return {
+          min: format(
+            new Date(now.getFullYear(), now.getMonth(), now.getDate() - 3)
+          ),
+          max: format(new Date(now.getFullYear() + 1, 0, 1))
+        }
+      })(),
+      nextTwoWeeks: {
+        label: 'Next 14 days',
+        range: () => {
+          const now = new Date()
+          return {
+            start: now,
+            end: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 13)
+          }
+        }
+      },
       playground: { primary: '#264ad9', radius: 8, daySize: 36, dark: false },
       rangesData: {
         multipleDateRange: [{ end: '17/7/2020', start: '3/7/2020' }]

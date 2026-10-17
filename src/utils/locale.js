@@ -18,7 +18,16 @@ export const DEFAULT_LABELS = {
   date: 'Date',
   addDate: 'Add a date',
   hour: 'Hour',
-  minute: 'Minute'
+  minute: 'Minute',
+  quickRanges: 'Quick ranges',
+  presets: {
+    today: 'Today',
+    yesterday: 'Yesterday',
+    last7Days: 'Last 7 days',
+    last30Days: 'Last 30 days',
+    thisMonth: 'This month',
+    lastMonth: 'Last month'
+  }
 }
 
 export const resolveLocale = locale => {

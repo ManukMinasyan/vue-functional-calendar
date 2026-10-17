@@ -38,6 +38,7 @@
       :aria-label="isModalPicker ? fConfigs.labels.calendar : null"
       :class="{
         'vfc-modal': isModalPicker,
+        'vfc-has-presets': hasPresets,
         'vfc-dark': fConfigs.isDark
       }"
     >
@@ -50,6 +51,7 @@
       ></time-picker>
 
       <template v-else>
+        <Presets v-if="hasPresets" />
         <div class="vfc-calendars-container">
           <Arrows
             :isMultiple="false"
@@ -272,9 +274,16 @@ import Day from '../components/Day.vue'
 import MonthYearPicker from '../components/MonthYearPicker.vue'
 import PickerInputs from '../components/PickerInputs.vue'
 import Footer from '../components/Footer.vue'
+import Presets from '../components/Presets.vue'
 
 import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
+import {
+  PRESET_KEYS,
+  builtInRange,
+  eachDay,
+  isValidRange
+} from '../utils/presets'
 import {
   DEFAULT_DAY_NAMES,
   resolveLocale,
@@ -292,6 +301,7 @@ export default {
     PickerInputs,
     Arrows,
     Footer,
+    Presets,
     Day,
     WeekNumbers
   },
@@ -353,6 +363,36 @@ export default {
 
         return roving ? roving.date : ''
       })
+    },
+    hasPresets() {
+      return this.presetItems.length > 0 && !this.showTimePicker
+    },
+    presetItems() {
+      const { presets, isDateRange, isDatePicker, labels } = this.fConfigs
+      if (!presets || !(isDateRange || isDatePicker)) return []
+      if (!this.checkHiddenElement('presets')) return []
+
+      const entries = presets === true ? PRESET_KEYS : presets
+      if (!Array.isArray(entries)) return []
+
+      const now = new Date()
+      return entries
+        .map(entry => {
+          const isKey = typeof entry === 'string'
+          const label = isKey ? labels.presets[entry] : entry && entry.label
+          const range = isKey
+            ? builtInRange(entry, now)
+            : entry && typeof entry.range === 'function' && entry.range()
+          if (!label || !isValidRange(range)) return null
+
+          return {
+            label,
+            start: range.start,
+            end: range.end,
+            disabled: this.isPresetBlocked(range)
+          }
+        })
+        .filter(Boolean)
     },
     rangeIsSelected() {
       if (!this.fConfigs.isMultipleDateRange)
@@ -587,8 +627,7 @@ export default {
     setConfigs() {
       const explicit = new Set()
       const apply = (key, value) => {
-        this.fConfigs[key] =
-          key === 'labels' ? { ...this.fConfigs.labels, ...value } : value
+        this.fConfigs[key] = key === 'labels' ? this.mergeLabels(value) : value
         if (typeof value !== 'undefined') explicit.add(key)
       }
 
@@ -641,6 +680,14 @@ export default {
           ...dayNames.slice(shift),
           ...dayNames.slice(0, shift)
         ]
+      }
+    },
+    mergeLabels(labels) {
+      const current = this.fConfigs.labels
+      return {
+        ...current,
+        ...labels,
+        presets: { ...current.presets, ...(labels && labels.presets) }
       }
     },
     applyLocale(explicit) {
@@ -1048,6 +1095,58 @@ export default {
       }
 
       this.$emit('choseDay', item)
+    },
+    isPresetBlocked({ start, end }) {
+      const isRange =
+        this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange
+      const days = eachDay(start, isRange ? end : start)
+      const { minSelDays, maxSelDays } = this.fConfigs
+
+      if (
+        days.some(day => this.isDateBlocked(this.helpCalendar.formatDate(day)))
+      ) {
+        return true
+      }
+
+      return (
+        isRange &&
+        ((minSelDays && days.length < minSelDays) ||
+          (maxSelDays && days.length > maxSelDays))
+      )
+    },
+    applyPreset(preset) {
+      if (preset.disabled) return
+
+      const dayItem = date => ({ date: this.helpCalendar.formatDate(date) })
+
+      if (this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange) {
+        this.discardOpenRange()
+        this.clickDay(dayItem(preset.start), this.isDisabledDate)
+        this.clickDay(dayItem(preset.end), this.isDisabledDate)
+      } else {
+        this.clickDay(dayItem(preset.start), this.isDisabledDate)
+      }
+
+      this.revealMonth(preset.start)
+      this.returnFocusIfClosed()
+    },
+    discardOpenRange() {
+      if (!this.fConfigs.isMultipleDateRange) {
+        this.cleanRange()
+        return
+      }
+
+      const ranges = this.calendar.multipleDateRange
+      const last = ranges[ranges.length - 1]
+      if (last && !(last.start && last.end)) ranges.pop()
+    },
+    revealMonth(date) {
+      const isShown = this.listCalendars.some(
+        item =>
+          item.date.getFullYear() === date.getFullYear() &&
+          item.date.getMonth() === date.getMonth()
+      )
+      if (!isShown) this.ChooseDate(this.helpCalendar.formatDate(date))
     },
     markChooseDays() {
       let startDate = this.startDMY
