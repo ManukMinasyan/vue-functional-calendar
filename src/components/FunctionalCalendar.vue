@@ -277,6 +277,7 @@ import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
 
 const listKeys = ['selectedDates', 'multipleDateRange']
+const monthIndex = date => date.getFullYear() * 12 + date.getMonth()
 
 const hasModelKey = (value, key) => {
   const entry = value[key]
@@ -632,6 +633,7 @@ export default {
 
       for (let i = 0; i < this.fConfigs.calendarsCount; i++) {
         date = new Date(date.getFullYear(), date.getMonth() + 1)
+        if (i > 0 && this.isMonthPastMax(date)) break
 
         let calendar = {
           key: hUniqueID(),
@@ -2155,11 +2157,22 @@ export default {
       const { limits } = this.fConfigs
       if (!limits) return true
 
-      const index = date => date.getFullYear() * 12 + date.getMonth()
       const min = this.helpCalendar.getDateFromFormat(limits.min)
       const max = this.helpCalendar.getDateFromFormat(limits.max)
 
-      return index(month) >= index(min) && index(month) <= index(max)
+      return (
+        monthIndex(month) >= monthIndex(min) &&
+        monthIndex(month) <= monthIndex(max)
+      )
+    },
+    isMonthPastMax(month) {
+      const { limits } = this.fConfigs
+      if (!limits) return false
+
+      return (
+        monthIndex(month) >
+        monthIndex(this.helpCalendar.getDateFromFormat(limits.max))
+      )
     },
     revealDate(target, gridKey, changeEvent) {
       const month = new Date(target.getFullYear(), target.getMonth(), 1)

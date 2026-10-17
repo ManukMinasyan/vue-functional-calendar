@@ -258,6 +258,60 @@ describe('limits on every navigation move', () => {
   })
 })
 
+describe('limits with several calendars', () => {
+  const titles = wrapper =>
+    wrapper
+      .findAll('.vfc-calendar')
+      .map((_, index) => calendarTitle(wrapper, index))
+
+  it('does not render a calendar for a month past the max limit', () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 10, 1),
+      limits: { min: '1/11/2026', max: '30/11/2026' }
+    })
+
+    expect(titles(wrapper)).toEqual(['November 2026'])
+  })
+
+  it('renders the months up to the max limit', () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 3,
+      newCurrentDate: new Date(2026, 10, 1),
+      limits: { min: '1/1/2026', max: '31/12/2026' }
+    })
+
+    expect(titles(wrapper)).toEqual(['November 2026', 'December 2026'])
+  })
+
+  it('shows the dropped calendar again after moving back', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 10, 1),
+      limits: { min: '1/1/2026', max: '30/11/2026' }
+    })
+
+    await arrow(wrapper, 'left').trigger('click')
+
+    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
+  })
+
+  it('still renders the first calendar when its month is past the max limit', () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2027, 0, 1),
+      limits: { min: '1/1/2026', max: '30/11/2026' }
+    })
+
+    expect(titles(wrapper)).toEqual(['January 2027'])
+  })
+})
+
 describe('limits after picking a month', () => {
   it('re-checks the arrows for the picked month', async () => {
     const { wrapper } = mountCalendar({
