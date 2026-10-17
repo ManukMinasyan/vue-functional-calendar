@@ -34,13 +34,21 @@ The calendar updates the value only when the text is a complete, real date: all 
 
 In a range, each input commits on its own. Typing a start date does not need an end date.
 
-## Paste
+## Paste and autofill
 
-A pasted date has its `-`, `.`, `/` and space separators replaced with the separator of `dateFormat`, so `5.10.2026` becomes `5/10/2026`. The text is then cut to what the format can hold. Parts are not reordered, so paste them in the order of `dateFormat`.
+A pasted or autofilled date has its `-`, `.`, `/` and space separators replaced with the separator of `dateFormat`, so `5.10.2026` becomes `5/10/2026`. An ISO date such as `2026-10-05` is reordered to match `dateFormat`. Other text that is not a date, such as `5 Oct 2026`, stays exactly as pasted and changes nothing.
+
+## IME input
+
+While an input method editor composes text, the input is left alone. When the composition ends, full-width digits and separators such as `１５／０１／２０２７` become ASCII and the date commits.
 
 ## Time
 
-With `displayTimeInput`, the time stays in the input text while you edit the date part.
+With `displayTimeInput`, the time stays in the input text while you edit the date part. Text typed after the date is left as typed. It does not change the selected time, so pick the hour and minute in the time picker.
+
+## Undo
+
+When the calendar reformats the text, for example by inserting a separator, the browser clears the input's undo history.
 
 ## Forms
 
@@ -52,7 +60,7 @@ The multiple date picker shows its dates as tags. Type a date and press Enter. T
 
 ## Read the value
 
-The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. Start with a full model, as shown in [usage](https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage#the-bound-value), so the keys exist before the first click.
+The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. An empty `{}` model also works: the calendar replaces it with its own state object when it mounts.
 
 
 ## Sitemap

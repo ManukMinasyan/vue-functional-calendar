@@ -205,7 +205,7 @@ The calendar keeps its whole state in one object. Which keys matter depends on t
 
 `currentDate` is a `Date` in the month on display. `selectedDatesItem` is the text in the tags input.
 
-The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. If you want every key from the start, begin with a full model:
+The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. A bound object without `selectedDate` or `dateRange`, such as `{}`, is replaced with the calendar's state object when it mounts. If you want every key from the start, begin with a full model:
 
 ```js
 const value = ref({
