@@ -1,4 +1,5 @@
 const baseURL = process.env.NUXT_APP_BASE_URL || '/'
+const siteOrigin = process.env.NUXT_SITE_URL || 'https://manukminasyan.github.io'
 const docsVersion = process.env.DOCS_VERSION || '2.x'
 
 export default defineNuxtConfig({
@@ -7,7 +8,7 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
     site: {
         name: 'Vue Functional Calendar',
-        url: process.env.NUXT_SITE_URL || 'https://manukminasyan.github.io',
+        url: siteOrigin,
     },
     runtimeConfig: {
         public: {
@@ -15,8 +16,13 @@ export default defineNuxtConfig({
         },
     },
     appConfig: {
+        header: {
+            logo: {
+                favicon: `${baseURL}favicon.svg`,
+            },
+        },
         docus: {
-            url: `https://manukminasyan.github.io${baseURL}`,
+            url: `${siteOrigin}${baseURL}`,
             image: `${baseURL}img/calendar-preview.png`,
             header: {
                 logo: {
@@ -32,15 +38,6 @@ export default defineNuxtConfig({
     app: {
         baseURL,
         buildAssetsDir: 'assets',
-        head: {
-            link: [
-                {
-                    rel: 'icon',
-                    type: 'image/png',
-                    href: baseURL + 'logo.png',
-                },
-            ],
-        },
     },
     image: {
         provider: 'none',
@@ -55,7 +52,7 @@ export default defineNuxtConfig({
         },
     },
     llms: {
-        domain: `https://manukminasyan.github.io${baseURL.replace(/\/$/, '')}`,
+        domain: siteOrigin,
     },
     nitro: {
         preset: 'github_pages',
