@@ -737,6 +737,61 @@ describe('modal mode', () => {
     )
   })
 
+  it('exposes each input as a combobox that controls the dialog', async () => {
+    const { wrapper } = await mountModal()
+    const inputs = wrapper.findAll('.vfc-multiple-input input')
+    const dialog = wrapper.find('[role="dialog"]')
+
+    expect(dialog.attributes('id')).toBeTruthy()
+    inputs.forEach(input => {
+      expect(input.attributes('role')).toBe('combobox')
+      expect(input.attributes('aria-controls')).toBe(dialog.attributes('id'))
+    })
+  })
+
+  it('names the inputs with the labels and keeps the title', async () => {
+    const { wrapper } = await mountModal({ labels: { endDate: 'Bis' } })
+    const [start, end] = wrapper.findAll('.vfc-multiple-input input')
+
+    expect(start.attributes('aria-label')).toBe('Start Date')
+    expect(start.attributes('title')).toBe('Start Date')
+    expect(end.attributes('aria-label')).toBe('Bis')
+    expect(end.attributes('title')).toBe('Bis')
+  })
+
+  it('wires the single and tags inputs to the dialog', async () => {
+    const single = await mountCalendarReady({
+      isModal: true,
+      isDatePicker: true
+    })
+    const tags = await mountCalendarReady({
+      isModal: true,
+      isMultipleDatePicker: true
+    })
+
+    const input = single.wrapper.find('.vfc-single-input')
+    const tagsInput = tags.wrapper.find('.vfc-tags-input input')
+
+    expect(input.attributes('role')).toBe('combobox')
+    expect(input.attributes('aria-label')).toBe('Date')
+    expect(input.attributes('aria-controls')).toBe(
+      single.wrapper.find('[role="dialog"]').attributes('id')
+    )
+    expect(tagsInput.attributes('role')).toBe('combobox')
+    expect(tagsInput.attributes('aria-controls')).toBe(
+      tags.wrapper.find('[role="dialog"]').attributes('id')
+    )
+  })
+
+  it('gives every calendar its own dialog id', async () => {
+    const first = await mountModal()
+    const second = await mountModal()
+
+    expect(first.wrapper.find('[role="dialog"]').attributes('id')).not.toBe(
+      second.wrapper.find('[role="dialog"]').attributes('id')
+    )
+  })
+
   it('does not give an inline calendar the dialog role', async () => {
     const { wrapper } = await mountCalendarReady({ isDateRange: true })
 

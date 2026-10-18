@@ -35,6 +35,7 @@
       v-show="showCalendar"
       ref="mainContainer"
       tabindex="-1"
+      :id="isModalPicker ? dialogId : null"
       :role="isModalPicker ? 'dialog' : null"
       :aria-label="isModalPicker ? fConfigs.labels.calendar : null"
       :class="{
