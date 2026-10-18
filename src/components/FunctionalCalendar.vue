@@ -106,7 +106,7 @@
                   </template>
                 </Arrows>
 
-                <transition :name="getTransition_()" appear>
+                <transition :name="transitionName" appear>
                   <div
                     class="vfc-top-date"
                     :class="'vfc-' + fConfigs.titlePosition"
@@ -155,7 +155,7 @@
                     </span>
                   </div>
                 </transition>
-                <transition :name="getTransition_()" appear>
+                <transition :name="transitionName" appear>
                   <div class="vfc-dayNames" aria-hidden="true">
                     <span v-if="fConfigs.showWeekNumbers"></span>
                     <span
@@ -173,7 +173,7 @@
                   tag="div"
                   role="grid"
                   :aria-label="calendarItem.dateTop"
-                  :name="getTransition_()"
+                  :name="transitionName"
                   appear
                 >
                   <div
@@ -288,6 +288,10 @@ const reactiveKeys = [
 ]
 const rebuildKeys = ['limits', 'calendarsCount']
 const relayoutKeys = ['disabledDayNames', 'markedDateRange']
+const TRANSITIONS = {
+  left: 'vfc-calendar-slide-left',
+  right: 'vfc-calendar-slide-right'
+}
 const signature = value => JSON.stringify(value) ?? 'undefined'
 const monthIndex = date => date.getFullYear() * 12 + date.getMonth()
 
@@ -445,6 +449,11 @@ export default {
         min: this.helpCalendar.getDateFromFormat(limits.min).getTime(),
         max: this.helpCalendar.getDateFromFormat(limits.max).getTime()
       }
+    },
+    transitionName() {
+      if (!this.fConfigs.transition) return ''
+
+      return TRANSITIONS[this.transitionPrefix] || ''
     },
     limitMonths() {
       const times = this.limitTimes
@@ -1725,17 +1734,6 @@ export default {
       if (monthIndex(this.forwardEdge(current)) >= limitMonths.max) {
         this.allowNextDate = false
       }
-    },
-    getTransition_() {
-      if (!this.fConfigs.transition) return ''
-
-      let name = ''
-      if (this.transitionPrefix === 'left') {
-        name = 'vfc-calendar-slide-left'
-      } else if (this.transitionPrefix === 'right') {
-        name = 'vfc-calendar-slide-right'
-      }
-      return name
     },
     checkHiddenElement(elementName) {
       return !this.fConfigs.hiddenElements.includes(elementName)
