@@ -66,21 +66,26 @@ describe('theme tokens', () => {
     expect(forced).toContain("-preset[aria-pressed='true']")
   })
 
-  it('gives every logical property an old browser fallback', () => {
+  it('gives every logical property a fallback gated on its own support', () => {
     const read = path => readFileSync(join(process.cwd(), path), 'utf8')
     const scss = read('src/assets/scss/calendar.scss')
-    const fallback = scss.slice(
-      scss.indexOf('@supports not (inset-inline-start: 0)'),
+    const insetGate = '@supports not (inset-inline-start: 0)'
+    const radiusGate = '@supports not (border-start-start-radius: 0)'
+    const insets = scss.slice(scss.indexOf(insetGate), scss.indexOf(radiusGate))
+    const radii = scss.slice(
+      scss.indexOf(radiusGate),
       scss.indexOf('@media (forced-colors: active)')
     )
 
-    expect(fallback).toContain('border-right: 1px solid')
-    expect(fallback).toContain('right: 0;')
-    expect(fallback).toContain('left: 0;')
-    expect(fallback).toContain(
+    expect(scss.indexOf(insetGate)).toBeGreaterThan(-1)
+    expect(insets).toContain('border-right: 1px solid')
+    expect(insets).toContain('right: 0;')
+    expect(insets).toContain('left: 0;')
+    expect(insets).not.toContain('border-radius')
+    expect(radii).toContain(
       'border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0'
     )
-    expect(fallback).toContain(
+    expect(radii).toContain(
       'border-radius: var(--_vfc-radius) 0 0 var(--_vfc-radius)'
     )
     expect(read('src/components/Day.vue')).toMatch(
