@@ -233,6 +233,39 @@ describe('time picker with a date range', () => {
   })
 })
 
+describe('time picker range toggles', () => {
+  const rangeOptions = { isDateRange: true, withTimePicker: true }
+
+  it('exposes which range edge the lists edit', async () => {
+    const { wrapper } = mountCalendar(rangeOptions)
+    await clickDay(wrapper, 10)
+    await wrapper.find('.vfc-close').trigger('click')
+    await clickDay(wrapper, 14)
+
+    const toggles = () =>
+      wrapper
+        .findAll('.vfc-modal-time-line [role="button"]')
+        .map(toggle => toggle.attributes('aria-pressed'))
+
+    expect(toggles()).toEqual(['false', 'true'])
+
+    await wrapper
+      .findAll('.vfc-modal-time-line [role="button"]')[0]
+      .trigger('click')
+
+    expect(toggles()).toEqual(['true', 'false'])
+  })
+
+  it('leaves no fixed id on the time line', async () => {
+    const { wrapper } = mountCalendar(rangeOptions)
+    await clickDay(wrapper, 10)
+
+    expect(wrapper.find('.vfc-modal-time-line').attributes('id')).toBe(
+      undefined
+    )
+  })
+})
+
 describe('time picker with a clamped date range', () => {
   const clickWithTime = async (wrapper, days) => {
     for (const day of days) {

@@ -2,6 +2,7 @@
   <div
     class="vfc-day vfc-week-number"
     role="rowheader"
+    :aria-label="`${calendarRoot.fConfigs.labels.week} ${number}`"
     :style="{ borderRightColor: borderColor }"
   >
     <span class="vfc-span-day">{{ number }}</span>
@@ -9,8 +10,11 @@
 </template>
 
 <script>
+import { CALENDAR_KEY } from '../utils/injectionKeys'
+
 export default {
   name: 'WeekNumbers',
+  inject: { calendarRoot: CALENDAR_KEY },
   props: {
     number: {
       type: Number,

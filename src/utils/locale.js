@@ -26,6 +26,7 @@ export const DEFAULT_LABELS = {
   rangeStart: 'range start',
   rangeEnd: 'range end',
   today: 'Today',
+  week: 'Week',
   presets: {
     today: 'Today',
     yesterday: 'Yesterday',

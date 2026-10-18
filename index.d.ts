@@ -70,6 +70,7 @@ export interface FunctionalCalendarLabels {
   rangeStart: string
   rangeEnd: string
   today: string
+  week: string
   presets: Record<FunctionalCalendarPresetKey, string>
 }
 

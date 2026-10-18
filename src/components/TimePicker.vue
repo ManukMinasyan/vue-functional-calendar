@@ -9,12 +9,13 @@
       @keydown.enter.space.prevent="close()"
     ></div>
     <div class="vfc-modal-time-mechanic">
-      <div id="time-line" class="vfc-modal-time-line">
+      <div class="vfc-modal-time-line">
         <span>
           <template v-if="calendarRoot.fConfigs.isDateRange">
             <span
               role="button"
               tabindex="0"
+              :aria-pressed="startDateActive"
               @click="startDateActive = true"
               @keydown.enter.space.prevent="startDateActive = true"
               :class="{ 'vfc-active': startDateActive }"
@@ -25,6 +26,7 @@
               <span
                 role="button"
                 tabindex="0"
+                :aria-pressed="!startDateActive"
                 @click="startDateActive = false"
                 @keydown.enter.space.prevent="startDateActive = false"
                 :class="{ 'vfc-active': !startDateActive }"

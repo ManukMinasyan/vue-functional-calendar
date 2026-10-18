@@ -19,6 +19,27 @@ describe('showWeekNumbers', () => {
     expect(wrapper.findAll('.vfc-week')).toHaveLength(5)
   })
 
+  it('names each week number cell with the week label', () => {
+    const { wrapper } = mountCalendar({ showWeekNumbers: true })
+
+    expect(
+      wrapper
+        .findAll('.vfc-week-number')
+        .map(cell => cell.attributes('aria-label'))
+    ).toEqual(['Week 40', 'Week 41', 'Week 42', 'Week 43', 'Week 44'])
+  })
+
+  it('translates the week label', () => {
+    const { wrapper } = mountCalendar({
+      showWeekNumbers: true,
+      labels: { week: 'KW' }
+    })
+
+    expect(wrapper.find('.vfc-week-number').attributes('aria-label')).toBe(
+      'KW 40'
+    )
+  })
+
   it('numbers the first week of October 2026 as ISO week 40', () => {
     const { wrapper } = mountCalendar({ showWeekNumbers: true })
 
