@@ -263,6 +263,50 @@ describe('modal mode', () => {
   })
 })
 
+describe('placeholder', () => {
+  it.each([true, false])(
+    'falls back to the dateFormat when placeholder is %s',
+    placeholder => {
+      const { wrapper } = mountCalendar({
+        isModal: true,
+        isDatePicker: true,
+        dateFormat: 'yyyy-mm-dd',
+        placeholder
+      })
+
+      expect(
+        wrapper.find('input.vfc-single-input').attributes('placeholder')
+      ).toBe('yyyy-mm-dd')
+    }
+  )
+
+  it('falls back to the dateFormat for a range with a time input', () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDateRange: true,
+      displayTimeInput: true,
+      dateFormat: 'yyyy-mm-dd',
+      placeholder: true
+    })
+
+    expect(
+      wrapper.findAll('input').map(input => input.attributes('placeholder'))
+    ).toEqual(['yyyy-mm-dd', 'yyyy-mm-dd'])
+  })
+
+  it('keeps a placeholder string', () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDatePicker: true,
+      placeholder: 'Birthday'
+    })
+
+    expect(
+      wrapper.find('input.vfc-single-input').attributes('placeholder')
+    ).toBe('Birthday')
+  })
+})
+
 describe('typeable inputs', () => {
   it('writes a typed date into the single input to the model', async () => {
     const model = emptyModel()

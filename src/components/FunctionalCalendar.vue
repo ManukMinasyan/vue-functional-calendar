@@ -814,7 +814,10 @@ export default {
       if (this.fConfigs.isModal) this.showCalendar = false
 
       // Placeholder
-      if (!this.fConfigs.placeholder)
+      if (
+        typeof this.fConfigs.placeholder !== 'string' ||
+        !this.fConfigs.placeholder
+      )
         this.fConfigs.placeholder = this.fConfigs.dateFormat
 
       // Week Start
