@@ -7,7 +7,7 @@ const target = fileURLToPath(
 )
 const body = readFileSync(source, 'utf8')
     .replace(/^# .*\n+/, '')
-    .replace('](MIGRATION.md)', '](/getting-started/migration)')
+    .replaceAll('](MIGRATION.md)', '](/getting-started/migration)')
 
 writeFileSync(
     target,
