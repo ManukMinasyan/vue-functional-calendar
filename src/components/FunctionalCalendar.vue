@@ -772,67 +772,29 @@ export default {
       }
     },
     listRendering() {
-      // Each Calendars
+      const { helpCalendar } = this
+      const today = dayStart(new Date()).getTime()
+
       this.listCalendars.forEach(calendar => {
-        // Set Calendar Weeks
         calendar.weeks.forEach(week => {
-          let finalizedDays = []
+          week.days = week.days.map(day => {
+            const date = new Date(day.year, day.month, day.day)
+            const formatted = helpCalendar.formatDate(date)
 
-          week.days.forEach(day => {
-            let date = new Date(day.year, day.month, day.day)
-            let now = new Date()
-
-            let isToday = false
-
-            date.setHours(0, 0, 0, 0)
-            now.setHours(0, 0, 0, 0)
-
-            if (date.getTime() === now.getTime()) {
-              isToday = true
-            }
-
-            let checkMarked
-            // With Custom Classes
-            if (typeof this.fConfigs.markedDates[0] === 'object') {
-              checkMarked = this.fConfigs.markedDates.find(markDate => {
-                return markDate.date === this.helpCalendar.formatDate(date)
-              })
-            } else {
-              // Without Classes
-              checkMarked = this.fConfigs.markedDates.find(markDate => {
-                return markDate === this.helpCalendar.formatDate(date)
-              })
-            }
-
-            if (this.startDMY === this.helpCalendar.formatDate(date)) {
-              checkMarked = true
-            }
-
-            let isMarked = false
-            if (typeof checkMarked !== 'undefined') {
-              isMarked = true
-            }
-
-            finalizedDays.push({
+            return {
               day: day.day,
-              date: this.helpCalendar.formatDate(date),
+              date: formatted,
               hide: day.hide,
               isMouseToLeft: false,
               isMouseToRight: false,
               isHovered: false,
-              isDateRangeStart: this.checkDateRangeStart(
-                this.helpCalendar.formatDate(date)
-              ),
-              isDateRangeEnd: this.checkDateRangeEnd(
-                this.helpCalendar.formatDate(date)
-              ),
+              isDateRangeStart: this.checkDateRangeStart(formatted),
+              isDateRangeEnd: this.checkDateRangeEnd(formatted),
               hideLeftAndRightDays: day.hideLeftAndRightDays,
-              isToday,
-              isMarked
-            })
+              isToday: date.getTime() === today,
+              isMarked: false
+            }
           })
-
-          week.days = finalizedDays
         })
       })
     },
