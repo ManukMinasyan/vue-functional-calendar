@@ -244,6 +244,41 @@ describe('roving tabindex', () => {
     expect(tabStops(wrapper)).toEqual([findDay(wrapper, 3)])
   })
 
+  it.each([
+    ['date picker', 'isDatePicker', { selectedDate: '08/10/2026' }],
+    [
+      'multiple date picker',
+      'isMultipleDatePicker',
+      {
+        selectedDates: [
+          { date: '08/10/2026', dateTime: false, hour: '00', minute: '00' }
+        ]
+      }
+    ]
+  ])(
+    'puts the tab stop on a %s selection written with leading zeros',
+    async (_name, mode, selection) => {
+      const model = {
+        currentDate: new Date(2026, 9, 1),
+        selectedDate: false,
+        selectedDateTime: false,
+        selectedHour: '00',
+        selectedMinute: '00',
+        selectedDatesItem: '',
+        selectedDates: [],
+        dateRange: { start: '', end: '' },
+        multipleDateRange: [],
+        ...selection
+      }
+      const { wrapper } = await mountCalendarReady({
+        [mode]: true,
+        modelValue: model
+      })
+
+      expect(tabStops(wrapper)).toEqual([findDay(wrapper, 8)])
+    }
+  )
+
   it('follows the day that was last focused', async () => {
     const { wrapper } = await mountCalendarReady({ isDatePicker: true })
 

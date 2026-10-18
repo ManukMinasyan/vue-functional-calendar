@@ -186,3 +186,18 @@ describe('date picker', () => {
     expect(wrapper.find('div.vfc-top-date').text()).toContain('2027')
   })
 })
+
+describe('date picker model with leading zeros', () => {
+  it('marks the selected day and exposes it as selected', async () => {
+    const model = { ...emptyModel(), selectedDate: '08/10/2026' }
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      modelValue: model
+    })
+
+    expect(findDay(wrapper, 8).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 8).classList).toContain('vfc-borderd')
+    expect(findDay(wrapper, 8).getAttribute('aria-selected')).toBe('true')
+    expect(findDay(wrapper, 9).getAttribute('aria-selected')).toBe('false')
+  })
+})

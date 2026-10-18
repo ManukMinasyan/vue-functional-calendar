@@ -215,3 +215,37 @@ describe('multiple date picker', () => {
     expect(findDay(wrapper, 9).classList).toContain('vfc-marked')
   })
 })
+
+describe('multiple date picker model with leading zeros', () => {
+  const entry = date => ({ date, dateTime: false, hour: '00', minute: '00' })
+
+  it('marks the selected days and exposes them as selected', async () => {
+    const model = emptyModel()
+    model.selectedDates = [entry('08/10/2026'), entry('12/10/2026')]
+    const { wrapper } = await mountCalendarReady({
+      isMultipleDatePicker: true,
+      modelValue: model
+    })
+
+    ;[8, 12].forEach(day => {
+      expect(findDay(wrapper, day).classList).toContain('vfc-marked')
+      expect(findDay(wrapper, day).classList).toContain('vfc-borderd')
+      expect(findDay(wrapper, day).getAttribute('aria-selected')).toBe('true')
+    })
+    expect(findDay(wrapper, 9).getAttribute('aria-selected')).toBe('false')
+  })
+
+  it('removes a padded entry when its day is clicked', async () => {
+    const model = emptyModel()
+    model.selectedDates = [entry('08/10/2026')]
+    const { wrapper } = await mountCalendarReady({
+      isMultipleDatePicker: true,
+      modelValue: model
+    })
+
+    await clickDay(wrapper, 8)
+
+    expect(lastValue(wrapper).selectedDates).toEqual([])
+    expect(findDay(wrapper, 8).classList).not.toContain('vfc-marked')
+  })
+})

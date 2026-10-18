@@ -330,8 +330,8 @@ export default {
       if (day.date === calendarRoot.endDMY) classes.push('vfc-end-marked')
 
       if (
-        day.date === this.calendar.selectedDate ||
-        this.calendar.selectedDates.some(sDate => sDate.date === day.date)
+        day.date === calendarRoot.selectedDMY ||
+        calendarRoot.selectedDatesDMY.includes(day.date)
       ) {
         classes.push('vfc-borderd')
       }

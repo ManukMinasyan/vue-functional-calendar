@@ -44,6 +44,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - A `dateRange` in the model and a `markedDateRange` written with leading zeros, such as `08/10/2026`, mark their start, end and days. They were ignored.
 - A `multipleDateRange` written with leading zeros, such as `06/10/2026`, marks its start, end and days and shows its end button. A parent that sets `dateRange.start` or `dateRange.end` to `null` no longer makes the calendar throw.
 - Delete removes a multiple date range whose open start is written with a leading zero, and a preset shows as pressed when the selected date or range is written with leading zeros.
+- A `selectedDate` or `selectedDates` entry in the model written with leading zeros, such as `08/10/2026`, marks its day, reports it as selected, keeps the keyboard tab stop on it, and is removed by a click on its day.
 - In a `isMultipleDateRange` calendar the range band no longer covers the numbers of the days inside a range.
 - The `minSelDays` and `maxSelDays` hover preview counts whole calendar days, so it no longer shows one day too many or too few when the range crosses a daylight saving change.
 - An empty `{}` v-model receives typed dates, time picker changes and cleared values.

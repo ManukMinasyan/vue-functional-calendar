@@ -394,6 +394,12 @@ export default {
     endDMY() {
       return this.dateOnly(this.calendar.dateRange.end)
     },
+    selectedDMY() {
+      return this.dateOnly(this.calendar.selectedDate)
+    },
+    selectedDatesDMY() {
+      return this.calendar.selectedDates.map(entry => this.dateOnly(entry.date))
+    },
     multipleRangeDates() {
       return this.calendar.multipleDateRange.map(range => ({
         start: this.dateOnly(range.start),
@@ -946,9 +952,7 @@ export default {
 
         if (!this.usesTimePicker) this.autoCloseModal()
       } else if (this.fConfigs.isMultipleDatePicker) {
-        const dateIndex = this.calendar.selectedDates.findIndex(
-          entry => entry.date === date
-        )
+        const dateIndex = this.selectedDatesDMY.indexOf(date)
         if (dateIndex !== -1) {
           this.calendar.selectedDates.splice(dateIndex, 1)
         } else {
@@ -1129,9 +1133,7 @@ export default {
       const { calendar } = this
       const start = this.helpCalendar.formatDate(preset.start)
 
-      if (!this.isRangePreset) {
-        return this.helpCalendar.normalizeDate(calendar.selectedDate) === start
-      }
+      if (!this.isRangePreset) return this.selectedDMY === start
 
       const end = this.helpCalendar.formatDate(preset.end)
       const matches = range =>
@@ -1235,12 +1237,9 @@ export default {
             day.isMarked = false
             day.date = day.date.split(' ')[0]
             if (this.fConfigs.isDatePicker) {
-              if (this.calendar.selectedDate === day.date) day.isMarked = true
+              if (this.selectedDMY === day.date) day.isMarked = true
             } else if (this.fConfigs.isMultipleDatePicker) {
-              if (
-                this.calendar.selectedDates.some(date => date.date === day.date)
-              )
-                day.isMarked = true
+              if (this.selectedDatesDMY.includes(day.date)) day.isMarked = true
             } else {
               day.isMouseToLeft = false
               day.isMouseToRight = false
@@ -1826,9 +1825,9 @@ export default {
           calendar.dateRange.end
         )
       }
-      if (fConfigs.isDatePicker) return calendar.selectedDate === date
+      if (fConfigs.isDatePicker) return this.selectedDMY === date
       if (fConfigs.isMultipleDatePicker) {
-        return calendar.selectedDates.some(item => item.date === date)
+        return this.selectedDatesDMY.includes(date)
       }
       return false
     },
