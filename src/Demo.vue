@@ -295,42 +295,6 @@
     <hr />
     <hr />
     <hr />
-    <!-- <functional-calendar
-      :limits="{ min: '8/06/2020', max: '24/06/2020' }"
-      :is-date-picker="true"
-    ></functional-calendar> -->
-
-    <!-- <functional-calendar
-      :with-time-picker="true"
-      :is-date-picker="true"
-    ></functional-calendar>
-    <functional-calendar :is-multiple-date-picker="true"></functional-calendar> -->
-
-    <!-- <FunctionalCalendar
-      class="demo-calendar"
-      v-model="demoCalendar1"
-      :marked-dates="markedDates"
-      :showWeekNumbers="true"
-      borderColor="green"
-      :disabled-dates="disabledDates"
-      :is-date-picker="true"
-      :is-modal="true"
-    >
-      <template v-slot:datePickerInput="props">
-        <label for="input-date">
-          <input
-            id="input-date"
-            type="text"
-            title="Start Date"
-            v-model="props.selectedDate"
-            placeholder="Birthday"
-            :readonly="!props.isTypeable"
-          />
-        </label>
-      </template>
-    </FunctionalCalendar> -->
-    <!-- <button @click="markedDates.push('20/5/2020')">Push marked</button>
-    <button @click="disabledDates.push('21/5/2020')">Push disabled</button> -->
 
     <FunctionalCalendar
       class="demo-calendar dateRangeInputs"
@@ -435,7 +399,6 @@
       </template>
     </FunctionalCalendar>
 
-    <!-- ################################################################################### -->
     asd
     <functional-calendar
       :is-modal="true"
@@ -502,67 +465,7 @@
       </template>
     </functional-calendar>
     asd
-    <!-- <FunctionalCalendar class="demo-calendar 2"-->
-    <!--                            ref="Calendar"-->
-    <!--                            v-model="calendarData"-->
-    <!--                            :sundayStart="true"-->
-    <!--                            :hiddenElements="['']"-->
-    <!--                            :showWeekNumbers="false"-->
-    <!--                            :withTimePicker="false"-->
-    <!--                            :is-date-picker="false"-->
-    <!--                            :is-multiple-date-picker="true"-->
-    <!--                            :is-date-range="false"-->
-    <!--                            :min-sel-days="3"-->
-    <!--                            :is-dark="false"-->
-    <!--                            :date-format="'yyyy-mm-dd'"-->
-    <!--                            :is-multiple="true"-->
-    <!--                            :calendars-count="2"-->
-    <!--                            :isSeparately="true"-->
-    <!--                            :with-time-picker="false"-->
-    <!--                            :change-month-function="true"-->
-    <!--                            :change-year-function="true"-->
-    <!--                            :marked-dates="markedDates"-->
-    <!--                            :is-auto-closeable="false"-->
-    <!--                            :is-modal="false"-->
-    <!--                            :change-year-step="5"-->
-    <!--                            :is-typeable="true"-->
-    <!--                            @choseDay="choseDay"-->
-    <!--                            title-position="left"-->
-    <!--                            arrows-position="right"-->
-    <!--        >-->
-    <!--        </FunctionalCalendar>-->
 
-    <!--        <FunctionalCalendar class="demo-calendar 2"-->
-    <!--                            ref="Calendar"-->
-    <!--                            :sundayStart="true"-->
-    <!--                            :hiddenElements="['']"-->
-    <!--                            :showWeekNumbers="true"-->
-    <!--                            :is-date-picker="false"-->
-    <!--                            :is-multiple-date-picker="true"-->
-    <!--                            :is-date-range="false"-->
-    <!--                            :min-sel-days="3"-->
-    <!--                            :is-dark="false"-->
-    <!--                            :date-format="'yyyy-mm-dd'"-->
-    <!--                            :is-multiple="true"-->
-    <!--                            :calendars-count="2"-->
-    <!--                            :isSeparately="true"-->
-    <!--                            :with-time-picker="false"-->
-    <!--                            :change-month-function="true"-->
-    <!--                            :change-year-function="true"-->
-    <!--                            :marked-dates="markedDates"-->
-    <!--                            :is-auto-closeable="false"-->
-    <!--                            :is-modal="false"-->
-    <!--                            :change-year-step="5"-->
-    <!--                            :is-typeable="true"-->
-    <!--                            @choseDay="choseDay"-->
-    <!--                            title-position="left"-->
-    <!--                            arrows-position="right"-->
-    <!--        >-->
-    <!--        </FunctionalCalendar>-->
-
-    <!--        <pre>-->
-    <!--        {{ calendarData }}-->
-    <!--        </pre>!-->
     <functional-calendar
       :with-time-picker="true"
       :sundayStart="true"
@@ -596,56 +499,6 @@
         </div>
       </template>
     </functional-calendar>
-
-    <!--        &lt;!&ndash;        <button @click="markedDates2.push('22/3/2020')">Add date</button>&ndash;&gt;-->
-
-    <!--        <button @click="$refs.Calendar.ChooseDate('2020-10-15')">Choose Date 2020-10-15</button>-->
-
-    <!--<FunctionalCalendar class="demo-calendar 3"-->
-    <!--ref="Calendar2"-->
-    <!--:is-date-range="true"-->
-    <!--:min-sel-days="3"-->
-    <!--:is-dark="false"-->
-    <!--:date-format="'dd/mm/yyyy'"-->
-    <!--:is-multiple="true"-->
-    <!--:calendars-count="1"-->
-    <!--:with-time-picker="false"-->
-    <!--:change-month-function="true"-->
-    <!--:change-year-function="true"-->
-    <!--:disabled-dates="['beforeToday', '20/12/2019']"-->
-    <!--v-slot:default="props"-->
-    <!--:is-auto-closeable="true"-->
-    <!--:is-modal="false"-->
-    <!--:change-year-step="5"-->
-    <!--&gt;-->
-    <!--<span style="text-align: center">-->
-    <!--{{ props.day.day }}-->
-    <!--<span :class="{'green-point': props.day.day === 5, 'orange-point': props.day.day === 9, 'green-line': props.day.day === 11}"></span>-->
-    <!--</span>-->
-    <!--</FunctionalCalendar>-->
-    <!--<functional-calendar class="demo-calendar"-->
-    <!--:with-time-picker='true'-->
-    <!--:is-date-picker='true'-->
-    <!--:limits="{min: '13/6/2019', max: '20/7/2019'}"-->
-    <!--&gt;</functional-calendar>-->
-
-    <!--<button @click="$refs.Calendar.ChooseDate('today')">Today</button>-->
-    <!--<functional-calendar class="demo-calendar2"-->
-    <!--v-model="calendarData"-->
-    <!--:sunday-start="true"-->
-    <!--:is-modal="false"-->
-    <!--:date-format="'dd.mm.yyyy'"-->
-    <!--:change-month-function="true"-->
-    <!--:change-year-function="true"-->
-    <!--:is-date-range="true"-->
-    <!--:is-multiple="false"-->
-    <!--:calendars-count="2"-->
-    <!--:marked-date-range="{start: '22.4.2019', end: '24.4.2019'}"-->
-    <!--:left-and-right-days="true"-->
-    <!--&gt;</functional-calendar>-->
-
-    <!--:disabledDates="['27.4.2019','29.4.2019']"-->
-    <!--:disabledDayNames="['Su']"-->
 
     <blockquote>
       <pre>
@@ -700,7 +553,6 @@ export default {
           start: '20/5/2020',
           end: '25/5/2020'
         }
-        // selectedDate: '26/5/2020'
       },
       events: [
         {
@@ -980,7 +832,6 @@ body {
                           position: relative;
                           padding: 5px;
                           border: 0;
-                          // width: 100%;
                           border-radius: 5px;
                           background-color: transparent;
                           color: #ffffff;
