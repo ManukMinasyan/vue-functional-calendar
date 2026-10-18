@@ -2092,7 +2092,7 @@ export default {
         const title = grid.querySelector(
           '.vfc-top-date [role="button"][aria-expanded="true"]'
         )
-        this.showMonthPicker = this.showYearPicker = false
+        this.closeMonthYearPicker()
         if (title) title.focus()
         return
       }
@@ -2138,7 +2138,7 @@ export default {
       if (keep.some(element => hElContains(element, target))) return
       if (hElContains(target, keep[0])) return
 
-      this.showMonthPicker = this.showYearPicker = false
+      this.closeMonthYearPicker()
     },
     onFocusIn(e) {
       this.closePickerOnOutsideFocus(e.target)
@@ -2155,7 +2155,7 @@ export default {
         e.relatedTarget &&
         !hElContains(this.$refs.popoverElement, e.relatedTarget)
       ) {
-        this.showMonthPicker = this.showYearPicker = false
+        this.closeMonthYearPicker()
       }
       if (
         this.fConfigs.isModal &&
@@ -2183,9 +2183,12 @@ export default {
           if (MYactive.contains(e.target)) {
             return
           }
-          return (this.showMonthPicker = this.showYearPicker = false)
+          this.closeMonthYearPicker()
         }
       })
+    },
+    closeMonthYearPicker() {
+      this.showMonthPicker = this.showYearPicker = false
     },
 
     cleanRange() {
