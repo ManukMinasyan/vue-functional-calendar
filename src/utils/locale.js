@@ -23,6 +23,9 @@ export const DEFAULT_LABELS = {
   minute: 'Minute',
   quickRanges: 'Quick ranges',
   range: 'Range',
+  rangeStart: 'range start',
+  rangeEnd: 'range end',
+  today: 'Today',
   presets: {
     today: 'Today',
     yesterday: 'Yesterday',

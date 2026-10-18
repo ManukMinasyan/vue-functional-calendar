@@ -1459,10 +1459,13 @@ describe('multiple date ranges', () => {
     const { wrapper } = await mountRanges()
 
     expect(findDay(wrapper, 10).getAttribute('aria-label')).toBe(
-      `${fullDate(2026, 9, 10)}, Range 1`
+      `${fullDate(2026, 9, 10)}, Range 1, range start`
     )
     expect(findDay(wrapper, 24).getAttribute('aria-label')).toBe(
-      `${fullDate(2026, 9, 24)}, Range 2`
+      `${fullDate(2026, 9, 24)}, Range 2, range end`
+    )
+    expect(findDay(wrapper, 13).getAttribute('aria-label')).toBe(
+      `${fullDate(2026, 9, 13)}, Range 1, range end`
     )
     expect(findDay(wrapper, 10).getAttribute('aria-keyshortcuts')).toBe(
       'Delete'
@@ -1672,5 +1675,77 @@ describe('weekday in day labels', () => {
     expect(findDay(wrapper, 15).getAttribute('aria-label')).toBe(
       'Donnerstag, 15. Oktober 2026'
     )
+  })
+})
+
+describe('day state labels', () => {
+  const label = (wrapper, day) =>
+    findDay(wrapper, day).getAttribute('aria-label')
+
+  const setToday = () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 15, 12))
+  }
+
+  it('marks today with aria-current and a label', async () => {
+    setToday()
+    const { wrapper } = await mountCalendarReady({ isDatePicker: true })
+
+    expect(findDay(wrapper, 15).getAttribute('aria-current')).toBe('date')
+    expect(label(wrapper, 15)).toBe(`${fullDate(2026, 9, 15)}, Today`)
+    expect(findDay(wrapper, 16).hasAttribute('aria-current')).toBe(false)
+    expect(label(wrapper, 16)).toBe(fullDate(2026, 9, 16))
+  })
+
+  it('translates the today label', async () => {
+    setToday()
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      labels: { today: 'Heute' }
+    })
+
+    expect(label(wrapper, 15)).toBe(`${fullDate(2026, 9, 15)}, Heute`)
+  })
+
+  it('names the ends of a date range', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: { dateRange: { start: '10/10/2026', end: '13/10/2026' } }
+    })
+
+    expect(label(wrapper, 10)).toBe(`${fullDate(2026, 9, 10)}, range start`)
+    expect(label(wrapper, 13)).toBe(`${fullDate(2026, 9, 13)}, range end`)
+    expect(label(wrapper, 11)).toBe(fullDate(2026, 9, 11))
+  })
+
+  it('names a one day range as both ends', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: { dateRange: { start: '10/10/2026', end: '10/10/2026' } }
+    })
+
+    expect(label(wrapper, 10)).toBe(
+      `${fullDate(2026, 9, 10)}, range start, range end`
+    )
+  })
+
+  it('translates the range end labels', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      labels: { rangeStart: 'Beginn', rangeEnd: 'Ende' },
+      modelValue: { dateRange: { start: '10/10/2026', end: '13/10/2026' } }
+    })
+
+    expect(label(wrapper, 10)).toBe(`${fullDate(2026, 9, 10)}, Beginn`)
+    expect(label(wrapper, 13)).toBe(`${fullDate(2026, 9, 13)}, Ende`)
+  })
+
+  it('does not name a pending range end that is not chosen yet', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: { dateRange: { start: '10/10/2026', end: '' } }
+    })
+
+    expect(label(wrapper, 10)).toBe(`${fullDate(2026, 9, 10)}, range start`)
   })
 })

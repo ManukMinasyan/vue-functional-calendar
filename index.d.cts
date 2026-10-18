@@ -67,6 +67,9 @@ export interface FunctionalCalendarLabels {
   minute: string
   quickRanges: string
   range: string
+  rangeStart: string
+  rangeEnd: string
+  today: string
   presets: Record<FunctionalCalendarPresetKey, string>
 }
 

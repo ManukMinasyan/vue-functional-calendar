@@ -106,14 +106,25 @@ describe('multiple date ranges', () => {
 
     await clickDays(wrapper, [3, 5, 10, 12])
 
-    const markers = wrapper.findAll('.vfc-day .number').map(node =>
-      [...node.element.childNodes]
+    const markers = wrapper
+      .findAll('.vfc-day .number')
+      .map(node => node.attributes('data-number'))
+    expect(markers).toEqual(['0', '-1', '1', '1'])
+  })
+
+  it('keeps the range number out of the text of the day', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 5, 10, 12])
+
+    wrapper.findAll('.vfc-day .number').forEach(node => {
+      const ownText = [...node.element.childNodes]
         .filter(child => child.nodeType === Node.TEXT_NODE)
         .map(child => child.textContent)
         .join('')
         .trim()
-    )
-    expect(markers).toEqual(['0', '-1', '1', '1'])
+      expect(ownText).toBe('')
+    })
   })
 
   it('shows ranges passed through the model', async () => {
@@ -373,11 +384,7 @@ const rangeMarkers = wrapper =>
           day.find('.vfc-base-start').exists() && 'start',
           day.find('.vfc-base-end').exists() && 'end',
           number.exists() &&
-            `number ${[...number.element.childNodes]
-              .filter(node => node.nodeType === Node.TEXT_NODE)
-              .map(node => node.textContent)
-              .join('')
-              .trim()} tip [${day.find('.toolTip').text()}]`,
+            `number ${number.attributes('data-number')} tip [${day.find('.toolTip').text()}]`,
           day.find('.times').exists() && 'times'
         ].filter(Boolean)
         const label = [...cell.childNodes]

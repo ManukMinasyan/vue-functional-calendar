@@ -63,6 +63,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - The tags input of `isMultipleDatePicker` removes a date with a labelled `<button>` (`labels.removeDate`) instead of an unnamed link, shows the date as text instead of HTML, names its input with `labels.addDate`, and returns focus to the input after a removal.
 - The inputs of a modal calendar are `role="combobox"` with `aria-controls` pointing at the dialog and an `aria-label` from `labels`. A plain textbox with `aria-expanded` and a name from `title` alone failed axe.
 - A screen reader announces the visible months when they change, through a visually hidden `aria-live="polite"` region. The calendar's root no longer takes focus with a nameless `tabindex="0"`.
+- Today has `aria-current="date"` and "Today" in its label. The first and last day of a range end their label with "range start" or "range end", and the number badge of a multiple date range is drawn from a `data-number` attribute so the label of a range day contains its visible text. New labels: `today`, `rangeStart`, `rangeEnd`.
 
 ## 2.10.0 - 2026-10-17
 

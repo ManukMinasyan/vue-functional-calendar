@@ -10,6 +10,7 @@
       :aria-selected="isSelectable ? isSelected : null"
       :aria-disabled="isBlocked"
       :aria-label="ariaLabel"
+      :aria-current="day.isToday ? 'date' : null"
       :aria-keyshortcuts="rangeNumbers.length ? 'Delete' : null"
       :data-focus-id="`day:${gridKey}:${day.date}`"
       :class="getClassNames(day)"
@@ -31,8 +32,9 @@
         @mouseover="toolTip && (onNumber = true)"
         @mouseleave="onNumber = false"
         class="number"
+        :data-number="getDaysNumber"
         aria-hidden="true"
-        >{{ getDaysNumber }}
+      >
         <div v-show="toolTip && onNumber" class="toolTip">
           {{ toolTipTxt.join('&nbsp;') }}
         </div>
@@ -155,13 +157,36 @@ export default {
         )
       )
     },
+    rangeLabelParts() {
+      const { labels, isMultipleDateRange, isDateRange } = this.fConfigs
+
+      if (isMultipleDateRange) {
+        const { starts, ends, touching } = this.rangeEdges
+        return touching.flatMap(index => [
+          `${labels.range} ${index + 1}`,
+          starts.includes(index) && labels.rangeStart,
+          ends.includes(index) && labels.rangeEnd
+        ])
+      }
+      if (!isDateRange) return []
+
+      const { date } = this.day
+      return [
+        date === this.calendarRoot.startDMY && labels.rangeStart,
+        date === this.calendarRoot.endDMY && labels.rangeEnd
+      ]
+    },
     ariaLabel() {
       if (this.day.hideLeftAndRightDays) return null
 
-      const label = this.calendarRoot.formatFullDate(this.dayDate)
-      if (!this.rangeNumbers.length) return label
-
-      return `${label}, ${this.fConfigs.labels.range} ${this.rangeNumbers.join(', ')}`
+      const { labels } = this.fConfigs
+      return [
+        this.calendarRoot.formatFullDate(this.dayDate),
+        this.day.isToday && labels.today,
+        ...this.rangeLabelParts
+      ]
+        .filter(Boolean)
+        .join(', ')
     },
     isPreviewStart() {
       const { day } = this
@@ -395,6 +420,9 @@ export default {
     background-color: var(--_vfc-primary);
     &:hover {
       background-color: var(--_vfc-primary-hover);
+    }
+    &::before {
+      content: attr(data-number);
     }
   }
   .toolTip {
