@@ -1118,11 +1118,11 @@ export default {
       )
     },
     hasDisabledDateIn(start, last) {
+      const lookup = this.disabledLookup
+      if (lookup.isEmpty) return false
+
       return eachDay(start, last).some(day =>
-        this.isDateInLookup(
-          this.helpCalendar.formatDate(day),
-          this.disabledLookup
-        )
+        this.isDateInLookup(this.helpCalendar.formatDate(day), lookup)
       )
     },
     hasDisabledDayNameIn(start, last) {
