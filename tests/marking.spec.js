@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { mountCalendar, findDay, clickDay, lastValue } from './helpers.js'
+import {
+  mountCalendar,
+  findDay,
+  findDayAny,
+  clickDay,
+  lastValue
+} from './helpers.js'
 
 const classesOf = (wrapper, day) => [...findDay(wrapper, day).classList]
+const classesOfAny = (wrapper, day) => [...findDayAny(wrapper, day).classList]
 
 describe('markedDates', () => {
   it('marks and outlines listed dates', () => {
@@ -27,6 +34,53 @@ describe('markedDates', () => {
     expect(classesOf(wrapper, 6)).toContain('holiday')
     expect(classesOf(wrapper, 7)).toContain('birthday')
     expect(classesOf(wrapper, 8)).not.toContain('holiday')
+  })
+
+  it('keeps an object entry a class only, without the marked look', () => {
+    const { wrapper } = mountCalendar({
+      markedDates: [{ date: '6/10/2026', class: 'holiday' }, '8/10/2026']
+    })
+
+    expect(classesOf(wrapper, 6)).not.toContain('vfc-marked')
+    expect(classesOf(wrapper, 6)).not.toContain('vfc-borderd')
+    expect(classesOf(wrapper, 8)).toEqual(
+      expect.arrayContaining(['vfc-marked', 'vfc-borderd'])
+    )
+  })
+
+  it('uses the class of the first entry when a date is listed twice', () => {
+    const { wrapper } = mountCalendar({
+      markedDates: [
+        { date: '6/10/2026', class: 'first' },
+        { date: '6/10/2026', class: 'second' }
+      ]
+    })
+
+    expect(classesOf(wrapper, 6)).toContain('first')
+    expect(classesOf(wrapper, 6)).not.toContain('second')
+  })
+
+  it('outlines listed dates in a multiple date range calendar', () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      isMultipleDateRange: true,
+      markedDates: ['5/10/2026']
+    })
+
+    expect(classesOf(wrapper, 5)).toContain('vfc-borderd')
+    expect(classesOf(wrapper, 6)).not.toContain('vfc-borderd')
+  })
+
+  it('leaves a listed date on a disabled weekday unmarked', () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDayNames: ['Mo'],
+      markedDates: ['5/10/2026', '6/10/2026']
+    })
+
+    expect(classesOfAny(wrapper, 5)).not.toContain('vfc-marked')
+    expect(classesOfAny(wrapper, 5)).not.toContain('vfc-borderd')
+    expect(classesOf(wrapper, 6)).toContain('vfc-marked')
   })
 
   it('formats listed dates with the dateFormat', () => {

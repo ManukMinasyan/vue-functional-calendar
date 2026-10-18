@@ -5,6 +5,8 @@ import {
   clickDay,
   clickDays,
   findDay,
+  hoverDay,
+  previewState,
   eventsNamed,
   lastValue
 } from './helpers.js'
@@ -383,5 +385,277 @@ describe('clearing a range', () => {
 
     expect(model.dateRange).toEqual({ start: '', end: '' })
     expect(findDay(wrapper, 12).classList).not.toContain('vfc-marked')
+  })
+})
+
+const previewSpan = (first, last, flags = 'marked') =>
+  Object.fromEntries(
+    Array.from({ length: last - first + 1 }, (_, index) => [
+      `${first + index}/10/2026`,
+      flags
+    ])
+  )
+
+describe('range hover preview', () => {
+  it('previews a range to the right of the start', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 14)
+
+    expect(previewState(wrapper)).toEqual({
+      ...previewSpan(10, 14),
+      '10/10/2026': 'marked left',
+      '14/10/2026': 'right'
+    })
+  })
+
+  it('previews a range to the left of the start', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 6)
+
+    expect(previewState(wrapper)).toEqual({
+      ...previewSpan(6, 10),
+      '6/10/2026': 'left',
+      '10/10/2026': 'marked right'
+    })
+  })
+
+  it('previews nothing but the start when the hovered day is the start', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 10)
+
+    expect(previewState(wrapper)).toEqual({ '10/10/2026': 'marked' })
+  })
+
+  it('replaces the previous preview on every hover', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 20)
+    await hoverDay(wrapper, 12)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'marked left',
+      '11/10/2026': 'marked',
+      '12/10/2026': 'right'
+    })
+  })
+
+  it('leaves a finished range as it is', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true })
+    await clickDays(wrapper, [10, 14])
+    const before = previewState(wrapper)
+
+    await hoverDay(wrapper, 20)
+
+    expect(previewState(wrapper)).toEqual(before)
+    expect(before).toEqual({
+      ...previewSpan(10, 14),
+      '10/10/2026': 'marked left',
+      '14/10/2026': 'marked right'
+    })
+  })
+
+  it('paints no preview while only an end is set', async () => {
+    const model = emptyModel()
+    model.dateRange = { start: '', end: '10/10/2026' }
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: model
+    })
+
+    await hoverDay(wrapper, 14)
+
+    expect(previewState(wrapper)).toEqual({ '10/10/2026': 'right' })
+  })
+
+  it('previews a range that carries a time on its start', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      withTimePicker: true
+    })
+    await clickDay(wrapper, 10)
+
+    wrapper.vm.dayMouseOver('14/10/2026')
+
+    expect(previewState(wrapper)).toEqual({
+      ...previewSpan(10, 14),
+      '10/10/2026': 'marked left',
+      '14/10/2026': 'right'
+    })
+  })
+
+  it('previews a range across two calendars', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      isMultiple: true,
+      calendarsCount: 2
+    })
+    await clickDay(wrapper, 28)
+
+    await hoverDay(wrapper, 5, 1)
+
+    expect(previewState(wrapper)).toEqual({
+      '28/10/2026': 'marked left',
+      '29/10/2026': 'marked',
+      '30/10/2026': 'marked',
+      '31/10/2026': 'marked',
+      '1/11/2026': 'marked',
+      '2/11/2026': 'marked',
+      '3/11/2026': 'marked',
+      '4/11/2026': 'marked',
+      '5/11/2026': 'right'
+    })
+  })
+
+  it('does not mark a disabled weekday inside the preview', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      disabledDayNames: ['Tu']
+    })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 16)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'marked left',
+      '11/10/2026': 'marked',
+      '12/10/2026': 'marked',
+      '14/10/2026': 'marked',
+      '15/10/2026': 'marked',
+      '16/10/2026': 'right'
+    })
+  })
+
+  it('keeps listed marked dates marked outside the preview', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      markedDates: ['3/10/2026', '20/10/2026', '12/10/2026']
+    })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 14)
+
+    expect(previewState(wrapper)).toEqual({
+      ...previewSpan(10, 14),
+      '3/10/2026': 'marked',
+      '10/10/2026': 'marked left',
+      '14/10/2026': 'right',
+      '20/10/2026': 'marked'
+    })
+  })
+
+  it('ignores a hover outside the limits', async () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      limits: { min: '5/10/2026', max: '20/10/2026' }
+    })
+    await clickDay(wrapper, 10)
+    await hoverDay(wrapper, 14)
+    const before = previewState(wrapper)
+
+    await hoverDay(wrapper, 25)
+    await hoverDay(wrapper, 2)
+
+    expect(previewState(wrapper)).toEqual(before)
+  })
+
+  it('emits dayMouseOver for a hover outside the limits', async () => {
+    const { wrapper, events } = mountCalendar({
+      isDateRange: true,
+      limits: { min: '5/10/2026', max: '20/10/2026' }
+    })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 25)
+
+    expect(eventsNamed(events, 'dayMouseOver')).toEqual(['25/10/2026'])
+  })
+})
+
+describe('range hover preview with minSelDays and maxSelDays', () => {
+  it('shows the minimum length to the right with the far end hovered', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, minSelDays: 3 })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 11)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'marked left',
+      '11/10/2026': 'marked right',
+      '12/10/2026': 'hovered right'
+    })
+  })
+
+  it('shows the minimum length to the left with the far end hovered', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, minSelDays: 3 })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 8)
+
+    expect(previewState(wrapper)).toEqual({
+      '8/10/2026': 'hovered left',
+      '9/10/2026': 'marked',
+      '10/10/2026': 'marked right'
+    })
+  })
+
+  it('shows the hovered day when it already reaches the minimum', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, minSelDays: 3 })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 14)
+
+    expect(previewState(wrapper)).toEqual({
+      ...previewSpan(10, 14),
+      '10/10/2026': 'marked left',
+      '14/10/2026': 'right'
+    })
+  })
+
+  it('cuts the preview at the maximum length to the right', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, maxSelDays: 4 })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 20)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'marked left',
+      '11/10/2026': 'marked',
+      '12/10/2026': 'marked',
+      '13/10/2026': 'hovered right'
+    })
+  })
+
+  it('cuts the preview at the maximum length to the left', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, maxSelDays: 4 })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 2)
+
+    expect(previewState(wrapper)).toEqual({
+      '7/10/2026': 'hovered left',
+      '8/10/2026': 'marked',
+      '9/10/2026': 'marked',
+      '10/10/2026': 'marked right'
+    })
+  })
+
+  it('shows the hovered day when it is inside the maximum', async () => {
+    const { wrapper } = mountCalendar({ isDateRange: true, maxSelDays: 4 })
+    await clickDay(wrapper, 10)
+
+    await hoverDay(wrapper, 12)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'marked left',
+      '11/10/2026': 'marked',
+      '12/10/2026': 'right'
+    })
   })
 })

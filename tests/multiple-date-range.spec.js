@@ -9,6 +9,8 @@ import {
   clickDay,
   clickDays,
   findDay,
+  hoverDay,
+  previewState,
   eventsNamed,
   lastValue
 } from './helpers.js'
@@ -356,5 +358,231 @@ describe('multiple date range selection rules', () => {
       { start: '3/10/2026', end: '5/10/2026' },
       { start: '10/10/2026', end: '12/10/2026' }
     ])
+  })
+})
+
+const rangeMarkers = wrapper =>
+  Object.fromEntries(
+    wrapper
+      .findAll('.vfc-calendar .vfc-day')
+      .filter(day => day.find('[role="gridcell"]').exists())
+      .map(day => {
+        const cell = day.find('[role="gridcell"]').element
+        const number = day.find('.number')
+        const flags = [
+          day.find('.vfc-base-start').exists() && 'start',
+          day.find('.vfc-base-end').exists() && 'end',
+          number.exists() &&
+            `number ${[...number.element.childNodes]
+              .filter(node => node.nodeType === Node.TEXT_NODE)
+              .map(node => node.textContent)
+              .join('')
+              .trim()} tip [${day.find('.toolTip').text()}]`,
+          day.find('.times').exists() && 'times'
+        ].filter(Boolean)
+        const label = [...cell.childNodes]
+          .filter(node => node.nodeType === Node.TEXT_NODE)
+          .map(node => node.textContent)
+          .join('')
+          .trim()
+        return [label, flags.join(', ')]
+      })
+      .filter(([, flags]) => flags)
+  )
+
+const modelOf = multipleDateRange => ({
+  currentDate: new Date(2026, 9, 1),
+  selectedDate: false,
+  selectedDateTime: false,
+  selectedHour: '00',
+  selectedMinute: '00',
+  selectedDatesItem: '',
+  selectedDates: [],
+  dateRange: { start: '', end: '' },
+  multipleDateRange
+})
+
+describe('multiple date range markers', () => {
+  const nbsp = '\u00a0'
+  const cases = {
+    'two separate ranges': [
+      [
+        { start: '3/10/2026', end: '6/10/2026' },
+        { start: '10/10/2026', end: '12/10/2026' }
+      ],
+      {
+        3: 'start, number 0 tip [0]',
+        4: 'start, end',
+        5: 'start, end',
+        6: 'end, number -1 tip [0], times',
+        10: 'start, number 1 tip [1]',
+        11: 'start, end',
+        12: 'end, number 1 tip [1], times'
+      }
+    ],
+    'ranges that share an edge day': [
+      [
+        { start: '3/10/2026', end: '5/10/2026' },
+        { start: '5/10/2026', end: '8/10/2026' }
+      ],
+      {
+        3: 'start, number 0 tip [0]',
+        4: 'start, end',
+        5: `start, end, number · tip [0${nbsp}1], times`,
+        6: 'start, end',
+        7: 'start, end',
+        8: 'end, number 1 tip [1], times'
+      }
+    ],
+    'a one day range': [
+      [{ start: '10/10/2026', end: '10/10/2026' }],
+      { 10: `number · tip [0${nbsp}0], times` }
+    ],
+    'identical ranges': [
+      [
+        { start: '6/10/2026', end: '9/10/2026' },
+        { start: '6/10/2026', end: '9/10/2026' }
+      ],
+      {
+        6: `start, number · tip [0${nbsp}1]`,
+        7: 'start, end',
+        8: 'start, end',
+        9: `end, number · tip [0${nbsp}1], times`
+      }
+    ],
+    'a range inside another range': [
+      [
+        { start: '3/10/2026', end: '12/10/2026' },
+        { start: '5/10/2026', end: '8/10/2026' }
+      ],
+      {
+        3: 'start, number 0 tip [0]',
+        4: 'start, end',
+        5: 'start, end, number 1 tip [1]',
+        6: 'start, end',
+        7: 'start, end',
+        8: 'start, end, number 1 tip [1], times',
+        9: 'start, end',
+        10: 'start, end',
+        11: 'start, end',
+        12: 'end, number -1 tip [0], times'
+      }
+    ]
+  }
+
+  it.each(Object.entries(cases))(
+    'draws bands, numbers and remove buttons for %s',
+    async (_, [ranges, expected]) => {
+      const { wrapper } = await mountCalendarReady({
+        ...options,
+        modelValue: modelOf(ranges)
+      })
+
+      expect(rangeMarkers(wrapper)).toEqual(expected)
+    }
+  )
+
+  it('draws the open range with its start number only', async () => {
+    const { wrapper } = mountCalendar(options)
+
+    await clickDays(wrapper, [3, 6, 10])
+
+    expect(rangeMarkers(wrapper)).toEqual({
+      3: 'start, number 0 tip [0]',
+      4: 'start, end',
+      5: 'start, end',
+      6: 'end, number -1 tip [0], times',
+      10: 'number 1 tip [1]'
+    })
+  })
+})
+
+describe('multiple date range hover preview', () => {
+  it('previews the open range to the right', async () => {
+    const { wrapper } = mountCalendar(options)
+    await clickDays(wrapper, [3, 5, 10])
+
+    await hoverDay(wrapper, 14)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'left',
+      '11/10/2026': 'marked',
+      '12/10/2026': 'marked',
+      '13/10/2026': 'marked',
+      '14/10/2026': 'right'
+    })
+  })
+
+  it('previews the open range to the left over a finished range', async () => {
+    const { wrapper } = mountCalendar(options)
+    await clickDays(wrapper, [3, 5, 10])
+
+    await hoverDay(wrapper, 1)
+
+    expect(previewState(wrapper)).toEqual({
+      '1/10/2026': 'left',
+      '2/10/2026': 'marked',
+      '3/10/2026': 'marked',
+      '4/10/2026': 'marked',
+      '5/10/2026': 'marked',
+      '6/10/2026': 'marked',
+      '7/10/2026': 'marked',
+      '8/10/2026': 'marked',
+      '9/10/2026': 'marked',
+      '10/10/2026': 'right'
+    })
+  })
+
+  it('shows the minimum length with the far end hovered', async () => {
+    const { wrapper } = mountCalendar({ ...options, minSelDays: 3 })
+    await clickDays(wrapper, [3, 5, 10])
+
+    await hoverDay(wrapper, 11)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'left',
+      '11/10/2026': 'marked right',
+      '12/10/2026': 'hovered right'
+    })
+  })
+
+  it('cuts the preview at the maximum length', async () => {
+    const { wrapper } = mountCalendar({ ...options, maxSelDays: 5 })
+    await clickDays(wrapper, [3, 5, 10])
+
+    await hoverDay(wrapper, 20)
+
+    expect(previewState(wrapper)).toEqual({
+      '10/10/2026': 'left',
+      '11/10/2026': 'marked',
+      '12/10/2026': 'marked',
+      '13/10/2026': 'marked',
+      '14/10/2026': 'hovered right'
+    })
+  })
+
+  it('cuts the preview at the maximum length to the left', async () => {
+    const { wrapper } = mountCalendar({ ...options, maxSelDays: 5 })
+    await clickDays(wrapper, [3, 5, 10])
+
+    await hoverDay(wrapper, 2)
+
+    expect(previewState(wrapper)).toEqual({
+      '6/10/2026': 'hovered left',
+      '7/10/2026': 'marked',
+      '8/10/2026': 'marked',
+      '9/10/2026': 'marked',
+      '10/10/2026': 'right'
+    })
+  })
+
+  it('previews nothing once every range is finished', async () => {
+    const { wrapper } = mountCalendar(options)
+    await clickDays(wrapper, [3, 5, 10, 12])
+    const before = previewState(wrapper)
+
+    await hoverDay(wrapper, 20)
+
+    expect(previewState(wrapper)).toEqual(before)
   })
 })

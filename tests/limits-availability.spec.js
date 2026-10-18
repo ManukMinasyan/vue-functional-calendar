@@ -489,6 +489,67 @@ describe('disabledDayNames', () => {
   })
 })
 
+describe('blocked day classes', () => {
+  const classesOf = (wrapper, day) => [...findDayAny(wrapper, day).classList]
+
+  it('marks a disabled weekday as hidden and not allowed, but not disabled', () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDayNames: ['Mo']
+    })
+
+    expect(classesOf(wrapper, 5)).toEqual(
+      expect.arrayContaining(['vfc-hide', 'vfc-cursor-not-allowed'])
+    )
+    expect(classesOf(wrapper, 5)).not.toContain('vfc-disabled')
+  })
+
+  it('marks a disabled date as disabled and not allowed', () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDates: ['6/10/2026']
+    })
+
+    expect(classesOf(wrapper, 6)).toEqual(
+      expect.arrayContaining(['vfc-disabled', 'vfc-cursor-not-allowed'])
+    )
+    expect(classesOf(wrapper, 6)).not.toContain('vfc-hide')
+  })
+
+  it('marks a disabled date on a disabled weekday as disabled too', () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDayNames: ['Mo'],
+      disabledDates: ['5/10/2026']
+    })
+
+    expect(classesOf(wrapper, 5)).toEqual(
+      expect.arrayContaining([
+        'vfc-hide',
+        'vfc-disabled',
+        'vfc-cursor-not-allowed'
+      ])
+    )
+  })
+
+  it('exposes the blocked state of a day through aria-disabled', () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDayNames: ['Mo'],
+      disabledDates: ['6/10/2026'],
+      limits: { min: '2/10/2026', max: '20/10/2026' }
+    })
+
+    const blocked = day =>
+      findDayAny(wrapper, day).getAttribute('aria-disabled')
+    expect(blocked(5)).toBe('true')
+    expect(blocked(6)).toBe('true')
+    expect(blocked(1)).toBe('true')
+    expect(blocked(21)).toBe('true')
+    expect(blocked(7)).toBe('false')
+  })
+})
+
 describe('range clamps', () => {
   const minFive = { isDateRange: true, minSelDays: 5 }
 

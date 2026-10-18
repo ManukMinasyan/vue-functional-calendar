@@ -86,6 +86,32 @@ export const clickDays = async (wrapper, texts) => {
   }
 }
 
+export const hoverDay = async (wrapper, day, calendarIndex = 0) => {
+  findDay(wrapper, day, calendarIndex).dispatchEvent(
+    new MouseEvent('mouseover', { bubbles: true })
+  )
+  await wrapper.vm.$nextTick()
+}
+
+export const previewState = wrapper =>
+  Object.fromEntries(
+    wrapper.vm.listCalendars
+      .flatMap(item => item.weeks)
+      .flatMap(week => week.days)
+      .map(day => [
+        day.date,
+        [
+          day.isMarked && 'marked',
+          day.isHovered && 'hovered',
+          day.isMouseToLeft && 'left',
+          day.isMouseToRight && 'right'
+        ]
+          .filter(Boolean)
+          .join(' ')
+      ])
+      .filter(([, flags]) => flags)
+  )
+
 export const lastValue = wrapper => {
   const emitted = wrapper.emitted('update:modelValue')
   return emitted ? JSON.parse(JSON.stringify(emitted.at(-1)[0])) : undefined
