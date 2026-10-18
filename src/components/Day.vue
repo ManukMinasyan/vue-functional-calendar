@@ -34,7 +34,7 @@
         aria-hidden="true"
         >{{ getDaysNumber }}
         <div v-show="toolTip && onNumber" class="toolTip">
-          {{ toolTipTxt().join('&nbsp;') }}
+          {{ toolTipTxt.join('&nbsp;') }}
         </div>
       </span>
     </span>
@@ -87,9 +87,7 @@ export default {
   emits: ['dayMouseOver'],
   data() {
     return {
-      toolTip: false,
       onNumber: false
-      // toolTipTxt
     }
   },
   computed: {
@@ -127,18 +125,35 @@ export default {
     isBlocked() {
       return this.isDayNameDisabled || this.isRuleBlocked
     },
-    rangeNumbers() {
-      const ranges = this.calendar.multipleDateRange
-      if (!this.fConfigs.isMultipleDateRange || !ranges) return []
+    rangeEdges() {
+      const edges = { starts: [], ends: [], touching: [] }
+      const ranges = this.fConfigs.isMultipleDateRange
+        ? this.calendar.multipleDateRange
+        : null
+      if (!ranges) return edges
 
       const date = this.day.date
-      return ranges
-        .map((range, index) =>
-          range.start.split(' ')[0] === date || range.end.split(' ')[0] === date
-            ? index + 1
-            : 0
+      ranges.forEach((range, index) => {
+        const isStart = range.start.split(' ')[0] === date
+        const isEnd = range.end.split(' ')[0] === date
+        if (isStart) edges.starts.push(index)
+        if (isEnd) edges.ends.push(index)
+        if (isStart || isEnd) edges.touching.push(index)
+      })
+
+      return edges
+    },
+    rangeNumbers() {
+      return this.rangeEdges.touching.map(index => index + 1)
+    },
+    isInsideRange() {
+      return (
+        this.fConfigs.isMultipleDateRange &&
+        this.helpCalendar.isInsideRanges(
+          this.day.date,
+          this.calendar.multipleDateRange
         )
-        .filter(Boolean)
+      )
     },
     ariaLabel() {
       if (this.day.hideLeftAndRightDays) return null
@@ -148,162 +163,83 @@ export default {
 
       return `${label}, ${this.fConfigs.labels.range} ${this.rangeNumbers.join(', ')}`
     },
-    startActive() {
-      if (!this.fConfigs.isMultipleDateRange)
-        return (
-          (this.day.isDateRangeStart || this.day.isMouseToLeft) &&
-          !this.day.hideLeftAndRightDays
-        )
-
-      const inAnyRange = this.helpCalendar.isInsideRanges(
-        this.day.date,
-        this.calendar.multipleDateRange
-      )
-
-      const lastElement =
-        this.calendar.multipleDateRange[
-          this.calendar.multipleDateRange.length - 1
-        ]
-      if (!lastElement) return inAnyRange
-      const lastHasDayStart = ~this.calendar.multipleDateRange
-        .map(range => range.start)
-        .indexOf(this.day.date)
-      const lastHasDayEnd = ~this.calendar.multipleDateRange
-        .map(range => range.end)
-        .indexOf(this.day.date)
-
-      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return inAnyRange
-
-      if (
-        lastHasDayStart &&
-        ~lastHasDayStart > -1 &&
-        this.calendar.multipleDateRange[~lastHasDayStart].end
-      )
-        return lastHasDayStart || inAnyRange
-
-      if (!lastElement.start && !lastElement.end) {
-        return lastHasDayStart || inAnyRange
-      }
-      // console.log('lastElement')
-
+    isPreviewStart() {
+      const { day } = this
       return (
-        ((this.day.isDateRangeStart || this.day.isMouseToLeft) &&
-          !this.day.hideLeftAndRightDays) ||
-        inAnyRange
+        (day.isDateRangeStart || day.isMouseToLeft) && !day.hideLeftAndRightDays
       )
+    },
+    isPreviewEnd() {
+      const { day } = this
+      return (
+        (day.isDateRangeEnd || day.isMouseToRight) && !day.hideLeftAndRightDays
+      )
+    },
+    startActive() {
+      if (!this.fConfigs.isMultipleDateRange) return this.isPreviewStart
+
+      const ranges = this.calendar.multipleDateRange
+      const lastRange = ranges[ranges.length - 1]
+      if (!lastRange) return this.isInsideRange
+
+      const { starts, ends } = this.rangeEdges
+      const startIndex = starts.length ? starts[0] : -1
+      const endIndex = ends.length ? ends[0] : -1
+
+      if (startIndex === endIndex && endIndex > -1) return this.isInsideRange
+      if (startIndex > -1 && ranges[startIndex].end) return true
+      if (!lastRange.start && !lastRange.end) {
+        return startIndex > -1 || this.isInsideRange
+      }
+
+      return this.isPreviewStart || this.isInsideRange
     },
     endActive() {
-      if (!this.fConfigs.isMultipleDateRange)
-        return (
-          (this.day.isDateRangeEnd || this.day.isMouseToRight) &&
-          !this.day.hideLeftAndRightDays
-        )
+      if (!this.fConfigs.isMultipleDateRange) return this.isPreviewEnd
 
-      const inAnyRange = this.helpCalendar.isInsideRanges(
-        this.day.date,
-        this.calendar.multipleDateRange
-      )
+      const ranges = this.calendar.multipleDateRange
+      const lastRange = ranges[ranges.length - 1]
+      if (!lastRange) return this.isInsideRange
 
-      const lastElement =
-        this.calendar.multipleDateRange[
-          this.calendar.multipleDateRange.length - 1
-        ]
-      if (!lastElement) return inAnyRange
+      const { starts, ends } = this.rangeEdges
+      const startIndex = starts.length ? starts[0] : -1
+      const endIndex = ends.length ? ends[0] : -1
 
-      const lastHasDayStart = ~this.calendar.multipleDateRange
-        .map(range => range.start)
-        .indexOf(this.day.date)
-      const lastHasDayEnd = ~this.calendar.multipleDateRange
-        .map(range => range.end)
-        .indexOf(this.day.date)
+      if (startIndex === endIndex && endIndex > -1) return this.isInsideRange
+      if (endIndex > -1) return true
+      if (!lastRange.start && !lastRange.end) return false
 
-      if (lastHasDayStart === lastHasDayEnd && lastHasDayEnd) return inAnyRange
-
-      if (lastHasDayEnd) return true
-
-      if (!lastElement.start && !lastElement.end) {
-        if (lastElement.start === lastElement.end) return false
-        return lastHasDayEnd
-      }
-      return (
-        ((this.day.isDateRangeEnd || this.day.isMouseToRight) &&
-          !this.day.hideLeftAndRightDays) ||
-        inAnyRange
-      )
+      return this.isPreviewEnd || this.isInsideRange
     },
     numberShow() {
-      if (!this.fConfigs.isMultipleDateRange) return false
-
-      let endPos = this.calendar.multipleDateRange
-        .map(range => range.end)
-        .indexOf(this.day.date)
-
-      return !!(
-        ~endPos ||
-        ~this.calendar.multipleDateRange
-          .map(range => range.start)
-          .indexOf(this.day.date)
-      )
+      return this.rangeEdges.touching.length > 0
     },
     timesShow() {
-      let res = this.calendar.multipleDateRange
-        ? ~this.calendar.multipleDateRange
-            .map(range => range.end)
-            .indexOf(this.day.date)
-        : -1
-      return this.fConfigs.isMultipleDateRange && res
+      return this.rangeEdges.ends.length > 0
+    },
+    toolTip() {
+      const { starts, ends } = this.rangeEdges
+      return (
+        starts.length > 1 ||
+        ends.length > 1 ||
+        (!!starts.length && !!ends.length)
+      )
+    },
+    toolTipTxt() {
+      const { starts, ends } = this.rangeEdges
+      return [...ends, ...starts].sort((a, b) => a - b)
     },
     getDaysNumber() {
-      const endPosFirst = this.calendar.multipleDateRange
-        .map(range => range.end)
-        .indexOf(this.day.date)
-      const startPosFirst = this.calendar.multipleDateRange
-        .map(range => range.start)
-        .indexOf(this.day.date)
-      const endPosLast = this.calendar.multipleDateRange
-        .map(range => range.end)
-        .lastIndexOf(this.day.date)
-      const startPosLast = this.calendar.multipleDateRange
-        .map(range => range.start)
-        .lastIndexOf(this.day.date)
+      if (this.toolTip) return '·'
 
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.toolTip =
-        endPosFirst !== endPosLast ||
-        startPosFirst !== startPosLast ||
-        (endPosFirst > -1 && startPosFirst > -1) ||
-        (startPosFirst > -1 && endPosFirst > -1)
+      const { starts, ends } = this.rangeEdges
+      const endIndex = ends.length ? ends[0] : -1
+      const startIndex = starts.length ? starts[0] : -1
 
-      if (this.toolTip) {
-        return '·'
-      }
-
-      return (endPosFirst > -1 ? Number(endPosFirst) : 0) || startPosFirst
+      return (endIndex > -1 ? endIndex : 0) || startIndex
     }
   },
   methods: {
-    toolTipTxt() {
-      const numbers = []
-      const endArr = this.calendar.multipleDateRange.map(range => range.end)
-      const startArr = this.calendar.multipleDateRange.map(range => range.start)
-      let endIndex = 0
-      let startIndex = 0
-      let ind = endArr.indexOf(this.day.date, endIndex)
-      while (~endArr.indexOf(this.day.date, endIndex)) {
-        ind = endArr.indexOf(this.day.date, endIndex)
-
-        numbers.push(ind)
-        endIndex = ind + 1
-      }
-      ind = startArr.indexOf(this.day.date, startIndex)
-      while (~startArr.indexOf(this.day.date, startIndex)) {
-        ind = startArr.indexOf(this.day.date, startIndex)
-
-        numbers.push(ind)
-        startIndex = ind + 1
-      }
-      return numbers.sort((a, b) => a - b)
-    },
     clearRange() {
       //$emit
       const removeIndex = this.calendar.multipleDateRange.findIndex(
@@ -365,41 +301,21 @@ export default {
         classes.push('vfc-hover')
       }
 
-      //Date Multiple Range
       if (this.fConfigs.isMultipleDateRange) {
+        const { starts, ends } = this.rangeEdges
         if (
           day.isMarked ||
-          ~this.calendar.multipleDateRange
-            .map(range => range.start.split(' ')[0])
-            .indexOf(day.date) ||
-          ~this.calendar.multipleDateRange
-            .map(range => range.end.split(' ')[0])
-            .indexOf(day.date) ||
-          this.helpCalendar.isInsideRanges(
-            day.date,
-            this.calendar.multipleDateRange
-          )
+          starts.length ||
+          ends.length ||
+          this.isInsideRange
         ) {
           classes.push('vfc-marked')
         }
         if (calendarRoot.markedLookup.dates.has(day.date)) {
           classes.push('vfc-borderd')
         }
-        if (
-          ~this.calendar.multipleDateRange
-            .map(range => range.start.split(' ')[0])
-            .indexOf(day.date)
-        ) {
-          classes.push('vfc-start-marked')
-        }
-
-        if (
-          ~this.calendar.multipleDateRange
-            .map(range => range.end.split(' ')[0])
-            .indexOf(day.date)
-        ) {
-          classes.push('vfc-end-marked')
-        }
+        if (starts.length) classes.push('vfc-start-marked')
+        if (ends.length) classes.push('vfc-end-marked')
       }
 
       const { classes: customClasses } = calendarRoot.markedLookup
