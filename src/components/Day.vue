@@ -19,11 +19,9 @@
       @focus="calendarRoot.focusedDate = day.date"
       @mouseover="dayMouseOver"
     >
-      <SlotOutlet
-        :source="calendarRoot.$slots.default"
-        :scope="{ week, day }"
-        >{{ day.day }}</SlotOutlet
-      >
+      <SlotOutlet :source="daySlot" :scope="{ week, day }">{{
+        day.day
+      }}</SlotOutlet>
       <span
         v-if="timesShow"
         @click="clearRange"
@@ -79,6 +77,10 @@ export default {
     calendar: {
       type: Object,
       required: true
+    },
+    daySlot: {
+      type: Function,
+      default: undefined
     },
     alwaysUseDefaultClasses: {
       type: Boolean,
@@ -259,9 +261,8 @@ export default {
     dayMouseOver() {
       this.$emit('dayMouseOver', this.day.date)
     },
-    hasSlot(name = 'default') {
-      const props = name === 'default' ? { week: this.week, day: this.day } : {}
-      return hasSlotContent(this.calendarRoot.$slots[name], props)
+    hasSlot() {
+      return hasSlotContent(this.daySlot, { week: this.week, day: this.day })
     },
     onKeydown(event) {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -284,7 +285,7 @@ export default {
       const classes = []
       const { calendarRoot, isDayNameDisabled } = this
 
-      if (this.alwaysUseDefaultClasses || !this.hasSlot('default')) {
+      if (this.alwaysUseDefaultClasses || !this.hasSlot()) {
         classes.push('vfc-span-day')
       }
 

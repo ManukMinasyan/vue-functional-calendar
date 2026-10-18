@@ -198,6 +198,7 @@
                       :week="week"
                       :grid-key="key"
                       @dayMouseOver="dayMouseOver"
+                      :daySlot="$slots.default"
                       :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
                     />
                   </div>

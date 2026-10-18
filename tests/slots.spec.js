@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { h, nextTick, Comment, createCommentVNode } from 'vue'
+import {
+  h,
+  nextTick,
+  ref,
+  defineComponent,
+  Comment,
+  createCommentVNode
+} from 'vue'
 import { mount } from '@vue/test-utils'
 import FunctionalCalendar from '../index.js'
 import {
@@ -372,5 +379,105 @@ describe('modal input slots', () => {
       isTypeable: false,
       dialogId: dialogIdOf(wrapper)
     })
+  })
+})
+
+describe('default day slot updates', () => {
+  const settle = async () => {
+    await nextTick()
+    await nextTick()
+  }
+
+  it('drops a conditional slot when the parent removes it', async () => {
+    const show = ref(true)
+    const wrapper = mount(
+      {
+        render: () =>
+          h(
+            FunctionalCalendar,
+            { newCurrentDate: FIXED_DATE, isDatePicker: true },
+            show.value
+              ? { default: ({ day }) => h('b', { class: 'custom' }, day.day) }
+              : {}
+          )
+      },
+      { attachTo: document.body }
+    )
+    await nextTick()
+    expect(wrapper.findAll('.custom').length).toBeGreaterThan(0)
+
+    show.value = false
+    await settle()
+
+    expect(wrapper.findAll('.custom').length).toBe(0)
+  })
+
+  it('renders a slot closure with the latest non-reactive value', async () => {
+    const label = ref('A')
+    const wrapper = mount(
+      {
+        render() {
+          const prefix = label.value
+          return h(
+            FunctionalCalendar,
+            { newCurrentDate: FIXED_DATE, isDatePicker: true },
+            {
+              default: ({ day }) =>
+                h('b', { class: 'custom' }, prefix + day.day)
+            }
+          )
+        }
+      },
+      { attachTo: document.body }
+    )
+    await nextTick()
+    expect(wrapper.find('.custom').text().startsWith('A')).toBe(true)
+
+    label.value = 'B'
+    await settle()
+
+    expect(wrapper.find('.custom').text().startsWith('B')).toBe(true)
+  })
+
+  it('swaps a compiled slot that reads a v-for item with the list', async () => {
+    const Parent = defineComponent({
+      components: { FunctionalCalendar },
+      data: () => ({ items: [Object.freeze({ id: 1, tag: 'A' })] }),
+      computed: { date: () => FIXED_DATE },
+      template: `<div><FunctionalCalendar v-for="item in items" :key="item.id" :new-current-date="date" :is-date-picker="true"><template #default="{ day }"><b class="custom">{{ item.tag }}{{ day.day }}</b></template></FunctionalCalendar></div>`
+    })
+    const wrapper = mount(Parent, { attachTo: document.body })
+    await nextTick()
+    expect(wrapper.find('.custom').text().startsWith('A')).toBe(true)
+
+    wrapper.vm.items = [Object.freeze({ id: 1, tag: 'B' })]
+    await settle()
+
+    expect(wrapper.find('.custom').text().startsWith('B')).toBe(true)
+  })
+
+  it('keeps the vfc-span-day class in sync when a slot is switched on', async () => {
+    const show = ref(false)
+    const wrapper = mount(
+      {
+        render: () =>
+          h(
+            FunctionalCalendar,
+            { newCurrentDate: FIXED_DATE, isDatePicker: true },
+            show.value
+              ? { default: ({ day }) => h('b', { class: 'custom' }, day.day) }
+              : {}
+          )
+      },
+      { attachTo: document.body }
+    )
+    await nextTick()
+    expect(wrapper.findAll('.vfc-span-day').length).toBeGreaterThan(0)
+
+    show.value = true
+    await settle()
+
+    expect(wrapper.findAll('.custom').length).toBeGreaterThan(0)
+    expect(wrapper.findAll('.vfc-span-day').length).toBe(0)
   })
 })
