@@ -54,6 +54,8 @@ import 'vue-functional-calendar/style.css'
 
 Your 2.x CSS overrides keep working, because the `vfc-*` class names are unchanged. The default look changed, so check your overrides against it.
 
+Vue 3 renamed the transition class `-enter` to `-enter-from`. An override of `.vfc-calendar-slide-left-enter`, `-right-enter`, `-up-enter` or `-down-enter` must now target `.vfc-calendar-slide-left-enter-from` and so on. The `-enter-active`, `-leave-active` and `-leave-to` classes keep their names.
+
 ## Registration
 
 Vue 2 used `Vue.use`. Vue 3 uses `app.use`, and the options still become global defaults.
@@ -387,15 +389,15 @@ import FunctionalCalendar from 'vue-functional-calendar/src/components/Functiona
 import { FunctionalCalendar } from 'vue-functional-calendar'
 ```
 
-## Props are still not reactive
+## Most props are still read once
 
-As in 2.x, the calendar reads its props once, when it is created. Re-key the component to apply a change:
+As in 2.x, the calendar reads most props once, when it is created. Re-key the component to apply a change:
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker />
 ```
 
-`modelValue` and `enabledDates` are watched.
+3.1 watches `modelValue` and the data props `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`, in `configs` too. Change them on a live calendar without a re-key. The same rule as before decides the source: when `configs` is present, the props are ignored.
 
 ## New in 3.1
 

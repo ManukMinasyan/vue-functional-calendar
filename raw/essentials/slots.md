@@ -132,7 +132,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/essentia
     
     <td>
       <code>
-        { startDate, endDate, isTypeable }
+        { startDate, endDate, isTypeable, dialogId }
       </code>
     </td>
     
@@ -150,7 +150,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/essentia
     
     <td>
       <code>
-        { selectedDate, isTypeable }
+        { selectedDate, isTypeable, dialogId }
       </code>
     </td>
     

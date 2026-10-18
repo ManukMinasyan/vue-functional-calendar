@@ -49,7 +49,7 @@ Each month is a grid with one tab stop. Tab moves into the grid, and the arrow k
     </td>
     
     <td>
-      Previous or next day
+      Previous or next day. In a right to left page they swap: ArrowRight goes to the previous day, the one on the right
     </td>
   </tr>
   
@@ -115,13 +115,13 @@ Each month is a grid with one tab stop. Tab moves into the grid, and the arrow k
 </tbody>
 </table>
 
-Moving past the edge of the visible months scrolls the calendar and emits `changedMonth`, or `changedYear` for the Shift variants. Moves stop at the months that `limits` allows. Home and End follow the week start of the calendar, so Home lands on Sunday for `en-US` and on Monday for `de-DE`.
+Moving past the edge of the visible months scrolls the calendar and emits `changedMonth`, and `changedYear` too when the year changes. The Shift variants emit `changedYear` only. Moves stop at the months that `limits` allows. Home and End follow the week start of the calendar, so Home lands on Sunday for `en-US` and on Monday for `de-DE`.
 
 Disabled days are focusable but cannot be selected. Moving over a day also fires `dayMouseOver`, so a range preview follows the keyboard.
 
 ## Title, arrows and pickers
 
-The arrows are buttons. The month and year titles are buttons when `changeMonthFunction` or `changeYearFunction` is on. Enter or Space on a title opens its picker and moves focus to the selected item. Escape closes the picker and returns focus to the title. Items in a picker are buttons too.
+The arrows are buttons. The month and year titles are buttons when `changeMonthFunction` or `changeYearFunction` is on. Enter or Space on a title opens its picker and moves focus to the selected item. Escape closes the picker and returns focus to the title. Items in a picker are buttons too. Moving focus out of the picker, for example with Tab, closes it.
 
 Custom arrow slots that contain a button or a link keep their own focus. Other slot content gets `role="button"` and responds to Enter and Space.
 

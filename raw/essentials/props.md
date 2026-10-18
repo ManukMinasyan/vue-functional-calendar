@@ -7,7 +7,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/essentia
 
 > Every prop, with its type and default.
 
-The calendar has 48 props. The calendar reads them when it is created, except `modelValue` and `enabledDates`, which it watches. Re-key the component to apply a change to any other prop.
+The calendar has 48 props. The calendar reads them when it is created, except `modelValue` and the data props `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`, which it watches. The same keys inside `configs` are watched too. Re-key the component to apply a change to any other prop.
 
 ## Where options come from
 
@@ -417,7 +417,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         isMultiple
       </code>
       
-      .
+      . Watched.
     </td>
   </tr>
   
@@ -701,7 +701,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
     </td>
     
     <td>
-      Dates outside are disabled.
+      Dates outside are disabled. Watched.
     </td>
   </tr>
   
@@ -733,7 +733,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         afterToday
       </code>
       
-      .
+      . Watched.
     </td>
   </tr>
   
@@ -785,7 +785,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         dayNames
       </code>
       
-      .
+      . Watched.
     </td>
   </tr>
 </tbody>
@@ -839,7 +839,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
     </td>
     
     <td>
-      Dates to mark. Objects add a class to the day.
+      Dates to mark. Objects add a class to the day. Watched.
     </td>
   </tr>
   
@@ -869,7 +869,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         false
       </code>
       
-       leaves a side open.
+       leaves a side open. Watched.
     </td>
   </tr>
   
@@ -1397,7 +1397,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
     </td>
     
     <td>
-      Use the dark tokens.
+      Use the dark tokens. Watched.
     </td>
   </tr>
   
@@ -1623,6 +1623,18 @@ Call these through a template ref.
       
       , or to <code>
         'today'
+      </code>
+      
+      . Returns <code>
+        false
+      </code>
+      
+       and stays put when the month is outside <code>
+        limits
+      </code>
+      
+      . With several calendars, the view may start earlier so every calendar stays inside <code>
+        max
       </code>
       
       .

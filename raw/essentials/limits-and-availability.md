@@ -21,7 +21,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/essentia
 
 </calendar-demo>
 
-Dates use `dateFormat`, `dd/mm/yyyy` by default, and need no leading zero.
+Dates use `dateFormat`, `dd/mm/yyyy` by default. `5/3/2026` and `05/03/2026` mean the same date.
 
 <table>
 <thead>
@@ -133,7 +133,7 @@ With a `locale`, `disabledDayNames` still matches the English two letter names `
 
 ## Reactive list
 
-`enabledDates` is watched. Swap the list to change what is available on a calendar that is on screen. The other props are read once.
+`markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits` and `calendarsCount` are watched, in `configs` too. Swap a list or the limits to change what is available on a calendar that is on screen. Changing `limits` or `calendarsCount` rebuilds the grids from the current month. With `isSeparately`, each grid keeps the month you moved it to, a grid outside the new `limits` moves to the nearest allowed month, and new grids follow the last one. A new object with the same content changes nothing.
 
 ## Disabled days and keyboard
 

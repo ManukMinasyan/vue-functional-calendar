@@ -325,7 +325,23 @@ Week numbers follow the same first day.
     </td>
     
     <td>
-      Tags input placeholder
+      Tags input placeholder and name
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        removeDate
+      </code>
+    </td>
+    
+    <td>
+      Remove
+    </td>
+    
+    <td>
+      Remove button of a tag, followed by its date
     </td>
   </tr>
   
@@ -378,6 +394,78 @@ Week numbers follow the same first day.
     
     <td>
       Suffix in the label of a day in a numbered range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        rangeStart
+      </code>
+      
+      , <code>
+        rangeEnd
+      </code>
+    </td>
+    
+    <td>
+      range start, range end
+    </td>
+    
+    <td>
+      Suffix in the label of the first and last day of a range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        today
+      </code>
+    </td>
+    
+    <td>
+      Today
+    </td>
+    
+    <td>
+      Suffix in the label of today's date
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        week
+      </code>
+    </td>
+    
+    <td>
+      Week
+    </td>
+    
+    <td>
+      Name of a week number, followed by the number
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        chooseMonth
+      </code>
+      
+      , <code>
+        chooseYear
+      </code>
+    </td>
+    
+    <td>
+      Choose month, Choose year
+    </td>
+    
+    <td>
+      Name of the month picker and the year picker
     </td>
   </tr>
   
@@ -481,9 +569,9 @@ Week numbers follow the same first day.
 
 `labels.presets` merges key by key, so you can translate one preset. Labels can come from the global options and `configs` too. The more specific source wins, and calendars never share labels.
 
-## Props are not reactive
+## Locale and labels are read once
 
-The calendar reads `locale` and `labels` when it is created. To switch at runtime, re-key it:
+The calendar reads `locale` and `labels` when it is created, unlike the watched data props such as `markedDates`. To switch at runtime, re-key it:
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker />

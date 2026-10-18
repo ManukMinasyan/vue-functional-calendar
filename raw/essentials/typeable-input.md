@@ -60,7 +60,7 @@ The multiple date picker shows its dates as tags. Type a date and press Enter. T
 
 ## Read the value
 
-The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. An empty `{}` model also works: the calendar replaces it with its own state object when it mounts.
+The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. An empty `{}` model also works: the calendar fills in the missing keys when it mounts.
 
 
 ## Sitemap

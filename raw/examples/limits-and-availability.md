@@ -7,7 +7,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/examples
 
 > Block dates, weekdays and spans, or allow only a list of dates.
 
-Dates use the `dateFormat` of the calendar, `dd/mm/yyyy` by default. Day and month need no leading zero.
+Dates use the `dateFormat` of the calendar, `dd/mm/yyyy` by default. Day and month may carry a leading zero.
 
 ## Limit to a span
 

@@ -27,9 +27,11 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - The SCSS `!default` variables are replaced by `--vfc-*` tokens.
 - The default look is redesigned. The `vfc-*` class names are unchanged.
 - Deep imports from `src/` no longer resolve. Import from `vue-functional-calendar`.
+- The slide transition classes follow Vue 3: `.vfc-calendar-slide-*-enter` is now `-enter-from`. See [MIGRATION.md](MIGRATION).
 
 ### Fixed
 
+- The badges of multiple date ranges count from 1, as the day labels do. The first range showed 0 at its start and -1 at its end.
 - Week numbers with `sundayStart` follow ISO numbering of each row's Thursday. They were one lower.
 - Typed dates are validated. `31/02/2026` is rejected, padded dates such as `05/03/2026` are accepted, and a value commits only when the date is complete.
 - A pasted or autofilled ISO date is reordered to `dateFormat`, and pasted text that is not a date stays as pasted.
@@ -37,7 +39,48 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - Text typed after the date in a `displayTimeInput` field is kept, and the input is long enough to hold the time.
 - ArrowDown no longer opens the calendar while an IME composes, or when the input already handled the key.
 - A navigation arrow slot that renders a focusable component is no longer wrapped in a second button.
+- A model that is `null`, `{}`, readonly, frozen or missing keys such as `dateRange` no longer breaks the calendar. A plain object keeps being your object and gets the missing keys filled in. Assigning a new `{}` object clears the selection (#75, #117, #132).
+- A parent that binds a model holding only `multipleDateRange` can pick ranges without an `Invalid Data Range` error. That model is read, never written to.
+- A preloaded `v-model` survives `newCurrentDate`, and a server render shows the bound selection.
+- `disabledDates`, `enabledDates` and `markedDates` accept dates with a leading zero, such as `05/10/2026` or `2026-10-05`. They were ignored (#153, #40).
+- A `dateRange` in the model and a `markedDateRange` written with leading zeros, such as `08/10/2026`, mark their start, end and days. They were ignored.
+- A `multipleDateRange` written with leading zeros, such as `06/10/2026`, marks its start, end and days and shows its end button. A parent that sets `dateRange.start` or `dateRange.end` to `null` no longer makes the calendar throw.
+- Delete removes a multiple date range whose open start is written with a leading zero, and a preset shows as pressed when the selected date or range is written with leading zeros.
+- In a `isMultipleDateRange` calendar the range band no longer covers the numbers of the days inside a range.
+- The `minSelDays` and `maxSelDays` hover preview counts whole calendar days, so it no longer shows one day too many or too few when the range crosses a daylight saving change.
 - An empty `{}` v-model receives typed dates, time picker changes and cleared values.
+- The calendar no longer adds `inRange` to `String.prototype` or `getWeekNumber` to `Date.prototype`, and two multi-range calendars with different `dateFormat` values on one page each draw their ranges with their own format.
+- Side-by-side calendars could get the same internal key and reuse the wrong grid after navigation. Each grid now gets a unique key.
+- A `locale` on an engine without `Intl.Locale` no longer throws while mounting. The first day of the week falls back to the default.
+- `minSelDays` and `maxSelDays` keep the times of a range with `withTimePicker`, and the time picker no longer throws on a range edge without a time.
+- The `minSelDays` extension of a range stops at `limits` and before disabled days instead of running past them.
+- `disabledDates` and `enabledDates` apply to range clicks with `withTimePicker`. A disabled date was selectable and an enabled one was rejected.
+- A rejected click on a `withTimePicker` range no longer rewrites the day, so a disabled date stays disabled and a second click cannot select it.
+- A modal with `isAutoCloseable` and `withTimePicker` stays open for the time picker and closes when the time picker is closed (#103, #49).
+- A modal that loses focus with the time picker open reopens on the day grid instead of the time picker.
+- With `isMultipleDateRange` and `minSelDays`, starting the next range no longer rewrites the range that was just finished.
+- `withTimePicker` with `isMultipleDateRange` no longer opens a time picker that edited the empty `dateRange`. The combination is unsupported and the ranges hold plain dates.
+- An invalid initial `multipleDateRange` model raises `Invalid Data Range` through the app error handler, which Vue rethrows in development when none is set. With a handler, or in production, the calendar still renders and follows later valid models.
+- Picking a month or year with several calendars keeps them consecutive, updates `currentDate`, emits the model and re-checks `limits`. It emits `changedMonth` when the month of the first visible calendar changes and `changedYear` when its year changes, each with the first visible month as its date, so a view that `limits` clamp reports what is on screen and an unchanged view reports nothing.
+- Every navigation move stays inside `limits`: the year arrows, `changeMonthStep`, `changeYearStep`, the month and year pickers and `ChooseDate` no longer overshoot, and the right arrow of a multi-calendar picker disables before a month past `max` shows. `ChooseDate` returns `false` when the month is outside `limits`.
+- A multi-calendar picker no longer shows a month after `limits.max`. The view starts early enough that the last calendar is the `max` month, and keeps all `calendarsCount` calendars unless the limits span fewer months (#114).
+- With `isSeparately`, each calendar disables its own arrows at `limits` by its own month. They followed the first calendar before.
+- The previous and next month arrows emit `changedYear` when the visible year changes, as the year arrows do. A keyboard move across a year boundary emits `changedYear` too.
+- `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark` follow later changes, as props and inside `configs`. A list that arrives after mount, a replaced list and an edited reactive list all update the calendar, and an equal object created again changes nothing. With `isSeparately`, a `limits` or `calendarsCount` change keeps the month of each grid (#2, #65, #78, #97, #101, #109, #142).
+- The tags input of `isMultipleDatePicker` removes a date with a labelled `<button>` (`labels.removeDate`) instead of an unnamed link, shows the date as text instead of HTML, names its input with `labels.addDate`, and returns focus to the input after a removal.
+- The inputs of a modal calendar are `role="combobox"` with `aria-controls` pointing at the dialog and an `aria-label` from `labels`. A plain textbox with `aria-expanded` and a name from `title` alone failed axe.
+- A screen reader announces the visible months when they change, through a visually hidden `aria-live="polite"` region. The calendar's root no longer takes focus with a nameless `tabindex="0"`.
+- Today has `aria-current="date"` and "Today" in its label. The first and last day of a range end their label with "range start" or "range end", and the number badge of a multiple date range is drawn from a `data-number` attribute so the label of a range day contains its visible text. New labels: `today`, `rangeStart`, `rangeEnd`.
+- Week numbers are named "Week 42" for a screen reader (`labels.week`), the start and end toggles of the time picker report `aria-pressed`, and the time line no longer carries a fixed `id="time-line"` that duplicated across calendars.
+- The month and year picker is a named `role="group"` (`labels.chooseMonth`, `labels.chooseYear`), its year is a `<button class="vfc-top-date">` instead of an `<h2>`, and it closes when focus moves out of it, so Tab no longer walks into the grid hidden beneath it.
+- In a right to left page ArrowLeft and ArrowRight move to the day on that side, the navigation chevrons mirror under `dir="rtl"`, and the range bands, their rounded ends, the week number divider and the range badges sit on the correct side. Left to right rendering is unchanged.
+- The type declarations compile on Vue 3.3 and 3.4. They imported `EmitsToProps` and `PublicProps`, which exist from Vue 3.5.
+- `PreMonth`, `NextMonth`, `PreYear`, `NextYear` and `ChooseDate` are typed as returning `boolean`, and `configs` and the plugin options reject the options that are always props, such as `displayTimeInput` and `newCurrentDate`, which were ignored there.
+- `package.json` is importable through the `exports` map, and jsDelivr serves the UMD build.
+- `placeholder: true` no longer throws while rendering the inputs. A placeholder that is not a string falls back to the `dateFormat`.
+- In forced colors modes (Windows high contrast) the selected days, range ends, days inside a range, today, the selected preset, month, year and time, and the range badges stay visible. They were drawn with a background colour only and disappeared.
+- With `isSeparately`, a calendar added when `calendarsCount` grows stays inside `limits` instead of showing a month after `limits.max`.
+- In forced colors modes the close and remove crosses stay visible, and a disabled today keeps its line-through next to the underline.
 
 ## 2.10.0 - 2026-10-17
 
@@ -298,6 +341,12 @@ The calendar follows the ARIA date grid pattern. Screen readers get names, state
       <code>
         role="rowheader"
       </code>
+      
+       labeled by <code>
+        labels.week
+      </code>
+      
+       and the number, such as "Week 42"
     </td>
   </tr>
   
@@ -339,7 +388,9 @@ Day labels and the month name use the calendar's own names and the locale you se
 
 - `aria-selected` is set on days when the calendar selects something. It is absent on a display-only calendar.
 - `aria-disabled="true"` marks days blocked by `limits`, `disabledDates`, `enabledDates` or `disabledDayNames`.
-- A day in a numbered range has its range number added to the label, such as "Thursday, 15 October 2026, Range 2". The word comes from `labels.range`.
+- Today has `aria-current="date"` and "Today" at the end of its label. The word comes from `labels.today`.
+- The first and last day of a date range end their label with "range start" or "range end", from `labels.rangeStart` and `labels.rangeEnd`. A one day range gets both.
+- A day in a numbered range has its range number added to the label, such as "Thursday, 15 October 2026, Range 2, range start". The word comes from `labels.range`. The number badge drawn on the day is `aria-hidden` and comes from a `data-number` attribute, so the visible text of the day is only its number.
 - Days in a multiple date range carry `aria-keyshortcuts="Delete"`.
 
 ## Roving focus
@@ -347,6 +398,10 @@ Day labels and the month name use the calendar's own names and the locale you se
 Each month has one tab stop, so Tab crosses the grid in one step. The stop sits on the day you last focused, then on the selected day, then on today, then on the first enabled day. The other days have `tabindex="-1"` and are reached with the arrow keys.
 
 Focus stays on the same day when the calendar re-renders, for example after a month change. If that day leaves the screen, focus goes to the tab stop of the same month.
+
+## Month changes
+
+A visually hidden `aria-live="polite"` region holds the visible months, such as "October 2026" or "October 2026, November 2026". It updates on every month change, so a screen reader announces the new month. The calendar's root element has `tabindex="-1"`, so it takes focus from a click on plain text but is not a tab stop: the tab stops are the inputs, the controls and the grid. The dialog `id` is assigned after mount, so a server render has no `id` or `aria-controls` to mismatch on hydration.
 
 ## Controls
 
@@ -409,6 +464,36 @@ Focus stays on the same day when the calendar re-renders, for example after a mo
       </code>
       
       , when the pickers are on
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Month and year picker
+    </td>
+    
+    <td>
+      A <code>
+        role="group"
+      </code>
+      
+       named by <code>
+        labels.chooseMonth
+      </code>
+      
+       or <code>
+        labels.chooseYear
+      </code>
+      
+      . The year at its top is a <code>
+        <button>
+      </code>
+      
+      , <code>
+        aria-disabled
+      </code>
+      
+       until you page through the years, and it returns to the current years
     </td>
   </tr>
   
@@ -515,6 +600,46 @@ Focus stays on the same day when the calendar re-renders, for example after a mo
       </code>
     </td>
   </tr>
+  
+  <tr>
+    <td>
+      Time picker range edges
+    </td>
+    
+    <td>
+      Two <code>
+        role="button"
+      </code>
+      
+       toggles with <code>
+        aria-pressed
+      </code>
+      
+       on the edge the lists edit
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Tags input of the multiple date picker
+    </td>
+    
+    <td>
+      An input named by <code>
+        labels.addDate
+      </code>
+      
+      , and one <code>
+        <button>
+      </code>
+      
+       per date labeled <code>
+        labels.removeDate
+      </code>
+      
+       plus the date. Removing a date returns focus to the input
+    </td>
+  </tr>
 </tbody>
 </table>
 
@@ -522,7 +647,7 @@ Arrow slots with your own button or link keep their own focus and semantics.
 
 ## Modal calendars
 
-In modal mode, the calendar is a `role="dialog"` named by `labels.calendar`. Its inputs have `aria-haspopup="dialog"` and an `aria-expanded` that tracks the dialog, and a `title` from `labels.date`, `labels.startDate` or `labels.endDate`.
+In modal mode, the calendar is a `role="dialog"` named by `labels.calendar`. Its inputs are `role="combobox"` with `aria-haspopup="dialog"`, an `aria-controls` that points at the dialog, an `aria-expanded` that tracks it, and an `aria-label` and `title` from `labels.date`, `labels.startDate` or `labels.endDate`. Inputs you render in the `datePickerInput` and `dateRangeInputs` slots are your markup, so add these attributes yourself. Both slots pass `dialogId`, which is empty until the calendar mounts, so bind `:aria-controls="dialogId || null"`.
 
 Focus follows these rules:
 
@@ -531,6 +656,15 @@ Focus follows these rules:
 - Selecting a day with the keyboard in an auto-closing calendar returns focus to the input.
 - Focus leaving the calendar and its inputs closes it.
 - Escape inside a month or year picker, or the time picker, closes only that layer.
+- Moving focus out of an open month or year picker closes it, in modal and inline calendars. Tab from the last item goes to the titles, and the first Tab past the picker's own title closes it, so focus never lands in the grid hidden under it.
+
+## Forced colors
+
+In Windows high contrast and other forced colors modes, the calendar uses system colors. Selected days, range ends, marked dates, the selected preset, month and year, and the selected time use `Highlight` and `HighlightText`. Days inside a range get a line above and below, today is underlined, and the range number and remove badges keep a filled shape. Your `--vfc-*` colors do not apply in this mode.
+
+## Right to left
+
+Put `dir="rtl"` on the page or an ancestor, or set the CSS `direction` to `rtl`. The grid mirrors, and ArrowLeft and ArrowRight follow the screen: ArrowLeft moves to the day on the left. The navigation chevrons mirror under a `dir="rtl"` attribute, and the range bands, their rounded ends, the week number divider and the range badges use logical properties. The range shapes and badges keep a physical `left` and `right` fallback for browsers without logical properties, which render them left to right. A page that only sets `direction: rtl` in CSS mirrors the grid and the keys, but not the chevrons.
 
 ## Focus ring
 
@@ -977,7 +1111,7 @@ Each month is a grid with one tab stop. Tab moves into the grid, and the arrow k
     </td>
     
     <td>
-      Previous or next day
+      Previous or next day. In a right to left page they swap: ArrowRight goes to the previous day, the one on the right
     </td>
   </tr>
   
@@ -1043,13 +1177,13 @@ Each month is a grid with one tab stop. Tab moves into the grid, and the arrow k
 </tbody>
 </table>
 
-Moving past the edge of the visible months scrolls the calendar and emits `changedMonth`, or `changedYear` for the Shift variants. Moves stop at the months that `limits` allows. Home and End follow the week start of the calendar, so Home lands on Sunday for `en-US` and on Monday for `de-DE`.
+Moving past the edge of the visible months scrolls the calendar and emits `changedMonth`, and `changedYear` too when the year changes. The Shift variants emit `changedYear` only. Moves stop at the months that `limits` allows. Home and End follow the week start of the calendar, so Home lands on Sunday for `en-US` and on Monday for `de-DE`.
 
 Disabled days are focusable but cannot be selected. Moving over a day also fires `dayMouseOver`, so a range preview follows the keyboard.
 
 ## Title, arrows and pickers
 
-The arrows are buttons. The month and year titles are buttons when `changeMonthFunction` or `changeYearFunction` is on. Enter or Space on a title opens its picker and moves focus to the selected item. Escape closes the picker and returns focus to the title. Items in a picker are buttons too.
+The arrows are buttons. The month and year titles are buttons when `changeMonthFunction` or `changeYearFunction` is on. Enter or Space on a title opens its picker and moves focus to the selected item. Escape closes the picker and returns focus to the title. Items in a picker are buttons too. Moving focus out of the picker, for example with Tab, closes it.
 
 Custom arrow slots that contain a button or a link keep their own focus. Other slot content gets `role="button"` and responds to Enter and Space.
 
@@ -1315,7 +1449,7 @@ Slots replace the day, arrows, footer and inputs, see [slots](https://manukminas
 
 </calendar-demo>
 
-Dates use `dateFormat`, `dd/mm/yyyy` by default, and need no leading zero.
+Dates use `dateFormat`, `dd/mm/yyyy` by default. `5/3/2026` and `05/03/2026` mean the same date.
 
 <table>
 <thead>
@@ -1427,7 +1561,7 @@ With a `locale`, `disabledDayNames` still matches the English two letter names `
 
 ## Reactive list
 
-`enabledDates` is watched. Swap the list to change what is available on a calendar that is on screen. The other props are read once.
+`markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits` and `calendarsCount` are watched, in `configs` too. Swap a list or the limits to change what is available on a calendar that is on screen. Changing `limits` or `calendarsCount` rebuilds the grids from the current month. With `isSeparately`, each grid keeps the month you moved it to, a grid outside the new `limits` moves to the nearest allowed month, and new grids follow the last one. A new object with the same content changes nothing.
 
 ## Disabled days and keyboard
 
@@ -1760,7 +1894,23 @@ Week numbers follow the same first day.
     </td>
     
     <td>
-      Tags input placeholder
+      Tags input placeholder and name
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        removeDate
+      </code>
+    </td>
+    
+    <td>
+      Remove
+    </td>
+    
+    <td>
+      Remove button of a tag, followed by its date
     </td>
   </tr>
   
@@ -1813,6 +1963,78 @@ Week numbers follow the same first day.
     
     <td>
       Suffix in the label of a day in a numbered range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        rangeStart
+      </code>
+      
+      , <code>
+        rangeEnd
+      </code>
+    </td>
+    
+    <td>
+      range start, range end
+    </td>
+    
+    <td>
+      Suffix in the label of the first and last day of a range
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        today
+      </code>
+    </td>
+    
+    <td>
+      Today
+    </td>
+    
+    <td>
+      Suffix in the label of today's date
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        week
+      </code>
+    </td>
+    
+    <td>
+      Week
+    </td>
+    
+    <td>
+      Name of a week number, followed by the number
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      <code>
+        chooseMonth
+      </code>
+      
+      , <code>
+        chooseYear
+      </code>
+    </td>
+    
+    <td>
+      Choose month, Choose year
+    </td>
+    
+    <td>
+      Name of the month picker and the year picker
     </td>
   </tr>
   
@@ -1916,9 +2138,9 @@ Week numbers follow the same first day.
 
 `labels.presets` merges key by key, so you can translate one preset. Labels can come from the global options and `configs` too. The more specific source wins, and calendars never share labels.
 
-## Props are not reactive
+## Locale and labels are read once
 
-The calendar reads `locale` and `labels` when it is created. To switch at runtime, re-key it:
+The calendar reads `locale` and `labels` when it is created, unlike the watched data props such as `markedDates`. To switch at runtime, re-key it:
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker />
@@ -2275,7 +2497,7 @@ The button of the preset that matches the current selection has `aria-pressed="t
 
 > Every prop, with its type and default.
 
-The calendar has 48 props. The calendar reads them when it is created, except `modelValue` and `enabledDates`, which it watches. Re-key the component to apply a change to any other prop.
+The calendar has 48 props. The calendar reads them when it is created, except `modelValue` and the data props `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`, which it watches. The same keys inside `configs` are watched too. Re-key the component to apply a change to any other prop.
 
 ## Where options come from
 
@@ -2685,7 +2907,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         isMultiple
       </code>
       
-      .
+      . Watched.
     </td>
   </tr>
   
@@ -2969,7 +3191,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
     </td>
     
     <td>
-      Dates outside are disabled.
+      Dates outside are disabled. Watched.
     </td>
   </tr>
   
@@ -3001,7 +3223,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         afterToday
       </code>
       
-      .
+      . Watched.
     </td>
   </tr>
   
@@ -3053,7 +3275,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         dayNames
       </code>
       
-      .
+      . Watched.
     </td>
   </tr>
 </tbody>
@@ -3107,7 +3329,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
     </td>
     
     <td>
-      Dates to mark. Objects add a class to the day.
+      Dates to mark. Objects add a class to the day. Watched.
     </td>
   </tr>
   
@@ -3137,7 +3359,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
         false
       </code>
       
-       leaves a side open.
+       leaves a side open. Watched.
     </td>
   </tr>
   
@@ -3665,7 +3887,7 @@ An explicit `dayNames`, `monthNames`, `shortMonthNames` or `sundayStart` wins ov
     </td>
     
     <td>
-      Use the dark tokens.
+      Use the dark tokens. Watched.
     </td>
   </tr>
   
@@ -3891,6 +4113,18 @@ Call these through a template ref.
       
       , or to <code>
         'today'
+      </code>
+      
+      . Returns <code>
+        false
+      </code>
+      
+       and stays put when the month is outside <code>
+        limits
+      </code>
+      
+      . With several calendars, the view may start earlier so every calendar stays inside <code>
+        max
       </code>
       
       .
@@ -4168,7 +4402,7 @@ See [examples](https://manukminasyan.github.io/vue-functional-calendar/examples/
     
     <td>
       <code>
-        { startDate, endDate, isTypeable }
+        { startDate, endDate, isTypeable, dialogId }
       </code>
     </td>
     
@@ -4186,7 +4420,7 @@ See [examples](https://manukminasyan.github.io/vue-functional-calendar/examples/
     
     <td>
       <code>
-        { selectedDate, isTypeable }
+        { selectedDate, isTypeable, dialogId }
       </code>
     </td>
     
@@ -4279,7 +4513,7 @@ To follow your site theme, bind `isDark`:
 <FunctionalCalendar :is-dark="colorMode.value === 'dark'" is-date-picker />
 ```
 
-Props are read once, so re-key the calendar if the theme can change while it is mounted: `:key="isDark"`.
+`isDark` is watched, so the calendar follows the theme without a re-key.
 
 ## Color tokens
 
@@ -5234,6 +5468,8 @@ Set `withTimePicker`. After you choose a date, the calendar swaps to an hour lis
 
 </calendar-demo>
 
+The time picker does not open with `isMultipleDateRange`, and those ranges hold plain dates without a time.
+
 ## Where the time lives
 
 <table>
@@ -5478,14 +5714,14 @@ The multiple date picker shows its dates as tags. Type a date and press Enter. T
 
 ## Read the value
 
-The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. An empty `{}` model also works: the calendar replaces it with its own state object when it mounts.
+The calendar writes typed dates into the object you bound, in place and without an `update:modelValue` event. An empty `{}` model also works: the calendar fills in the missing keys when it mounts.
 
 
 # Limits and availability
 
 > Block dates, weekdays and spans, or allow only a list of dates.
 
-Dates use the `dateFormat` of the calendar, `dd/mm/yyyy` by default. Day and month need no leading zero.
+Dates use the `dateFormat` of the calendar, `dd/mm/yyyy` by default. Day and month may carry a leading zero.
 
 ## Limit to a span
 
@@ -5563,7 +5799,7 @@ Dates use the `dateFormat` of the calendar, `dd/mm/yyyy` by default. Day and mon
 
 ## Switch the locale
 
-The `locale` prop derives day names, month names and the first day of the week from `Intl`. Names are always Gregorian, also for locales such as `fa-IR` or `ar-SA`. Props are not reactive, so the demo re-keys the calendar when you pick a locale.
+The `locale` prop derives day names, month names and the first day of the week from `Intl`. Names are always Gregorian, also for locales such as `fa-IR` or `ar-SA`. The calendar reads `locale` once, so the demo re-keys the calendar when you pick a locale.
 
 <calendar-locale-demo>
 
@@ -6541,6 +6777,8 @@ import 'vue-functional-calendar/style.css'
 
 Your 2.x CSS overrides keep working, because the `vfc-*` class names are unchanged. The default look changed, so check your overrides against it.
 
+Vue 3 renamed the transition class `-enter` to `-enter-from`. An override of `.vfc-calendar-slide-left-enter`, `-right-enter`, `-up-enter` or `-down-enter` must now target `.vfc-calendar-slide-left-enter-from` and so on. The `-enter-active`, `-leave-active` and `-leave-to` classes keep their names.
+
 ## Registration
 
 Vue 2 used `Vue.use`. Vue 3 uses `app.use`, and the options still become global defaults.
@@ -6874,15 +7112,15 @@ import FunctionalCalendar from 'vue-functional-calendar/src/components/Functiona
 import { FunctionalCalendar } from 'vue-functional-calendar'
 ```
 
-## Props are still not reactive
+## Most props are still read once
 
-As in 2.x, the calendar reads its props once, when it is created. Re-key the component to apply a change:
+As in 2.x, the calendar reads most props once, when it is created. Re-key the component to apply a change:
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker />
 ```
 
-`modelValue` and `enabledDates` are watched.
+3.1 watches `modelValue` and the data props `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`, in `configs` too. Change them on a live calendar without a re-key. The same rule as before decides the source: when `configs` is present, the props are ignored.
 
 ## New in 3.1
 
@@ -7096,7 +7334,7 @@ The calendar keeps its whole state in one object. Which keys matter depends on t
 
 `currentDate` is a `Date` in the month on display. `selectedDatesItem` is the text in the tags input.
 
-The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. A bound object without `selectedDate` or `dateRange`, such as `{}`, is replaced with the calendar's state object when it mounts. If you want every key from the start, begin with a full model:
+The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. A bound plain object that lacks calendar keys, such as `{}`, stays your object: the calendar fills in the missing keys when it mounts. Assigning a new `{}` object later clears the selection. A readonly or frozen object, a non-plain value, and an object holding only `multipleDateRange` are read into the calendar's own state and are never written to. If you want every key from the start, begin with a full model:
 
 ```js
 const value = ref({
@@ -7141,13 +7379,13 @@ Pass props one by one, or group them in a `configs` object. When you pass `confi
 
 ## Props are read once
 
-The calendar reads its props when it is created. Changing `isDateRange`, `locale` or `calendarsCount` afterwards has no effect. Re-key the component to rebuild it.
+The calendar reads most props when it is created. Changing `isDateRange` or `locale` afterwards has no effect. Re-key the component to rebuild it.
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker v-model="value" />
 ```
 
-`modelValue` and `enabledDates` are watched, so changing those works on a live calendar.
+`modelValue` and the data props are watched, so changing those works on a live calendar. The data props are `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`. The same keys inside `configs` are watched too.
 
 ## Call methods
 
@@ -7166,14 +7404,14 @@ const calendar = ref(null)
 </template>
 ```
 
-`PreMonth`, `NextMonth`, `PreYear` and `NextYear` take an optional calendar index. `ChooseDate` takes a date in `dateFormat` or the word `today`, and moves the calendar there.
+`PreMonth`, `NextMonth`, `PreYear` and `NextYear` take an optional calendar index. `ChooseDate` takes a date in `dateFormat` or the word `today`, and moves the calendar there. It refuses a month outside `limits`.
 
 
 # Playground
 
 > Change the main props and theme tokens, and copy the code.
 
-Change a control and the calendar rebuilds with the new props, because props are not reactive. The code under the calendar updates with it. Theme controls set `--vfc-*` tokens, which do apply live.
+Change a control and the calendar rebuilds with the new props, because the playground re-keys it. The code under the calendar updates with it. Theme controls set `--vfc-*` tokens, which do apply live.
 
 <calendar-playground>
 

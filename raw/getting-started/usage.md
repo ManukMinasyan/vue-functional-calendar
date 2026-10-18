@@ -205,7 +205,7 @@ The calendar keeps its whole state in one object. Which keys matter depends on t
 
 `currentDate` is a `Date` in the month on display. `selectedDatesItem` is the text in the tags input.
 
-The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. A bound object without `selectedDate` or `dateRange`, such as `{}`, is replaced with the calendar's state object when it mounts. If you want every key from the start, begin with a full model:
+The calendar edits the object it receives and emits that same object. Typed dates, time picker changes and the clear button update it in place, without an `update:modelValue` event. A bound plain object that lacks calendar keys, such as `{}`, stays your object: the calendar fills in the missing keys when it mounts. Assigning a new `{}` object later clears the selection. A readonly or frozen object, a non-plain value, and an object holding only `multipleDateRange` are read into the calendar's own state and are never written to. If you want every key from the start, begin with a full model:
 
 ```js
 const value = ref({
@@ -250,13 +250,13 @@ Pass props one by one, or group them in a `configs` object. When you pass `confi
 
 ## Props are read once
 
-The calendar reads its props when it is created. Changing `isDateRange`, `locale` or `calendarsCount` afterwards has no effect. Re-key the component to rebuild it.
+The calendar reads most props when it is created. Changing `isDateRange` or `locale` afterwards has no effect. Re-key the component to rebuild it.
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker v-model="value" />
 ```
 
-`modelValue` and `enabledDates` are watched, so changing those works on a live calendar.
+`modelValue` and the data props are watched, so changing those works on a live calendar. The data props are `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`. The same keys inside `configs` are watched too.
 
 ## Call methods
 
@@ -275,7 +275,7 @@ const calendar = ref(null)
 </template>
 ```
 
-`PreMonth`, `NextMonth`, `PreYear` and `NextYear` take an optional calendar index. `ChooseDate` takes a date in `dateFormat` or the word `today`, and moves the calendar there.
+`PreMonth`, `NextMonth`, `PreYear` and `NextYear` take an optional calendar index. `ChooseDate` takes a date in `dateFormat` or the word `today`, and moves the calendar there. It refuses a month outside `limits`.
 
 
 ## Sitemap

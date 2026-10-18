@@ -7,7 +7,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/playgrou
 
 > Change the main props and theme tokens, and copy the code.
 
-Change a control and the calendar rebuilds with the new props, because props are not reactive. The code under the calendar updates with it. Theme controls set `--vfc-*` tokens, which do apply live.
+Change a control and the calendar rebuilds with the new props, because the playground re-keys it. The code under the calendar updates with it. Theme controls set `--vfc-*` tokens, which do apply live.
 
 <calendar-playground>
 

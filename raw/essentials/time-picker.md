@@ -17,6 +17,8 @@ Set `withTimePicker`. After you choose a date, the calendar swaps to an hour lis
 
 </calendar-demo>
 
+The time picker does not open with `isMultipleDateRange`, and those ranges hold plain dates without a time.
+
 ## Where the time lives
 
 <table>

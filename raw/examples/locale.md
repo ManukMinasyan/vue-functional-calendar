@@ -9,7 +9,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/examples
 
 ## Switch the locale
 
-The `locale` prop derives day names, month names and the first day of the week from `Intl`. Names are always Gregorian, also for locales such as `fa-IR` or `ar-SA`. Props are not reactive, so the demo re-keys the calendar when you pick a locale.
+The `locale` prop derives day names, month names and the first day of the week from `Intl`. Names are always Gregorian, also for locales such as `fa-IR` or `ar-SA`. The calendar reads `locale` once, so the demo re-keys the calendar when you pick a locale.
 
 <calendar-locale-demo>
 
