@@ -379,10 +379,12 @@ describe('limits with several calendars', () => {
 })
 
 describe('limits on isSeparately calendars', () => {
-  const sideArrow = (wrapper, index, direction) =>
-    wrapper
-      .findAll('.vfc-calendar')
-      [index].find(`.vfc-separately-navigation-buttons .vfc-arrow-${direction}`)
+  const sideArrow = (wrapper, index, direction) => {
+    const calendar = wrapper.findAll('.vfc-calendar')[index]
+    return calendar.find(
+      `.vfc-separately-navigation-buttons .vfc-arrow-${direction}`
+    )
+  }
   const disabled = (wrapper, index, direction) =>
     sideArrow(wrapper, index, direction).classes('vfc-disabled')
 
