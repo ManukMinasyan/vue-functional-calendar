@@ -188,6 +188,52 @@ describe('choseDay payload', () => {
 })
 
 describe('markedDateRange', () => {
+  it('marks a range written with leading zeros', () => {
+    const { wrapper } = mountCalendar({
+      markedDateRange: { start: '05/10/2026', end: '08/10/2026' }
+    })
+
+    ;[5, 6, 7, 8].forEach(day => {
+      expect(classesOf(wrapper, day)).toContain('vfc-marked')
+    })
+    expect(classesOf(wrapper, 5)).toContain('vfc-start-marked')
+    expect(classesOf(wrapper, 8)).toContain('vfc-end-marked')
+    expect(classesOf(wrapper, 9)).not.toContain('vfc-marked')
+  })
+
+  it('marks ranges of an array written with leading zeros', () => {
+    const { wrapper } = mountCalendar({
+      markedDateRange: [
+        { start: '02/10/2026', end: '03/10/2026' },
+        { start: '20/10/2026', end: '22/10/2026' }
+      ]
+    })
+
+    expect(classesOf(wrapper, 2)).toContain('vfc-start-marked')
+    expect(classesOf(wrapper, 3)).toContain('vfc-end-marked')
+    expect(classesOf(wrapper, 22)).toContain('vfc-end-marked')
+  })
+
+  it('reports padded range edges in the day object', async () => {
+    const { wrapper, events } = mountCalendar({
+      isDatePicker: true,
+      markedDateRange: { start: '05/10/2026', end: '08/10/2026' }
+    })
+
+    await clickDay(wrapper, 5)
+    await clickDay(wrapper, 8)
+
+    expect(
+      eventsNamed(events, 'choseDay').map(day => [
+        day.isDateRangeStart,
+        day.isDateRangeEnd
+      ])
+    ).toEqual([
+      [true, false],
+      [false, true]
+    ])
+  })
+
   it('marks every day of a start and end range', () => {
     const { wrapper } = mountCalendar({
       markedDateRange: { start: '5/10/2026', end: '8/10/2026' }

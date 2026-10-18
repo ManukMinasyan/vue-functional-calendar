@@ -375,18 +375,30 @@ export default {
   ],
   computed: {
     startDMY() {
-      //start only with Day Month and Year
-      if (this.calendar.dateRange.start) {
-        return this.calendar.dateRange.start.split(' ')[0]
-      }
-      return ''
+      return this.helpCalendar.normalizeDate(
+        this.calendar.dateRange.start.split(' ')[0]
+      )
     },
     endDMY() {
-      //end only with Day Month and Year
-      if (this.calendar.dateRange.end) {
-        return this.calendar.dateRange.end.split(' ')[0]
+      return this.helpCalendar.normalizeDate(
+        this.calendar.dateRange.end.split(' ')[0]
+      )
+    },
+    markedRangeLookup() {
+      const { markedDateRange } = this.fConfigs
+      const normalize = value =>
+        value ? this.helpCalendar.normalizeDate(value) : value
+      const ranges = Array.isArray(markedDateRange)
+        ? markedDateRange
+        : [markedDateRange]
+
+      return {
+        isList: Array.isArray(markedDateRange),
+        ranges: ranges.map(range => ({
+          start: normalize(range.start),
+          end: normalize(range.end)
+        }))
       }
-      return ''
     },
     markedLookup() {
       const dates = new Set()
@@ -1749,15 +1761,7 @@ export default {
     },
 
     checkDateRangeEnd(date) {
-      if (Array.isArray(this.fConfigs.markedDateRange)) {
-        return (
-          this.fConfigs.markedDateRange.findIndex(range => {
-            return range.end === date
-          }) !== -1
-        )
-      }
-
-      return date === this.fConfigs.markedDateRange.end
+      return this.markedRangeLookup.ranges.some(range => range.end === date)
     },
     checkSelDates(type, itemOffset, hoverOffset) {
       const { minSelDays, maxSelDays } = this.fConfigs
@@ -2288,15 +2292,7 @@ export default {
     },
 
     checkDateRangeStart(date) {
-      if (Array.isArray(this.fConfigs.markedDateRange)) {
-        return (
-          this.fConfigs.markedDateRange.findIndex(range => {
-            return range.start === date
-          }) !== -1
-        )
-      }
-
-      return date === this.fConfigs.markedDateRange.start
+      return this.markedRangeLookup.ranges.some(range => range.start === date)
     },
     cleanRange() {
       if (!this.fConfigs.isMultipleDateRange) {

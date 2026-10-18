@@ -360,7 +360,7 @@ export default {
       return classes
     },
     markedRangeClasses(date, classes) {
-      const { markedDateRange } = this.fConfigs
+      const { isList, ranges } = this.calendarRoot.markedRangeLookup
       const { dayDate } = this
       const parse = value => this.helpCalendar.getDateFromFormat(value)
       const addCompleteRange = range => {
@@ -374,18 +374,18 @@ export default {
         }
       }
 
-      if (Array.isArray(markedDateRange)) {
-        markedDateRange.forEach(addCompleteRange)
-      } else if (markedDateRange.start && markedDateRange.end) {
-        addCompleteRange(markedDateRange)
-      } else {
-        if (markedDateRange.start && parse(markedDateRange.start) <= dayDate) {
-          classes.push('vfc-marked')
-        }
-        if (markedDateRange.end && parse(markedDateRange.end) >= dayDate) {
-          classes.push('vfc-marked')
-        }
+      if (isList) {
+        ranges.forEach(addCompleteRange)
+        return
       }
+
+      const [{ start, end }] = ranges
+      if (start && end) {
+        addCompleteRange({ start, end })
+        return
+      }
+      if (start && parse(start) <= dayDate) classes.push('vfc-marked')
+      if (end && parse(end) >= dayDate) classes.push('vfc-marked')
     }
   }
 }

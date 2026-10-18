@@ -396,6 +396,41 @@ const previewSpan = (first, last, flags = 'marked') =>
     ])
   )
 
+describe('date range model with leading zeros', () => {
+  it('marks the start, the end and the days between', async () => {
+    const model = emptyModel()
+    model.dateRange = { start: '08/10/2026', end: '12/10/2026' }
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: model
+    })
+
+    expect(findDay(wrapper, 8).classList).toContain('vfc-start-marked')
+    expect(findDay(wrapper, 8).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 12).classList).toContain('vfc-end-marked')
+    expect(findDay(wrapper, 10).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 13).classList).not.toContain('vfc-marked')
+  })
+
+  it('previews from a start written with a leading zero', async () => {
+    const model = emptyModel()
+    model.dateRange = { start: '08/10/2026', end: '' }
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: model
+    })
+
+    await hoverDay(wrapper, 11)
+
+    expect(previewState(wrapper)).toEqual({
+      '8/10/2026': 'marked left',
+      '9/10/2026': 'marked',
+      '10/10/2026': 'marked',
+      '11/10/2026': 'right'
+    })
+  })
+})
+
 describe('range hover preview', () => {
   it('previews a range to the right of the start', async () => {
     const { wrapper } = mountCalendar({ isDateRange: true })
