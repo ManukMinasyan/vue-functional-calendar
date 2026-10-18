@@ -309,4 +309,76 @@ describe('calendarsCount that changes after mount', () => {
 
     expect(wrapper.findAll('.vfc-calendar')).toHaveLength(3)
   })
+
+  describe('with isSeparately', () => {
+    const separate = () =>
+      mountParent({
+        configs: { isMultiple: true, isSeparately: true, calendarsCount: 2 }
+      })
+
+    it('keeps the grids when configs is replaced by an equal object', async () => {
+      const { state, calendar } = separate()
+      calendar.NextMonth(1)
+      await nextTick()
+      const keys = calendar.listCalendars.map(grid => grid.key)
+      const moved = calendar.listCalendars[1].date
+
+      state.configs = { ...state.configs }
+      await nextTick()
+
+      expect(calendar.listCalendars.map(grid => grid.key)).toEqual(keys)
+      expect(calendar.listCalendars[1].date).toBe(moved)
+    })
+
+    it('keeps the grids when an equal limits object is created again', async () => {
+      const { state, calendar } = separate()
+      state.configs.limits = { min: '1/1/2026', max: '31/12/2027' }
+      await nextTick()
+      const keys = calendar.listCalendars.map(grid => grid.key)
+
+      state.configs.limits = { min: '1/1/2026', max: '31/12/2027' }
+      await nextTick()
+
+      expect(calendar.listCalendars.map(grid => grid.key)).toEqual(keys)
+    })
+
+    it('keeps the month a grid was moved to when calendarsCount grows', async () => {
+      const { wrapper, state, calendar } = separate()
+      calendar.NextMonth(1)
+      await nextTick()
+
+      state.configs.calendarsCount = 3
+      await nextTick()
+
+      expect(titles(wrapper)).toEqual([
+        'October 2026',
+        'December 2026',
+        'January 2027'
+      ])
+    })
+
+    it('keeps the leading grids when calendarsCount drops', async () => {
+      const { state, calendar, wrapper } = separate()
+      calendar.NextMonth(0)
+      await nextTick()
+
+      state.configs.calendarsCount = 1
+      await nextTick()
+
+      expect(titles(wrapper)).toEqual(['November 2026'])
+    })
+
+    it('clamps only the grids that fall outside limits that arrive later', async () => {
+      const { wrapper, state, calendar } = separate()
+      calendar.NextMonth(0)
+      calendar.NextMonth(1)
+      await nextTick()
+      expect(titles(wrapper)).toEqual(['November 2026', 'December 2026'])
+
+      state.configs.limits = { min: '1/10/2026', max: '30/11/2026' }
+      await nextTick()
+
+      expect(titles(wrapper)).toEqual(['November 2026', 'November 2026'])
+    })
+  })
 })

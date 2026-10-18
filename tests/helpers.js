@@ -57,7 +57,11 @@ export const mountParent = (state, calendarProps = {}) => {
     },
     { attachTo: document.body }
   )
-  return { wrapper, state: reactiveState }
+  return {
+    wrapper,
+    state: reactiveState,
+    calendar: wrapper.findComponent(FunctionalCalendar).vm
+  }
 }
 
 export const mountCalendarReady = async (props = {}, options = {}) => {

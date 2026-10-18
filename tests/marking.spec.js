@@ -468,4 +468,34 @@ describe('marking that changes after mount', () => {
     expect(lastValue(wrapper).selectedDate).toBe('14/10/2026')
     expect(classesOf(wrapper, 14)).toContain('vfc-marked')
   })
+
+  it.each([
+    ['markedDates', ['5/10/2026'], ['9/10/2026']],
+    ['disabledDates', ['5/10/2026'], ['9/10/2026']],
+    ['enabledDates', ['5/10/2026'], ['9/10/2026']]
+  ])(
+    'does not re-render the day list when %s changes',
+    async (key, from, to) => {
+      const { wrapper, state, calendar } = mountParent({ [key]: from })
+      const listRendering = vi.spyOn(calendar, 'listRendering')
+
+      state[key] = to
+      await wrapper.vm.$nextTick()
+
+      expect(listRendering).not.toHaveBeenCalled()
+    }
+  )
+
+  it('does not re-render the day list when the parent pushes a marked date', async () => {
+    const { wrapper, state, calendar } = mountParent({
+      markedDates: ['5/10/2026']
+    })
+    const listRendering = vi.spyOn(calendar, 'listRendering')
+
+    state.markedDates.push('9/10/2026')
+    await wrapper.vm.$nextTick()
+
+    expect(listRendering).not.toHaveBeenCalled()
+    expect(marked(wrapper, 9)).toBe(true)
+  })
 })

@@ -291,6 +291,8 @@ const reactiveKeys = [
   'isDark'
 ]
 const rebuildKeys = ['limits', 'calendarsCount']
+const relayoutKeys = ['disabledDayNames', 'markedDateRange']
+const signature = value => JSON.stringify(value) ?? 'undefined'
 const monthIndex = date => date.getFullYear() * 12 + date.getMonth()
 
 const hasModelKey = (value, key) => {
@@ -692,14 +694,14 @@ export default {
       state.currentDate = this.calendar.currentDate
       return state
     },
-    initCalendar() {
+    initCalendar(keepGrids = false) {
       const { currentDate } = this.calendar
       const start = this.clampViewStart(currentDate)
       if (monthIndex(start) !== monthIndex(currentDate)) {
         this.calendar.currentDate = start
       }
 
-      this.setCalendarData()
+      this.setCalendarData(keepGrids ? this.listCalendars : [])
       this.listRendering()
       this.markChooseDays()
       this.checkLimits(this.calendar.currentDate)
@@ -712,17 +714,20 @@ export default {
     isNotSeparatelyAndFirst(key) {
       return this.fConfigs.isSeparately || key == 0
     },
-    setCalendarData() {
+    setCalendarData(previous = []) {
       let date = this.calendar.currentDate
       date = new Date(date.getFullYear(), date.getMonth() - 1)
 
       this.listCalendars = []
 
       for (let i = 0; i < this.visibleCount(); i++) {
-        date = new Date(date.getFullYear(), date.getMonth() + 1)
+        const kept = previous[i]
+        date = kept
+          ? this.clampToLimits(kept.date)
+          : new Date(date.getFullYear(), date.getMonth() + 1)
 
         let calendar = {
-          key: hUniqueID(),
+          key: kept ? kept.key : hUniqueID(),
           date: date,
           dateTop: `${
             this.fConfigs.monthNames[date.getMonth()]
@@ -829,9 +834,17 @@ export default {
     },
     watchReactiveKeys(defaults) {
       reactiveKeys.forEach(key => {
+        let applied = signature(this.configSource(key))
+
         this.$watch(
           () => this.configSource(key),
-          () => this.applyReactiveKey(key, defaults[key]),
+          () => {
+            const next = signature(this.configSource(key))
+            if (next === applied) return
+
+            applied = next
+            this.applyReactiveKey(key, defaults[key])
+          },
           { deep: true }
         )
       })
@@ -846,10 +859,10 @@ export default {
       this.fConfigs[key] = value ?? globalValue ?? fallback
 
       if (rebuildKeys.includes(key)) {
-        this.initCalendar()
+        this.initCalendar(this.fConfigs.isSeparately)
         return
       }
-      this.updateCalendar()
+      if (relayoutKeys.includes(key)) this.updateCalendar()
     },
     mergeLabels(labels) {
       const current = this.fConfigs.labels
@@ -1616,6 +1629,21 @@ export default {
       return Number.isNaN(span)
         ? calendarsCount
         : Math.max(1, Math.min(calendarsCount, span))
+    },
+    clampToLimits(date) {
+      const { limits } = this.fConfigs
+      if (!limits) return date
+
+      const minIndex = monthIndex(
+        this.helpCalendar.getDateFromFormat(limits.min)
+      )
+      const maxIndex = monthIndex(
+        this.helpCalendar.getDateFromFormat(limits.max)
+      )
+      if (Number.isNaN(minIndex + maxIndex)) return date
+
+      const index = Math.min(Math.max(monthIndex(date), minIndex), maxIndex)
+      return new Date(Math.floor(index / 12), index % 12, 1)
     },
     clampViewStart(first) {
       const { limits } = this.fConfigs
