@@ -627,33 +627,6 @@ export default {
     },
     getEventsByDate(date) {
       return this.events.filter(event => event.date === date)
-    },
-    get(val) {
-      console.log(val)
-    },
-    opened() {
-      console.log('open')
-    },
-    closed() {
-      console.log('close')
-    },
-    changedMonth(value) {
-      console.log(value)
-    },
-    choseDay(day) {
-      console.log(day)
-    },
-    preYear() {
-      this.$refs.calendar.ChooseDate('10/10/2020')
-    },
-    nextYear() {
-      this.$refs.calendar.NextYear()
-    },
-    preMonth() {
-      this.$refs.calendar.PreMonth()
-    },
-    nextMonth() {
-      this.$refs.calendar.NextMonth()
     }
   }
 }
