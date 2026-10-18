@@ -409,6 +409,25 @@ const modelOf = multipleDateRange => ({
   multipleDateRange
 })
 
+describe('removing a timed multiple date range', () => {
+  it('removes the range whose end day button is clicked', async () => {
+    const { wrapper } = await mountCalendarReady({
+      ...options,
+      modelValue: modelOf([
+        { start: '1/10/2026 10:00', end: '5/10/2026 10:00' },
+        { start: '10/10/2026', end: '12/10/2026' }
+      ])
+    })
+
+    await findDay(wrapper, 5).querySelector('.times').click()
+    await nextTick()
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+})
+
 describe('multiple date range markers', () => {
   const nbsp = '\u00a0'
   const cases = {

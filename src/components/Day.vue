@@ -267,9 +267,9 @@ export default {
   methods: {
     clearRange() {
       //$emit
-      const removeIndex = this.calendar.multipleDateRange.findIndex(
-        range => range.end === this.day.date
-      )
+      const [removeIndex] = this.rangeEdges.ends
+      if (removeIndex === undefined) return
+
       this.calendar.multipleDateRange.splice(removeIndex, 1)
     },
     dayMouseOver() {
