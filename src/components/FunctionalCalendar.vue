@@ -377,14 +377,16 @@ export default {
   ],
   computed: {
     startDMY() {
-      return this.helpCalendar.normalizeDate(
-        this.calendar.dateRange.start.split(' ')[0]
-      )
+      return this.dateOnly(this.calendar.dateRange.start)
     },
     endDMY() {
-      return this.helpCalendar.normalizeDate(
-        this.calendar.dateRange.end.split(' ')[0]
-      )
+      return this.dateOnly(this.calendar.dateRange.end)
+    },
+    multipleRangeDates() {
+      return this.calendar.multipleDateRange.map(range => ({
+        start: this.dateOnly(range.start),
+        end: this.dateOnly(range.end)
+      }))
     },
     markedRangeLookup() {
       const { markedDateRange } = this.fConfigs
@@ -644,6 +646,9 @@ export default {
     }
   },
   methods: {
+    dateOnly(value) {
+      return value ? this.helpCalendar.normalizeDate(value.split(' ')[0]) : ''
+    },
     applyModel(value) {
       if (!value || typeof value !== 'object') return
       if (toRaw(value) !== toRaw(this.calendar)) this.focusedDate = ''
@@ -1342,19 +1347,12 @@ export default {
               }
               //Multiple Range
               if (this.calendar.multipleDateRange) {
-                if (
-                  ~this.calendar.multipleDateRange
-                    .map(range => range.start.split(' ')[0])
-                    .indexOf(day.date)
-                ) {
+                const ranges = this.multipleRangeDates
+                if (ranges.some(range => range.start === day.date)) {
                   day.isMouseToLeft = !!endDate
                   day.isMarked = true
                 }
-                if (
-                  ~this.calendar.multipleDateRange
-                    .map(range => range.end.split(' ')[0])
-                    .indexOf(day.date)
-                ) {
+                if (ranges.some(range => range.end === day.date)) {
                   day.isMouseToRight = !!endDate
                   day.isMarked = true
                 }

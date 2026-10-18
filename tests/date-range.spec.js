@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { nextTick, reactive } from 'vue'
 import {
   mountCalendar,
   mountCalendarReady,
@@ -428,6 +429,23 @@ describe('date range model with leading zeros', () => {
       '10/10/2026': 'marked',
       '11/10/2026': 'right'
     })
+  })
+})
+
+describe('date range model edited in place', () => {
+  it.each(['start', 'end'])('treats a %s set to null as empty', async side => {
+    const model = reactive(emptyModel())
+    model.dateRange = { start: '08/10/2026', end: '12/10/2026' }
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      modelValue: model
+    })
+
+    model.dateRange[side] = null
+
+    expect(wrapper.vm[`${side}DMY`]).toBe('')
+    await nextTick()
+    expect(wrapper.vm[`${side}DMY`]).toBe('')
   })
 })
 

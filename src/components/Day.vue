@@ -129,15 +129,12 @@ export default {
     },
     rangeEdges() {
       const edges = { starts: [], ends: [], touching: [] }
-      const ranges = this.fConfigs.isMultipleDateRange
-        ? this.calendar.multipleDateRange
-        : null
-      if (!ranges) return edges
+      if (!this.fConfigs.isMultipleDateRange) return edges
 
       const date = this.day.date
-      ranges.forEach((range, index) => {
-        const isStart = range.start.split(' ')[0] === date
-        const isEnd = range.end.split(' ')[0] === date
+      this.calendarRoot.multipleRangeDates.forEach((range, index) => {
+        const isStart = range.start === date
+        const isEnd = range.end === date
         if (isStart) edges.starts.push(index)
         if (isEnd) edges.ends.push(index)
         if (isStart || isEnd) edges.touching.push(index)

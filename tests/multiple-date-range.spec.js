@@ -149,6 +149,34 @@ describe('multiple date ranges', () => {
     expect(findDay(wrapper, 7).classList).toContain('vfc-marked')
   })
 
+  it('shows ranges written with leading zeros through the model', async () => {
+    const model = {
+      currentDate: new Date(2026, 9, 1),
+      selectedDate: false,
+      selectedDateTime: false,
+      selectedHour: '00',
+      selectedMinute: '00',
+      selectedDatesItem: '',
+      selectedDates: [],
+      dateRange: { start: '', end: '' },
+      multipleDateRange: [{ start: '06/10/2026', end: '09/10/2026' }]
+    }
+    const { wrapper } = await mountCalendarReady({
+      ...options,
+      modelValue: model
+    })
+
+    expect(findDay(wrapper, 6).classList).toContain('vfc-start-marked')
+    expect(findDay(wrapper, 9).classList).toContain('vfc-end-marked')
+    expect(findDay(wrapper, 7).classList).toContain('vfc-marked')
+    expect(findDay(wrapper, 9).querySelector('.times')).not.toBeNull()
+
+    await findDay(wrapper, 9).querySelector('.times').click()
+    await nextTick()
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([])
+  })
+
   it('draws ranges on two calendars with different date formats', async () => {
     const modelWith = range => ({
       currentDate: new Date(2026, 9, 1),

@@ -41,6 +41,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - A preloaded `v-model` survives `newCurrentDate`, and a server render shows the bound selection.
 - `disabledDates`, `enabledDates` and `markedDates` accept dates with a leading zero, such as `05/10/2026` or `2026-10-05`. They were ignored (#153, #40).
 - A `dateRange` in the model and a `markedDateRange` written with leading zeros, such as `08/10/2026`, mark their start, end and days. They were ignored.
+- A `multipleDateRange` written with leading zeros, such as `06/10/2026`, marks its start, end and days and shows its end button. A parent that sets `dateRange.start` or `dateRange.end` to `null` no longer makes the calendar throw.
 - In a `isMultipleDateRange` calendar the range band no longer covers the numbers of the days inside a range.
 - The `minSelDays` and `maxSelDays` hover preview counts whole calendar days, so it no longer shows one day too many or too few when the range crosses a daylight saving change.
 - An empty `{}` v-model receives typed dates, time picker changes and cleared values.
