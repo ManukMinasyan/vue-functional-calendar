@@ -615,7 +615,9 @@ export default {
     },
     calendar: {
       handler() {
-        this.markChooseDays()
+        if (this.markedSignature !== this.selectionSignature()) {
+          this.markChooseDays()
+        }
       },
       deep: true,
       immediate: true
@@ -940,6 +942,7 @@ export default {
       }
 
       this.selectDate(clicked.date)
+      this.markChooseDays()
       this.$emit('choseDay', item)
     },
     selectDate(date) {
@@ -1266,7 +1269,19 @@ export default {
         this.$emit('changedYear', first)
       }
     },
+    selectionSignature() {
+      const { selectedDate, selectedDates, dateRange, multipleDateRange } =
+        this.calendar
+
+      return JSON.stringify([
+        selectedDate,
+        selectedDates,
+        dateRange,
+        multipleDateRange
+      ])
+    },
     markChooseDays() {
+      this.markedSignature = this.selectionSignature()
       let startDate = this.startDMY
       let endDate = this.endDMY
       const markedDates = this.markedLookup.dates

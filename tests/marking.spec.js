@@ -4,6 +4,8 @@ import {
   findDay,
   findDayAny,
   clickDay,
+  clickDays,
+  eventsNamed,
   lastValue,
   mountParent
 } from './helpers.js'
@@ -134,6 +136,54 @@ describe('markedDates', () => {
     expect(classesOf(wrapper, 7)).toContain('vfc-marked')
     expect(classesOf(wrapper, 5)).toContain('vfc-marked')
     expect(classesOf(wrapper, 5)).toContain('vfc-borderd')
+  })
+})
+
+describe('choseDay payload', () => {
+  const chosen = events => eventsNamed(events, 'choseDay')
+
+  it('carries isMarked for a picked date', async () => {
+    const { wrapper, events } = mountCalendar({ isDatePicker: true })
+
+    await clickDay(wrapper, 10)
+
+    expect(chosen(events)[0].isMarked).toBe(true)
+  })
+
+  it('carries isMarked for the first and second click of a range', async () => {
+    const { wrapper, events } = mountCalendar({ isDateRange: true })
+
+    await clickDays(wrapper, [10, 14])
+
+    expect(chosen(events).map(day => day.isMarked)).toEqual([true, true])
+  })
+
+  it('carries isMarked for the start of a multiple date range', async () => {
+    const { wrapper, events } = mountCalendar({
+      isDateRange: true,
+      isMultipleDateRange: true
+    })
+
+    await clickDay(wrapper, 10)
+
+    expect(chosen(events)[0].isMarked).toBe(true)
+  })
+
+  it('carries isMarked for a day added to a multiple date picker', async () => {
+    const { wrapper, events } = mountCalendar({ isMultipleDatePicker: true })
+
+    await clickDay(wrapper, 10)
+
+    expect(chosen(events)[0].isMarked).toBe(true)
+  })
+
+  it('carries no isMarked for a day removed from a multiple date picker', async () => {
+    const { wrapper, events } = mountCalendar({ isMultipleDatePicker: true })
+
+    await clickDay(wrapper, 10)
+    await clickDay(wrapper, 10)
+
+    expect(chosen(events).map(day => day.isMarked)).toEqual([true, false])
   })
 })
 
