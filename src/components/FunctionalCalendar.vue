@@ -1228,77 +1228,62 @@ export default {
     },
     markChooseDays() {
       this.markedSignature = this.selectionSignature()
-      let startDate = this.startDMY
-      let endDate = this.endDMY
+      const { isDatePicker, isMultipleDatePicker } = this.fConfigs
       const markedDates = this.markedLookup.dates
+      const markRange = this.rangeMarker()
+
       this.listCalendars.forEach(calendar => {
         calendar.weeks.forEach(week => {
           week.days.forEach(day => {
-            day.isMarked = false
-            day.date = day.date.split(' ')[0]
-            if (this.fConfigs.isDatePicker) {
-              if (this.selectedDMY === day.date) day.isMarked = true
-            } else if (this.fConfigs.isMultipleDatePicker) {
-              if (this.selectedDatesDMY.includes(day.date)) day.isMarked = true
+            const { date } = day
+
+            if (isDatePicker) {
+              day.isMarked = markedDates.has(date) || this.selectedDMY === date
+            } else if (isMultipleDatePicker) {
+              day.isMarked =
+                markedDates.has(date) || this.selectedDatesDMY.includes(date)
             } else {
-              day.isMouseToLeft = false
-              day.isMouseToRight = false
-              if (startDate === day.date) {
-                day.isMouseToLeft = !!endDate
-                day.isMarked = true
-              }
-
-              if (endDate === day.date) {
-                day.isMouseToRight = !!endDate
-                day.isMarked = true
-              }
-              if (this.calendar.multipleDateRange) {
-                const ranges = this.multipleRangeDates
-                if (ranges.some(range => range.start === day.date)) {
-                  day.isMouseToLeft = !!endDate
-                  day.isMarked = true
-                }
-                if (ranges.some(range => range.end === day.date)) {
-                  day.isMouseToRight = !!endDate
-                  day.isMarked = true
-                }
-                this.calendar.multipleDateRange.forEach(range => {
-                  if (range.start && range.start === range.end) {
-                    day.isMouseToLeft = false
-                    day.isMouseToRight = false
-                  }
-                  if (range.start && range.end) {
-                    if (
-                      this.helpCalendar.getDateFromFormat(day.date).getTime() >
-                        this.helpCalendar.getDateFromFormat(range.start) &&
-                      this.helpCalendar.getDateFromFormat(day.date) <
-                        this.helpCalendar.getDateFromFormat(range.end)
-                    ) {
-                      day.isMarked = true
-                    }
-                  }
-                })
-              }
-
-              if (startDate && startDate === endDate) {
-                day.isMouseToLeft = false
-                day.isMouseToRight = false
-              }
-              if (startDate && endDate) {
-                if (
-                  this.helpCalendar.getDateFromFormat(day.date).getTime() >
-                    this.helpCalendar.getDateFromFormat(startDate) &&
-                  this.helpCalendar.getDateFromFormat(day.date) <
-                    this.helpCalendar.getDateFromFormat(endDate)
-                ) {
-                  day.isMarked = true
-                }
-              }
+              const marks = markRange(date)
+              day.isMarked = marks.isMarked || markedDates.has(date)
+              day.isMouseToLeft = marks.isMouseToLeft
+              day.isMouseToRight = marks.isMouseToRight
             }
-            if (markedDates.has(day.date)) day.isMarked = true
           })
         })
       })
+    },
+    rangeMarker() {
+      const { startDMY, endDMY } = this
+      const { multipleDateRange } = this.calendar
+      const timeOf = date => this.parsedDay(date).getTime()
+      const starts = new Set(this.multipleRangeDates.map(range => range.start))
+      const ends = new Set(this.multipleRangeDates.map(range => range.end))
+      const inside = multipleDateRange
+        .filter(range => range.start && range.end)
+        .map(range => [timeOf(range.start), timeOf(range.end)])
+      if (startDMY && endDMY) inside.push([timeOf(startDMY), timeOf(endDMY)])
+
+      const hasEnd = !!endDMY
+      const isSingleDay =
+        (!!startDMY && startDMY === endDMY) ||
+        multipleDateRange.some(
+          range => range.start && range.start === range.end
+        )
+
+      return date => {
+        const isStart = startDMY === date || starts.has(date)
+        const isEnd = endDMY === date || ends.has(date)
+        const time = inside.length ? timeOf(date) : NaN
+
+        return {
+          isMarked:
+            isStart ||
+            isEnd ||
+            inside.some(([from, to]) => time > from && time < to),
+          isMouseToLeft: isStart && hasEnd && !isSingleDay,
+          isMouseToRight: isEnd && hasEnd && !isSingleDay
+        }
+      }
     },
     dayMouseOver(date) {
       this.$emit('dayMouseOver', date)
