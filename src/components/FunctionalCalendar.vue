@@ -396,15 +396,14 @@ export default {
     enabledLookup() {
       return buildDatesLookup(this.fConfigs.enabledDates, this.helpCalendar)
     },
-    dayTime() {
+    parsedDay() {
       const { helpCalendar } = this
-      const times = new Map()
+      const days = new Map()
 
       return date => {
-        if (!times.has(date)) {
-          times.set(date, helpCalendar.getDateFromFormat(date).getTime())
-        }
-        return times.get(date)
+        if (!days.has(date))
+          days.set(date, helpCalendar.getDateFromFormat(date))
+        return days.get(date)
       }
     },
     limitTimes() {
@@ -1347,48 +1346,48 @@ export default {
     },
     hoverPreview(range, hoverDate) {
       const { minSelDays, maxSelDays } = this.fConfigs
-      const startTime = this.dayTime(range.start)
-      const start = new Date(startTime)
+      const start = this.parsedDay(range.start)
 
       return {
-        startTime,
-        hoverTime: this.dayTime(hoverDate),
-        minLeft: dayStart(start, 1 - minSelDays).getTime(),
-        minRight: dayStart(start, minSelDays - 1).getTime(),
-        maxLeft: dayStart(start, 1 - maxSelDays).getTime(),
-        maxRight: dayStart(start, maxSelDays - 1).getTime()
+        start,
+        hoverOffset: daysBetween(start, this.parsedDay(hoverDate)),
+        minLeft: 1 - minSelDays,
+        minRight: minSelDays - 1,
+        maxLeft: 1 - maxSelDays,
+        maxRight: maxSelDays - 1
       }
     },
     paintHoverDay(day, preview) {
-      const { startTime, hoverTime } = preview
-      const itemTime = this.dayTime(day.date)
-      const isHoverBefore = hoverTime < startTime
-      const isHoverAfter = hoverTime > startTime
+      const { hoverOffset } = preview
+      const itemDate = this.parsedDay(day.date)
+      const itemOffset = daysBetween(preview.start, itemDate)
+      const isHoverBefore = hoverOffset < 0
+      const isHoverAfter = hoverOffset > 0
 
       day.isMouseToLeft =
-        (itemTime === startTime && isHoverAfter) ||
-        (itemTime === hoverTime && isHoverBefore)
+        (itemOffset === 0 && isHoverAfter) ||
+        (itemOffset === hoverOffset && isHoverBefore)
       day.isMouseToRight =
-        (itemTime === startTime && isHoverBefore) ||
-        (itemTime === hoverTime && isHoverAfter)
+        (itemOffset === 0 && isHoverBefore) ||
+        (itemOffset === hoverOffset && isHoverAfter)
 
       const isBetween =
-        (itemTime > startTime && itemTime < hoverTime) ||
-        (itemTime < startTime && itemTime > hoverTime)
-      if (isBetween && !this.isTimeOnDisabledDayName(itemTime)) {
+        (itemOffset > 0 && itemOffset < hoverOffset) ||
+        (itemOffset < 0 && itemOffset > hoverOffset)
+      if (isBetween && !this.isOnDisabledDayName(itemDate)) {
         day.isMarked = true
       }
 
-      if (this.checkSelDates('min', startTime, itemTime, hoverTime)) {
+      if (this.checkSelDates('min', itemOffset, hoverOffset)) {
         day.isMarked = true
 
-        if (hoverTime >= preview.minLeft && preview.minLeft === itemTime) {
+        if (hoverOffset >= preview.minLeft && preview.minLeft === itemOffset) {
           day.isMarked = false
           day.isMouseToLeft = true
           day.isHovered = true
         } else if (
-          hoverTime <= preview.minRight &&
-          preview.minRight === itemTime
+          hoverOffset <= preview.minRight &&
+          preview.minRight === itemOffset
         ) {
           day.isMarked = false
           day.isMouseToRight = true
@@ -1396,29 +1395,32 @@ export default {
         }
       }
 
-      if (this.checkSelDates('max', startTime, itemTime, hoverTime)) {
+      if (this.checkSelDates('max', itemOffset, hoverOffset)) {
         day.isMarked = false
         day.isHovered = false
         day.isMouseToLeft = false
         day.isMouseToRight = false
 
-        if (hoverTime <= preview.maxLeft && preview.maxLeft === itemTime) {
+        if (hoverOffset <= preview.maxLeft && preview.maxLeft === itemOffset) {
           day.isHovered = true
           day.isMouseToLeft = true
         }
 
-        if (hoverTime >= preview.maxRight && preview.maxRight === itemTime) {
+        if (
+          hoverOffset >= preview.maxRight &&
+          preview.maxRight === itemOffset
+        ) {
           day.isHovered = true
           day.isMouseToRight = true
         }
       }
     },
-    isTimeOnDisabledDayName(time) {
+    isOnDisabledDayName(date) {
       const { disabledDayNames } = this.fConfigs
 
       return (
         disabledDayNames.length > 0 &&
-        this.helpCalendar.isDayNameDisabled(new Date(time), disabledDayNames)
+        this.helpCalendar.isDayNameDisabled(date, disabledDayNames)
       )
     },
     /**
@@ -1645,39 +1647,26 @@ export default {
 
       return date === this.fConfigs.markedDateRange.end
     },
-    checkSelDates(type, startTime, itemTime, hoverTime) {
-      let days =
-        type === 'min' ? this.fConfigs.minSelDays : this.fConfigs.maxSelDays - 2
-      let minTime = days * 1000 * 60 * 60 * 24
-      let rightTime = startTime + minTime
-      let leftTime = startTime - minTime
+    checkSelDates(type, itemOffset, hoverOffset) {
+      const { minSelDays, maxSelDays } = this.fConfigs
+      const isMin = type === 'min'
+      const days = isMin ? minSelDays : maxSelDays - 2
+      const selDays = isMin ? minSelDays : maxSelDays
 
-      let result
-      if (hoverTime > startTime) {
-        if (type === 'min')
-          result =
-            itemTime < rightTime &&
-            itemTime > startTime &&
-            this.fConfigs.minSelDays
-        else
-          result =
-            itemTime > rightTime &&
-            itemTime > startTime &&
-            this.fConfigs.maxSelDays
-      } else if (hoverTime < startTime) {
-        if (type === 'min')
-          result =
-            itemTime > leftTime &&
-            itemTime < startTime &&
-            this.fConfigs.minSelDays
-        else
-          result =
-            itemTime < leftTime &&
-            itemTime < startTime &&
-            this.fConfigs.maxSelDays
+      if (hoverOffset > 0) {
+        return (
+          (isMin ? itemOffset < days : itemOffset > days) &&
+          itemOffset > 0 &&
+          selDays
+        )
       }
-
-      return result
+      if (hoverOffset < 0) {
+        return (
+          (isMin ? itemOffset > -days : itemOffset < -days) &&
+          itemOffset < 0 &&
+          selDays
+        )
+      }
     },
     checkLimits(value) {
       if (this.fConfigs.limits) {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import {
   mountCalendar,
   mountCalendarReady,
@@ -656,6 +656,70 @@ describe('range hover preview with minSelDays and maxSelDays', () => {
       '10/10/2026': 'marked left',
       '11/10/2026': 'marked',
       '12/10/2026': 'right'
+    })
+  })
+})
+
+describe('range hover preview across a daylight saving change', () => {
+  const originalTimeZone = process.env.TZ
+
+  beforeAll(() => {
+    process.env.TZ = 'America/New_York'
+  })
+
+  afterAll(() => {
+    if (originalTimeZone === undefined) {
+      delete process.env.TZ
+    } else {
+      process.env.TZ = originalTimeZone
+    }
+  })
+
+  const mountMarch = () =>
+    mountCalendar({
+      isDateRange: true,
+      minSelDays: 5,
+      newCurrentDate: new Date(2026, 2, 1)
+    })
+
+  it('runs in a time zone that changes its clocks on 8 March 2026', () => {
+    expect(new Date(2026, 2, 7, 12).getTimezoneOffset()).toBe(300)
+    expect(new Date(2026, 2, 9, 12).getTimezoneOffset()).toBe(240)
+  })
+
+  it('previews the minimum length that the second click commits', async () => {
+    const preview = mountMarch()
+    await clickDay(preview.wrapper, 5)
+    await hoverDay(preview.wrapper, 6)
+
+    const committed = mountMarch()
+    await clickDays(committed.wrapper, [5, 6])
+
+    expect(previewState(preview.wrapper)).toEqual({
+      '5/3/2026': 'marked left',
+      '6/3/2026': 'marked right',
+      '7/3/2026': 'marked',
+      '8/3/2026': 'marked',
+      '9/3/2026': 'hovered right'
+    })
+    expect(lastValue(committed.wrapper).dateRange).toEqual({
+      start: '5/3/2026',
+      end: '9/3/2026'
+    })
+  })
+
+  it('previews the minimum length to the left across the change', async () => {
+    const { wrapper } = mountMarch()
+    await clickDay(wrapper, 12)
+
+    await hoverDay(wrapper, 11)
+
+    expect(previewState(wrapper)).toEqual({
+      '8/3/2026': 'hovered left',
+      '9/3/2026': 'marked',
+      '10/3/2026': 'marked',
+      '11/3/2026': 'marked left',
+      '12/3/2026': 'marked right'
     })
   })
 })
