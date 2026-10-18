@@ -19,7 +19,11 @@
       @focus="calendarRoot.focusedDate = day.date"
       @mouseover="dayMouseOver"
     >
-      <slot :week="week" :day="day">{{ day.day }}</slot>
+      <SlotOutlet
+        :source="calendarRoot.$slots.default"
+        :scope="{ week, day }"
+        >{{ day.day }}</SlotOutlet
+      >
       <span
         v-if="timesShow"
         @click="clearRange"
@@ -47,10 +51,11 @@
 <script>
 import { CALENDAR_KEY } from '../utils/injectionKeys'
 
-import { hasSlotContent } from '../utils/slots'
+import { SlotOutlet, hasSlotContent } from '../utils/slots'
 
 export default {
   name: 'Day',
+  components: { SlotOutlet },
   inject: { calendarRoot: CALENDAR_KEY },
   props: {
     week: {
@@ -283,7 +288,7 @@ export default {
       const classes = []
       const { calendarRoot, isDayNameDisabled } = this
 
-      if (!this.hasSlot('default') || this.alwaysUseDefaultClasses) {
+      if (this.alwaysUseDefaultClasses || !this.hasSlot('default')) {
         classes.push('vfc-span-day')
       }
 

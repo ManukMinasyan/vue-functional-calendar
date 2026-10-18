@@ -199,11 +199,7 @@
                       :grid-key="key"
                       @dayMouseOver="dayMouseOver"
                       :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
-                    >
-                      <template v-slot:default="props">
-                        <slot :week="props.week" :day="props.day"></slot>
-                      </template>
-                    </Day>
+                    />
                   </div>
                   <template
                     v-if="

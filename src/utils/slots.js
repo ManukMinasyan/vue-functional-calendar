@@ -1,4 +1,4 @@
-import { Comment, Fragment } from 'vue'
+import { Comment, Fragment, renderSlot } from 'vue'
 
 const flatten = vnodes =>
   vnodes.flatMap(vnode =>
@@ -17,6 +17,10 @@ export const hasSlotContent = (slot, props = {}) => {
   const vnodes = flatten(slot(props))
   return !(vnodes.length && vnodes.every(isHtmlComment))
 }
+
+export const SlotOutlet = (props, { slots }) =>
+  renderSlot({ default: props.source }, 'default', props.scope, slots.default)
+SlotOutlet.props = ['source', 'scope']
 
 const FOCUSABLE =
   'button, input, select, textarea, a[href], [tabindex], [contenteditable]'
