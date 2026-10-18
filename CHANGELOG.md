@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here.
 
+## 3.1.1 - 2026-10-18
+
+The package code is the same as 3.1.0. This release updates what npm shows.
+
+### Changed
+
+- The README lists Relaticle as a sponsor, with light and dark logos.
+- `repository.url` uses the `git+https` form npm expects.
+
+### Fixed
+
+- The GetCopy sponsor logo in the README, whose old URL returned 404.
+
 ## 3.1.0 - 2026-10-18
 
 The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. Vue 2 apps stay on `^2.10.0`. See [MIGRATION.md](MIGRATION.md).
