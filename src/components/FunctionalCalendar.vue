@@ -913,8 +913,8 @@ export default {
               isMouseToLeft: false,
               isMouseToRight: false,
               isHovered: false,
-              isDateRangeStart: this.checkDateRangeStart(formatted),
-              isDateRangeEnd: this.checkDateRangeEnd(formatted),
+              isDateRangeStart: this.matchesMarkedRangeEdge(formatted, 'start'),
+              isDateRangeEnd: this.matchesMarkedRangeEdge(formatted, 'end'),
               hideLeftAndRightDays: day.hideLeftAndRightDays,
               isToday: date.getTime() === today,
               isMarked: false
@@ -1752,8 +1752,8 @@ export default {
       this.calendar.selectedDates.splice(index, 1)
     },
 
-    checkDateRangeEnd(date) {
-      return this.markedRangeLookup.ranges.some(range => range.end === date)
+    matchesMarkedRangeEdge(date, edge) {
+      return this.markedRangeLookup.ranges.some(range => range[edge] === date)
     },
     checkSelDates(type, itemOffset, hoverOffset) {
       const { minSelDays, maxSelDays } = this.fConfigs
@@ -2289,9 +2289,6 @@ export default {
       })
     },
 
-    checkDateRangeStart(date) {
-      return this.markedRangeLookup.ranges.some(range => range.start === date)
-    },
     cleanRange() {
       if (!this.fConfigs.isMultipleDateRange) {
         this.calendar.dateRange.end = ''
