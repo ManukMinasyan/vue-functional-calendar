@@ -923,7 +923,7 @@ export default {
         })
       })
     },
-    clickDay(item, isDisabledDate) {
+    clickDay(item) {
       const day = item.date
       const clicked = { ...item, date: this.withTimeSuffix(day) }
       this.$emit('dayClicked', clicked)
@@ -936,19 +936,7 @@ export default {
         return false
       }
 
-      if (
-        this.helpCalendar.isDayNameDisabled(
-          this.helpCalendar.getDateFromFormat(day),
-          this.fConfigs.disabledDayNames
-        ) ||
-        isDisabledDate(day)
-      ) {
-        return false
-      }
-
-      if (this.isOutsideLimits(day)) {
-        return false
-      }
+      if (this.isDateBlocked(day)) return false
 
       this.selectDate(clicked.date)
       this.markChooseDays()

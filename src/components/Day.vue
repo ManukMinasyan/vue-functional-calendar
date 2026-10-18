@@ -14,7 +14,7 @@
       :aria-keyshortcuts="rangeNumbers.length ? 'Delete' : null"
       :data-focus-id="`day:${gridKey}:${day.date}`"
       :class="getClassNames(day)"
-      @click.self="calendarRoot.clickDay(day, isDisabledDate)"
+      @click.self="calendarRoot.clickDay(day)"
       @keydown="onKeydown"
       @focus="calendarRoot.focusedDate = day.date"
       @mouseover="dayMouseOver"
@@ -265,13 +265,10 @@ export default {
       const props = name === 'default' ? { week: this.week, day: this.day } : {}
       return hasSlotContent(this.calendarRoot.$slots[name], props)
     },
-    isDisabledDate(date) {
-      return this.calendarRoot.isDisabledDate(date)
-    },
     onKeydown(event) {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
-        this.calendarRoot.clickDay(this.day, this.isDisabledDate)
+        this.calendarRoot.clickDay(this.day)
         this.calendarRoot.returnFocusIfClosed()
         return
       }
