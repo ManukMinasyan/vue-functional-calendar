@@ -74,6 +74,31 @@ describe('arrow navigation', () => {
   })
 })
 
+describe('year arrows of the month picker with isSeparately', () => {
+  it('keeps the focus on the arrow and the grid mounted', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      changeMonthFunction: true
+    })
+    wrapper.vm.openMonthPicker(2)
+    await nextTick()
+    const button = wrapper
+      .findAll('.vfc-calendar')[1]
+      .find('.vfc-months-container .vfc-arrow-right').element.parentElement
+    const keys = wrapper.vm.listCalendars.map(grid => grid.key)
+
+    button.focus()
+    button.click()
+    await nextTick()
+
+    expect(document.activeElement).toBe(button)
+    expect(wrapper.vm.listCalendars.map(grid => grid.key)).toEqual(keys)
+    expect(calendarTitle(wrapper, 1)).toBe('November 2027')
+  })
+})
+
 describe('changedYear on month arrows', () => {
   it('emits changedYear when NextMonth crosses into the next year', async () => {
     const { wrapper, events } = mountCalendar({

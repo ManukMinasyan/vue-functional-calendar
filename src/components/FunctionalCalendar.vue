@@ -1487,7 +1487,7 @@ export default {
       }
     },
     changeYear(calendarKey, years) {
-      const target = this.moveMonths(calendarKey, years * 12)
+      const target = this.moveMonths(calendarKey, years * 12, false)
       if (!target) return false
 
       this.$emit('changedYear', target)
@@ -1495,7 +1495,7 @@ export default {
     gridAt(calendarKey) {
       return this.listCalendars[calendarKey !== null ? calendarKey : 0]
     },
-    moveMonths(calendarKey, months) {
+    moveMonths(calendarKey, months, rekey = true) {
       const grid = this.gridAt(calendarKey)
       const target = new Date(
         grid.date.getFullYear(),
@@ -1508,7 +1508,7 @@ export default {
           : this.isWithinMin(target)
       if (!allowed) return null
 
-      this.showMonth(grid, target)
+      this.showMonth(grid, target, rekey)
       return target
     },
     forwardEdge(first) {
@@ -1553,10 +1553,10 @@ export default {
       const start = Math.min(index, Math.max(maxIndex - last, minIndex))
       return new Date(Math.floor(start / 12), start % 12, 1)
     },
-    showMonth(grid, date) {
+    showMonth(grid, date, rekey = true) {
       if (this.fConfigs.isSeparately) {
         grid.date = date
-        grid.key = hUniqueID()
+        if (rekey) grid.key = hUniqueID()
         this.updateCalendar()
         return
       }
