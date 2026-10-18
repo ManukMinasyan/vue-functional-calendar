@@ -57,14 +57,14 @@
           <div
             class="vfc-time-picker__item"
             :class="{
-              'vfc-time-picker__item--selected': checkHourActiveClass(i)
+              'vfc-time-picker__item--selected': isActiveTime('hour', i)
             }"
             v-for="(i, index) in hours"
             :key="i"
             role="option"
             :tabindex="tabStop('hour', index) ? 0 : -1"
-            :aria-selected="checkHourActiveClass(i)"
-            @click="changeHour(formatTime(i))"
+            :aria-selected="isActiveTime('hour', i)"
+            @click="changeTime('hour', formatTime(i))"
           >
             {{ formatTime(i) }}
           </div>
@@ -79,14 +79,14 @@
           <div
             class="vfc-time-picker__item"
             :class="{
-              'vfc-time-picker__item--selected': checkMinuteActiveClass(i)
+              'vfc-time-picker__item--selected': isActiveTime('minute', i)
             }"
             v-for="(i, index) in minutes"
             :key="i"
             role="option"
             :tabindex="tabStop('minute', index) ? 0 : -1"
-            :aria-selected="checkMinuteActiveClass(i)"
-            @click="changeMinute(formatTime(i))"
+            :aria-selected="isActiveTime('minute', i)"
+            @click="changeTime('minute', formatTime(i))"
           >
             {{ formatTime(i) }}
           </div>
@@ -98,6 +98,8 @@
 
 <script>
 import { CALENDAR_KEY } from '../utils/injectionKeys'
+
+const SELECTED_KEYS = { hour: 'selectedHour', minute: 'selectedMinute' }
 
 export default {
   name: 'TimePicker',
@@ -139,6 +141,11 @@ export default {
     },
     getCurrentDateTime() {
       return this.currentSelectedDate.dateTime
+    },
+    currentEntry() {
+      return this.calendarRoot.calendar.selectedDates.find(
+        date => date.date === this.getCurrentDate
+      )
     }
   },
   created() {
@@ -146,17 +153,12 @@ export default {
     this.currentSelectedDate = selectedDates[selectedDates.length - 1]
   },
   mounted() {
-    let startDate = this.calendarRoot.calendar.dateRange.start.split(' ')[0]
-    let endDate = this.calendarRoot.calendar.dateRange.end.split(' ')[0]
-    if (
-      startDate &&
-      this.calendarRoot.helpCalendar.getDateFromFormat(startDate) <
-        this.calendarRoot.helpCalendar.getDateFromFormat(endDate)
-    ) {
-      this.startDateActive = false
-    } else {
-      this.startDateActive = true
-    }
+    const { startDMY, endDMY, helpCalendar } = this.calendarRoot
+    this.startDateActive = !(
+      startDMY &&
+      helpCalendar.getDateFromFormat(startDMY) <
+        helpCalendar.getDateFromFormat(endDMY)
+    )
 
     this.setSelectedDateTime()
     this.setStyles()
@@ -168,12 +170,12 @@ export default {
     close() {
       this.calendarRoot.closeTimePicker()
     },
+    unitValues(unit) {
+      return unit === 'hour' ? this.hours : this.minutes
+    },
     tabStop(kind, index) {
-      const values = kind === 'hour' ? this.hours : this.minutes
-      const selected = values.findIndex(value =>
-        kind === 'hour'
-          ? this.checkHourActiveClass(value)
-          : this.checkMinuteActiveClass(value)
+      const selected = this.unitValues(kind).findIndex(value =>
+        this.isActiveTime(kind, value)
       )
       return index === (selected === -1 ? 0 : selected)
     },
@@ -183,8 +185,6 @@ export default {
       const current = items.indexOf(document.activeElement)
       if (current === -1) return
 
-      const select = kind === 'hour' ? this.changeHour : this.changeMinute
-      const values = kind === 'hour' ? this.hours : this.minutes
       const moves = {
         ArrowDown: Math.min(current + 1, items.length - 1),
         ArrowUp: Math.max(current - 1, 0),
@@ -197,7 +197,7 @@ export default {
         items[moves[event.key]].focus()
       } else if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
-        select(this.formatTime(values[current]))
+        this.changeTime(kind, this.formatTime(this.unitValues(kind)[current]))
       }
     },
     timeOf(value) {
@@ -209,55 +209,20 @@ export default {
       const time = what == 'hour' ? `${to}:${minute}` : `${hour}:${to}`
       return `${val.split(' ')[0]} ${time}`
     },
-    changeHour(hour) {
-      if (this.calendarRoot.fConfigs.isDateRange) {
-        if (this.startDateActive) {
-          this.calendarRoot.calendar.dateRange.start = this.addMinuteHour(
-            'hour',
-            this.calendarRoot.calendar.dateRange.start,
-            hour
-          )
-        } else {
-          this.calendarRoot.calendar.dateRange.end = this.addMinuteHour(
-            'hour',
-            this.calendarRoot.calendar.dateRange.end,
-            hour
-          )
-        }
-      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
-        let currentDate = this.calendarRoot.calendar.selectedDates.find(
-          date => date.date === this.getCurrentDate
-        )
-        currentDate.hour = hour
-      } else {
-        this.calendarRoot.calendar.selectedHour = hour
-      }
+    changeTime(unit, value) {
+      const { fConfigs, calendar } = this.calendarRoot
 
-      this.setSelectedDateTime()
-      this.setScrollPosition()
-    },
-    changeMinute(minute) {
-      if (this.calendarRoot.fConfigs.isDateRange) {
-        if (this.startDateActive) {
-          this.calendarRoot.calendar.dateRange.start = this.addMinuteHour(
-            'minute',
-            this.calendarRoot.calendar.dateRange.start,
-            minute
-          )
-        } else {
-          this.calendarRoot.calendar.dateRange.end = this.addMinuteHour(
-            'minute',
-            this.calendarRoot.calendar.dateRange.end,
-            minute
-          )
-        }
-      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
-        let currentDate = this.calendarRoot.calendar.selectedDates.find(
-          date => date.date === this.getCurrentDate
+      if (fConfigs.isDateRange) {
+        const edge = this.startDateActive ? 'start' : 'end'
+        calendar.dateRange[edge] = this.addMinuteHour(
+          unit,
+          calendar.dateRange[edge],
+          value
         )
-        currentDate.minute = minute
+      } else if (fConfigs.isMultipleDatePicker) {
+        this.currentEntry[unit] = value
       } else {
-        this.calendarRoot.calendar.selectedMinute = minute
+        calendar[SELECTED_KEYS[unit]] = value
       }
 
       this.setSelectedDateTime()
@@ -272,52 +237,32 @@ export default {
           ':' +
           this.calendarRoot.calendar.selectedMinute
       } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
-        let currentDate = this.calendarRoot.calendar.selectedDates.find(
-          date => date.date === this.getCurrentDate
-        )
-        currentDate.dateTime =
-          currentDate.date + ' ' + currentDate.hour + ':' + currentDate.minute
+        const entry = this.currentEntry
+        entry.dateTime = entry.date + ' ' + entry.hour + ':' + entry.minute
       }
     },
     activeRangeEdge() {
       const { dateRange } = this.calendarRoot.calendar
       return this.startDateActive ? dateRange.start : dateRange.end
     },
-    checkHourActiveClass(i) {
-      let hour
-      if (this.calendarRoot.fConfigs.isDateRange) {
-        hour = this.timeOf(this.activeRangeEdge()).hour
-      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
-        hour = this.calendarRoot.calendar.selectedDates.find(
-          date => date.date === this.getCurrentDate
-        ).hour
+    isActiveTime(unit, i) {
+      const { fConfigs, calendar } = this.calendarRoot
+      const values = this.unitValues(unit)
+      let current
+
+      if (fConfigs.isDateRange) {
+        current = this.timeOf(this.activeRangeEdge())[unit]
+      } else if (fConfigs.isMultipleDatePicker) {
+        current = this.currentEntry[unit]
       } else {
-        hour = this.calendarRoot.calendar.selectedHour
+        current = calendar[SELECTED_KEYS[unit]]
       }
 
-      if (this.hours.length && !this.hours.some(el => el == hour)) {
-        hour = this.hours[0]
+      if (values.length && !values.some(el => el == current)) {
+        current = values[0]
       }
 
-      return hour == this.formatTime(i)
-    },
-    checkMinuteActiveClass(i) {
-      let minute
-      if (this.calendarRoot.fConfigs.isDateRange) {
-        minute = this.timeOf(this.activeRangeEdge()).minute
-      } else if (this.calendarRoot.fConfigs.isMultipleDatePicker) {
-        minute = this.calendarRoot.calendar.selectedDates.find(
-          date => date.date === this.getCurrentDate
-        ).minute
-      } else {
-        minute = this.calendarRoot.calendar.selectedMinute
-      }
-
-      if (this.minutes.length && !this.minutes.some(el => el == minute)) {
-        minute = this.minutes[0]
-      }
-
-      return minute == this.formatTime(i)
+      return current == this.formatTime(i)
     },
     setStyles() {
       this.setScrollPosition()
