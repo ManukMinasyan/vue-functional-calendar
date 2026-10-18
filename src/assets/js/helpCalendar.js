@@ -190,7 +190,6 @@ export default class helpCalendar {
     let leftMonthDays = this.getLeftMonthDays(month, year)
     let rightMonthDays = this.getRightMonthDays(month, year)
 
-    // Push Current Month Week days
     monthWeeks.weeks.forEach(week => {
       for (let i = week.start; i <= week.end; i++) {
         week.days.push({
@@ -203,7 +202,6 @@ export default class helpCalendar {
       }
     })
 
-    // Left month days
     if (leftMonthDays.days.length) {
       leftMonthDays.days.forEach(day => {
         let hideLeftAndRightDays = false
@@ -223,7 +221,6 @@ export default class helpCalendar {
       })
     }
 
-    // Right month days
     if (rightMonthDays.days.length) {
       rightMonthDays.days.forEach(day => {
         let hideLeftAndRightDays = false
@@ -243,7 +240,6 @@ export default class helpCalendar {
       })
     }
 
-    // Remove Week Year
     monthWeeks.weeks.forEach(week => {
       delete week.year
     })

@@ -573,7 +573,6 @@ export default {
     if (invalidModel) throw invalidModel
   },
   mounted() {
-    //show time placeholder
     if (this.displayTimeInput) {
       const timeFormat = this.fConfigs.placeholder.split(' ')[1]
       if (!timeFormat) {
@@ -583,7 +582,6 @@ export default {
 
     this.dialogId = `vfc-dialog-${hUniqueID()}`
     this.popoverElement = this.$refs.popoverElement
-    // Event
     this.popoverElement.addEventListener('focusin', this.onFocusIn)
     this.popoverElement.addEventListener('focusout', this.onFocusOut)
     window.addEventListener('click', this.hideMonthYearPicker, {
@@ -785,7 +783,6 @@ export default {
       }
 
       if (typeof this.$getOptions !== 'undefined') {
-        // Global Options
         const globalOptions = this.$getOptions()
         Object.keys(globalOptions).forEach(objectKey => {
           if (typeof this.fConfigs[objectKey] !== 'undefined') {
@@ -797,7 +794,6 @@ export default {
       if (typeof this.configs !== 'undefined') {
         Object.keys(this.fConfigs).forEach(objectKey => {
           if (typeof this.configs[objectKey] !== 'undefined') {
-            // Get From Configs
             apply(objectKey, this.configs[objectKey])
           }
         })
@@ -816,17 +812,14 @@ export default {
       this.customMonthNames = explicit.has('monthNames')
       this.customDayNames = explicit.has('dayNames')
 
-      // Is Modal
       if (this.fConfigs.isModal) this.showCalendar = false
 
-      // Placeholder
       if (
         typeof this.fConfigs.placeholder !== 'string' ||
         !this.fConfigs.placeholder
       )
         this.fConfigs.placeholder = this.fConfigs.dateFormat
 
-      // Week Start
       const shift = (this.weekStart + 6) % 7
       if (shift) {
         const dayNames = this.fConfigs.dayNames
@@ -945,9 +938,6 @@ export default {
         return false
       }
 
-      //Disabled Dates - Start
-
-      // Disable days of week if set in configuration
       if (
         this.helpCalendar.isDayNameDisabled(
           this.helpCalendar.getDateFromFormat(day),
@@ -958,9 +948,6 @@ export default {
         return false
       }
 
-      //Disabled Dates - End
-
-      // Limits
       if (this.fConfigs.limits) {
         let min = this.helpCalendar
           .getDateFromFormat(this.fConfigs.limits.min)
@@ -1019,7 +1006,6 @@ export default {
         this.emitModel()
       }
 
-      // Time Picker
       if (this.fConfigs.withTimePicker) {
         if (this.fConfigs.isDateRange || this.fConfigs.isDatePicker) {
           this.openTimePicker()
@@ -1319,7 +1305,6 @@ export default {
           week.days.forEach(day => {
             day.isMarked = false
             day.date = day.date.split(' ')[0]
-            // Date Picker
             if (this.fConfigs.isDatePicker) {
               if (this.calendar.selectedDate === day.date) day.isMarked = true
             } else if (this.fConfigs.isMultipleDatePicker) {
@@ -1330,7 +1315,6 @@ export default {
             } else {
               day.isMouseToLeft = false
               day.isMouseToRight = false
-              // Date Range
               if (startDate === day.date) {
                 day.isMouseToLeft = !!endDate
                 day.isMarked = true
@@ -1340,7 +1324,6 @@ export default {
                 day.isMouseToRight = !!endDate
                 day.isMarked = true
               }
-              //Multiple Range
               if (this.calendar.multipleDateRange) {
                 const ranges = this.multipleRangeDates
                 if (ranges.some(range => range.start === day.date)) {
@@ -1769,10 +1752,6 @@ export default {
       }
       return years
     },
-    /**
-     * Add date to selectedDates list
-     * @param index
-     */
     addToSelectedDates() {
       const typed = this.helpCalendar.parseTypedDate(
         this.calendar.selectedDatesItem
@@ -1784,10 +1763,6 @@ export default {
         this.calendar.selectedDatesItem = ''
       }
     },
-    /**
-     * Remove date from selectedDates list
-     * @param index
-     */
     removeFromSelectedDates(index) {
       this.calendar.selectedDates.splice(index, 1)
     },

@@ -253,7 +253,6 @@ export default {
   },
   methods: {
     clearRange() {
-      //$emit
       const [removeIndex] = this.rangeEdges.ends
       if (removeIndex === undefined) return
 
