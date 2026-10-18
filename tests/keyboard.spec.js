@@ -816,10 +816,10 @@ describe('modal mode', () => {
     )
   })
 
-  it('keeps the container out of the tab order', async () => {
+  it('keeps the container focusable but out of the tab order', async () => {
     const { wrapper } = await mountModal()
 
-    expect(wrapper.attributes('tabindex')).toBeUndefined()
+    expect(wrapper.attributes('tabindex')).toBe('-1')
   })
 
   it('does not give an inline calendar the dialog role', async () => {
@@ -1108,6 +1108,35 @@ describe('month and year pickers', () => {
     await nextTick()
 
     expect(wrapper.vm.showMonthPicker).toBe(1)
+  })
+
+  it('keeps the picker open when focus lands on a container around it', async () => {
+    const { wrapper } = await mountPicker()
+    await press(titleButtons(wrapper)[0], 'Enter')
+
+    wrapper.find('.vfc-main-container').element.focus()
+    await nextTick()
+    wrapper.element.focus()
+    await nextTick()
+
+    expect(wrapper.vm.showMonthPicker).toBe(1)
+  })
+
+  it('pages the year picker when its arrow takes no focus on click', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      changeYearFunction: true
+    })
+    await press(titleButtons(wrapper)[0], 'Enter')
+    const next = wrapper.find(
+      '.vfc-months-container button[aria-label="Next years"]'
+    )
+
+    wrapper.find('.vfc-main-container').element.focus()
+    await next.trigger('click')
+
+    expect(wrapper.vm.showYearPicker).toBe(1)
+    expect(wrapper.find('.vfc-months .vfc-item').text()).not.toBe('2020')
   })
 
   it('closes the picker of an inline calendar when focus leaves the calendar', async () => {

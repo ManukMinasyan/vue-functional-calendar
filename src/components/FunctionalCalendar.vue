@@ -2,6 +2,7 @@
   <div
     class="vfc-popover-container"
     ref="popoverElement"
+    tabindex="-1"
     @keydown="onPopoverKeydown"
     @click="onPopoverClick"
   >
@@ -34,7 +35,7 @@
       v-show="showCalendar"
       ref="mainContainer"
       tabindex="-1"
-      :id="isModalPicker ? dialogId : null"
+      :id="isModalPicker && dialogId ? dialogId : null"
       :role="isModalPicker ? 'dialog' : null"
       :aria-label="isModalPicker ? fConfigs.labels.calendar : null"
       :class="{
@@ -582,6 +583,7 @@ export default {
       }
     }
 
+    this.dialogId = `vfc-dialog-${hUniqueID()}`
     this.popoverElement = this.$refs.popoverElement
     // Event
     this.popoverElement.addEventListener('focusin', this.onFocusIn)
@@ -2280,6 +2282,7 @@ export default {
         grid.querySelector('.vfc-top-date [aria-expanded="true"]')
       ]
       if (keep.some(element => hElContains(element, target))) return
+      if (hElContains(target, keep[0])) return
 
       this.showMonthPicker = this.showYearPicker = false
     },

@@ -1300,6 +1300,35 @@ describe('model intake at creation', () => {
   })
 })
 
+describe('dialog id on the server', () => {
+  it('renders no dialog id or aria-controls before the client assigns one', async () => {
+    const app = createSSRApp(FunctionalCalendar, {
+      isModal: true,
+      isDateRange: true,
+      newCurrentDate: new Date(2026, 9, 1)
+    })
+
+    const html = await renderToString(app)
+
+    expect(html).not.toContain('vfc-dialog-')
+    expect(html).not.toContain('aria-controls')
+    expect(html).toContain('role="dialog"')
+  })
+
+  it('points aria-controls at the dialog id once mounted', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isModal: true,
+      isDateRange: true
+    })
+    const id = wrapper.find('[role="dialog"]').attributes('id')
+
+    expect(id).toMatch(/^vfc-dialog-\d+$/)
+    wrapper.findAll('.vfc-multiple-input input').forEach(input => {
+      expect(input.attributes('aria-controls')).toBe(id)
+    })
+  })
+})
+
 describe('range model sync', () => {
   it('emits the chosen range as the model value', async () => {
     const { wrapper } = mountCalendar({ isModal: true, isDateRange: true })

@@ -1,5 +1,4 @@
 import { DEFAULT_LABELS } from '../utils/locale'
-import { hUniqueID } from '../utils/helpers'
 
 const undefinedGenerator = () => undefined
 
@@ -213,7 +212,7 @@ export const propsAndData = {
   },
   data() {
     return {
-      dialogId: `vfc-dialog-${hUniqueID()}`,
+      dialogId: '',
       popoverElement: '',
       popoverOpener: null,
       restoringFocus: false,
