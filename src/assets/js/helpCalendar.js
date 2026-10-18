@@ -85,10 +85,6 @@ export default class helpCalendar {
     })
   }
 
-  checkValidDate(val) {
-    return !isNaN(this.getDateFromFormat(val).getTime())
-  }
-
   daysSinceWeekStart(date) {
     return (date.getDay() - this.weekStart + 7) % 7
   }
