@@ -503,6 +503,9 @@ export default {
         return roving ? roving.date : ''
       })
     },
+    isRangePreset() {
+      return this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange
+    },
     hasPresets() {
       return this.presetItems.length > 0 && !this.showTimePicker
     },
@@ -1084,11 +1087,8 @@ export default {
         disabled: this.isPresetBlocked(days)
       }
     },
-    isRangePreset() {
-      return this.fConfigs.isMultipleDateRange || this.fConfigs.isDateRange
-    },
     isPresetBlocked({ start, end }) {
-      const isRange = this.isRangePreset()
+      const isRange = this.isRangePreset
       const last = isRange ? end : start
       const length = daysBetween(start, last) + 1
       const { minSelDays, maxSelDays } = this.fConfigs
@@ -1148,7 +1148,7 @@ export default {
       const { calendar } = this
       const start = this.helpCalendar.formatDate(preset.start)
 
-      if (!this.isRangePreset()) {
+      if (!this.isRangePreset) {
         return this.helpCalendar.normalizeDate(calendar.selectedDate) === start
       }
 
@@ -1170,7 +1170,7 @@ export default {
 
       this.batchingModel = true
       try {
-        if (this.isRangePreset()) {
+        if (this.isRangePreset) {
           this.discardOpenRange()
           this.selectDate(dateOf(current.start))
           this.selectDate(dateOf(current.end))
