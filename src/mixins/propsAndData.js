@@ -218,12 +218,6 @@ export const propsAndData = {
       focusToken: null,
       customDayNames: false,
       customMonthNames: false,
-      defaultDateFormat: {
-        date: false,
-        dateTime: false,
-        hour: '00',
-        minute: '00'
-      },
       presetNow: new Date(),
       batchingModel: false,
       calendar: createCalendarState(),

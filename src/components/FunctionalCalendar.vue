@@ -292,6 +292,12 @@ const TRANSITIONS = {
   left: 'vfc-calendar-slide-left',
   right: 'vfc-calendar-slide-right'
 }
+const DEFAULT_DATE_ENTRY = {
+  date: false,
+  dateTime: false,
+  hour: '00',
+  minute: '00'
+}
 const signature = value => JSON.stringify(value) ?? 'undefined'
 const monthIndex = date => date.getFullYear() * 12 + date.getMonth()
 
@@ -968,10 +974,7 @@ export default {
         if (dateIndex !== -1) {
           this.calendar.selectedDates.splice(dateIndex, 1)
         } else {
-          let selected = Object.assign({}, this.defaultDateFormat)
-          selected.date = date
-
-          this.calendar.selectedDates.push(selected)
+          this.calendar.selectedDates.push({ ...DEFAULT_DATE_ENTRY, date })
         }
 
         this.emitModel()
@@ -1681,9 +1684,7 @@ export default {
         this.calendar.selectedDatesItem
       )
       if (typed) {
-        let date = Object.assign({}, this.defaultDateFormat)
-        date.date = typed
-        this.calendar.selectedDates.push(date)
+        this.calendar.selectedDates.push({ ...DEFAULT_DATE_ENTRY, date: typed })
         this.calendar.selectedDatesItem = ''
       }
     },
