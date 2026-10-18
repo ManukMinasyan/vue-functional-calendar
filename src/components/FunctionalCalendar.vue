@@ -1006,21 +1006,14 @@ export default {
         const { withTimePicker, isMultipleDateRange } = this.fConfigs
         if (!withTimePicker || isMultipleDateRange) this.autoCloseModal()
       } else if (this.fConfigs.isMultipleDatePicker) {
-        if (
-          this.calendar.hasOwnProperty('selectedDates') &&
-          this.calendar.selectedDates.find(entry => entry.date === date)
-        ) {
-          let dateIndex = this.calendar.selectedDates.findIndex(
-            entry => entry.date === date
-          )
+        const dateIndex = this.calendar.selectedDates.findIndex(
+          entry => entry.date === date
+        )
+        if (dateIndex !== -1) {
           this.calendar.selectedDates.splice(dateIndex, 1)
         } else {
           let selected = Object.assign({}, this.defaultDateFormat)
           selected.date = date
-
-          if (!this.calendar.hasOwnProperty('selectedDates')) {
-            this.calendar.selectedDates = []
-          }
 
           this.calendar.selectedDates.push(selected)
         }
@@ -1333,8 +1326,7 @@ export default {
               if (this.calendar.selectedDate === day.date) day.isMarked = true
             } else if (this.fConfigs.isMultipleDatePicker) {
               if (
-                this.calendar.hasOwnProperty('selectedDates') &&
-                this.calendar.selectedDates.find(date => date.date === day.date)
+                this.calendar.selectedDates.some(date => date.date === day.date)
               )
                 day.isMarked = true
             } else {
@@ -1987,7 +1979,7 @@ export default {
       }
       if (fConfigs.isDatePicker) return calendar.selectedDate === date
       if (fConfigs.isMultipleDatePicker) {
-        return (calendar.selectedDates || []).some(item => item.date === date)
+        return calendar.selectedDates.some(item => item.date === date)
       }
       return false
     },
