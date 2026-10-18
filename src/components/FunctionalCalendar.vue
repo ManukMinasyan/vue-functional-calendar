@@ -789,22 +789,10 @@ export default {
         }
       })
 
-      if (typeof this.configs !== 'undefined') {
-        Object.keys(this.fConfigs).forEach(objectKey => {
-          if (typeof this.configs[objectKey] !== 'undefined') {
-            apply(objectKey, this.configs[objectKey])
-          }
-        })
-      } else {
-        Object.keys(this.$props).forEach(objectKey => {
-          if (
-            typeof this.fConfigs[objectKey] !== 'undefined' &&
-            typeof this.$props[objectKey] !== 'undefined'
-          ) {
-            apply(objectKey, this.$props[objectKey])
-          }
-        })
-      }
+      Object.keys(this.fConfigs).forEach(objectKey => {
+        const value = this.configSource(objectKey)
+        if (typeof value !== 'undefined') apply(objectKey, value)
+      })
 
       this.applyLocale(explicit)
       this.customMonthNames = explicit.has('monthNames')
