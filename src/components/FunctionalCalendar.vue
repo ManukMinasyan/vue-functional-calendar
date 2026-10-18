@@ -1133,11 +1133,7 @@ export default {
       const { disabledDayNames } = this.fConfigs
       if (!disabledDayNames.length) return false
 
-      const weekEnd = new Date(
-        start.getFullYear(),
-        start.getMonth(),
-        start.getDate() + 6
-      )
+      const weekEnd = dayStart(start, 6)
       return eachDay(start, last < weekEnd ? last : weekEnd).some(day =>
         this.isOnDisabledDayName(day)
       )
@@ -1924,19 +1920,15 @@ export default {
       )
     },
     keyboardTarget(key, shift, from, rtl = false) {
-      const year = from.getFullYear()
-      const month = from.getMonth()
-      const date = from.getDate()
-
       switch (key) {
         case 'ArrowLeft':
-          return new Date(year, month, date + (rtl ? 1 : -1))
+          return dayStart(from, rtl ? 1 : -1)
         case 'ArrowRight':
-          return new Date(year, month, date + (rtl ? -1 : 1))
+          return dayStart(from, rtl ? -1 : 1)
         case 'ArrowUp':
-          return new Date(year, month, date - 7)
+          return dayStart(from, -7)
         case 'ArrowDown':
-          return new Date(year, month, date + 7)
+          return dayStart(from, 7)
         case 'Home':
           return this.weekEdge(from, 0)
         case 'End':
@@ -1953,11 +1945,7 @@ export default {
       const year = from.getFullYear()
       const month = from.getMonth()
       const sinceWeekStart = this.helpCalendar.daysSinceWeekStart(from)
-      const edge = new Date(
-        year,
-        month,
-        from.getDate() - sinceWeekStart + offset
-      )
+      const edge = dayStart(from, offset - sinceWeekStart)
 
       if (edge.getMonth() === month) return edge
 
