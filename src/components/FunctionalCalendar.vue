@@ -459,6 +459,10 @@ export default {
         max: monthIndex(new Date(times.max))
       }
     },
+    usesTimePicker() {
+      const { withTimePicker, isMultipleDateRange } = this.fConfigs
+      return withTimePicker && !isMultipleDateRange
+    },
     isModalPicker() {
       return (
         this.fConfigs.isModal &&
@@ -972,8 +976,7 @@ export default {
         this.calendar.selectedDate = date
         this.emitModel()
 
-        const { withTimePicker, isMultipleDateRange } = this.fConfigs
-        if (!withTimePicker || isMultipleDateRange) this.autoCloseModal()
+        if (!this.usesTimePicker) this.autoCloseModal()
       } else if (this.fConfigs.isMultipleDatePicker) {
         const dateIndex = this.calendar.selectedDates.findIndex(
           entry => entry.date === date
@@ -1037,8 +1040,7 @@ export default {
 
       this.$emit('selectedDaysCount', diffDays)
 
-      const { withTimePicker, isMultipleDateRange } = this.fConfigs
-      if (!withTimePicker || isMultipleDateRange) this.autoCloseModal()
+      if (!this.usesTimePicker) this.autoCloseModal()
 
       return diffDays
     },
@@ -1218,9 +1220,7 @@ export default {
       this.returnFocusIfClosed()
     },
     withTimeSuffix(date) {
-      return this.fConfigs.withTimePicker &&
-        this.fConfigs.isDateRange &&
-        !this.fConfigs.isMultipleDateRange
+      return this.usesTimePicker && this.fConfigs.isDateRange
         ? `${date} 00:00`
         : date
     },
@@ -1647,9 +1647,7 @@ export default {
       }
     },
     openTimePicker() {
-      if (this.fConfigs.isMultipleDateRange) return
-
-      this.showTimePicker = true
+      if (this.usesTimePicker) this.showTimePicker = true
     },
     closeTimePicker() {
       this.showTimePicker = false
