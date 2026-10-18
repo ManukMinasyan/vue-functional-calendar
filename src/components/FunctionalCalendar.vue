@@ -941,8 +941,6 @@ export default {
         this.emitModel()
       }
 
-      this.markChooseDays()
-
       // Time Picker
       if (this.fConfigs.withTimePicker) {
         if (this.fConfigs.isDateRange || this.fConfigs.isDatePicker) {
@@ -1625,7 +1623,6 @@ export default {
         date.date = typed
         this.calendar.selectedDates.push(date)
         this.calendar.selectedDatesItem = ''
-        this.markChooseDays()
       }
     },
     /**
@@ -1634,7 +1631,6 @@ export default {
      */
     removeFromSelectedDates(index) {
       this.calendar.selectedDates.splice(index, 1)
-      this.markChooseDays()
     },
 
     checkDateRangeEnd(date) {

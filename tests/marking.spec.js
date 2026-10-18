@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import {
   mountCalendar,
   findDay,
@@ -155,5 +155,57 @@ describe('markedDateRange', () => {
     expect(classesOf(wrapper, 5)).toContain('vfc-marked')
     expect(classesOf(wrapper, 2)).toContain('vfc-marked')
     expect(classesOf(wrapper, 6)).not.toContain('vfc-marked')
+  })
+})
+
+describe('marking work per click', () => {
+  it.each([
+    ['date picker', { isDatePicker: true }],
+    ['date range', { isDateRange: true }],
+    ['multiple date range', { isDateRange: true, isMultipleDateRange: true }],
+    ['multiple date picker', { isMultipleDatePicker: true }]
+  ])('recomputes the marks once for a %s click', async (_, props) => {
+    const { wrapper } = mountCalendar(props)
+    const markChooseDays = vi.spyOn(wrapper.vm, 'markChooseDays')
+
+    await clickDay(wrapper, 10)
+
+    expect(markChooseDays).toHaveBeenCalledTimes(1)
+  })
+
+  it('recomputes the marks once when a typed date joins the multiple date picker', async () => {
+    const { wrapper } = mountCalendar({
+      isMultipleDatePicker: true,
+      isTypeable: true
+    })
+    const markChooseDays = vi.spyOn(wrapper.vm, 'markChooseDays')
+
+    wrapper.vm.calendar.selectedDatesItem = '12/10/2026'
+    wrapper.vm.addToSelectedDates()
+    await wrapper.vm.$nextTick()
+
+    expect(markChooseDays).toHaveBeenCalledTimes(1)
+    expect(findDay(wrapper, 12).classList).toContain('vfc-marked')
+  })
+
+  it('recomputes the marks once when a picked date is removed from the list', async () => {
+    const { wrapper } = mountCalendar({ isMultipleDatePicker: true })
+    await clickDay(wrapper, 12)
+    const markChooseDays = vi.spyOn(wrapper.vm, 'markChooseDays')
+
+    wrapper.vm.removeFromSelectedDates(0)
+    await wrapper.vm.$nextTick()
+
+    expect(markChooseDays).toHaveBeenCalledTimes(1)
+    expect(findDay(wrapper, 12).classList).not.toContain('vfc-marked')
+  })
+
+  it('marks the clicked day as soon as the click is handled', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true })
+
+    findDay(wrapper, 10).click()
+    await wrapper.vm.$nextTick()
+
+    expect(findDay(wrapper, 10).classList).toContain('vfc-marked')
   })
 })
