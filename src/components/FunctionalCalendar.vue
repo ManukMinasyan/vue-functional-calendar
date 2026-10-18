@@ -587,9 +587,8 @@ export default {
     }
 
     this.dialogId = `vfc-dialog-${hUniqueID()}`
-    this.popoverElement = this.$refs.popoverElement
-    this.popoverElement.addEventListener('focusin', this.onFocusIn)
-    this.popoverElement.addEventListener('focusout', this.onFocusOut)
+    this.$refs.popoverElement.addEventListener('focusin', this.onFocusIn)
+    this.$refs.popoverElement.addEventListener('focusout', this.onFocusOut)
     window.addEventListener('click', this.hideMonthYearPicker, {
       capture: true
     })
@@ -619,8 +618,8 @@ export default {
     if (token) this.restoreFocus(token)
   },
   beforeUnmount() {
-    this.popoverElement.removeEventListener('focusin', this.onFocusIn)
-    this.popoverElement.removeEventListener('focusout', this.onFocusOut)
+    this.$refs.popoverElement.removeEventListener('focusin', this.onFocusIn)
+    this.$refs.popoverElement.removeEventListener('focusout', this.onFocusOut)
     window.removeEventListener('click', this.hideMonthYearPicker, {
       capture: true
     })
@@ -2228,7 +2227,7 @@ export default {
       const opener =
         this.popoverOpener && this.popoverOpener.isConnected
           ? this.popoverOpener
-          : this.popoverElement.querySelector('input')
+          : this.$refs.popoverElement.querySelector('input')
       if (!opener) return
 
       this.restoringFocus = true
@@ -2263,14 +2262,14 @@ export default {
       if (
         !this.patching &&
         e.relatedTarget &&
-        !hElContains(this.popoverElement, e.relatedTarget)
+        !hElContains(this.$refs.popoverElement, e.relatedTarget)
       ) {
         this.showMonthPicker = this.showYearPicker = false
       }
       if (
         this.fConfigs.isModal &&
         !this.patching &&
-        !hElContains(this.popoverElement, e.relatedTarget)
+        !hElContains(this.$refs.popoverElement, e.relatedTarget)
       ) {
         return (this.showCalendar =
           this.showMonthPicker =

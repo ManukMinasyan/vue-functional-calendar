@@ -211,7 +211,6 @@ export const propsAndData = {
   data() {
     return {
       dialogId: '',
-      popoverElement: '',
       popoverOpener: null,
       restoringFocus: false,
       focusedDate: '',
