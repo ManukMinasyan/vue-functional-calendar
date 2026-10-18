@@ -53,10 +53,6 @@ export default {
   name: 'Day',
   inject: { calendarRoot: CALENDAR_KEY },
   props: {
-    day_key: {
-      type: Number,
-      required: true
-    },
     week: {
       type: Object,
       required: true

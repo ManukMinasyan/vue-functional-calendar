@@ -201,7 +201,6 @@
                       :calendar="calendar"
                       :helpCalendar="helpCalendar"
                       :week="week"
-                      :day_key="day_key"
                       :grid-key="key"
                       @dayMouseOver="dayMouseOver"
                       :alwaysUseDefaultClasses="alwaysUseDefaultClasses"
