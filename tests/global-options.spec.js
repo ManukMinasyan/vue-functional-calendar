@@ -105,7 +105,7 @@ describe('configs prop with multiple date ranges', () => {
   it('labels the cleaner for several ranges', () => {
     const { wrapper } = mountCalendar(options)
 
-    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear Ranges')
+    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear ranges')
   })
 
   it('clears every range', async () => {

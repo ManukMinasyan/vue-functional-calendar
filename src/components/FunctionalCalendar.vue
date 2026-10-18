@@ -2201,18 +2201,21 @@ export default {
     font-size: var(--_vfc-font-size-sm);
     font-weight: var(--_vfc-font-weight-medium);
     line-height: 24px;
-    border: 1px solid var(--_vfc-border-strong);
+    border: 1px solid transparent;
     border-radius: var(--_vfc-radius);
+    transition:
+      background-color var(--_vfc-transition),
+      color var(--_vfc-transition);
     &.active {
-      color: var(--_vfc-text);
+      color: var(--_vfc-text-muted);
       cursor: pointer;
       &:hover {
+        color: var(--_vfc-text);
         background-color: var(--_vfc-hover);
       }
     }
     &.disabled {
       color: var(--_vfc-text-disabled);
-      border-color: var(--_vfc-border);
     }
     &:focus-visible {
       outline: 2px solid var(--_vfc-focus);

@@ -336,7 +336,7 @@ describe('clearing a range', () => {
       isMultipleDateRange: false
     })
 
-    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear Range')
+    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear range')
   })
 
   it('labels the clear button without a suffix when isMultipleDateRange is unset', () => {
@@ -345,7 +345,7 @@ describe('clearing a range', () => {
       canClearRange: true
     })
 
-    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear Range')
+    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear range')
   })
 
   it('labels the clear button with a plural suffix for multiple ranges', () => {
@@ -355,7 +355,7 @@ describe('clearing a range', () => {
       isMultipleDateRange: true
     })
 
-    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear Ranges')
+    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear ranges')
   })
 
   it('shows the button as disabled until a range is selected', async () => {

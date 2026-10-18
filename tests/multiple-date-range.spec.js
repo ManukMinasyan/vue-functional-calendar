@@ -302,12 +302,12 @@ describe('multiple date ranges', () => {
     ])
   })
 
-  it('clears every range with the Clear Ranges button', async () => {
+  it('clears every range with the clear ranges button', async () => {
     const { wrapper } = mountCalendar({ ...options, canClearRange: true })
     await clickDay(wrapper, 3)
     await clickDay(wrapper, 5)
     const button = wrapper.find('.rangeCleaner span')
-    expect(button.text()).toBe('Clear Ranges')
+    expect(button.text()).toBe('Clear ranges')
     expect(button.classes()).toContain('active')
 
     await button.trigger('click')

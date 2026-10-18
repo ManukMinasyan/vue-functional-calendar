@@ -812,8 +812,8 @@ describe('modal mode', () => {
     const { wrapper } = await mountModal({ labels: { endDate: 'Bis' } })
     const [start, end] = wrapper.findAll('.vfc-multiple-input input')
 
-    expect(start.attributes('aria-label')).toBe('Start Date')
-    expect(start.attributes('title')).toBe('Start Date')
+    expect(start.attributes('aria-label')).toBe('Start date')
+    expect(start.attributes('title')).toBe('Start date')
     expect(end.attributes('aria-label')).toBe('Bis')
     expect(end.attributes('title')).toBe('Bis')
   })

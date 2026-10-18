@@ -229,33 +229,42 @@
     flex: 1 0 140px;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 104px), 1fr));
     align-content: start;
-    gap: var(--_vfc-space-2);
+    gap: var(--_vfc-space-1);
     box-sizing: border-box;
-    padding: var(--_vfc-space-4) var(--_vfc-space-3);
-    background-color: var(--_vfc-hover);
+    padding: var(--_vfc-space-3) var(--_vfc-space-2);
+    // The container clips whichever edge sits on its border, so one rule divides both layouts.
+    box-shadow:
+      1px 0 0 var(--_vfc-border),
+      -1px 0 0 var(--_vfc-border),
+      0 1px 0 var(--_vfc-border);
   }
 
   &-preset {
     padding: var(--_vfc-space-1) var(--_vfc-space-3);
     font-family: inherit;
     font-size: var(--_vfc-font-size-sm);
-    font-weight: var(--_vfc-font-weight-medium);
+    font-weight: var(--_vfc-font-weight);
     line-height: 24px;
-    color: var(--_vfc-text);
-    text-align: center;
+    color: var(--_vfc-text-muted);
+    text-align: start;
     cursor: pointer;
     appearance: none;
-    background-color: var(--_vfc-bg);
-    border: 1px solid var(--_vfc-border-strong);
+    background-color: transparent;
+    border: 1px solid transparent;
     border-radius: var(--_vfc-radius);
+    transition:
+      background-color var(--_vfc-transition),
+      color var(--_vfc-transition);
 
     &:hover {
-      background-color: var(--_vfc-range);
+      color: var(--_vfc-text);
+      background-color: var(--_vfc-hover);
     }
 
     &[aria-pressed='true'] {
-      font-weight: var(--_vfc-font-weight-strong);
-      border-color: var(--_vfc-primary);
+      font-weight: var(--_vfc-font-weight-medium);
+      color: var(--_vfc-primary);
+      background-color: var(--_vfc-range);
     }
 
     &:focus-visible {
@@ -266,10 +275,10 @@
     &[aria-disabled='true'] {
       color: var(--_vfc-text-disabled);
       cursor: not-allowed;
-      border-color: var(--_vfc-border);
 
       &:hover {
-        background-color: var(--_vfc-bg);
+        color: var(--_vfc-text-disabled);
+        background-color: transparent;
       }
     }
   }
@@ -1091,10 +1100,6 @@
       color: var(--_vfc-text);
       border-bottom-color: var(--_vfc-border);
     }
-  }
-
-  .rangeCleaner span {
-    border-color: var(--_vfc-border-strong);
   }
 
   .vfc-calendars .vfc-calendar div.vfc-content {

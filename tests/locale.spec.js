@@ -638,12 +638,12 @@ describe('labels', () => {
     expect(wrapper.find('[role="dialog"]').attributes('aria-label')).toBe(
       'Calendar'
     )
-    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear Range')
+    expect(wrapper.find('.rangeCleaner span').text()).toBe('Clear range')
     expect(
       wrapper
         .findAll('.vfc-multiple-input input')
         .map(i => i.attributes('title'))
-    ).toEqual(['Start Date', 'End Date'])
+    ).toEqual(['Start date', 'End date'])
   })
 
   it('merges a partial labels prop over the defaults', () => {

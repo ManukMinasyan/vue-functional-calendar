@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## Unreleased
+
+### Changed
+
+- Range presets render as a quiet list on a divided rail instead of outlined buttons. The selected preset takes the range tint and the primary color.
+- The clear range button is a text button that only darkens on hover.
+- Default labels use sentence case: `Clear range`, `Clear ranges`, `Start date` and `End date`. Pass `labels` to keep the old text.
+
 ## 3.1.1 - 2026-10-18
 
 The package code is the same as 3.1.0. This release updates what npm shows.
