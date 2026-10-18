@@ -926,7 +926,8 @@ export default {
         this.calendar.selectedDate = date
         this.emitModel()
 
-        if (!this.fConfigs.withTimePicker) this.autoCloseModal()
+        const { withTimePicker, isMultipleDateRange } = this.fConfigs
+        if (!withTimePicker || isMultipleDateRange) this.autoCloseModal()
       } else if (this.fConfigs.isMultipleDatePicker) {
         if (
           this.calendar.hasOwnProperty('selectedDates') &&
@@ -1000,7 +1001,8 @@ export default {
 
       this.$emit('selectedDaysCount', diffDays)
 
-      if (!this.fConfigs.withTimePicker) this.autoCloseModal()
+      const { withTimePicker, isMultipleDateRange } = this.fConfigs
+      if (!withTimePicker || isMultipleDateRange) this.autoCloseModal()
 
       return diffDays
     },

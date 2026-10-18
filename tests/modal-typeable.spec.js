@@ -7,6 +7,7 @@ import {
   mountCalendar,
   mountCalendarReady,
   clickDay,
+  clickDays,
   findDay,
   eventsNamed,
   lastValue
@@ -154,6 +155,22 @@ describe('modal mode', () => {
     expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(true)
 
     await wrapper.find('.vfc-close').trigger('click')
+    expect(isHidden(wrapper)).toBe(true)
+  })
+
+  it('closes after the second click of a multiple date range with withTimePicker', async () => {
+    const { wrapper } = mountCalendar({
+      isModal: true,
+      isDateRange: true,
+      isMultipleDateRange: true,
+      isAutoCloseable: true,
+      withTimePicker: true
+    })
+    await wrapper.trigger('focusin')
+
+    await clickDays(wrapper, [10, 14])
+
+    expect(wrapper.find('.vfc-time-picker-container').exists()).toBe(false)
     expect(isHidden(wrapper)).toBe(true)
   })
 
