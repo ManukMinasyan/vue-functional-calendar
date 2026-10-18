@@ -605,7 +605,7 @@ export default {
           this.$emit('closed')
         }
       },
-      { immediate: true, deep: true }
+      { immediate: true }
     )
   },
   beforeUpdate() {
