@@ -1,4 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
+import { h, nextTick, ref } from 'vue'
+import { mount } from '@vue/test-utils'
+import FunctionalCalendar from '../index.js'
 import {
   mountCalendar,
   clickDay,
@@ -8,7 +11,8 @@ import {
   calendarTitle,
   eventsNamed,
   lastValue,
-  mountParent
+  mountParent,
+  FIXED_DATE
 } from './helpers.js'
 
 const arrow = (wrapper, direction) =>
@@ -1185,5 +1189,35 @@ describe('availability that changes after mount', () => {
 
     expect(disabled(wrapper, 7)).toBe(true)
     expect(disabled(wrapper, 12)).toBe(false)
+  })
+})
+
+describe('limits with a string currentDate in the model', () => {
+  it('accepts an ISO string currentDate without throwing', async () => {
+    const model = ref({})
+    const errors = []
+    mount(
+      {
+        render: () =>
+          h(FunctionalCalendar, {
+            newCurrentDate: FIXED_DATE,
+            isDatePicker: true,
+            limits: { min: '01/01/2026', max: '31/12/2026' },
+            modelValue: model.value,
+            'onUpdate:modelValue': value => (model.value = value)
+          })
+      },
+      {
+        attachTo: document.body,
+        global: { config: { errorHandler: error => errors.push(error) } }
+      }
+    )
+    await nextTick()
+
+    model.value = { ...model.value, currentDate: '2026-05-01T00:00:00.000Z' }
+    await nextTick()
+    await nextTick()
+
+    expect(errors.map(String)).toEqual([])
   })
 })

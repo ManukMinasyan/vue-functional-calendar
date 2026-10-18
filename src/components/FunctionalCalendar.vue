@@ -1721,7 +1721,8 @@ export default {
       this.allowNextDate = true
       if (!limitMonths) return
 
-      const current = new Date(value.getFullYear(), value.getMonth(), 1)
+      const date = new Date(value)
+      const current = new Date(date.getFullYear(), date.getMonth(), 1)
       if (monthIndex(current) <= limitMonths.min) this.allowPreDate = false
       if (monthIndex(this.forwardEdge(current)) >= limitMonths.max) {
         this.allowNextDate = false
