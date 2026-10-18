@@ -16,6 +16,7 @@
           :startDate="props.startDate"
           :endDate="props.endDate"
           :isTypeable="fConfigs.isTypeable"
+          :dialogId="dialogId"
           name="dateRangeInputs"
         >
         </slot>
@@ -24,6 +25,7 @@
         <slot
           :selectedDate="props.selectedDate"
           :isTypeable="fConfigs.isTypeable"
+          :dialogId="dialogId"
           name="datePickerInput"
         >
         </slot>

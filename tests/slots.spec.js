@@ -313,8 +313,14 @@ describe('arrow slots', () => {
   })
 })
 
+const dialogIdOf = wrapper => {
+  const id = wrapper.find('[role="dialog"]').attributes('id')
+  expect(id).toMatch(/^vfc-dialog-/)
+  return id
+}
+
 describe('modal input slots', () => {
-  it('passes selectedDate and isTypeable to the datePickerInput slot', async () => {
+  it('passes selectedDate, isTypeable and dialogId to the datePickerInput slot', async () => {
     const received = []
     const { wrapper } = mountCalendar(
       { isModal: true, isDatePicker: true, isTypeable: true },
@@ -333,11 +339,12 @@ describe('modal input slots', () => {
     expect(wrapper.find('.my-input').text()).toBe('10/10/2026')
     expect(received.at(-1)).toEqual({
       selectedDate: '10/10/2026',
-      isTypeable: true
+      isTypeable: true,
+      dialogId: dialogIdOf(wrapper)
     })
   })
 
-  it('passes startDate, endDate and isTypeable to the dateRangeInputs slot', async () => {
+  it('passes startDate, endDate, isTypeable and dialogId to the dateRangeInputs slot', async () => {
     const received = []
     const { wrapper } = mountCalendar(
       { isModal: true, isDateRange: true },
@@ -362,7 +369,8 @@ describe('modal input slots', () => {
     expect(received.at(-1)).toEqual({
       startDate: '10/10/2026',
       endDate: '14/10/2026',
-      isTypeable: false
+      isTypeable: false,
+      dialogId: dialogIdOf(wrapper)
     })
   })
 })

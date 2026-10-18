@@ -214,8 +214,13 @@ export type FunctionalCalendarSlots = SlotsType<{
     startDate: string
     endDate: string
     isTypeable: boolean
+    dialogId: string
   }) => any
-  datePickerInput: (props: { selectedDate: string; isTypeable: boolean }) => any
+  datePickerInput: (props: {
+    selectedDate: string
+    isTypeable: boolean
+    dialogId: string
+  }) => any
 }>
 
 export type FunctionalCalendarComponent = DefineComponent<
