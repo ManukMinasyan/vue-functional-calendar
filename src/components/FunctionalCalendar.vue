@@ -1673,16 +1673,8 @@ export default {
       return this.listCalendars[this.fConfigs.isSeparately ? calendarKey : 0]
     },
     getYearList(date, delta) {
-      let years = []
-      let year = date.getFullYear() - 4 + delta
-      for (let i = 0; i < 12; i++) {
-        let finalYear = year + i
-
-        years.push({
-          year: finalYear
-        })
-      }
-      return years
+      const first = date.getFullYear() - 4 + delta
+      return Array.from({ length: 12 }, (_, index) => first + index)
     },
     addToSelectedDates() {
       const typed = this.helpCalendar.parseTypedDate(

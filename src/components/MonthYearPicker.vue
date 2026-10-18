@@ -64,18 +64,18 @@
             :class="{
               'vfc-selected':
                 calendarRoot.listCalendars[calendarKey].date.getFullYear() ===
-                year.year
+                year
             }"
             :aria-pressed="
               calendarRoot.listCalendars[calendarKey].date.getFullYear() ===
-              year.year
+              year
             "
-            @click="calendarRoot.pickYear(year.year, calendarKey)"
+            @click="calendarRoot.pickYear(year, calendarKey)"
             @keydown.enter.space.prevent="
-              calendarRoot.pickYear(year.year, calendarKey)
+              calendarRoot.pickYear(year, calendarKey)
             "
           >
-            {{ year.year }}
+            {{ year }}
           </div>
         </template>
       </div>
