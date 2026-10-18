@@ -112,10 +112,7 @@ export default {
       return this.helpCalendar.getDateFromFormat(this.day.date)
     },
     isDayNameDisabled() {
-      return this.helpCalendar.isDayNameDisabled(
-        this.dayDate,
-        this.fConfigs.disabledDayNames
-      )
+      return this.calendarRoot.isOnDisabledDayName(this.dayDate)
     },
     isRuleBlocked() {
       return this.calendarRoot.isDateRuleBlocked(this.day.date)

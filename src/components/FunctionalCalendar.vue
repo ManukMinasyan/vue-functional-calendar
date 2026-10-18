@@ -1147,7 +1147,7 @@ export default {
         start.getDate() + 6
       )
       return eachDay(start, last < weekEnd ? last : weekEnd).some(day =>
-        this.helpCalendar.isDayNameDisabled(day, disabledDayNames)
+        this.isOnDisabledDayName(day)
       )
     },
     hasUnavailableDateIn(start, last, length) {
@@ -1868,10 +1868,8 @@ export default {
     },
     isDateBlocked(date) {
       return (
-        this.helpCalendar.isDayNameDisabled(
-          this.helpCalendar.getDateFromFormat(date),
-          this.fConfigs.disabledDayNames
-        ) || this.isDateRuleBlocked(date)
+        this.isOnDisabledDayName(this.helpCalendar.getDateFromFormat(date)) ||
+        this.isDateRuleBlocked(date)
       )
     },
     isDateSelected(date) {
