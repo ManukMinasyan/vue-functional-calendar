@@ -101,7 +101,7 @@ describe('multiple date ranges', () => {
     ])
   })
 
-  it('numbers the range markers', async () => {
+  it('numbers the range markers from one', async () => {
     const { wrapper } = mountCalendar(options)
 
     await clickDays(wrapper, [3, 5, 10, 12])
@@ -109,7 +109,7 @@ describe('multiple date ranges', () => {
     const markers = wrapper
       .findAll('.vfc-day .number')
       .map(node => node.attributes('data-number'))
-    expect(markers).toEqual(['0', '-1', '1', '1'])
+    expect(markers).toEqual(['1', '1', '2', '2'])
   })
 
   it('keeps the range number out of the text of the day', async () => {
@@ -465,13 +465,13 @@ describe('multiple date range markers', () => {
         { start: '10/10/2026', end: '12/10/2026' }
       ],
       {
-        3: 'start, number 0 tip [0]',
+        3: 'start, number 1 tip [1]',
         4: 'start, end',
         5: 'start, end',
-        6: 'end, number -1 tip [0], times',
-        10: 'start, number 1 tip [1]',
+        6: 'end, number 1 tip [1], times',
+        10: 'start, number 2 tip [2]',
         11: 'start, end',
-        12: 'end, number 1 tip [1], times'
+        12: 'end, number 2 tip [2], times'
       }
     ],
     'ranges that share an edge day': [
@@ -480,17 +480,17 @@ describe('multiple date range markers', () => {
         { start: '5/10/2026', end: '8/10/2026' }
       ],
       {
-        3: 'start, number 0 tip [0]',
+        3: 'start, number 1 tip [1]',
         4: 'start, end',
-        5: `start, end, number · tip [0${nbsp}1], times`,
+        5: `start, end, number · tip [1${nbsp}2], times`,
         6: 'start, end',
         7: 'start, end',
-        8: 'end, number 1 tip [1], times'
+        8: 'end, number 2 tip [2], times'
       }
     ],
     'a one day range': [
       [{ start: '10/10/2026', end: '10/10/2026' }],
-      { 10: `number · tip [0${nbsp}0], times` }
+      { 10: `number · tip [1${nbsp}1], times` }
     ],
     'identical ranges': [
       [
@@ -498,10 +498,10 @@ describe('multiple date range markers', () => {
         { start: '6/10/2026', end: '9/10/2026' }
       ],
       {
-        6: `start, number · tip [0${nbsp}1]`,
+        6: `start, number · tip [1${nbsp}2]`,
         7: 'start, end',
         8: 'start, end',
-        9: `end, number · tip [0${nbsp}1], times`
+        9: `end, number · tip [1${nbsp}2], times`
       }
     ],
     'a range inside another range': [
@@ -510,16 +510,16 @@ describe('multiple date range markers', () => {
         { start: '5/10/2026', end: '8/10/2026' }
       ],
       {
-        3: 'start, number 0 tip [0]',
+        3: 'start, number 1 tip [1]',
         4: 'start, end',
-        5: 'start, end, number 1 tip [1]',
+        5: 'start, end, number 2 tip [2]',
         6: 'start, end',
         7: 'start, end',
-        8: 'start, end, number 1 tip [1], times',
+        8: 'start, end, number 2 tip [2], times',
         9: 'start, end',
         10: 'start, end',
         11: 'start, end',
-        12: 'end, number -1 tip [0], times'
+        12: 'end, number 1 tip [1], times'
       }
     ]
   }
@@ -542,11 +542,11 @@ describe('multiple date range markers', () => {
     await clickDays(wrapper, [3, 6, 10])
 
     expect(rangeMarkers(wrapper)).toEqual({
-      3: 'start, number 0 tip [0]',
+      3: 'start, number 1 tip [1]',
       4: 'start, end',
       5: 'start, end',
-      6: 'end, number -1 tip [0], times',
-      10: 'number 1 tip [1]'
+      6: 'end, number 1 tip [1], times',
+      10: 'number 2 tip [2]'
     })
   })
 })

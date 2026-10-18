@@ -29,6 +29,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 
 ### Fixed
 
+- The badges of multiple date ranges count from 1, as the day labels do. The first range showed 0 at its start and -1 at its end.
 - Week numbers with `sundayStart` follow ISO numbering of each row's Thursday. They were one lower.
 - Typed dates are validated. `31/02/2026` is rejected, padded dates such as `05/03/2026` are accepted, and a value commits only when the date is complete.
 - A pasted or autofilled ISO date is reordered to `dateFormat`, and pasted text that is not a date stays as pasted.

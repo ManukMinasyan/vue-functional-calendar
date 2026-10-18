@@ -249,16 +249,10 @@ export default {
     },
     toolTipTxt() {
       const { starts, ends } = this.rangeEdges
-      return [...ends, ...starts].sort((a, b) => a - b)
+      return [...ends, ...starts].sort((a, b) => a - b).map(index => index + 1)
     },
     getDaysNumber() {
-      if (this.toolTip) return '·'
-
-      const { starts, ends } = this.rangeEdges
-      const endIndex = ends.length ? ends[0] : -1
-      const startIndex = starts.length ? starts[0] : -1
-
-      return (endIndex > -1 ? endIndex : 0) || startIndex
+      return this.toolTip ? '·' : this.rangeNumbers[0]
     }
   },
   methods: {
