@@ -195,7 +195,6 @@
                       v-for="(day, day_key) in week.days"
                       ref="day"
                       :key="key + week_key + day_key + 1"
-                      :isMultipleDateRange="fConfigs.isMultipleDateRange"
                       :day="day"
                       :fConfigs="fConfigs"
                       :calendar="calendar"
