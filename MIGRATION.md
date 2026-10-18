@@ -108,15 +108,15 @@ import FunctionalCalendar from 'vue-functional-calendar/src/components/Functiona
 import { FunctionalCalendar } from 'vue-functional-calendar'
 ```
 
-## Props are still not reactive
+## Most props are still read once
 
-As in 2.x, the calendar reads its props once, when it is created. Re-key the component to apply a change:
+As in 2.x, the calendar reads most props once, when it is created. Re-key the component to apply a change:
 
 ```vue
 <FunctionalCalendar :key="locale" :locale="locale" is-date-picker />
 ```
 
-`modelValue` and `enabledDates` are watched.
+3.1 watches `modelValue` and the data props `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark`, in `configs` too. Change them on a live calendar without a re-key. The same rule as before decides the source: when `configs` is present, the props are ignored.
 
 ## New in 3.1
 

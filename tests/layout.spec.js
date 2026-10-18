@@ -223,6 +223,32 @@ describe('appearance', () => {
     expect(wrapper.find('.vfc-main-container').classes()).toContain('vfc-dark')
   })
 
+  it('toggles vfc-dark when isDark changes after mount', async () => {
+    const { wrapper } = mountCalendar({ isDark: false })
+
+    await wrapper.setProps({ isDark: true })
+    expect(wrapper.find('.vfc-main-container').classes()).toContain('vfc-dark')
+
+    await wrapper.setProps({ isDark: false })
+    expect(wrapper.find('.vfc-main-container').classes()).not.toContain(
+      'vfc-dark'
+    )
+  })
+
+  it('toggles vfc-dark on the input when isDark changes inside configs', async () => {
+    const { wrapper } = mountCalendar({
+      configs: { isDatePicker: true, isModal: true, isDark: false }
+    })
+
+    await wrapper.setProps({
+      configs: { isDatePicker: true, isModal: true, isDark: true }
+    })
+
+    expect(
+      wrapper.find('.vfc-single-input').element.parentElement.className
+    ).toContain('vfc-dark')
+  })
+
   it('has no vfc-dark class by default', () => {
     const { wrapper } = mountCalendar()
 

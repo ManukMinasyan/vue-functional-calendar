@@ -277,6 +277,17 @@ import { hElContains, hUniqueID } from '../utils/helpers'
 import { CALENDAR_KEY } from '../utils/injectionKeys'
 
 const listKeys = ['selectedDates', 'multipleDateRange']
+const reactiveKeys = [
+  'markedDates',
+  'markedDateRange',
+  'disabledDates',
+  'enabledDates',
+  'disabledDayNames',
+  'limits',
+  'calendarsCount',
+  'isDark'
+]
+const rebuildKeys = ['limits', 'calendarsCount']
 const monthIndex = date => date.getFullYear() * 12 + date.getMonth()
 
 const hasModelKey = (value, key) => {
@@ -522,6 +533,9 @@ export default {
     }
   },
   created() {
+    const defaults = Object.fromEntries(
+      reactiveKeys.map(key => [key, toRaw(this.fConfigs[key])])
+    )
     this.setConfigs()
     let invalidModel = null
     try {
@@ -534,6 +548,7 @@ export default {
     }
     this.initCalendar()
     this.$watch('modelValue', this.applyModel, { deep: true })
+    this.watchReactiveKeys(defaults)
     if (invalidModel) throw invalidModel
   },
   mounted() {
@@ -585,18 +600,6 @@ export default {
     })
   },
   watch: {
-    enabledDates: {
-      handler() {
-        this.fConfigs.enabledDates = this.enabledDates
-      },
-      deep: true
-    },
-    'configs.enabledDates': {
-      handler() {
-        this.fConfigs.enabledDates = this.configs.enabledDates
-      },
-      deep: true
-    },
     fConfigs: {
       handler() {
         this.markChooseDays()
@@ -798,6 +801,35 @@ export default {
           ...dayNames.slice(0, shift)
         ]
       }
+    },
+    configSource(key) {
+      return typeof this.configs !== 'undefined'
+        ? this.configs[key]
+        : this.$props[key]
+    },
+    watchReactiveKeys(defaults) {
+      reactiveKeys.forEach(key => {
+        this.$watch(
+          () => this.configSource(key),
+          () => this.applyReactiveKey(key, defaults[key]),
+          { deep: true }
+        )
+      })
+    },
+    applyReactiveKey(key, fallback) {
+      const value = this.configSource(key)
+      const globalValue =
+        typeof this.$getOptions !== 'undefined'
+          ? this.$getOptions()[key]
+          : undefined
+
+      this.fConfigs[key] = value ?? globalValue ?? fallback
+
+      if (rebuildKeys.includes(key)) {
+        this.initCalendar()
+        return
+      }
+      this.updateCalendar()
     },
     mergeLabels(labels) {
       const current = this.fConfigs.labels
@@ -1728,6 +1760,9 @@ export default {
       }
     },
     checkLimits(value) {
+      this.allowPreDate = true
+      this.allowNextDate = true
+
       if (this.fConfigs.limits) {
         let min = new Date(
           this.helpCalendar.getDateFromFormat(this.fConfigs.limits.min)
@@ -1739,9 +1774,6 @@ export default {
         )
         max.setDate(1)
         max.setHours(0, 0, 0, 0)
-
-        this.allowPreDate = true
-        this.allowNextDate = true
 
         let current = new Date(value)
         current.setDate(1)

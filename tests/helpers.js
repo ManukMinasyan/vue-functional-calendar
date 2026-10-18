@@ -1,6 +1,6 @@
 import { afterEach } from 'vitest'
 import { mount, enableAutoUnmount } from '@vue/test-utils'
-import { nextTick, toRaw } from 'vue'
+import { h, nextTick, reactive, toRaw } from 'vue'
 import FunctionalCalendar from '../index.js'
 
 enableAutoUnmount(afterEach)
@@ -42,6 +42,22 @@ export const mountCalendar = (props = {}, options = {}) => {
     ...options
   })
   return { wrapper, events }
+}
+
+export const mountParent = (state, calendarProps = {}) => {
+  const reactiveState = reactive(state)
+  const wrapper = mount(
+    {
+      render: () =>
+        h(FunctionalCalendar, {
+          newCurrentDate: FIXED_DATE,
+          ...calendarProps,
+          ...reactiveState
+        })
+    },
+    { attachTo: document.body }
+  )
+  return { wrapper, state: reactiveState }
 }
 
 export const mountCalendarReady = async (props = {}, options = {}) => {

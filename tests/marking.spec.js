@@ -4,7 +4,8 @@ import {
   findDay,
   findDayAny,
   clickDay,
-  lastValue
+  lastValue,
+  mountParent
 } from './helpers.js'
 
 const classesOf = (wrapper, day) => [...findDay(wrapper, day).classList]
@@ -236,5 +237,139 @@ describe('marking work per click', () => {
     await wrapper.vm.$nextTick()
 
     expect(findDay(wrapper, 10).classList).toContain('vfc-marked')
+  })
+})
+
+describe('marking that changes after mount', () => {
+  const marked = (wrapper, day) =>
+    classesOf(wrapper, day).includes('vfc-marked')
+
+  it('marks the dates of a markedDates list that arrives later', async () => {
+    const { wrapper } = mountCalendar({ markedDates: [] })
+
+    await wrapper.setProps({ markedDates: ['5/10/2026'] })
+
+    expect(marked(wrapper, 5)).toBe(true)
+  })
+
+  it('swaps the marked days when the markedDates list is replaced', async () => {
+    const { wrapper } = mountCalendar({ markedDates: ['5/10/2026'] })
+
+    await wrapper.setProps({ markedDates: ['9/10/2026'] })
+
+    expect(marked(wrapper, 9)).toBe(true)
+    expect(marked(wrapper, 5)).toBe(false)
+  })
+
+  it('applies the class of a marked date object that arrives later', async () => {
+    const { wrapper } = mountCalendar({ markedDates: [] })
+
+    await wrapper.setProps({
+      markedDates: [{ date: '8/10/2026', class: 'bg-blue-400' }]
+    })
+
+    expect(classesOf(wrapper, 8)).toContain('bg-blue-400')
+  })
+
+  it('marks the dates of a markedDates list that arrives in multiple date picker mode', async () => {
+    const { wrapper } = mountCalendar({
+      isMultipleDatePicker: true,
+      markedDates: []
+    })
+
+    await wrapper.setProps({ markedDates: ['28/10/2026', '14/10/2026'] })
+
+    expect(marked(wrapper, 14)).toBe(true)
+    expect(marked(wrapper, 28)).toBe(true)
+  })
+
+  it('marks a date that the parent pushes into its reactive list', async () => {
+    const { wrapper, state } = mountParent({ markedDates: ['5/10/2026'] })
+
+    state.markedDates.push('9/10/2026')
+    await wrapper.vm.$nextTick()
+
+    expect(marked(wrapper, 9)).toBe(true)
+  })
+
+  it('swaps the marked days when the parent replaces its reactive list', async () => {
+    const { wrapper, state } = mountParent({ markedDates: ['5/10/2026'] })
+
+    state.markedDates = ['12/10/2026']
+    await wrapper.vm.$nextTick()
+
+    expect(marked(wrapper, 12)).toBe(true)
+    expect(marked(wrapper, 5)).toBe(false)
+  })
+
+  it('moves the marked range when markedDateRange is replaced', async () => {
+    const { wrapper } = mountCalendar({
+      markedDateRange: { start: '5/10/2026', end: '8/10/2026' }
+    })
+
+    await wrapper.setProps({
+      markedDateRange: { start: '12/10/2026', end: '15/10/2026' }
+    })
+
+    expect(marked(wrapper, 13)).toBe(true)
+    expect(marked(wrapper, 6)).toBe(false)
+  })
+
+  it('moves the marked range when the parent edits its reactive range', async () => {
+    const { wrapper, state } = mountParent({
+      markedDateRange: { start: '5/10/2026', end: '8/10/2026' }
+    })
+
+    state.markedDateRange.start = '12/10/2026'
+    state.markedDateRange.end = '15/10/2026'
+    await wrapper.vm.$nextTick()
+
+    expect(marked(wrapper, 13)).toBe(true)
+    expect(marked(wrapper, 6)).toBe(false)
+  })
+
+  it('follows a configs object that the parent replaces', async () => {
+    const { wrapper } = mountCalendar({
+      configs: { markedDates: ['5/10/2026'] }
+    })
+
+    await wrapper.setProps({ configs: { markedDates: ['9/10/2026'] } })
+
+    expect(marked(wrapper, 9)).toBe(true)
+    expect(marked(wrapper, 5)).toBe(false)
+  })
+
+  it('follows a key that the parent changes inside its reactive configs', async () => {
+    const { wrapper, state } = mountParent({
+      configs: { markedDates: ['5/10/2026'] }
+    })
+
+    state.configs.markedDates = ['9/10/2026']
+    await wrapper.vm.$nextTick()
+
+    expect(marked(wrapper, 9)).toBe(true)
+    expect(marked(wrapper, 5)).toBe(false)
+  })
+
+  it('ignores a later prop change while configs holds the setting', async () => {
+    const { wrapper } = mountCalendar({
+      configs: { markedDates: ['5/10/2026'] },
+      markedDates: ['6/10/2026']
+    })
+
+    await wrapper.setProps({ markedDates: ['9/10/2026'] })
+
+    expect(marked(wrapper, 5)).toBe(true)
+    expect(marked(wrapper, 9)).toBe(false)
+  })
+
+  it('keeps the selection when the marked dates change', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true, markedDates: [] })
+    await clickDay(wrapper, 14)
+
+    await wrapper.setProps({ markedDates: ['5/10/2026'] })
+
+    expect(lastValue(wrapper).selectedDate).toBe('14/10/2026')
+    expect(classesOf(wrapper, 14)).toContain('vfc-marked')
   })
 })

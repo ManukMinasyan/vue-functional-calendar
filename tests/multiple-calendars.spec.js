@@ -6,7 +6,8 @@ import {
   clickDay,
   calendarTitle,
   eventsNamed,
-  lastValue
+  lastValue,
+  mountParent
 } from './helpers.js'
 
 const arrow = (wrapper, direction, calendarIndex) => {
@@ -261,5 +262,51 @@ describe('unique ids', () => {
     const ids = Array.from({ length: 1000 }, () => hUniqueID())
 
     expect(new Set(ids).size).toBe(1000)
+  })
+})
+
+describe('calendarsCount that changes after mount', () => {
+  it('shows fewer calendars when calendarsCount drops', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 3 })
+
+    await wrapper.setProps({ calendarsCount: 1 })
+
+    expect(titles(wrapper)).toEqual(['October 2026'])
+  })
+
+  it('shows more calendars when calendarsCount grows', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 1 })
+
+    await wrapper.setProps({ calendarsCount: 3 })
+
+    expect(titles(wrapper)).toEqual([
+      'October 2026',
+      'November 2026',
+      'December 2026'
+    ])
+  })
+
+  it('keeps the first month when calendarsCount changes after navigating', async () => {
+    const { wrapper } = mountCalendar({ isMultiple: true, calendarsCount: 2 })
+    await arrow(wrapper, 'right').trigger('click')
+
+    await wrapper.setProps({ calendarsCount: 3 })
+
+    expect(titles(wrapper)).toEqual([
+      'November 2026',
+      'December 2026',
+      'January 2027'
+    ])
+  })
+
+  it('follows a calendarsCount that changes inside configs', async () => {
+    const { wrapper, state } = mountParent({
+      configs: { isMultiple: true, calendarsCount: 2 }
+    })
+
+    state.configs.calendarsCount = 3
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.findAll('.vfc-calendar')).toHaveLength(3)
   })
 })

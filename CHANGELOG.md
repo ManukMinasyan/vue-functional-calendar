@@ -59,6 +59,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - A multi-calendar picker no longer shows a month after `limits.max`. The view starts early enough that the last calendar is the `max` month, and keeps all `calendarsCount` calendars unless the limits span fewer months (#114).
 - With `isSeparately`, each calendar disables its own arrows at `limits` by its own month. They followed the first calendar before.
 - The previous and next month arrows emit `changedYear` when the visible year changes, as the year arrows do. A keyboard move across a year boundary emits `changedYear` too.
+- `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark` follow later changes, as props and inside `configs`. A list that arrives after mount, a replaced list and an edited reactive list all update the calendar (#2, #65, #78, #97, #101, #109, #142).
 
 ## 2.10.0 - 2026-10-17
 

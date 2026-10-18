@@ -7,7 +7,8 @@ import {
   findDayAny,
   calendarTitle,
   eventsNamed,
-  lastValue
+  lastValue,
+  mountParent
 } from './helpers.js'
 
 const arrow = (wrapper, direction) =>
@@ -952,5 +953,157 @@ describe('availability with a time picker range', () => {
     await clickDay(wrapper, 11)
 
     expect(wrapper.vm.calendar.dateRange.start).toBe('')
+  })
+})
+
+describe('availability that changes after mount', () => {
+  const disabled = (wrapper, day) =>
+    findDay(wrapper, day).classList.contains('vfc-disabled')
+
+  it('disables the days of a disabledDates list that arrives later', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true, disabledDates: [] })
+
+    await wrapper.setProps({ disabledDates: ['12/10/2026'] })
+
+    expect(disabled(wrapper, 12)).toBe(true)
+    expect(disabled(wrapper, 13)).toBe(false)
+  })
+
+  it('enables a day again when it leaves the disabledDates list', async () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDates: ['12/10/2026']
+    })
+
+    await wrapper.setProps({ disabledDates: [] })
+
+    expect(disabled(wrapper, 12)).toBe(false)
+  })
+
+  it('disables the days of a disabledDates list that the parent pushes into', async () => {
+    const { wrapper, state } = mountParent(
+      { disabledDates: [] },
+      { isDatePicker: true }
+    )
+
+    state.disabledDates.push('12/10/2026')
+    await wrapper.vm.$nextTick()
+
+    expect(disabled(wrapper, 12)).toBe(true)
+  })
+
+  it('limits the days to an enabledDates list that arrives later', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true, enabledDates: [] })
+
+    await wrapper.setProps({ enabledDates: ['12/10/2026'] })
+
+    expect(disabled(wrapper, 12)).toBe(false)
+    expect(disabled(wrapper, 13)).toBe(true)
+  })
+
+  it('follows an enabledDates list that changes inside configs', async () => {
+    const { wrapper } = mountCalendar({
+      configs: { isDatePicker: true, enabledDates: ['12/10/2026'] }
+    })
+
+    await wrapper.setProps({
+      configs: { isDatePicker: true, enabledDates: ['13/10/2026'] }
+    })
+
+    expect(disabled(wrapper, 12)).toBe(true)
+    expect(disabled(wrapper, 13)).toBe(false)
+  })
+
+  it('ignores a later prop change while configs holds the list', async () => {
+    const { wrapper } = mountCalendar({
+      configs: { isDatePicker: true, disabledDates: ['12/10/2026'] },
+      disabledDates: ['14/10/2026']
+    })
+
+    await wrapper.setProps({ disabledDates: ['16/10/2026'] })
+
+    expect(disabled(wrapper, 12)).toBe(true)
+    expect(disabled(wrapper, 16)).toBe(false)
+  })
+
+  it('hides and blocks the weekdays of a disabledDayNames list that arrives later', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true })
+
+    await wrapper.setProps({ disabledDayNames: ['Sa', 'Su'] })
+
+    expect(findDayAny(wrapper, 3).classList).toContain('vfc-hide')
+    expect(findDayAny(wrapper, 3).classList).toContain('vfc-cursor-not-allowed')
+    expect(findDayAny(wrapper, 5).classList).not.toContain('vfc-hide')
+  })
+
+  it('shows the weekdays again when disabledDayNames empties', async () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      disabledDayNames: ['Sa', 'Su']
+    })
+
+    await wrapper.setProps({ disabledDayNames: [] })
+
+    expect(findDayAny(wrapper, 3).classList).not.toContain('vfc-hide')
+  })
+
+  it('refuses clicks on a day of a disabledDates list that arrives later', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true, disabledDates: [] })
+    await wrapper.setProps({ disabledDates: ['12/10/2026'] })
+
+    await clickDay(wrapper, 12)
+
+    expect(lastValue(wrapper).selectedDate).toBe(false)
+  })
+
+  it('applies limits that arrive later', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true })
+
+    await wrapper.setProps({
+      limits: { min: '05/10/2026', max: '20/10/2026' }
+    })
+
+    expect(disabled(wrapper, 3)).toBe(true)
+    expect(disabled(wrapper, 12)).toBe(false)
+    expect(disabled(wrapper, 25)).toBe(true)
+  })
+
+  it('lifts limits that the parent removes', async () => {
+    const { wrapper } = mountCalendar({
+      isDatePicker: true,
+      limits: { min: '05/10/2026', max: '20/10/2026' }
+    })
+    expect(arrow(wrapper, 'right').classes()).toContain('vfc-disabled')
+
+    await wrapper.setProps({ limits: false })
+
+    expect(disabled(wrapper, 3)).toBe(false)
+    expect(arrow(wrapper, 'left').classes()).not.toContain('vfc-disabled')
+    expect(arrow(wrapper, 'right').classes()).not.toContain('vfc-disabled')
+  })
+
+  it('moves the view into limits that arrive later', async () => {
+    const { wrapper } = mountCalendar({ isDatePicker: true })
+
+    await wrapper.setProps({
+      limits: { min: '1/1/2026', max: '31/3/2026' }
+    })
+
+    expect(calendarTitle(wrapper)).toBe('March 2026')
+  })
+
+  it('follows limits that change inside configs', async () => {
+    const { wrapper, state } = mountParent({
+      configs: {
+        isDatePicker: true,
+        limits: { min: '05/10/2026', max: '20/10/2026' }
+      }
+    })
+
+    state.configs.limits = { min: '10/10/2026', max: '20/10/2026' }
+    await wrapper.vm.$nextTick()
+
+    expect(disabled(wrapper, 7)).toBe(true)
+    expect(disabled(wrapper, 12)).toBe(false)
   })
 })
