@@ -133,7 +133,11 @@
       right: 0;
       width: var(--_vfc-space-5);
       height: 100%;
+      padding: 0;
       cursor: pointer;
+      appearance: none;
+      background: none;
+      border: 0;
       color: var(--_vfc-text-muted);
 
       &::before,

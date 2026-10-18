@@ -60,6 +60,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - With `isSeparately`, each calendar disables its own arrows at `limits` by its own month. They followed the first calendar before.
 - The previous and next month arrows emit `changedYear` when the visible year changes, as the year arrows do. A keyboard move across a year boundary emits `changedYear` too.
 - `markedDates`, `markedDateRange`, `disabledDates`, `enabledDates`, `disabledDayNames`, `limits`, `calendarsCount` and `isDark` follow later changes, as props and inside `configs`. A list that arrives after mount, a replaced list and an edited reactive list all update the calendar (#2, #65, #78, #97, #101, #109, #142).
+- The tags input of `isMultipleDatePicker` removes a date with a labelled `<button>` (`labels.removeDate`) instead of an unnamed link, shows the date as text instead of HTML, names its input with `labels.addDate`, and returns focus to the input after a removal.
 
 ## 2.10.0 - 2026-10-17
 

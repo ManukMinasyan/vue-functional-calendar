@@ -62,6 +62,7 @@ export interface FunctionalCalendarLabels {
   endDate: string
   date: string
   addDate: string
+  removeDate: string
   hour: string
   minute: string
   quickRanges: string

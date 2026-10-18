@@ -18,6 +18,7 @@ export const DEFAULT_LABELS = {
   endDate: 'End Date',
   date: 'Date',
   addDate: 'Add a date',
+  removeDate: 'Remove',
   hour: 'Hour',
   minute: 'Minute',
   quickRanges: 'Quick ranges',

@@ -72,18 +72,21 @@
           v-for="(date, index) in calendar.selectedDates"
           :key="index"
         >
-          <span v-html="date.date"></span>
-          <a
-            href="#"
+          <span>{{ date.date }}</span>
+          <button
+            type="button"
             class="vfc-tags-input-remove"
-            @click.prevent="calendarRoot.removeFromSelectedDates(index)"
-          ></a>
+            :aria-label="`${fConfigs.labels.removeDate} ${date.date}`"
+            @click="removeDate(index)"
+          ></button>
         </span>
 
         <input
+          ref="tagsInput"
           v-model="calendar.selectedDatesItem"
           @keydown.enter.prevent="calendarRoot.addToSelectedDates"
           type="text"
+          :aria-label="fConfigs.labels.addDate"
           aria-haspopup="dialog"
           :aria-expanded="calendarRoot.showCalendar"
           :placeholder="fConfigs.labels.addDate"
@@ -128,6 +131,13 @@ export default {
     }
   },
   methods: {
+    removeDate(index) {
+      this.calendarRoot.removeFromSelectedDates(index)
+      this.$nextTick(() => {
+        const input = this.$refs.tagsInput
+        if (input) input.focus()
+      })
+    },
     cleanTypedInput(event) {
       const input = event.target
       const cleaned = this.calendarRoot.helpCalendar.cleanTypedInput(
