@@ -312,6 +312,36 @@ describe('limits with several calendars', () => {
   })
 })
 
+describe('limits when the view starts outside them', () => {
+  const ahead = { min: '1/12/2026', max: '31/3/2027' }
+
+  it('moves toward the limits with the right arrow', async () => {
+    const { wrapper } = mountCalendar({ limits: ahead })
+
+    await arrow(wrapper, 'right').trigger('click')
+
+    expect(calendarTitle(wrapper)).toBe('November 2026')
+  })
+
+  it('moves toward the limits with the keyboard reveal', () => {
+    const { wrapper } = mountCalendar({ limits: ahead })
+
+    expect(
+      wrapper.vm.revealDate(new Date(2026, 10, 1), 0, 'changedMonth')
+    ).toBe(true)
+  })
+
+  it('still refuses to move further away from the limits', async () => {
+    const { wrapper } = mountCalendar({ limits: ahead })
+
+    wrapper.vm.allowPreDate = true
+    wrapper.vm.PreMonth()
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper)).toBe('October 2026')
+  })
+})
+
 describe('limits after picking a month', () => {
   it('re-checks the arrows for the picked month', async () => {
     const { wrapper } = mountCalendar({

@@ -691,7 +691,7 @@ export default {
 
       for (let i = 0; i < this.fConfigs.calendarsCount; i++) {
         date = new Date(date.getFullYear(), date.getMonth() + 1)
-        if (i > 0 && this.isMonthPastMax(date)) break
+        if (i > 0 && !this.isWithinMax(date)) break
 
         let calendar = {
           key: hUniqueID(),
@@ -1497,8 +1497,11 @@ export default {
         grid.date.getMonth() + months,
         1
       )
-      const edge = months > 0 ? this.forwardEdge(target) : target
-      if (!this.isMonthAllowed(edge)) return null
+      const allowed =
+        months > 0
+          ? this.isWithinMax(this.forwardEdge(target))
+          : this.isWithinMin(target)
+      if (!allowed) return null
 
       this.showMonth(grid, target)
       return target
@@ -1964,33 +1967,35 @@ export default {
       return this.focusDay(this.rovingDates[gridKey], gridKey)
     },
     isMonthAllowed(month) {
+      return this.isWithinMin(month) && this.isWithinMax(month)
+    },
+    isWithinMin(month) {
       const { limits } = this.fConfigs
       if (!limits) return true
 
-      const min = this.helpCalendar.getDateFromFormat(limits.min)
-      const max = this.helpCalendar.getDateFromFormat(limits.max)
-
       return (
-        monthIndex(month) >= monthIndex(min) &&
-        monthIndex(month) <= monthIndex(max)
+        monthIndex(month) >=
+        monthIndex(this.helpCalendar.getDateFromFormat(limits.min))
       )
     },
-    isMonthPastMax(month) {
+    isWithinMax(month) {
       const { limits } = this.fConfigs
-      if (!limits) return false
+      if (!limits) return true
 
       return (
-        monthIndex(month) >
+        monthIndex(month) <=
         monthIndex(this.helpCalendar.getDateFromFormat(limits.max))
       )
     },
     revealDate(target, gridKey, changeEvent) {
       const month = new Date(target.getFullYear(), target.getMonth(), 1)
-      if (!this.isMonthAllowed(month)) return false
-
       const separately = this.fConfigs.isSeparately
       const grid = this.listCalendars[separately ? gridKey : 0]
       const forward = month > grid.date
+      if (!(forward ? this.isWithinMax(month) : this.isWithinMin(month))) {
+        return false
+      }
+
       const start =
         forward && !separately
           ? new Date(
