@@ -626,6 +626,24 @@ describe('blocked day classes', () => {
     )
   })
 
+  it('reports a disabled weekday as hidden in the dayClicked payload', async () => {
+    const { wrapper, events } = mountCalendar({
+      isDatePicker: true,
+      disabledDayNames: ['Mo']
+    })
+
+    findDayAny(wrapper, 5).click()
+    findDayAny(wrapper, 6).click()
+    findDayAny(wrapper, 29).click()
+    await wrapper.vm.$nextTick()
+
+    expect(eventsNamed(events, 'dayClicked').map(day => day.hide)).toEqual([
+      true,
+      false,
+      true
+    ])
+  })
+
   it('exposes the blocked state of a day through aria-disabled', () => {
     const { wrapper } = mountCalendar({
       isDatePicker: true,

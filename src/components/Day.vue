@@ -284,7 +284,7 @@ export default {
 
       if (this.isRuleBlocked) classes.push('vfc-disabled')
       if (this.isBlocked) classes.push('vfc-cursor-not-allowed')
-      if (day.hide || isDayNameDisabled) classes.push('vfc-hide')
+      if (day.hide) classes.push('vfc-hide')
       if (day.isToday) classes.push('vfc-today')
 
       if (!day.hideLeftAndRightDays && !isDayNameDisabled) {

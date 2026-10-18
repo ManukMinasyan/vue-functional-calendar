@@ -825,6 +825,7 @@ export default {
     },
     listRendering() {
       const { helpCalendar } = this
+      const { disabledDayNames } = this.fConfigs
       const today = dayStart(new Date()).getTime()
 
       this.listCalendars.forEach(calendar => {
@@ -836,7 +837,9 @@ export default {
             return {
               day: day.day,
               date: formatted,
-              hide: day.hide,
+              hide:
+                day.hide ||
+                helpCalendar.isDayNameDisabled(date, disabledDayNames),
               isMouseToLeft: false,
               isMouseToRight: false,
               isHovered: false,
