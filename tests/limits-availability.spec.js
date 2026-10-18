@@ -486,6 +486,26 @@ describe('limits after picking a month', () => {
     expect(arrow(wrapper, 'left').classes()).not.toContain('vfc-disabled')
   })
 
+  it('clamps a separate grid that appears when calendarsCount grows', async () => {
+    const configs = {
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      limits: { min: '1/10/2026', max: '31/12/2026' }
+    }
+    const { wrapper } = mountCalendar({
+      configs,
+      newCurrentDate: new Date(2026, 10, 1)
+    })
+
+    await wrapper.setProps({ configs: { ...configs, calendarsCount: 3 } })
+
+    expect(calendarTitle(wrapper, 0)).toBe('November 2026')
+    expect(calendarTitle(wrapper, 1)).toBe('December 2026')
+    expect(wrapper.findAll('.vfc-calendar')).toHaveLength(3)
+    expect(wrapper.text()).not.toContain('January 2027')
+  })
+
   it('emits changedMonth with the first visible month after the view is clamped', async () => {
     const { wrapper, events } = mountCalendar({
       isMultiple: true,

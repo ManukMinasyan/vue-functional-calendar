@@ -729,9 +729,10 @@ export default {
 
       for (let i = 0; i < this.visibleCount(); i++) {
         const kept = previous[i]
-        date = kept
-          ? this.clampToLimits(kept.date)
+        const next = kept
+          ? kept.date
           : new Date(date.getFullYear(), date.getMonth() + 1)
+        date = previous.length ? this.clampToLimits(next) : next
 
         let calendar = {
           key: kept ? kept.key : hUniqueID(),
