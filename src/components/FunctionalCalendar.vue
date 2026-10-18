@@ -1122,20 +1122,12 @@ export default {
       )
     },
     hasDisabledDateIn(start, last) {
-      const { dates, beforeToday, afterToday } = this.disabledLookup
-      const today = dayStart(new Date())
-
-      if (beforeToday && start < today) return true
-      if (afterToday && last > today) return true
-
-      return [...dates].some(entry => {
-        const date = this.helpCalendar.getDateFromFormat(entry)
-        return (
-          date >= start &&
-          date <= last &&
-          this.helpCalendar.formatDate(date) === entry
+      return eachDay(start, last).some(day =>
+        this.isDateInLookup(
+          this.helpCalendar.formatDate(day),
+          this.disabledLookup
         )
-      })
+      )
     },
     hasDisabledDayNameIn(start, last) {
       const { disabledDayNames } = this.fConfigs
