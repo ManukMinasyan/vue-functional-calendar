@@ -439,4 +439,21 @@ export default {
     box-shadow: var(--_vfc-shadow-md);
   }
 }
+
+@media (forced-colors: active) {
+  .vfc-day {
+    .times,
+    .number {
+      forced-color-adjust: none;
+    }
+    .times {
+      color: Canvas;
+      background-color: CanvasText;
+    }
+    .number {
+      color: HighlightText;
+      background-color: Highlight;
+    }
+  }
+}
 </style>

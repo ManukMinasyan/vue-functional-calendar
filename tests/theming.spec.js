@@ -47,6 +47,21 @@ describe('theme tokens', () => {
     expect(scss).not.toMatch(/:dir\(/)
   })
 
+  it('keeps selection visible in forced colors with system colors', () => {
+    const scss = readFileSync(
+      join(process.cwd(), 'src/assets/scss/calendar.scss'),
+      'utf8'
+    )
+    const forced = scss.slice(scss.indexOf('@media (forced-colors: active)'))
+
+    expect(forced).toContain('background-color: Highlight')
+    expect(forced).toContain('color: HighlightText')
+    expect(forced).toContain('forced-color-adjust: none')
+    expect(forced).toContain('.vfc-today')
+    expect(forced).toContain('-time-picker__item--selected')
+    expect(forced).toContain("-preset[aria-pressed='true']")
+  })
+
   it('renders inside an ancestor that sets a token', () => {
     const wrapper = mount(
       {

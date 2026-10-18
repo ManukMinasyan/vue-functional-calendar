@@ -1193,3 +1193,63 @@
     }
   }
 }
+
+@media (forced-colors: active) {
+  .vfc {
+    &-preset[aria-pressed='true'],
+    &-time-picker__item--selected,
+    &-time-picker__item--selected:hover,
+    &-months .vfc-item.vfc-selected,
+    &-months .vfc-item.vfc-selected:hover {
+      color: HighlightText;
+      forced-color-adjust: none;
+      background-color: Highlight;
+      border-color: Highlight;
+    }
+
+    &-tags-input-badge {
+      border: 1px solid CanvasText;
+    }
+
+    &-week .vfc-day {
+      .vfc-base-start,
+      .vfc-base-end {
+        display: none;
+      }
+
+      span.vfc-span-day {
+        &.vfc-today {
+          text-decoration: underline;
+          text-decoration-thickness: 2px;
+          text-underline-offset: 4px;
+        }
+
+        &.vfc-marked::before {
+          box-sizing: border-box;
+          background: transparent;
+          border-block: 2px solid Highlight;
+        }
+
+        &.vfc-marked.vfc-borderd,
+        &.vfc-marked.vfc-start-marked,
+        &.vfc-marked.vfc-end-marked,
+        &.vfc-marked.vfc-borderd.vfc-hover:hover,
+        &.vfc-marked.vfc-start-marked.vfc-hover:hover,
+        &.vfc-marked.vfc-end-marked.vfc-hover:hover {
+          color: HighlightText;
+          forced-color-adjust: none;
+          background-color: Highlight;
+          background-image: none;
+
+          &::before {
+            border-block-width: 0;
+          }
+
+          &::after {
+            color: HighlightText;
+          }
+        }
+      }
+    }
+  }
+}
