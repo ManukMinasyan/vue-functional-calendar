@@ -50,6 +50,10 @@ export default class helpCalendar {
     return formattedDate.split(' ')[0]
   }
 
+  normalizeDate(entry) {
+    return (typeof entry === 'string' && this.parseTypedDate(entry)) || entry
+  }
+
   getDateFromFormat(date) {
     let format = this.dateFormat.split(' ')[0]
     date = date.split(' ')[0]

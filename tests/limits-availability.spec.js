@@ -489,6 +489,100 @@ describe('disabledDayNames', () => {
   })
 })
 
+describe('dates written with a leading zero', () => {
+  const pickerOptions = { isDatePicker: true }
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('disables a listed date in the padded and the unpadded form', async () => {
+    const { wrapper, events } = mountCalendar({
+      ...pickerOptions,
+      disabledDates: ['07/10/2026', '9/10/2026']
+    })
+
+    expect(findDay(wrapper, 7).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 9).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 8).classList).not.toContain('vfc-disabled')
+
+    await clickDay(wrapper, 7)
+
+    expect(eventsNamed(events, 'choseDay')).toHaveLength(0)
+  })
+
+  it('enables only the listed dates in either form', async () => {
+    const { wrapper } = mountCalendar({
+      ...pickerOptions,
+      enabledDates: ['07/10/2026', '9/10/2026']
+    })
+
+    expect(findDay(wrapper, 7).classList).not.toContain('vfc-disabled')
+    expect(findDay(wrapper, 9).classList).not.toContain('vfc-disabled')
+    expect(findDay(wrapper, 8).classList).toContain('vfc-disabled')
+
+    await clickDay(wrapper, 7)
+
+    expect(lastValue(wrapper).selectedDate).toBe('7/10/2026')
+  })
+
+  it('disables listed dates of a year-first dateFormat', () => {
+    const { wrapper } = mountCalendar({
+      ...pickerOptions,
+      dateFormat: 'yyyy-mm-dd',
+      disabledDates: ['2026-10-05', '2026-10-6']
+    })
+
+    expect(findDay(wrapper, 5).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 6).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 7).classList).not.toContain('vfc-disabled')
+  })
+
+  it('keeps the before and after today keywords next to padded dates', () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 15, 9))
+    const { wrapper } = mountCalendar({
+      ...pickerOptions,
+      disabledDates: ['beforeToday', '20/10/2026']
+    })
+
+    expect(findDay(wrapper, 14).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 20).classList).toContain('vfc-disabled')
+    expect(findDay(wrapper, 16).classList).not.toContain('vfc-disabled')
+  })
+
+  it('ignores a listed date that does not exist', () => {
+    const { wrapper } = mountCalendar({
+      ...pickerOptions,
+      newCurrentDate: new Date(2026, 2, 1),
+      disabledDates: ['31/02/2026']
+    })
+
+    expect(findDay(wrapper, 3).classList).not.toContain('vfc-disabled')
+  })
+
+  it('treats a padded disabled date as blocking a preset range', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    vi.setSystemTime(new Date(2026, 9, 15, 10))
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      presets: true,
+      disabledDates: ['12/10/2026', '09/10/2026']
+    })
+    await wrapper.vm.$nextTick()
+
+    const blocked = (start, end) =>
+      wrapper.vm.isPresetBlocked({
+        start: new Date(2026, 9, start),
+        end: new Date(2026, 9, end)
+      })
+
+    expect(blocked(8, 10)).toBe(true)
+    expect(blocked(11, 13)).toBe(true)
+    expect(blocked(13, 15)).toBe(false)
+  })
+})
+
 describe('blocked day classes', () => {
   const classesOf = (wrapper, day) => [...findDayAny(wrapper, day).classList]
 

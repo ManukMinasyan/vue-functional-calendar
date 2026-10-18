@@ -301,8 +301,8 @@ const isOpenRange = range =>
   (range.start === '' || range.end === '') &&
   (range.start !== '' || range.end !== '')
 
-const buildDatesLookup = entries => ({
-  dates: new Set(entries),
+const buildDatesLookup = (entries, helpCalendar) => ({
+  dates: new Set(entries.map(entry => helpCalendar.normalizeDate(entry))),
   beforeToday: entries.includes('beforeToday'),
   afterToday: entries.includes('afterToday'),
   isEmpty: !entries.length
@@ -380,19 +380,21 @@ export default {
 
       this.fConfigs.markedDates.forEach(entry => {
         if (entry === null || typeof entry !== 'object') {
-          dates.add(entry)
-        } else if (!classes.has(entry.date)) {
-          classes.set(entry.date, entry.class)
+          dates.add(this.helpCalendar.normalizeDate(entry))
+          return
         }
+
+        const date = this.helpCalendar.normalizeDate(entry.date)
+        if (!classes.has(date)) classes.set(date, entry.class)
       })
 
       return { dates, classes }
     },
     disabledLookup() {
-      return buildDatesLookup(this.fConfigs.disabledDates)
+      return buildDatesLookup(this.fConfigs.disabledDates, this.helpCalendar)
     },
     enabledLookup() {
-      return buildDatesLookup(this.fConfigs.enabledDates)
+      return buildDatesLookup(this.fConfigs.enabledDates, this.helpCalendar)
     },
     dayTime() {
       const { helpCalendar } = this
@@ -1088,14 +1090,13 @@ export default {
       )
     },
     hasDisabledDateIn(start, last) {
-      const { disabledDates } = this.fConfigs
-      const today = new Date()
-      today.setHours(0, 0, 0, 0)
+      const { dates, beforeToday, afterToday } = this.disabledLookup
+      const today = dayStart(new Date())
 
-      if (disabledDates.includes('beforeToday') && start < today) return true
-      if (disabledDates.includes('afterToday') && last > today) return true
+      if (beforeToday && start < today) return true
+      if (afterToday && last > today) return true
 
-      return disabledDates.some(entry => {
+      return [...dates].some(entry => {
         const date = this.helpCalendar.getDateFromFormat(entry)
         return (
           date >= start &&

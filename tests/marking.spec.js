@@ -83,6 +83,35 @@ describe('markedDates', () => {
     expect(classesOf(wrapper, 6)).toContain('vfc-marked')
   })
 
+  it('marks listed dates written with a leading zero', () => {
+    const { wrapper } = mountCalendar({
+      markedDates: ['05/10/2026', '9/10/2026']
+    })
+
+    expect(classesOf(wrapper, 5)).toEqual(
+      expect.arrayContaining(['vfc-marked', 'vfc-borderd'])
+    )
+    expect(classesOf(wrapper, 9)).toContain('vfc-marked')
+  })
+
+  it('marks listed dates of a year-first dateFormat', () => {
+    const { wrapper } = mountCalendar({
+      dateFormat: 'yyyy-mm-dd',
+      markedDates: ['2026-10-05']
+    })
+
+    expect(classesOf(wrapper, 5)).toContain('vfc-marked')
+    expect(classesOf(wrapper, 6)).not.toContain('vfc-marked')
+  })
+
+  it('keeps the class of an object entry written with a leading zero', () => {
+    const { wrapper } = mountCalendar({
+      markedDates: [{ date: '06/10/2026', class: 'holiday' }]
+    })
+
+    expect(classesOf(wrapper, 6)).toContain('holiday')
+  })
+
   it('formats listed dates with the dateFormat', () => {
     const { wrapper } = mountCalendar({
       dateFormat: 'yyyy-mm-dd',
