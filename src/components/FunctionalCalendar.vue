@@ -298,6 +298,7 @@ const DEFAULT_DATE_ENTRY = {
   hour: '00',
   minute: '00'
 }
+const MINUTE_FIRST_TIME_FORMATS = ['MM:HH', 'mm:HH', 'MM:hh', 'mm:hh']
 const signature = value => JSON.stringify(value) ?? 'undefined'
 const monthIndex = date => date.getFullYear() * 12 + date.getMonth()
 
@@ -543,40 +544,17 @@ export default {
     },
     singleSelectedDate: {
       get() {
-        let res = ''
-        if (this.displayTimeInput) {
-          const validFormats = [
-            'HH:MM',
-            'HH:mm',
-            'hh:MM',
-            'hh:mm',
-            'MM:HH',
-            'mm:HH',
-            'MM:hh',
-            'mm:hh'
-          ]
-          let format = this.fConfigs.dateFormat
-          if (this.dateFormat) {
-            format = this.dateFormat
-          }
-          if (validFormats.indexOf(format.split(' ')[1]) > 3) {
-            res +=
-              ' ' +
-              [this.calendar.selectedHour, this.calendar.selectedMinute]
-                .reverse()
-                .join(':')
-          } else {
-            res +=
-              ' ' +
-              [this.calendar.selectedHour, this.calendar.selectedMinute].join(
-                ':'
-              )
-          }
+        const { selectedDate, selectedHour, selectedMinute } = this.calendar
+        if (!selectedDate) return ''
+        if (!this.displayTimeInput) return selectedDate
+
+        const format = this.dateFormat || this.fConfigs.dateFormat
+        const time = [selectedHour, selectedMinute]
+        if (MINUTE_FIRST_TIME_FORMATS.includes(format.split(' ')[1])) {
+          time.reverse()
         }
 
-        return this.calendar.selectedDate
-          ? this.calendar.selectedDate + res
-          : ''
+        return `${selectedDate} ${time.join(':')}`
       },
       set(newValue) {
         const date = this.helpCalendar.parseTypedDate(newValue)
