@@ -485,6 +485,50 @@ describe('limits after picking a month', () => {
     expect(wrapper.vm.calendar.currentDate.getMonth()).toBe(11)
     expect(arrow(wrapper, 'left').classes()).not.toContain('vfc-disabled')
   })
+
+  it('emits changedMonth with the first visible month after the view is clamped', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 3,
+      newCurrentDate: new Date(2026, 0, 1),
+      limits: { min: '1/1/2026', max: '31/12/2026' }
+    })
+
+    wrapper.vm.pickMonth(11, 0)
+    await wrapper.vm.$nextTick()
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2026, 9, 1)])
+  })
+
+  it('emits changedYear with the first visible month after the view is clamped', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 3,
+      newCurrentDate: new Date(2026, 11, 1),
+      limits: { min: '1/1/2026', max: '31/12/2027' }
+    })
+
+    wrapper.vm.pickYear(2027, 0)
+    await wrapper.vm.$nextTick()
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 9, 1)])
+  })
+
+  it('emits nothing when the clamped view stays where it was', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 3,
+      newCurrentDate: new Date(2026, 9, 1),
+      limits: { min: '1/1/2026', max: '31/12/2026' }
+    })
+
+    wrapper.vm.pickMonth(11, 0)
+    wrapper.vm.pickYear(2026, 0)
+    await wrapper.vm.$nextTick()
+
+    expect(eventsNamed(events, 'changedMonth')).toEqual([])
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+  })
 })
 
 describe('disabledDates', () => {

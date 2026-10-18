@@ -1737,21 +1737,30 @@ export default {
     },
     pickMonth(key, calendarKey) {
       this.showMonthPicker = false
-      const grid = this.pickerGrid(calendarKey)
-      const target = new Date(grid.date.getFullYear(), key, 1)
-      if (!this.isMonthAllowed(target)) return
-
-      this.showMonth(grid, target)
-      this.$emit('changedMonth', target)
+      const { date } = this.pickerGrid(calendarKey)
+      const shown = this.showPicked(
+        calendarKey,
+        new Date(date.getFullYear(), key, 1)
+      )
+      if (shown) this.$emit('changedMonth', shown)
     },
     pickYear(year, calendarKey) {
       this.showYearPicker = false
-      const grid = this.pickerGrid(calendarKey)
-      const target = new Date(year, grid.date.getMonth(), 1)
-      if (!this.isMonthAllowed(target)) return
+      const { date } = this.pickerGrid(calendarKey)
+      const shown = this.showPicked(
+        calendarKey,
+        new Date(year, date.getMonth(), 1)
+      )
+      if (shown) this.$emit('changedYear', shown)
+    },
+    showPicked(calendarKey, target) {
+      if (!this.isMonthAllowed(target)) return null
 
-      this.showMonth(grid, target)
-      this.$emit('changedYear', target)
+      const { date: previous } = this.pickerGrid(calendarKey)
+      this.showMonth(this.pickerGrid(calendarKey), target)
+      const { date } = this.pickerGrid(calendarKey)
+
+      return monthIndex(date) === monthIndex(previous) ? null : new Date(date)
     },
     pickerGrid(calendarKey) {
       return this.listCalendars[this.fConfigs.isSeparately ? calendarKey : 0]
