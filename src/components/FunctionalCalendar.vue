@@ -450,6 +450,15 @@ export default {
         max: this.helpCalendar.getDateFromFormat(limits.max).getTime()
       }
     },
+    limitMonths() {
+      const times = this.limitTimes
+      if (!times) return null
+
+      return {
+        min: monthIndex(new Date(times.min)),
+        max: monthIndex(new Date(times.max))
+      }
+    },
     isModalPicker() {
       return (
         this.fConfigs.isModal &&
@@ -1583,49 +1592,35 @@ export default {
     visibleCount() {
       if (!this.fConfigs.isMultiple) return 1
 
-      const { calendarsCount, limits } = this.fConfigs
-      if (!limits) return calendarsCount
+      const { calendarsCount } = this.fConfigs
+      const { limitMonths } = this
+      if (!limitMonths) return calendarsCount
 
-      const span =
-        monthIndex(this.helpCalendar.getDateFromFormat(limits.max)) -
-        monthIndex(this.helpCalendar.getDateFromFormat(limits.min)) +
-        1
+      const span = limitMonths.max - limitMonths.min + 1
       return Number.isNaN(span)
         ? calendarsCount
         : Math.max(1, Math.min(calendarsCount, span))
     },
     clampToLimits(date) {
-      const { limits } = this.fConfigs
-      if (!limits) return date
+      const { limitMonths } = this
+      if (!limitMonths) return date
 
-      const minIndex = monthIndex(
-        this.helpCalendar.getDateFromFormat(limits.min)
-      )
-      const maxIndex = monthIndex(
-        this.helpCalendar.getDateFromFormat(limits.max)
-      )
-      if (Number.isNaN(minIndex + maxIndex)) return date
+      const { min, max } = limitMonths
+      if (Number.isNaN(min + max)) return date
 
-      const index = Math.min(Math.max(monthIndex(date), minIndex), maxIndex)
+      const index = Math.min(Math.max(monthIndex(date), min), max)
       return new Date(Math.floor(index / 12), index % 12, 1)
     },
     clampViewStart(first) {
-      const { limits } = this.fConfigs
-      if (!limits) return first
+      const { limitMonths } = this
+      if (!limitMonths) return first
 
+      const { min, max } = limitMonths
       const last = this.visibleCount() - 1
       const index = monthIndex(first)
-      const maxIndex = monthIndex(
-        this.helpCalendar.getDateFromFormat(limits.max)
-      )
-      const minIndex = monthIndex(
-        this.helpCalendar.getDateFromFormat(limits.min)
-      )
-      if (Number.isNaN(maxIndex + minIndex) || index + last <= maxIndex) {
-        return first
-      }
+      if (Number.isNaN(max + min) || index + last <= max) return first
 
-      const start = Math.min(index, Math.max(maxIndex - last, minIndex))
+      const start = Math.min(index, Math.max(max - last, min))
       return new Date(Math.floor(start / 12), start % 12, 1)
     },
     showMonth(grid, date, rekey = true) {
@@ -1775,32 +1770,15 @@ export default {
       }
     },
     checkLimits(value) {
+      const { limitMonths } = this
       this.allowPreDate = true
       this.allowNextDate = true
+      if (!limitMonths) return
 
-      if (this.fConfigs.limits) {
-        let min = new Date(
-          this.helpCalendar.getDateFromFormat(this.fConfigs.limits.min)
-        )
-        min.setDate(1)
-        min.setHours(0, 0, 0, 0)
-        let max = new Date(
-          this.helpCalendar.getDateFromFormat(this.fConfigs.limits.max)
-        )
-        max.setDate(1)
-        max.setHours(0, 0, 0, 0)
-
-        let current = new Date(value)
-        current.setDate(1)
-        current.setHours(0, 0, 0, 0)
-
-        if (current <= min) {
-          this.allowPreDate = false
-        }
-
-        if (this.forwardEdge(current) >= max) {
-          this.allowNextDate = false
-        }
+      const current = new Date(value.getFullYear(), value.getMonth(), 1)
+      if (monthIndex(current) <= limitMonths.min) this.allowPreDate = false
+      if (monthIndex(this.forwardEdge(current)) >= limitMonths.max) {
+        this.allowNextDate = false
       }
     },
     getTransition_() {
@@ -2076,22 +2054,12 @@ export default {
       return this.isWithinMin(month) && this.isWithinMax(month)
     },
     isWithinMin(month) {
-      const { limits } = this.fConfigs
-      if (!limits) return true
-
-      return (
-        monthIndex(month) >=
-        monthIndex(this.helpCalendar.getDateFromFormat(limits.min))
-      )
+      const { limitMonths } = this
+      return !limitMonths || monthIndex(month) >= limitMonths.min
     },
     isWithinMax(month) {
-      const { limits } = this.fConfigs
-      if (!limits) return true
-
-      return (
-        monthIndex(month) <=
-        monthIndex(this.helpCalendar.getDateFromFormat(limits.max))
-      )
+      const { limitMonths } = this
+      return !limitMonths || monthIndex(month) <= limitMonths.max
     },
     revealDate(target, gridKey, changeEvent) {
       const month = new Date(target.getFullYear(), target.getMonth(), 1)
