@@ -1,3 +1,5 @@
+import { daysBetween } from '../../utils/presets'
+
 const toWeekStart = value => (typeof value === 'number' ? value : value ? 0 : 1)
 
 const FULL_WIDTH_OFFSET = 0xfee0
@@ -16,10 +18,9 @@ export const getWeekNumber = (date, weekStartOrSundayStart) => {
     date.getMonth(),
     date.getDate() + thursdayOffset
   )
-  const dayOfYear = Math.round(
-    (Date.UTC(thursday.getFullYear(), thursday.getMonth(), thursday.getDate()) -
-      Date.UTC(thursday.getFullYear(), 0, 1)) /
-      86400000
+  const dayOfYear = daysBetween(
+    new Date(thursday.getFullYear(), 0, 1),
+    thursday
   )
   return Math.floor(dayOfYear / 7) + 1
 }
