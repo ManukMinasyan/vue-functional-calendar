@@ -88,8 +88,8 @@
                 <Arrows
                   :isMultiple="true"
                   :fConfigs="fConfigs"
-                  :allowPreDate="allowPreDate"
-                  :allowNextDate="allowNextDate"
+                  :allowPreDate="allowPreFor(key)"
+                  :allowNextDate="allowNextFor(key)"
                   :calendar-key="key"
                 >
                   <template v-slot:navigationArrowLeft>
@@ -1435,7 +1435,7 @@ export default {
      * @return {boolean}
      */
     PreMonth(calendarKey = null) {
-      if (!this.allowPreDate) return false
+      if (!this.allowPreFor(calendarKey)) return false
 
       return this.changeMonth(
         calendarKey,
@@ -1447,7 +1447,7 @@ export default {
      * @return {boolean}
      */
     NextMonth(calendarKey = null) {
-      if (!this.allowNextDate) return false
+      if (!this.allowNextFor(calendarKey)) return false
 
       return this.changeMonth(
         calendarKey,
@@ -1459,7 +1459,7 @@ export default {
      * @return {boolean}
      */
     PreYear(calendarKey = null) {
-      if (!this.allowPreDate) return false
+      if (!this.allowPreFor(calendarKey)) return false
 
       return this.changeYear(calendarKey, -this.yearStep())
     },
@@ -1467,7 +1467,7 @@ export default {
      * @return {boolean}
      */
     NextYear(calendarKey = null) {
-      if (!this.allowNextDate) return false
+      if (!this.allowNextFor(calendarKey)) return false
 
       return this.changeYear(calendarKey, this.yearStep())
     },
@@ -1491,6 +1491,22 @@ export default {
       if (!target) return false
 
       this.$emit('changedYear', target)
+    },
+    allowPreFor(calendarKey) {
+      if (!this.fConfigs.isSeparately) return this.allowPreDate
+
+      const { date } = this.gridAt(calendarKey)
+      return this.isWithinMin(
+        new Date(date.getFullYear(), date.getMonth() - 1, 1)
+      )
+    },
+    allowNextFor(calendarKey) {
+      if (!this.fConfigs.isSeparately) return this.allowNextDate
+
+      const { date } = this.gridAt(calendarKey)
+      return this.isWithinMax(
+        new Date(date.getFullYear(), date.getMonth() + 1, 1)
+      )
     },
     gridAt(calendarKey) {
       return this.listCalendars[calendarKey !== null ? calendarKey : 0]

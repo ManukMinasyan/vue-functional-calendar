@@ -378,6 +378,65 @@ describe('limits with several calendars', () => {
   })
 })
 
+describe('limits on isSeparately calendars', () => {
+  const sideArrow = (wrapper, index, direction) =>
+    wrapper
+      .findAll('.vfc-calendar')
+      [index].find(`.vfc-separately-navigation-buttons .vfc-arrow-${direction}`)
+  const disabled = (wrapper, index, direction) =>
+    sideArrow(wrapper, index, direction).classes('vfc-disabled')
+
+  it('disables the arrows of each calendar by its own month', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      limits: { min: '1/10/2026', max: '30/11/2026' }
+    })
+
+    expect(disabled(wrapper, 0, 'left')).toBe(true)
+    expect(disabled(wrapper, 0, 'right')).toBe(false)
+    expect(disabled(wrapper, 1, 'left')).toBe(false)
+    expect(disabled(wrapper, 1, 'right')).toBe(true)
+
+    await sideArrow(wrapper, 0, 'right').trigger('click')
+
+    expect(calendarTitle(wrapper, 0)).toBe('November 2026')
+    expect(disabled(wrapper, 0, 'left')).toBe(false)
+    expect(disabled(wrapper, 0, 'right')).toBe(true)
+  })
+
+  it('ignores a move on a calendar that sits at its limit', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      limits: { min: '1/10/2026', max: '30/11/2026' }
+    })
+
+    await sideArrow(wrapper, 1, 'right').trigger('click')
+
+    expect(calendarTitle(wrapper, 1)).toBe('November 2026')
+    expect(eventsNamed(events, 'changedMonth')).toHaveLength(0)
+  })
+
+  it('lets a calendar move on while another one is at its limit', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      limits: { min: '1/10/2026', max: '31/12/2026' }
+    })
+
+    wrapper.vm.NextMonth(1)
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper, 1)).toBe('December 2026')
+    expect(disabled(wrapper, 1, 'right')).toBe(true)
+    expect(disabled(wrapper, 0, 'right')).toBe(false)
+  })
+})
+
 describe('limits when the view starts outside them', () => {
   const ahead = { min: '1/12/2026', max: '31/3/2027' }
 
