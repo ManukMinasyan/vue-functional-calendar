@@ -670,6 +670,12 @@ export default {
       return state
     },
     initCalendar() {
+      const { currentDate } = this.calendar
+      const start = this.clampViewStart(currentDate)
+      if (monthIndex(start) !== monthIndex(currentDate)) {
+        this.calendar.currentDate = start
+      }
+
       this.setCalendarData()
       this.listRendering()
       this.markChooseDays()
@@ -689,9 +695,8 @@ export default {
 
       this.listCalendars = []
 
-      for (let i = 0; i < this.fConfigs.calendarsCount; i++) {
+      for (let i = 0; i < this.visibleCount(); i++) {
         date = new Date(date.getFullYear(), date.getMonth() + 1)
-        if (i > 0 && !this.isWithinMax(date)) break
 
         let calendar = {
           key: hUniqueID(),
@@ -1516,7 +1521,37 @@ export default {
       )
     },
     visibleCount() {
-      return this.fConfigs.isMultiple ? this.fConfigs.calendarsCount : 1
+      if (!this.fConfigs.isMultiple) return 1
+
+      const { calendarsCount, limits } = this.fConfigs
+      if (!limits) return calendarsCount
+
+      const span =
+        monthIndex(this.helpCalendar.getDateFromFormat(limits.max)) -
+        monthIndex(this.helpCalendar.getDateFromFormat(limits.min)) +
+        1
+      return Number.isNaN(span)
+        ? calendarsCount
+        : Math.max(1, Math.min(calendarsCount, span))
+    },
+    clampViewStart(first) {
+      const { limits } = this.fConfigs
+      if (!limits) return first
+
+      const last = this.visibleCount() - 1
+      const index = monthIndex(first)
+      const maxIndex = monthIndex(
+        this.helpCalendar.getDateFromFormat(limits.max)
+      )
+      const minIndex = monthIndex(
+        this.helpCalendar.getDateFromFormat(limits.min)
+      )
+      if (Number.isNaN(maxIndex + minIndex) || index + last <= maxIndex) {
+        return first
+      }
+
+      const start = Math.min(index, Math.max(maxIndex - last, minIndex))
+      return new Date(Math.floor(start / 12), start % 12, 1)
     },
     showMonth(grid, date) {
       if (this.fConfigs.isSeparately) {

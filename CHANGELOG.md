@@ -56,7 +56,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - An invalid initial `multipleDateRange` model is reported through the error handler, and the calendar still renders and follows later valid models.
 - Picking a month or year with several calendars keeps them consecutive, updates `currentDate`, emits the model and re-checks `limits`. It emits `changedYear` once, and the dates of `changedMonth` and `changedYear` are the first of the month.
 - Every navigation move stays inside `limits`: the year arrows, `changeMonthStep`, `changeYearStep`, the month and year pickers and `ChooseDate` no longer overshoot, and the right arrow of a multi-calendar picker disables before a month past `max` shows. `ChooseDate` returns `false` when the month is outside `limits`.
-- A multi-calendar picker no longer renders a month after `limits.max`. The calendars that would sit past `max` are left out (#114).
+- A multi-calendar picker no longer shows a month after `limits.max`. The view starts early enough that the last calendar is the `max` month, and keeps all `calendarsCount` calendars unless the limits span fewer months (#114).
 - The previous and next month arrows emit `changedYear` when the visible year changes, like the keyboard and the year arrows.
 
 ## 2.10.0 - 2026-10-17

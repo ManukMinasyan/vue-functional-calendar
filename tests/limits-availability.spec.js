@@ -263,8 +263,21 @@ describe('limits with several calendars', () => {
     wrapper
       .findAll('.vfc-calendar')
       .map((_, index) => calendarTitle(wrapper, index))
+  const through2026 = { min: '1/1/2026', max: '30/11/2026' }
 
-  it('does not render a calendar for a month past the max limit', () => {
+  it('starts the view early enough that no month shows past the max limit', () => {
+    const { wrapper } = mountCalendar({
+      isDateRange: true,
+      isMultiple: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 10, 1),
+      limits: through2026
+    })
+
+    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
+  })
+
+  it('renders fewer calendars only when the limits span fewer months', () => {
     const { wrapper } = mountCalendar({
       isDateRange: true,
       isMultiple: true,
@@ -276,39 +289,92 @@ describe('limits with several calendars', () => {
     expect(titles(wrapper)).toEqual(['November 2026'])
   })
 
-  it('renders the months up to the max limit', () => {
+  it('starts at the min month when the limits span fewer months than the calendars', () => {
     const { wrapper } = mountCalendar({
       isMultiple: true,
       calendarsCount: 3,
-      newCurrentDate: new Date(2026, 10, 1),
-      limits: { min: '1/1/2026', max: '31/12/2026' }
+      newCurrentDate: new Date(2026, 11, 1),
+      limits: { min: '1/11/2026', max: '31/12/2026' }
     })
 
     expect(titles(wrapper)).toEqual(['November 2026', 'December 2026'])
   })
 
-  it('shows the dropped calendar again after moving back', async () => {
-    const { wrapper } = mountCalendar({
-      isMultiple: true,
-      calendarsCount: 2,
-      newCurrentDate: new Date(2026, 10, 1),
-      limits: { min: '1/1/2026', max: '30/11/2026' }
-    })
-
-    await arrow(wrapper, 'left').trigger('click')
-
-    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
-  })
-
-  it('still renders the first calendar when its month is past the max limit', () => {
+  it('pulls a view that starts past the max limit back inside', () => {
     const { wrapper } = mountCalendar({
       isMultiple: true,
       calendarsCount: 2,
       newCurrentDate: new Date(2027, 0, 1),
-      limits: { min: '1/1/2026', max: '30/11/2026' }
+      limits: through2026
     })
 
-    expect(titles(wrapper)).toEqual(['January 2027'])
+    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
+  })
+
+  it('does not pull a view that starts before the min limit up to it', () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      limits: { min: '1/12/2026', max: '31/3/2027' }
+    })
+
+    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
+  })
+
+  it('keeps every calendar when a month at the max limit is picked', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 3,
+      limits: { min: '1/1/2026', max: '31/12/2026' }
+    })
+
+    wrapper.vm.pickMonth(11, 0)
+    await wrapper.vm.$nextTick()
+    expect(titles(wrapper)).toEqual([
+      'October 2026',
+      'November 2026',
+      'December 2026'
+    ])
+
+    wrapper.vm.PreMonth()
+    await wrapper.vm.$nextTick()
+    expect(titles(wrapper)).toEqual([
+      'September 2026',
+      'October 2026',
+      'November 2026'
+    ])
+  })
+
+  it('shows the max month last when ChooseDate jumps to it', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2,
+      limits: { min: '1/1/2026', max: '31/12/2026' }
+    })
+
+    wrapper.vm.ChooseDate('15/12/2026')
+    await wrapper.vm.$nextTick()
+
+    expect(titles(wrapper)).toEqual(['November 2026', 'December 2026'])
+  })
+
+  it('keeps every isSeparately calendar and lets a moved one return', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      isSeparately: true,
+      calendarsCount: 2,
+      newCurrentDate: new Date(2026, 10, 1),
+      limits: through2026
+    })
+    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
+
+    wrapper.vm.PreMonth(1)
+    await wrapper.vm.$nextTick()
+    expect(titles(wrapper)).toEqual(['October 2026', 'October 2026'])
+
+    wrapper.vm.NextMonth(1)
+    await wrapper.vm.$nextTick()
+    expect(titles(wrapper)).toEqual(['October 2026', 'November 2026'])
   })
 })
 
