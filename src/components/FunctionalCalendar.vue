@@ -744,45 +744,32 @@ export default {
           : new Date(date.getFullYear(), date.getMonth() + 1)
         date = previous.length ? this.clampToLimits(next) : next
 
-        let calendar = {
-          key: kept ? kept.key : hUniqueID(),
-          date: date,
-          dateTop: `${
-            this.fConfigs.monthNames[date.getMonth()]
-          } ${date.getFullYear()}`,
-          month: this.fConfigs.monthNames[date.getMonth()],
-          year: date.getFullYear(),
-          weeks: this.helpCalendar.getFinalizedWeeks(
-            date.getMonth(),
-            date.getFullYear()
-          )
-        }
-
-        this.listCalendars.push(calendar)
+        this.listCalendars.push(
+          this.buildGrid(date, kept ? kept.key : hUniqueID())
+        )
 
         if (!this.fConfigs.isMultiple) {
           break
         }
       }
     },
+    buildGrid(date, key) {
+      const month = this.fConfigs.monthNames[date.getMonth()]
+      const year = date.getFullYear()
+
+      return {
+        key,
+        date,
+        dateTop: `${month} ${year}`,
+        month,
+        year,
+        weeks: this.helpCalendar.getFinalizedWeeks(date.getMonth(), year)
+      }
+    },
     setExistingCalendarData() {
       for (let i = 0; i < this.listCalendars.length; i++) {
-        let calendar = this.listCalendars[i]
-        let date = calendar.date
-
-        this.listCalendars[i] = {
-          key: calendar.key,
-          date: date,
-          dateTop: `${
-            this.fConfigs.monthNames[date.getMonth()]
-          } ${date.getFullYear()}`,
-          month: this.fConfigs.monthNames[date.getMonth()],
-          year: date.getFullYear(),
-          weeks: this.helpCalendar.getFinalizedWeeks(
-            date.getMonth(),
-            date.getFullYear()
-          )
-        }
+        const { date, key } = this.listCalendars[i]
+        this.listCalendars[i] = this.buildGrid(date, key)
 
         if (!this.fConfigs.isMultiple) {
           break
