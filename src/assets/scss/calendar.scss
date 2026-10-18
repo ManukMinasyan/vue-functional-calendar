@@ -730,11 +730,20 @@
           }
 
           .vfc-top-date {
+            position: static;
+            z-index: auto;
             justify-content: center;
             font-size: var(--_vfc-font-size-sm);
+            font-weight: var(--_vfc-font-weight-strong);
+            cursor: default;
+
+            &:hover {
+              background-color: transparent;
+            }
 
             &-has-delta:hover {
               cursor: pointer;
+              background-color: var(--_vfc-hover);
             }
 
             .vfc-popover-caret {

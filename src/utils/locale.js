@@ -27,6 +27,8 @@ export const DEFAULT_LABELS = {
   rangeEnd: 'range end',
   today: 'Today',
   week: 'Week',
+  chooseMonth: 'Choose month',
+  chooseYear: 'Choose year',
   presets: {
     today: 'Today',
     yesterday: 'Yesterday',

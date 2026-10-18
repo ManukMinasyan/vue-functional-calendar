@@ -1005,6 +1005,100 @@ describe('month and year pickers', () => {
     expect(month.getAttribute('aria-expanded')).toBe('false')
   })
 
+  it('names the open picker as a group', async () => {
+    const { wrapper } = await mountPicker()
+
+    await press(titleButtons(wrapper)[0], 'Enter')
+
+    const picker = wrapper.find('.vfc-months-container')
+    expect(picker.attributes('role')).toBe('group')
+    expect(picker.attributes('aria-label')).toBe('Choose month')
+
+    await press(active(), 'Escape')
+    await press(titleButtons(wrapper)[1], 'Enter')
+
+    expect(picker.attributes('aria-label')).toBe('Choose year')
+  })
+
+  it('translates the picker names', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      changeMonthFunction: true,
+      labels: { chooseMonth: 'Monat waehlen' }
+    })
+
+    await press(titleButtons(wrapper)[0], 'Enter')
+
+    expect(wrapper.find('.vfc-months-container').attributes('aria-label')).toBe(
+      'Monat waehlen'
+    )
+  })
+
+  it('renders the picker year as a button that resets the year range', async () => {
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      changeYearFunction: true
+    })
+    await press(titleButtons(wrapper)[0], 'Enter')
+    const year = wrapper.find('.vfc-months-container .vfc-top-date')
+
+    expect(year.element.tagName).toBe('BUTTON')
+    expect(year.attributes('aria-disabled')).toBe('true')
+
+    await wrapper
+      .find('.vfc-months-container button[aria-label="Next years"]')
+      .trigger('click')
+    expect(year.attributes('aria-disabled')).toBe('false')
+    expect(wrapper.find('.vfc-months .vfc-item').text()).not.toBe('2020')
+
+    await year.trigger('click')
+
+    expect(year.attributes('aria-disabled')).toBe('true')
+    expect(
+      wrapper.findAll('.vfc-months .vfc-item').map(item => item.text())
+    ).toContain('2026')
+  })
+
+  it('closes the picker when focus moves to the grid', async () => {
+    const { wrapper } = await mountPicker()
+    await press(titleButtons(wrapper)[0], 'Enter')
+    expect(wrapper.vm.showMonthPicker).toBe(1)
+
+    findDay(wrapper, 12).focus()
+    await nextTick()
+
+    expect(wrapper.vm.showMonthPicker).toBe(false)
+  })
+
+  it('keeps the picker open while focus moves inside it or to its own title', async () => {
+    const { wrapper } = await mountPicker()
+    const [month] = titleButtons(wrapper)
+    await press(month, 'Enter')
+    const items = wrapper.findAll('.vfc-months .vfc-item')
+
+    items[3].element.focus()
+    await nextTick()
+    wrapper.find('.vfc-months-container button').element.focus()
+    await nextTick()
+    month.focus()
+    await nextTick()
+
+    expect(wrapper.vm.showMonthPicker).toBe(1)
+  })
+
+  it('closes the picker of an inline calendar when focus leaves the calendar', async () => {
+    const outside = document.createElement('button')
+    document.body.append(outside)
+    const { wrapper } = await mountPicker()
+    await press(titleButtons(wrapper)[0], 'Enter')
+
+    outside.focus()
+    await nextTick()
+    outside.remove()
+
+    expect(wrapper.vm.showMonthPicker).toBe(false)
+  })
+
   it('labels the picker arrows', async () => {
     const { wrapper } = await mountPicker()
     await press(titleButtons(wrapper)[0], 'Enter')

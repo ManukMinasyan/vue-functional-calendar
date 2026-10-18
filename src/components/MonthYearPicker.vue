@@ -1,5 +1,5 @@
 <template>
-  <div class="vfc-months-container">
+  <div class="vfc-months-container" role="group" :aria-label="pickerLabel">
     <div class="vfc-content vfc-content-MY-picker">
       <div class="vfc-navigation-buttons">
         <button
@@ -9,13 +9,15 @@
         >
           <div class="vfc-arrow-left"></div>
         </button>
-        <h2
+        <button
+          type="button"
           :class="['vfc-top-date', delta !== 0 && 'vfc-top-date-has-delta']"
+          :aria-disabled="delta === 0"
           @click="delta = 0"
         >
           <span class="vfc-popover-caret"></span>
           {{ calendarRoot.listCalendars[calendarKey].date.getFullYear() }}
-        </h2>
+        </button>
         <button
           type="button"
           :aria-label="nextLabel"
@@ -103,6 +105,12 @@ export default {
     }
   },
   computed: {
+    pickerLabel() {
+      const { labels } = this.calendarRoot.fConfigs
+      return this.calendarRoot.showMonthPicker
+        ? labels.chooseMonth
+        : labels.chooseYear
+    },
     previousLabel() {
       const { labels } = this.calendarRoot.fConfigs
       return this.calendarRoot.showMonthPicker

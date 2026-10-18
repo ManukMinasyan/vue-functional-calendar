@@ -2209,7 +2209,22 @@ export default {
       opener.focus()
       this.restoringFocus = false
     },
+    closePickerOnOutsideFocus(target) {
+      const key = this.showMonthPicker || this.showYearPicker
+      if (!key) return
+
+      const grid =
+        this.$refs.calendars.querySelectorAll('.vfc-calendar')[key - 1]
+      const keep = [
+        grid.querySelector('.vfc-months-container'),
+        grid.querySelector('.vfc-top-date [aria-expanded="true"]')
+      ]
+      if (keep.some(element => hElContains(element, target))) return
+
+      this.showMonthPicker = this.showYearPicker = false
+    },
     onFocusIn(e) {
+      this.closePickerOnOutsideFocus(e.target)
       if (!this.fConfigs.isModal || this.restoringFocus) return
 
       if (!this.showCalendar && this.isOutsideCalendar(e.target)) {
@@ -2218,6 +2233,13 @@ export default {
       this.showCalendar = true
     },
     onFocusOut(e) {
+      if (
+        !this.patching &&
+        e.relatedTarget &&
+        !hElContains(this.popoverElement, e.relatedTarget)
+      ) {
+        this.showMonthPicker = this.showYearPicker = false
+      }
       if (
         this.fConfigs.isModal &&
         !this.patching &&

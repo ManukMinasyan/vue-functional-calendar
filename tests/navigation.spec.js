@@ -381,7 +381,7 @@ describe('year picker', () => {
     await wrapper.find('.vfc-months-container .vfc-arrow-left').trigger('click')
     expect(pickerItems(wrapper)[0].text()).toBe('2019')
 
-    await wrapper.find('.vfc-months-container h2').trigger('click')
+    await wrapper.find('.vfc-months-container .vfc-top-date').trigger('click')
     expect(pickerItems(wrapper)[0].text()).toBe('2022')
   })
 

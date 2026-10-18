@@ -71,6 +71,8 @@ export interface FunctionalCalendarLabels {
   rangeEnd: string
   today: string
   week: string
+  chooseMonth: string
+  chooseYear: string
   presets: Record<FunctionalCalendarPresetKey, string>
 }
 
