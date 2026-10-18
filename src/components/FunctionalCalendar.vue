@@ -2,7 +2,6 @@
   <div
     class="vfc-popover-container"
     ref="popoverElement"
-    tabindex="0"
     @keydown="onPopoverKeydown"
     @click="onPopoverClick"
   >
@@ -44,6 +43,9 @@
         'vfc-dark': fConfigs.isDark
       }"
     >
+      <div class="vfc-sr-only" aria-live="polite" aria-atomic="true">
+        {{ visibleMonths }}
+      </div>
       <time-picker
         v-if="showTimePicker"
         ref="timePicker"
@@ -443,6 +445,9 @@ export default {
         this.activeLocale,
         gregorianOptions({ dateStyle: 'full' })
       )
+    },
+    visibleMonths() {
+      return this.listCalendars.map(item => item.dateTop).join(', ')
     },
     rovingDates() {
       return this.listCalendars.map(calendarItem => {

@@ -74,6 +74,40 @@ describe('arrow navigation', () => {
   })
 })
 
+describe('month announcement', () => {
+  const live = wrapper => wrapper.find('[aria-live="polite"]')
+
+  it('keeps a polite live region with the visible month', async () => {
+    const { wrapper } = mountCalendar()
+
+    expect(live(wrapper).text()).toBe('October 2026')
+    expect(live(wrapper).classes()).toContain('vfc-sr-only')
+  })
+
+  it('announces the new month after an arrow click', async () => {
+    const { wrapper } = mountCalendar()
+
+    await arrow(wrapper, 'right').trigger('click')
+
+    expect(live(wrapper).text()).toBe('November 2026')
+  })
+
+  it('announces every visible month of several calendars', async () => {
+    const { wrapper } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 2
+    })
+
+    expect(live(wrapper).text()).toBe('October 2026, November 2026')
+  })
+
+  it('announces the month in the locale', async () => {
+    const { wrapper } = mountCalendar({ locale: 'de-DE' })
+
+    expect(live(wrapper).text()).toBe('Oktober 2026')
+  })
+})
+
 describe('year arrows of the month picker with isSeparately', () => {
   it('keeps the focus on the arrow and the grid mounted', async () => {
     const { wrapper } = mountCalendar({

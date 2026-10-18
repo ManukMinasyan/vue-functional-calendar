@@ -792,6 +792,12 @@ describe('modal mode', () => {
     )
   })
 
+  it('keeps the container out of the tab order', async () => {
+    const { wrapper } = await mountModal()
+
+    expect(wrapper.attributes('tabindex')).toBeUndefined()
+  })
+
   it('does not give an inline calendar the dialog role', async () => {
     const { wrapper } = await mountCalendarReady({ isDateRange: true })
 
