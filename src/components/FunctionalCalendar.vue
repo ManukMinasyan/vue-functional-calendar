@@ -946,18 +946,8 @@ export default {
         return false
       }
 
-      if (this.fConfigs.limits) {
-        let min = this.helpCalendar
-          .getDateFromFormat(this.fConfigs.limits.min)
-          .getTime()
-        let max = this.helpCalendar
-          .getDateFromFormat(this.fConfigs.limits.max)
-          .getTime()
-        let date = this.helpCalendar.getDateFromFormat(day).getTime()
-
-        if (date < min || date > max) {
-          return false
-        }
+      if (this.isOutsideLimits(day)) {
+        return false
       }
 
       this.selectDate(clicked.date)
@@ -1142,12 +1132,9 @@ export default {
       )
     },
     isPresetOutsideLimits(start, last) {
-      const { limits } = this.fConfigs
-      if (!limits) return false
-
       return (
-        start < this.helpCalendar.getDateFromFormat(limits.min) ||
-        last > this.helpCalendar.getDateFromFormat(limits.max)
+        this.isTimeOutsideLimits(start.getTime()) ||
+        this.isTimeOutsideLimits(last.getTime())
       )
     },
     hasDisabledDateIn(start, last) {
@@ -1916,11 +1903,16 @@ export default {
       )
     },
     isOutsideLimits(date) {
+      return (
+        !!this.limitTimes &&
+        this.isTimeOutsideLimits(
+          this.helpCalendar.getDateFromFormat(date).getTime()
+        )
+      )
+    },
+    isTimeOutsideLimits(time) {
       const range = this.limitTimes
-      if (!range) return false
-
-      const time = this.helpCalendar.getDateFromFormat(date).getTime()
-      return time < range.min || time > range.max
+      return !!range && (time < range.min || time > range.max)
     },
     isDateRuleBlocked(date) {
       return this.isDisabledDate(date) || this.isOutsideLimits(date)
