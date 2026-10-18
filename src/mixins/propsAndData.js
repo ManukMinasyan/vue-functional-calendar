@@ -1,4 +1,4 @@
-import { DEFAULT_LABELS } from '../utils/locale'
+import { DEFAULT_DAY_NAMES, DEFAULT_LABELS } from '../utils/locale'
 
 export const createCalendarState = () => ({
   currentDate: new Date(),
@@ -275,7 +275,7 @@ export const propsAndData = {
         enabledDates: [],
         disabledDayNames: [],
 
-        dayNames: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'],
+        dayNames: [...DEFAULT_DAY_NAMES],
         monthNames: [
           'January',
           'February',

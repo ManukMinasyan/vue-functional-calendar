@@ -127,9 +127,7 @@
                         openPickerFromKeyboard('month', key)
                       "
                       :class="{
-                        'vfc-cursor-pointer vfc-underline':
-                          fConfigs.changeMonthFunction &&
-                          isNotSeparatelyAndFirst(key),
+                        'vfc-cursor-pointer vfc-underline': canPickMonth(key),
                         'vfc-underline-active': showMonthPicker === key + 1
                       }"
                     >
@@ -149,9 +147,7 @@
                         canPickYear(key) && openPickerFromKeyboard('year', key)
                       "
                       :class="{
-                        'vfc-cursor-pointer vfc-underline':
-                          fConfigs.changeYearFunction &&
-                          isNotSeparatelyAndFirst(key),
+                        'vfc-cursor-pointer vfc-underline': canPickYear(key),
                         'vfc-underline-active': showYearPicker === key + 1
                       }"
                     >

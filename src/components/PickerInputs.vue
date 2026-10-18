@@ -129,10 +129,10 @@ export default {
   },
   computed: {
     dateRangeSelectedStartDate() {
-      return this.calendar.dateRange.start ? this.calendar.dateRange.start : ''
+      return this.calendar.dateRange.start || ''
     },
     dateRangeSelectedEndDate() {
-      return this.calendar.dateRange.end ? this.calendar.dateRange.end : ''
+      return this.calendar.dateRange.end || ''
     },
     maxLength() {
       const dateLength = this.fConfigs.dateFormat.split(' ')[0].length
