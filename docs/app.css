@@ -1,0 +1,34 @@
+@source "./components";
+
+:root {
+  --vfc-primary: var(--ui-color-primary-600);
+  --vfc-on-primary: var(--ui-color-neutral-50);
+  --vfc-bg: var(--ui-bg);
+  --vfc-text: var(--ui-text-highlighted);
+  --vfc-text-muted: var(--ui-text-muted);
+  --vfc-border: var(--ui-border);
+  --vfc-font: var(--font-sans);
+}
+
+.dark {
+  --vfc-primary: var(--ui-color-primary-400);
+  --vfc-on-primary: var(--ui-color-neutral-950);
+}
+
+/* The theming playground and any demo forcing isDark against the site mode keep the library palette. */
+.docs-library-theme,
+:root:not(.dark) .vfc-dark,
+.dark
+  :is(
+    .vfc-main-container,
+    .vfc-single-input,
+    .vfc-multiple-input,
+    .vfc-tags-input-root
+  ):not(.vfc-dark, .vfc-dark *) {
+  --vfc-primary: initial;
+  --vfc-on-primary: initial;
+  --vfc-bg: initial;
+  --vfc-text: initial;
+  --vfc-text-muted: initial;
+  --vfc-border: initial;
+}

@@ -60,6 +60,15 @@ onMounted(() => loadVersions())
 
         <UContentSearchButton class="lg:hidden" />
 
+        <UButton
+          color="neutral"
+          variant="ghost"
+          icon="i-simple-icons-github"
+          :to="appConfig.github.url"
+          target="_blank"
+          aria-label="Vue Functional Calendar on GitHub"
+        />
+
         <ClientOnly>
           <UColorModeButton />
 

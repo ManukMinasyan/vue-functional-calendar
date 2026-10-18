@@ -42,7 +42,7 @@ const css = computed(() => {
             @click="theme = name"
           />
         </div>
-        <div :style="tokens">
+        <div class="docs-library-theme" :style="tokens">
           <ClientOnly>
             <FunctionalCalendar
               :key="String(isDark)"

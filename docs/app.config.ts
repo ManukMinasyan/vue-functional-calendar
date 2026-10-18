@@ -19,9 +19,6 @@ export default defineAppConfig({
         title: 'Vue Functional Calendar',
         description: 'Lightweight calendar and datepicker component for Vue 3.',
     },
-    socials: {
-        github: 'https://github.com/ManukMinasyan/vue-functional-calendar'
-    },
     ui: {
         colors: {
             primary: 'blue',
