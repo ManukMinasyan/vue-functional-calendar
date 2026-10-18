@@ -68,6 +68,8 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - Week numbers are named "Week 42" for a screen reader (`labels.week`), the start and end toggles of the time picker report `aria-pressed`, and the time line no longer carries a fixed `id="time-line"` that duplicated across calendars.
 - The month and year picker is a named `role="group"` (`labels.chooseMonth`, `labels.chooseYear`), its year is a `<button class="vfc-top-date">` instead of an `<h2>`, and it closes when focus moves out of it, so Tab no longer walks into the grid hidden beneath it.
 - In a right to left page ArrowLeft and ArrowRight move to the day on that side, the navigation chevrons mirror under `dir="rtl"`, and the range bands, their rounded ends, the week number divider and the range badges sit on the correct side. Left to right rendering is unchanged.
+- The type declarations compile on Vue 3.3 and 3.4. They imported `EmitsToProps` and `PublicProps`, which exist from Vue 3.5.
+- `PreMonth`, `NextMonth`, `PreYear`, `NextYear` and `ChooseDate` are typed as returning `boolean`, and `configs` and the plugin options reject the options that are always props, such as `displayTimeInput` and `newCurrentDate`, which were ignored there.
 - In forced colors modes (Windows high contrast) the selected days, range ends, days inside a range, today, the selected preset, month, year and time, and the range badges stay visible. They were drawn with a background colour only and disappeared.
 
 ## 2.10.0 - 2026-10-17

@@ -1565,12 +1565,14 @@ export default {
       if (target.getFullYear() !== previous.getFullYear()) {
         this.$emit('changedYear', target)
       }
+      return true
     },
     changeYear(calendarKey, years) {
       const target = this.moveMonths(calendarKey, years * 12, false)
       if (!target) return false
 
       this.$emit('changedYear', target)
+      return true
     },
     allowPreFor(calendarKey) {
       if (!this.fConfigs.isSeparately) return this.allowPreDate

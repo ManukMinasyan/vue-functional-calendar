@@ -35,4 +35,56 @@ describe('type declarations', () => {
     expect(exports['.'].require.types).toBe('./index.d.cts')
     expect(files).toEqual(expect.arrayContaining(['index.d.ts', 'index.d.cts']))
   })
+
+  it('imports only types that exist in Vue 3.3', () => {
+    const declarations = read('../index.d.ts')
+
+    expect(declarations).not.toMatch(/\bEmitsToProps\b/)
+    expect(declarations).not.toMatch(/\bPublicProps\b/)
+  })
+
+  it('types the navigation methods as returning a boolean', () => {
+    const declarations = read('../index.d.ts')
+
+    ;['PreMonth', 'NextMonth', 'PreYear', 'NextYear', 'ChooseDate'].forEach(
+      method => {
+        expect(declarations).toMatch(
+          new RegExp(`${method}\\([^)]*\\): boolean`)
+        )
+      }
+    )
+  })
+
+  it('shares one configurable options type between configs and the plugin', () => {
+    const declarations = read('../index.d.ts')
+
+    expect(declarations).toContain(
+      'configs?: FunctionalCalendarConfigurableOptions'
+    )
+    expect(declarations).toContain(
+      'options?: FunctionalCalendarConfigurableOptions'
+    )
+  })
+
+  it('leaves the props that configs ignores out of the configurable options', () => {
+    const declarations = read('../index.d.ts')
+    const [, omitted] = declarations.match(
+      /FunctionalCalendarConfigurableOptions = Partial<\s*Omit<\s*FunctionalCalendarProps,([^>]*)>/
+    )
+    const keys = [...omitted.matchAll(/'(\w+)'/g)].map(match => match[1])
+
+    expect(keys.sort()).toEqual(
+      [
+        'activeHours',
+        'activeMinutes',
+        'alwaysUseDefaultClasses',
+        'borderColor',
+        'canClearRange',
+        'configs',
+        'displayTimeInput',
+        'modelValue',
+        'newCurrentDate'
+      ].sort()
+    )
+  })
 })

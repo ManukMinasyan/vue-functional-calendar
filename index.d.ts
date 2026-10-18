@@ -1,9 +1,10 @@
 import type {
+  AllowedComponentProps,
   App,
+  ComponentCustomProps,
   DefineComponent,
-  EmitsToProps,
-  PublicProps,
-  SlotsType
+  SlotsType,
+  VNodeProps
 } from 'vue'
 
 export interface FunctionalCalendarDateRange {
@@ -78,7 +79,7 @@ export interface FunctionalCalendarLabels {
 
 export interface FunctionalCalendarProps {
   modelValue?: Partial<FunctionalCalendarValue>
-  configs?: Record<string, unknown>
+  configs?: FunctionalCalendarConfigurableOptions
   activeHours?: number[]
   activeMinutes?: number[]
   borderColor?: string
@@ -134,15 +135,26 @@ export interface FunctionalCalendarProps {
 }
 
 export type FunctionalCalendarMethods = {
-  PreMonth(calendarKey?: number | null): void
-  NextMonth(calendarKey?: number | null): void
-  PreYear(calendarKey?: number | null): void
-  NextYear(calendarKey?: number | null): void
-  ChooseDate(date: string): void
+  PreMonth(calendarKey?: number | null): boolean
+  NextMonth(calendarKey?: number | null): boolean
+  PreYear(calendarKey?: number | null): boolean
+  NextYear(calendarKey?: number | null): boolean
+  ChooseDate(date: string): boolean
 }
 
-export type FunctionalCalendarOptions = Partial<
-  Omit<FunctionalCalendarProps, 'modelValue' | 'configs'>
+export type FunctionalCalendarConfigurableOptions = Partial<
+  Omit<
+    FunctionalCalendarProps,
+    | 'modelValue'
+    | 'configs'
+    | 'activeHours'
+    | 'activeMinutes'
+    | 'borderColor'
+    | 'displayTimeInput'
+    | 'canClearRange'
+    | 'newCurrentDate'
+    | 'alwaysUseDefaultClasses'
+  >
 >
 
 export interface FunctionalCalendarDay {
@@ -179,6 +191,16 @@ export type FunctionalCalendarEmits = {
   changedYear: (date: Date) => void
 }
 
+type FunctionalCalendarEmitProps = {
+  [K in keyof FunctionalCalendarEmits as `on${Capitalize<K & string>}`]?: (
+    ...args: Parameters<FunctionalCalendarEmits[K]>
+  ) => any
+}
+
+type FunctionalCalendarPublicProps = VNodeProps &
+  AllowedComponentProps &
+  ComponentCustomProps
+
 export type FunctionalCalendarSlots = SlotsType<{
   default: (props: {
     week: FunctionalCalendarWeek
@@ -206,14 +228,14 @@ export type FunctionalCalendarComponent = DefineComponent<
   {},
   FunctionalCalendarEmits,
   string,
-  PublicProps,
-  Readonly<FunctionalCalendarProps> & EmitsToProps<FunctionalCalendarEmits>,
+  FunctionalCalendarPublicProps,
+  Readonly<FunctionalCalendarProps> & FunctionalCalendarEmitProps,
   {},
   FunctionalCalendarSlots
 >
 
 export type FunctionalCalendarPlugin = FunctionalCalendarComponent & {
-  install(app: App, options?: FunctionalCalendarOptions): void
+  install(app: App, options?: FunctionalCalendarConfigurableOptions): void
   FunctionalCalendar: FunctionalCalendarPlugin
 }
 

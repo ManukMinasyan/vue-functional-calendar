@@ -451,6 +451,28 @@ describe('programmatic month and year moves', () => {
     expect(eventsNamed(events, 'changedMonth')).toEqual([])
   })
 
+  it('returns true from a move that happened and false from a refused one', async () => {
+    const { wrapper } = mountCalendar({
+      limits: { min: '1/10/2026', max: '31/10/2026' }
+    })
+
+    expect(wrapper.vm.NextMonth()).toBe(false)
+    expect(wrapper.vm.PreMonth()).toBe(false)
+    expect(wrapper.vm.NextYear()).toBe(false)
+    expect(wrapper.vm.PreYear()).toBe(false)
+    expect(wrapper.vm.ChooseDate('15/12/2027')).toBe(false)
+    expect(wrapper.vm.ChooseDate('15/10/2026')).toBe(true)
+  })
+
+  it('returns true from the moves a calendar without limits accepts', () => {
+    const { wrapper } = mountCalendar()
+
+    expect(wrapper.vm.NextMonth()).toBe(true)
+    expect(wrapper.vm.PreMonth()).toBe(true)
+    expect(wrapper.vm.NextYear()).toBe(true)
+    expect(wrapper.vm.PreYear()).toBe(true)
+  })
+
   it('moves one year at a time outside the year picker whatever changeYearStep is', async () => {
     const { wrapper } = mountCalendar({ changeYearStep: 5 })
 
