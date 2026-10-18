@@ -30,8 +30,8 @@ export default defineNuxtConfig({
             image: `${baseURL}img/calendar-preview.png`,
             header: {
                 logo: {
-                    light: `${baseURL}logo.png`,
-                    dark: `${baseURL}logo.png`,
+                    light: `${baseURL}logo.svg`,
+                    dark: `${baseURL}logo.svg`,
                 },
             },
         },
