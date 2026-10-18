@@ -360,6 +360,38 @@ describe('keys', () => {
     expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 9, 1)])
   })
 
+  it('PageDown into another year emits changedMonth and changedYear', async () => {
+    const { wrapper, events } = await mountCalendarReady({
+      isDatePicker: true,
+      newCurrentDate: new Date(2026, 11, 1)
+    })
+
+    await press(findDay(wrapper, 15), 'PageDown')
+
+    expect(calendarTitle(wrapper)).toBe('January 2027')
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2027, 0, 1)])
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 0, 1)])
+  })
+
+  it('ArrowRight from the last day of the year emits changedYear', async () => {
+    const { wrapper, events } = await mountCalendarReady({
+      isDatePicker: true,
+      newCurrentDate: new Date(2026, 11, 1)
+    })
+
+    await press(findDay(wrapper, 31), 'ArrowRight')
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 0, 1)])
+  })
+
+  it('emits no changedYear for a month move inside the year', async () => {
+    const { wrapper, events } = await mountCalendarReady({ isDatePicker: true })
+
+    await press(findDay(wrapper, 15), 'PageDown')
+
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+  })
+
   it('Shift+PageUp moves one year back', async () => {
     const { wrapper } = await start()
 

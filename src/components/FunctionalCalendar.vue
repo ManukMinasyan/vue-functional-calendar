@@ -2056,10 +2056,17 @@ export default {
             )
           : month
 
+      const previousYear = grid.date.getFullYear()
       this.transitionPrefix = forward ? 'left' : 'right'
       this.showMonth(grid, start)
 
       this.$emit(changeEvent, start)
+      if (
+        changeEvent !== 'changedYear' &&
+        start.getFullYear() !== previousYear
+      ) {
+        this.$emit('changedYear', start)
+      }
       return true
     },
     canPickMonth(key) {
