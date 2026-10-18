@@ -636,13 +636,8 @@ export default {
     })
   },
   watch: {
-    fConfigs: {
-      handler() {
-        this.markChooseDays()
-      },
-      deep: true,
-      immediate: true
-    },
+    'fConfigs.isDatePicker': 'markChooseDays',
+    'fConfigs.isMultipleDatePicker': 'markChooseDays',
     calendar: {
       handler() {
         if (this.markedSignature !== this.selectionSignature()) {
@@ -849,6 +844,7 @@ export default {
         return
       }
       if (relayoutKeys.includes(key)) this.updateCalendar()
+      if (key === 'markedDates') this.markChooseDays()
     },
     mergeLabels(labels) {
       const current = this.fConfigs.labels
