@@ -402,20 +402,55 @@ export default {
         end: this.dateOnly(range.end)
       }))
     },
+    multipleRangeSpans() {
+      return this.calendar.multipleDateRange
+        .filter(range => range.start && range.end)
+        .map(range => [this.dayTime(range.start), this.dayTime(range.end)])
+    },
+    rangeEdgeLookup() {
+      const lookup = new Map()
+      if (!this.fConfigs.isMultipleDateRange) return lookup
+
+      const edgesAt = date => {
+        if (!lookup.has(date)) {
+          lookup.set(date, { starts: [], ends: [], touching: [] })
+        }
+        return lookup.get(date)
+      }
+      this.multipleRangeDates.forEach((range, index) => {
+        const starting = edgesAt(range.start)
+        const ending = edgesAt(range.end)
+
+        starting.starts.push(index)
+        ending.ends.push(index)
+        starting.touching.push(index)
+        if (ending !== starting) ending.touching.push(index)
+      })
+
+      return lookup
+    },
     markedRangeLookup() {
       const { markedDateRange } = this.fConfigs
       const normalize = value =>
         value ? this.helpCalendar.normalizeDate(value) : value
+      const timeOf = value => (value ? this.dayTime(value) : NaN)
       const ranges = Array.isArray(markedDateRange)
         ? markedDateRange
         : [markedDateRange]
 
       return {
         isList: Array.isArray(markedDateRange),
-        ranges: ranges.map(range => ({
-          start: normalize(range.start),
-          end: normalize(range.end)
-        }))
+        ranges: ranges.map(range => {
+          const start = normalize(range.start)
+          const end = normalize(range.end)
+
+          return {
+            start,
+            end,
+            startTime: timeOf(start),
+            endTime: timeOf(end)
+          }
+        })
       }
     },
     markedLookup() {
@@ -651,6 +686,9 @@ export default {
     }
   },
   methods: {
+    dayTime(date) {
+      return this.parsedDay(date).getTime()
+    },
     dateOnly(value) {
       return value ? this.helpCalendar.normalizeDate(value.split(' ')[0]) : ''
     },
@@ -1247,13 +1285,12 @@ export default {
     rangeMarker() {
       const { startDMY, endDMY } = this
       const { multipleDateRange } = this.calendar
-      const timeOf = date => this.parsedDay(date).getTime()
       const starts = new Set(this.multipleRangeDates.map(range => range.start))
       const ends = new Set(this.multipleRangeDates.map(range => range.end))
-      const inside = multipleDateRange
-        .filter(range => range.start && range.end)
-        .map(range => [timeOf(range.start), timeOf(range.end)])
-      if (startDMY && endDMY) inside.push([timeOf(startDMY), timeOf(endDMY)])
+      const inside = [...this.multipleRangeSpans]
+      if (startDMY && endDMY) {
+        inside.push([this.dayTime(startDMY), this.dayTime(endDMY)])
+      }
 
       const hasEnd = !!endDMY
       const isSingleDay =
@@ -1265,7 +1302,7 @@ export default {
       return date => {
         const isStart = startDMY === date || starts.has(date)
         const isEnd = endDMY === date || ends.has(date)
-        const time = inside.length ? timeOf(date) : NaN
+        const time = inside.length ? this.dayTime(date) : NaN
 
         return {
           isMarked:
@@ -1765,7 +1802,7 @@ export default {
       if (lookup.dates.has(date)) return true
       if (!lookup.beforeToday && !lookup.afterToday) return false
 
-      const time = this.helpCalendar.getDateFromFormat(date).getTime()
+      const time = this.dayTime(date)
       const today = dayStart(new Date()).getTime()
 
       return (
@@ -1774,12 +1811,7 @@ export default {
       )
     },
     isOutsideLimits(date) {
-      return (
-        !!this.limitTimes &&
-        this.isTimeOutsideLimits(
-          this.helpCalendar.getDateFromFormat(date).getTime()
-        )
-      )
+      return !!this.limitTimes && this.isTimeOutsideLimits(this.dayTime(date))
     },
     isTimeOutsideLimits(time) {
       const range = this.limitTimes
@@ -1790,7 +1822,7 @@ export default {
     },
     isDateBlocked(date) {
       return (
-        this.isOnDisabledDayName(this.helpCalendar.getDateFromFormat(date)) ||
+        this.isOnDisabledDayName(this.parsedDay(date)) ||
         this.isDateRuleBlocked(date)
       )
     },
@@ -1818,19 +1850,16 @@ export default {
     isDateInRange(date, start, end) {
       if (!start) return false
 
-      const time = this.helpCalendar.getDateFromFormat(date).getTime()
-      const startTime = this.helpCalendar.getDateFromFormat(start).getTime()
+      const time = this.dayTime(date)
+      const startTime = this.dayTime(start)
       if (!end) return time === startTime
 
-      return (
-        time >= startTime &&
-        time <= this.helpCalendar.getDateFromFormat(end).getTime()
-      )
+      return time >= startTime && time <= this.dayTime(end)
     },
     isDayInMonth(day, calendarItem) {
       if (day.hideLeftAndRightDays || !calendarItem) return false
 
-      const date = this.helpCalendar.getDateFromFormat(day.date)
+      const date = this.parsedDay(day.date)
       return (
         date.getMonth() === calendarItem.date.getMonth() &&
         date.getFullYear() === calendarItem.date.getFullYear()
@@ -1839,11 +1868,14 @@ export default {
     onDayKeydown(event, day, gridKey) {
       if (event.altKey || event.ctrlKey || event.metaKey) return
 
+      const isHorizontal =
+        event.key === 'ArrowLeft' || event.key === 'ArrowRight'
       const target = this.keyboardTarget(
         event.key,
         event.shiftKey,
-        this.helpCalendar.getDateFromFormat(day.date),
-        getComputedStyle(event.currentTarget).direction === 'rtl'
+        this.parsedDay(day.date),
+        isHorizontal &&
+          getComputedStyle(event.currentTarget).direction === 'rtl'
       )
       if (!target) return
 

@@ -53,6 +53,8 @@ import { CALENDAR_KEY } from '../utils/injectionKeys'
 
 import { SlotOutlet, hasSlotContent } from '../utils/slots'
 
+const NO_EDGES = Object.freeze({ starts: [], ends: [], touching: [] })
+
 export default {
   name: 'Day',
   components: { SlotOutlet },
@@ -114,7 +116,13 @@ export default {
       return this.calendarRoot.isDateSelected(this.day.date)
     },
     dayDate() {
-      return this.helpCalendar.getDateFromFormat(this.day.date)
+      return this.calendarRoot.parsedDay(this.day.date)
+    },
+    dayTime() {
+      return this.dayDate.getTime()
+    },
+    fullDateLabel() {
+      return this.calendarRoot.formatFullDate(this.dayDate)
     },
     isDayNameDisabled() {
       return this.calendarRoot.isOnDisabledDayName(this.dayDate)
@@ -126,29 +134,17 @@ export default {
       return this.isDayNameDisabled || this.isRuleBlocked
     },
     rangeEdges() {
-      const edges = { starts: [], ends: [], touching: [] }
-      if (!this.fConfigs.isMultipleDateRange) return edges
-
-      const date = this.day.date
-      this.calendarRoot.multipleRangeDates.forEach((range, index) => {
-        const isStart = range.start === date
-        const isEnd = range.end === date
-        if (isStart) edges.starts.push(index)
-        if (isEnd) edges.ends.push(index)
-        if (isStart || isEnd) edges.touching.push(index)
-      })
-
-      return edges
+      return this.calendarRoot.rangeEdgeLookup.get(this.day.date) || NO_EDGES
     },
     rangeNumbers() {
       return this.rangeEdges.touching.map(index => index + 1)
     },
     isInsideRange() {
+      const { dayTime } = this
       return (
         this.fConfigs.isMultipleDateRange &&
-        this.helpCalendar.isInsideRanges(
-          this.day.date,
-          this.calendar.multipleDateRange
+        this.calendarRoot.multipleRangeSpans.some(
+          ([from, to]) => dayTime > from && dayTime < to
         )
       )
     },
@@ -176,7 +172,7 @@ export default {
 
       const { labels } = this.fConfigs
       return [
-        this.calendarRoot.formatFullDate(this.dayDate),
+        this.fullDateLabel,
         this.day.isToday && labels.today,
         ...this.rangeLabelParts
       ]
@@ -345,10 +341,9 @@ export default {
     },
     markedRangeClasses(date, classes) {
       const { isList, ranges } = this.calendarRoot.markedRangeLookup
-      const { dayDate } = this
-      const parse = value => this.helpCalendar.getDateFromFormat(value)
+      const { dayTime } = this
       const addCompleteRange = range => {
-        if (parse(range.start) <= dayDate && parse(range.end) >= dayDate) {
+        if (range.startTime <= dayTime && range.endTime >= dayTime) {
           classes.push('vfc-marked')
         }
         if (date === range.start) {
@@ -363,13 +358,13 @@ export default {
         return
       }
 
-      const [{ start, end }] = ranges
-      if (start && end) {
-        addCompleteRange({ start, end })
+      const [range] = ranges
+      if (range.start && range.end) {
+        addCompleteRange(range)
         return
       }
-      if (start && parse(start) <= dayDate) classes.push('vfc-marked')
-      if (end && parse(end) >= dayDate) classes.push('vfc-marked')
+      if (range.start && range.startTime <= dayTime) classes.push('vfc-marked')
+      if (range.end && range.endTime >= dayTime) classes.push('vfc-marked')
     }
   }
 }

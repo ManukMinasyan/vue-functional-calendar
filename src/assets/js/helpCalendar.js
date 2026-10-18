@@ -68,15 +68,6 @@ export default class helpCalendar {
     return new Date(parts[year], parts[month] - 1, parts[day])
   }
 
-  isInsideRanges(date, ranges) {
-    const current = +this.getDateFromFormat(date)
-    return ranges.some(range => {
-      const start = +this.getDateFromFormat(range.start)
-      const end = +this.getDateFromFormat(range.end)
-      return start !== end && start && end && start < current && current < end
-    })
-  }
-
   daysSinceWeekStart(date) {
     return (date.getDay() - this.weekStart + 7) % 7
   }
