@@ -1310,16 +1310,23 @@ export default {
     },
     paintHover(range, hoverDate) {
       const markedDates = this.markedLookup.dates
+      const { startDMY } = this
       const preview = range.start ? this.hoverPreview(range, hoverDate) : null
 
       this.listCalendars.forEach(calendar => {
         calendar.weeks.forEach(week => {
           week.days.forEach(day => {
-            day.isHovered = false
-            if (day.date !== this.startDMY && !markedDates.has(day.date)) {
-              day.isMarked = false
+            const next = {
+              date: day.date,
+              isHovered: false,
+              isMarked:
+                day.isMarked &&
+                (day.date === startDMY || markedDates.has(day.date)),
+              isMouseToLeft: day.isMouseToLeft,
+              isMouseToRight: day.isMouseToRight
             }
-            if (preview) this.paintHoverDay(day, preview)
+            if (preview) this.paintHoverDay(next, preview)
+            Object.assign(day, next)
           })
         })
       })
