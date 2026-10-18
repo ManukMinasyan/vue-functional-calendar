@@ -269,7 +269,7 @@ Week numbers follow the same first day.
     </td>
     
     <td>
-      Clear Range, Clear Ranges
+      Clear range, Clear ranges
     </td>
     
     <td>
@@ -289,7 +289,7 @@ Week numbers follow the same first day.
     </td>
     
     <td>
-      Start Date, End Date
+      Start date, End date
     </td>
     
     <td>

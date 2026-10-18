@@ -1,53 +1,64 @@
 ---
 canonical_url: "https://manukminasyan.github.io"
 ---
-<u-page-hero>
+<u-page-hero :ui="{"container":"lg:grid-cols-1 xl:grid-cols-[minmax(0,1fr)_minmax(0,38rem)] xl:gap-16 py-16 sm:py-24 lg:py-28","title":"text-4xl sm:text-6xl","description":"max-w-xl"}" orientation="horizontal">
+<template v-slot:headline="">
+<u-button size="sm" to="https://manukminasyan.github.io/vue-functional-calendar/community/changelog" trailing-icon="i-lucide-arrow-right" color="neutral" variant="subtle" className="rounded-full">
+
+3.1 is out, built for Vue 3
+
+</u-button>
+</template>
+
 <template v-slot:title="">
 
-Vue Functional Calendar
+Vue Functional <span className="text-primary">
 
+Calendar
+
+</span>
 </template>
 
 <template v-slot:description="">
 
-Lightweight calendar and datepicker for Vue 3.
-
-Date picker, date range with presets, multiple calendars and a time picker, with keyboard support, dark mode and Intl locales. No runtime dependencies.
+A lightweight calendar and datepicker for Vue 3. Pick single dates, ranges with presets, several months or a time, with keyboard support, dark mode and Intl locales built in. No runtime dependencies.
 
 </template>
 
 <template v-slot:links="">
-<u-button color="neutral" size="xl" to="https://manukminasyan.github.io/vue-functional-calendar/getting-started/installation" trailing-icon="i-lucide-arrow-right">
+<u-button size="xl" to="https://manukminasyan.github.io/vue-functional-calendar/getting-started/installation" trailing-icon="i-lucide-arrow-right">
 
 Get started
 
 </u-button>
 
-<u-button color="neutral" size="xl" to="https://manukminasyan.github.io/vue-functional-calendar/examples/selection-modes" icon="i-lucide-layout-grid" variant="outline">
+<install-command>
 
-Examples
 
-</u-button>
 
-<u-button color="neutral" size="xl" to="https://github.com/ManukMinasyan/vue-functional-calendar" icon="i-simple-icons-github" variant="ghost" target="_blank">
-
-GitHub
-
-</u-button>
+</install-command>
 </template>
-</u-page-hero>
 
 <calendar-hero>
 
 
 
 </calendar-hero>
+</u-page-hero>
 
 <u-page-section>
 <template v-slot:title="">
 
 Why Vue Functional Calendar?
 
+</template>
+
+<template v-slot:links="">
+<u-button size="lg" to="https://manukminasyan.github.io/vue-functional-calendar/examples/selection-modes" trailing-icon="i-lucide-arrow-right" color="neutral" variant="outline">
+
+Browse the examples
+
+</u-button>
 </template>
 
 <template v-slot:features="">
@@ -163,6 +174,54 @@ Replace the day cell, arrows, footer, clear button and inputs.
 </template>
 </u-page-feature>
 </template>
+</u-page-section>
+
+<u-page-section orientation="horizontal">
+<template v-slot:title="">
+
+Up and running in a minute
+
+</template>
+
+<template v-slot:description="">
+
+Import the component and its stylesheet, bind a model, and pick a mode with one prop. Every string, color and slot is yours to change later.
+
+</template>
+
+<template v-slot:links="">
+<u-button size="lg" to="https://manukminasyan.github.io/vue-functional-calendar/getting-started/usage" trailing-icon="i-lucide-arrow-right">
+
+Read the usage guide
+
+</u-button>
+
+<u-button size="lg" to="https://manukminasyan.github.io/vue-functional-calendar/essentials/props" color="neutral" variant="ghost">
+
+All props
+
+</u-button>
+</template>
+
+```vue [App.vue]
+<script setup>
+import { ref } from 'vue'
+import { FunctionalCalendar } from 'vue-functional-calendar'
+import 'vue-functional-calendar/style.css'
+
+const calendar = ref({})
+</script>
+
+<template>
+  <FunctionalCalendar
+    v-model="calendar"
+    is-date-range
+    presets
+    can-clear-range
+  />
+</template>
+```
+
 </u-page-section>
 
 ## Resources for Agents

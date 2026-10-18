@@ -9,6 +9,14 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/communit
 
 All notable changes to this project are documented here.
 
+## Unreleased
+
+### Changed
+
+- Range presets render as a quiet list on a divided rail instead of outlined buttons. The selected preset takes the range tint and the primary color.
+- The clear range button is a text button that only darkens on hover.
+- Default labels use sentence case: `Clear range`, `Clear ranges`, `Start date` and `End date`. Pass `labels` to keep the old text.
+
 ## 3.1.1 - 2026-10-18
 
 The package code is the same as 3.1.0. This release updates what npm shows.
@@ -45,7 +53,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - The SCSS `!default` variables are replaced by `--vfc-*` tokens.
 - The default look is redesigned. The `vfc-*` class names are unchanged.
 - Deep imports from `src/` no longer resolve. Import from `vue-functional-calendar`.
-- The slide transition classes follow Vue 3: `.vfc-calendar-slide-*-enter` is now `-enter-from`. See [MIGRATION.md](MIGRATION).
+- The slide transition classes follow Vue 3: `.vfc-calendar-slide-*-enter` is now `-enter-from`. See [MIGRATION.md](https://manukminasyan.github.io/vue-functional-calendar/getting-started/migration).
 
 ### Fixed
 
