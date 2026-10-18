@@ -56,32 +56,23 @@ export default class helpCalendar {
   }
 
   getDateFromFormat(date) {
-    let format = this.dateFormat.split(' ')[0]
-    date = date.split(' ')[0]
-    if (format.indexOf('/') !== -1) {
-      format = format.split('/')
-      date = date.split('/')
-    } else if (format.indexOf('-') !== -1) {
-      format = format.split('-')
-      date = date.split('-')
-    } else if (format.indexOf('.') !== -1) {
-      format = format.split('.')
-      date = date.split('.')
-    } else {
+    const { separator, tokens } = this.getFormatParts()
+    if (!separator) {
       throw new Error('Your date format not valid. Please read documentation.!')
     }
 
-    let year = format.indexOf('yyyy')
-    let month = format.indexOf('mm')
-    let day = format.indexOf('dd')
-    return new Date(date[year], date[month] - 1, date[day])
+    const parts = date.split(' ')[0].split(separator)
+    const year = tokens.indexOf('yyyy')
+    const month = tokens.indexOf('mm')
+    const day = tokens.indexOf('dd')
+    return new Date(parts[year], parts[month] - 1, parts[day])
   }
 
   isInsideRanges(date, ranges) {
-    const current = +this.getDateFromFormat(date.split(' ')[0])
+    const current = +this.getDateFromFormat(date)
     return ranges.some(range => {
-      const start = +this.getDateFromFormat(range.start.split(' ')[0])
-      const end = +this.getDateFromFormat(range.end.split(' ')[0])
+      const start = +this.getDateFromFormat(range.start)
+      const end = +this.getDateFromFormat(range.end)
       return start !== end && start && end && start < current && current < end
     })
   }
@@ -131,8 +122,7 @@ export default class helpCalendar {
     }
   }
 
-  getLeftMonthDays(month, year) {
-    let weeks = this.getWeeksInMonth(month, year)
+  getLeftMonthDays(month, year, weeks = this.getWeeksInMonth(month, year)) {
     let firstWeek = weeks.weeks[0]
     let weekDaysCount = firstWeek.end - firstWeek.start + 1
 
@@ -157,8 +147,7 @@ export default class helpCalendar {
     return { days: days.reverse(), month: finalMonth, year: finalYear }
   }
 
-  getRightMonthDays(month, year) {
-    let weeks = this.getWeeksInMonth(month, year)
+  getRightMonthDays(month, year, weeks = this.getWeeksInMonth(month, year)) {
     let lastWeek = weeks.weeks[weeks.weeks.length - 1]
 
     let weekDaysCount = lastWeek.end - lastWeek.start + 1
@@ -188,8 +177,8 @@ export default class helpCalendar {
 
   getFinalizedWeeks(month, year) {
     let monthWeeks = this.getWeeksInMonth(month, year)
-    let leftMonthDays = this.getLeftMonthDays(month, year)
-    let rightMonthDays = this.getRightMonthDays(month, year)
+    let leftMonthDays = this.getLeftMonthDays(month, year, monthWeeks)
+    let rightMonthDays = this.getRightMonthDays(month, year, monthWeeks)
 
     monthWeeks.weeks.forEach(week => {
       for (let i = week.start; i <= week.end; i++) {

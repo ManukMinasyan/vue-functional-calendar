@@ -1009,9 +1009,7 @@ export default {
     },
     applyRangeClick(range, date) {
       const { helpCalendar } = this
-      const clickTime = helpCalendar
-        .getDateFromFormat(date.split(' ')[0])
-        .getTime()
+      const clickTime = helpCalendar.getDateFromFormat(date).getTime()
       const startDate = range.start
         ? helpCalendar.getDateFromFormat(range.start)
         : ''
