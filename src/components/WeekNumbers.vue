@@ -3,7 +3,7 @@
     class="vfc-day vfc-week-number"
     role="rowheader"
     :aria-label="`${calendarRoot.fConfigs.labels.week} ${number}`"
-    :style="{ borderRightColor: borderColor }"
+    :style="{ borderInlineEndColor: borderColor }"
   >
     <span class="vfc-span-day">{{ number }}</span>
   </div>

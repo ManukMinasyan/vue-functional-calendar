@@ -78,7 +78,7 @@ describe('showWeekNumbers', () => {
     })
 
     expect(
-      wrapper.find('.vfc-week-number').element.style.borderRightColor
+      wrapper.find('.vfc-week-number').element.style.borderInlineEndColor
     ).toBe('rgb(255, 0, 255)')
   })
 

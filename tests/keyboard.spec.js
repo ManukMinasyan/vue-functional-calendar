@@ -294,6 +294,30 @@ describe('keys', () => {
     expect(active()).toBe(findDay(wrapper, day))
   })
 
+  it.each([
+    ['ArrowRight', 14],
+    ['ArrowLeft', 16],
+    ['ArrowDown', 22],
+    ['ArrowUp', 8]
+  ])('%s moves focus to day %i in a right to left page', async (key, day) => {
+    const { wrapper, origin } = await start()
+    wrapper.element.style.direction = 'rtl'
+
+    await press(origin, key)
+
+    expect(active()).toBe(findDay(wrapper, day))
+  })
+
+  it('keeps ArrowRight moving forward in a left to right grid inside a right to left page', async () => {
+    const { wrapper, origin } = await start()
+    wrapper.element.style.direction = 'rtl'
+    wrapper.find('.vfc-calendars').element.style.direction = 'ltr'
+
+    await press(origin, 'ArrowRight')
+
+    expect(active()).toBe(findDay(wrapper, 16))
+  })
+
   it('Home moves to the first day of the week', async () => {
     const { wrapper, origin } = await start()
 

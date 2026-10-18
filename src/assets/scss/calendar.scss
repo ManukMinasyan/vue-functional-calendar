@@ -1,5 +1,13 @@
 @use './tokens.scss';
 
+[dir='rtl'] {
+  --_vfc-dir: -1;
+}
+
+[dir='ltr'] {
+  --_vfc-dir: 1;
+}
+
 .vfc {
   &-sr-only {
     position: absolute;
@@ -558,13 +566,13 @@
     .vfc-arrow-left {
       border-top-width: 2px;
       border-left-width: 2px;
-      transform: translateX(2px) rotate(-45deg);
+      transform: scaleX(var(--_vfc-dir, 1)) translateX(2px) rotate(-45deg);
     }
 
     .vfc-arrow-right {
       border-top-width: 2px;
       border-right-width: 2px;
-      transform: translateX(-2px) rotate(45deg);
+      transform: scaleX(var(--_vfc-dir, 1)) translateX(-2px) rotate(45deg);
     }
   }
 
@@ -868,7 +876,7 @@
         box-sizing: border-box;
         flex: 0 0 32px;
         width: 32px;
-        border-right: 1px solid var(--_vfc-border);
+        border-inline-end: 1px solid var(--_vfc-border);
 
         span.vfc-span-day {
           font-size: var(--_vfc-font-size-xs);
@@ -886,20 +894,22 @@
       }
 
       .vfc-base-start {
-        right: 0;
+        inset-inline-end: 0;
       }
 
       .vfc-base-end {
-        left: 0;
+        inset-inline-start: 0;
       }
 
       &:last-child .vfc-base-start {
-        border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0;
+        border-start-end-radius: var(--_vfc-radius);
+        border-end-end-radius: var(--_vfc-radius);
       }
 
       &:first-child .vfc-base-end,
       &.vfc-week-number + .vfc-day .vfc-base-end {
-        border-radius: var(--_vfc-radius) 0 0 var(--_vfc-radius);
+        border-start-start-radius: var(--_vfc-radius);
+        border-end-start-radius: var(--_vfc-radius);
       }
 
       span.vfc-span-day {
@@ -1037,12 +1047,14 @@
       }
 
       &:last-child span.vfc-span-day.vfc-marked::before {
-        border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0;
+        border-start-end-radius: var(--_vfc-radius);
+        border-end-end-radius: var(--_vfc-radius);
       }
 
       &:first-child span.vfc-span-day.vfc-marked::before,
       &.vfc-week-number + .vfc-day span.vfc-span-day.vfc-marked::before {
-        border-radius: var(--_vfc-radius) 0 0 var(--_vfc-radius);
+        border-start-start-radius: var(--_vfc-radius);
+        border-end-start-radius: var(--_vfc-radius);
       }
     }
   }

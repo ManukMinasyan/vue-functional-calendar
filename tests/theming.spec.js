@@ -35,6 +35,18 @@ describe('theme tokens', () => {
     expect(tokens).toMatch(/--_vfc-bg:\s*var\(--vfc-bg,/)
   })
 
+  it('mirrors the chevrons under a dir ancestor with a custom property', () => {
+    const scss = readFileSync(
+      join(process.cwd(), 'src/assets/scss/calendar.scss'),
+      'utf8'
+    )
+
+    expect(scss).toMatch(/\[dir='rtl'\]\s*\{\s*--_vfc-dir:\s*-1/)
+    expect(scss).toMatch(/\[dir='ltr'\]\s*\{\s*--_vfc-dir:\s*1/)
+    expect(scss.match(/scaleX\(var\(--_vfc-dir, 1\)\)/g)).toHaveLength(2)
+    expect(scss).not.toMatch(/:dir\(/)
+  })
+
   it('renders inside an ancestor that sets a token', () => {
     const wrapper = mount(
       {

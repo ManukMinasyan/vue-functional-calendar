@@ -1957,7 +1957,8 @@ export default {
       const target = this.keyboardTarget(
         event.key,
         event.shiftKey,
-        this.helpCalendar.getDateFromFormat(day.date)
+        this.helpCalendar.getDateFromFormat(day.date),
+        getComputedStyle(event.currentTarget).direction === 'rtl'
       )
       if (!target) return
 
@@ -1969,16 +1970,16 @@ export default {
         movesByYear ? 'changedYear' : 'changedMonth'
       )
     },
-    keyboardTarget(key, shift, from) {
+    keyboardTarget(key, shift, from, rtl = false) {
       const year = from.getFullYear()
       const month = from.getMonth()
       const date = from.getDate()
 
       switch (key) {
         case 'ArrowLeft':
-          return new Date(year, month, date - 1)
+          return new Date(year, month, date + (rtl ? 1 : -1))
         case 'ArrowRight':
-          return new Date(year, month, date + 1)
+          return new Date(year, month, date + (rtl ? -1 : 1))
         case 'ArrowUp':
           return new Date(year, month, date - 7)
         case 'ArrowDown':
