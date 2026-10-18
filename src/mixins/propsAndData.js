@@ -227,7 +227,6 @@ export const propsAndData = {
         hour: '00',
         minute: '00'
       },
-      hoveredObject: null,
       presetNow: new Date(),
       batchingModel: false,
       calendar: createCalendarState(),
