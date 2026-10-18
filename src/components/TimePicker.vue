@@ -211,7 +211,7 @@ export default {
     },
     changeHour(hour) {
       if (this.calendarRoot.fConfigs.isDateRange) {
-        if (this.checkStartDate()) {
+        if (this.startDateActive) {
           this.calendarRoot.calendar.dateRange.start = this.addMinuteHour(
             'hour',
             this.calendarRoot.calendar.dateRange.start,
@@ -238,7 +238,7 @@ export default {
     },
     changeMinute(minute) {
       if (this.calendarRoot.fConfigs.isDateRange) {
-        if (this.checkStartDate()) {
+        if (this.startDateActive) {
           this.calendarRoot.calendar.dateRange.start = this.addMinuteHour(
             'minute',
             this.calendarRoot.calendar.dateRange.start,
@@ -279,12 +279,9 @@ export default {
           currentDate.date + ' ' + currentDate.hour + ':' + currentDate.minute
       }
     },
-    checkStartDate() {
-      return this.startDateActive
-    },
     activeRangeEdge() {
       const { dateRange } = this.calendarRoot.calendar
-      return this.checkStartDate() ? dateRange.start : dateRange.end
+      return this.startDateActive ? dateRange.start : dateRange.end
     },
     checkHourActiveClass(i) {
       let hour
