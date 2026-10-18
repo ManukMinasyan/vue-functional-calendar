@@ -405,6 +405,7 @@ export default {
     border-radius: 50%;
   }
   .times {
+    left: calc(50% + var(--_vfc-day-size) / 2 - 12px);
     inset-inline-start: calc(50% + var(--_vfc-day-size) / 2 - 12px);
     color: var(--_vfc-on-danger);
     cursor: pointer;
@@ -412,6 +413,7 @@ export default {
   }
   .number {
     z-index: 30;
+    left: calc(50% - var(--_vfc-day-size) / 2 - 4px);
     inset-inline-start: calc(50% - var(--_vfc-day-size) / 2 - 4px);
     color: var(--_vfc-on-primary);
     background-color: var(--_vfc-primary);

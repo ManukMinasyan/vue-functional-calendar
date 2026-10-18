@@ -1194,6 +1194,40 @@
   }
 }
 
+@supports not (inset-inline-start: 0) {
+  .vfc-week .vfc-day {
+    &.vfc-week-number {
+      border-right: 1px solid var(--_vfc-border);
+    }
+
+    .vfc-base-start {
+      right: 0;
+    }
+
+    .vfc-base-end {
+      left: 0;
+    }
+
+    &:last-child .vfc-base-start {
+      border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0;
+    }
+
+    &:first-child .vfc-base-end,
+    &.vfc-week-number + .vfc-day .vfc-base-end {
+      border-radius: var(--_vfc-radius) 0 0 var(--_vfc-radius);
+    }
+
+    &:last-child span.vfc-span-day.vfc-marked::before {
+      border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0;
+    }
+
+    &:first-child span.vfc-span-day.vfc-marked::before,
+    &.vfc-week-number + .vfc-day span.vfc-span-day.vfc-marked::before {
+      border-radius: var(--_vfc-radius) 0 0 var(--_vfc-radius);
+    }
+  }
+}
+
 @media (forced-colors: active) {
   .vfc {
     &-preset[aria-pressed='true'],

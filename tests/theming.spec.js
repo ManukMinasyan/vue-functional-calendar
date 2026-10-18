@@ -62,6 +62,31 @@ describe('theme tokens', () => {
     expect(forced).toContain("-preset[aria-pressed='true']")
   })
 
+  it('gives every logical property an old browser fallback', () => {
+    const read = path => readFileSync(join(process.cwd(), path), 'utf8')
+    const scss = read('src/assets/scss/calendar.scss')
+    const fallback = scss.slice(
+      scss.indexOf('@supports not (inset-inline-start: 0)'),
+      scss.indexOf('@media (forced-colors: active)')
+    )
+
+    expect(fallback).toContain('border-right: 1px solid')
+    expect(fallback).toContain('right: 0;')
+    expect(fallback).toContain('left: 0;')
+    expect(fallback).toContain(
+      'border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0'
+    )
+    expect(fallback).toContain(
+      'border-radius: var(--_vfc-radius) 0 0 var(--_vfc-radius)'
+    )
+    expect(read('src/components/Day.vue')).toMatch(
+      /left: calc\([^;]+;\s*inset-inline-start: calc\(/
+    )
+    expect(read('src/components/WeekNumbers.vue')).toMatch(
+      /borderRightColor: borderColor,\s*borderInlineEndColor: borderColor/
+    )
+  })
+
   it('renders inside an ancestor that sets a token', () => {
     const wrapper = mount(
       {
