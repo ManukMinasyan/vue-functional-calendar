@@ -256,7 +256,6 @@
               </div>
               <slot name="footer"></slot>
             </template>
-            <!-- <span>&nbsp;</span> -->
           </Footer>
         </div>
       </template>
@@ -347,7 +346,6 @@ import {
   localeMonthNames,
   localeFirstDay
 } from '../utils/locale'
-// import calendarMethods from '../utils/calendarMethods'
 
 export default {
   name: 'FunctionalCalendar',
@@ -2336,10 +2334,6 @@ export default {
         return
       }
       this.calendar.multipleDateRange = []
-      // this.calendar.multipleDateRange.push({
-      //   start: '',
-      //   end: ''
-      // })
     }
   }
 }
