@@ -112,8 +112,20 @@ export default {
     isSelected() {
       return this.calendarRoot.isDateSelected(this.day.date)
     },
+    dayDate() {
+      return this.helpCalendar.getDateFromFormat(this.day.date)
+    },
+    isDayNameDisabled() {
+      return this.helpCalendar.isDayNameDisabled(
+        this.dayDate,
+        this.fConfigs.disabledDayNames
+      )
+    },
+    isRuleBlocked() {
+      return this.calendarRoot.isDateRuleBlocked(this.day.date)
+    },
     isBlocked() {
-      return this.calendarRoot.isDateBlocked(this.day.date)
+      return this.isDayNameDisabled || this.isRuleBlocked
     },
     rangeNumbers() {
       const ranges = this.calendar.multipleDateRange
@@ -131,9 +143,7 @@ export default {
     ariaLabel() {
       if (this.day.hideLeftAndRightDays) return null
 
-      const label = this.calendarRoot.formatFullDate(
-        this.helpCalendar.getDateFromFormat(this.day.date)
-      )
+      const label = this.calendarRoot.formatFullDate(this.dayDate)
       if (!this.rangeNumbers.length) return label
 
       return `${label}, ${this.fConfigs.labels.range} ${this.rangeNumbers.join(', ')}`
@@ -329,125 +339,32 @@ export default {
       this.calendarRoot.onDayKeydown(event, this.day, this.gridKey)
     },
     getClassNames(day) {
-      let classes = []
+      const classes = []
+      const { calendarRoot, isDayNameDisabled } = this
 
       if (!this.hasSlot('default') || this.alwaysUseDefaultClasses) {
         classes.push('vfc-span-day')
       }
 
-      // Disable days of week if set in configuration
-      const isDayNameDisabled = this.helpCalendar.isDayNameDisabled(
-        this.helpCalendar.getDateFromFormat(day.date),
-        this.fConfigs.disabledDayNames
-      )
-      if (isDayNameDisabled) {
-        day.hide = true
-        classes.push('vfc-cursor-not-allowed')
-      }
+      if (this.isRuleBlocked) classes.push('vfc-disabled')
+      if (this.isBlocked) classes.push('vfc-cursor-not-allowed')
+      if (day.hide || isDayNameDisabled) classes.push('vfc-hide')
+      if (day.isToday) classes.push('vfc-today')
 
-      let date = this.helpCalendar.getDateFromFormat(day.date)
-      let today = new Date()
-      today.setHours(0, 0, 0, 0)
-      // Disabled dates
-      if (this.isDisabledDate(day.date)) {
-        classes.push('vfc-disabled')
-        classes.push('vfc-cursor-not-allowed')
-      }
-
-      if (this.fConfigs.limits) {
-        let min = this.helpCalendar
-          .getDateFromFormat(this.fConfigs.limits.min)
-          .getTime()
-        let max = this.helpCalendar
-          .getDateFromFormat(this.fConfigs.limits.max)
-          .getTime()
-
-        if (date.getTime() < min || date.getTime() > max) {
-          classes.push('vfc-disabled')
-          classes.push('vfc-cursor-not-allowed')
-        }
-      }
-
-      if (day.hide) {
-        classes.push('vfc-hide')
-      }
-
-      // Today date
-      if (day.isToday) {
-        classes.push('vfc-today')
-      }
       if (!day.hideLeftAndRightDays && !isDayNameDisabled) {
-        // Mark Date
         if (day.isMarked) {
           classes.push('vfc-marked')
         } else if (day.isHovered) {
           classes.push('vfc-hovered')
         }
-        if (this.fConfigs.markedDates.includes(day.date)) {
+        if (calendarRoot.markedLookup.dates.has(day.date)) {
           classes.push('vfc-borderd')
         }
 
-        if (Array.isArray(this.fConfigs.markedDateRange)) {
-          this.fConfigs.markedDateRange.forEach(range => {
-            if (
-              this.helpCalendar.getDateFromFormat(range.start) <=
-                this.helpCalendar.getDateFromFormat(day.date) &&
-              this.helpCalendar.getDateFromFormat(range.end) >=
-                this.helpCalendar.getDateFromFormat(day.date)
-            ) {
-              classes.push('vfc-marked')
-            }
-            if (day.date === range.start) {
-              classes.push('vfc-start-marked')
-            } else if (day.date === range.end) {
-              classes.push('vfc-end-marked')
-            }
-          })
-        } else if (
-          this.fConfigs.markedDateRange.start &&
-          this.fConfigs.markedDateRange.end
-        ) {
-          // Date Range Marked
-
-          if (
-            this.helpCalendar.getDateFromFormat(
-              this.fConfigs.markedDateRange.start
-            ) <= this.helpCalendar.getDateFromFormat(day.date) &&
-            this.helpCalendar.getDateFromFormat(
-              this.fConfigs.markedDateRange.end
-            ) >= this.helpCalendar.getDateFromFormat(day.date)
-          ) {
-            classes.push('vfc-marked')
-          }
-          if (day.date === this.fConfigs.markedDateRange.start) {
-            classes.push('vfc-start-marked')
-          } else if (day.date === this.fConfigs.markedDateRange.end) {
-            classes.push('vfc-end-marked')
-          }
-        } else {
-          // Only After Start Marked
-          if (this.fConfigs.markedDateRange.start) {
-            if (
-              this.helpCalendar.getDateFromFormat(
-                this.fConfigs.markedDateRange.start
-              ) <= this.helpCalendar.getDateFromFormat(day.date)
-            )
-              classes.push('vfc-marked')
-          }
-
-          // Only Before End Marked
-          if (this.fConfigs.markedDateRange.end) {
-            if (
-              this.helpCalendar.getDateFromFormat(
-                this.fConfigs.markedDateRange.end
-              ) >= this.helpCalendar.getDateFromFormat(day.date)
-            )
-              classes.push('vfc-marked')
-          }
-        }
-
+        this.markedRangeClasses(day.date, classes)
         classes.push('vfc-hover')
       }
+
       //Date Multiple Range
       if (this.fConfigs.isMultipleDateRange) {
         if (
@@ -465,17 +382,9 @@ export default {
         ) {
           classes.push('vfc-marked')
         }
-        // } else if (day.isHovered) {
-        // classes.push('vfc-hovered')
-        // }
-        if (this.fConfigs.markedDates.includes(day.date)) {
+        if (calendarRoot.markedLookup.dates.has(day.date)) {
           classes.push('vfc-borderd')
         }
-        // console.log(
-        //   ~this.calendar.multipleDateRange
-        //     .map(range => range.start)
-        //     .indexOf(day.date)
-        // )
         if (
           ~this.calendar.multipleDateRange
             .map(range => range.start.split(' ')[0])
@@ -492,24 +401,12 @@ export default {
           classes.push('vfc-end-marked')
         }
       }
-      // Date Mark With Custom Classes
-      if (typeof this.fConfigs.markedDates === 'object') {
-        let checkMarked = this.fConfigs.markedDates.find(markDate => {
-          return markDate.date === day.date
-        })
 
-        if (typeof checkMarked !== 'undefined') {
-          classes.push(checkMarked.class)
-        }
-      }
+      const { classes: customClasses } = calendarRoot.markedLookup
+      if (customClasses.has(day.date)) classes.push(customClasses.get(day.date))
 
-      if (day.date === this.calendar.dateRange.start.split(' ')[0]) {
-        classes.push('vfc-start-marked')
-      }
-
-      if (day.date === this.calendar.dateRange.end.split(' ')[0]) {
-        classes.push('vfc-end-marked')
-      }
+      if (day.date === calendarRoot.startDMY) classes.push('vfc-start-marked')
+      if (day.date === calendarRoot.endDMY) classes.push('vfc-end-marked')
 
       if (
         day.date === this.calendar.selectedDate ||
@@ -520,6 +417,34 @@ export default {
       }
 
       return classes
+    },
+    markedRangeClasses(date, classes) {
+      const { markedDateRange } = this.fConfigs
+      const { dayDate } = this
+      const parse = value => this.helpCalendar.getDateFromFormat(value)
+      const addCompleteRange = range => {
+        if (parse(range.start) <= dayDate && parse(range.end) >= dayDate) {
+          classes.push('vfc-marked')
+        }
+        if (date === range.start) {
+          classes.push('vfc-start-marked')
+        } else if (date === range.end) {
+          classes.push('vfc-end-marked')
+        }
+      }
+
+      if (Array.isArray(markedDateRange)) {
+        markedDateRange.forEach(addCompleteRange)
+      } else if (markedDateRange.start && markedDateRange.end) {
+        addCompleteRange(markedDateRange)
+      } else {
+        if (markedDateRange.start && parse(markedDateRange.start) <= dayDate) {
+          classes.push('vfc-marked')
+        }
+        if (markedDateRange.end && parse(markedDateRange.end) >= dayDate) {
+          classes.push('vfc-marked')
+        }
+      }
     }
   }
 }

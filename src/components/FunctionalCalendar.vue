@@ -297,6 +297,13 @@ const isAdoptable = value =>
   !isReadonly(value) &&
   Object.isExtensible(toRaw(value))
 
+const buildDatesLookup = entries => ({
+  dates: new Set(entries),
+  beforeToday: entries.includes('beforeToday'),
+  afterToday: entries.includes('afterToday'),
+  isEmpty: !entries.length
+})
+
 const copyModelKey = entry => {
   if (Array.isArray(entry)) return entry.map(item => ({ ...item }))
   if (entry instanceof Date) return new Date(entry)
@@ -362,6 +369,35 @@ export default {
         return this.calendar.dateRange.end.split(' ')[0]
       }
       return ''
+    },
+    markedLookup() {
+      const dates = new Set()
+      const classes = new Map()
+
+      this.fConfigs.markedDates.forEach(entry => {
+        if (entry === null || typeof entry !== 'object') {
+          dates.add(entry)
+        } else if (!classes.has(entry.date)) {
+          classes.set(entry.date, entry.class)
+        }
+      })
+
+      return { dates, classes }
+    },
+    disabledLookup() {
+      return buildDatesLookup(this.fConfigs.disabledDates)
+    },
+    enabledLookup() {
+      return buildDatesLookup(this.fConfigs.enabledDates)
+    },
+    limitTimes() {
+      const { limits } = this.fConfigs
+      if (!limits) return null
+
+      return {
+        min: this.helpCalendar.getDateFromFormat(limits.min).getTime(),
+        max: this.helpCalendar.getDateFromFormat(limits.max).getTime()
+      }
     },
     isModalPicker() {
       return (
@@ -1172,6 +1208,7 @@ export default {
     markChooseDays() {
       let startDate = this.startDMY
       let endDate = this.endDMY
+      const markedDates = this.markedLookup.dates
       this.listCalendars.forEach(calendar => {
         calendar.weeks.forEach(week => {
           week.days.forEach(day => {
@@ -1250,8 +1287,7 @@ export default {
                 }
               }
             }
-            if (this.fConfigs.markedDates.includes(day.date))
-              day.isMarked = true
+            if (markedDates.has(day.date)) day.isMarked = true
           })
         })
       })
@@ -1298,7 +1334,7 @@ export default {
               this.listCalendars[e].weeks[f].days[i].isHovered = false
               if (
                 item.date !== this.startDMY &&
-                !this.fConfigs.markedDates.includes(item.date)
+                !this.markedLookup.dates.has(item.date)
               ) {
                 this.listCalendars[e].weeks[f].days[i].isMarked = false
               }
@@ -1447,7 +1483,7 @@ export default {
                 this.listCalendars[e].weeks[f].days[i].isHovered = false
                 if (
                   item.date !== this.startDMY &&
-                  !this.fConfigs.markedDates.includes(item.date)
+                  !this.markedLookup.dates.has(item.date)
                 ) {
                   this.listCalendars[e].weeks[f].days[i].isMarked = false
                 }
@@ -1935,54 +1971,44 @@ export default {
       if (index !== -1) ranges.splice(index, 1)
     },
     isDisabledDate(date) {
-      const datesCollection = this.fConfigs.disabledDates
-
       return (
-        this.isDateIncludedInDatesCollection(date, datesCollection) ||
+        this.isDateInLookup(date, this.disabledLookup) ||
         !this.isEnabledDate(date)
       )
     },
     isEnabledDate(date) {
-      const datesCollection = this.fConfigs.enabledDates
+      const lookup = this.enabledLookup
+
+      return lookup.isEmpty || this.isDateInLookup(date, lookup)
+    },
+    isDateInLookup(date, lookup) {
+      if (lookup.dates.has(date)) return true
+      if (!lookup.beforeToday && !lookup.afterToday) return false
+
+      const time = this.helpCalendar.getDateFromFormat(date).getTime()
+      const today = dayStart(new Date()).getTime()
 
       return (
-        !datesCollection.length ||
-        this.isDateIncludedInDatesCollection(date, datesCollection)
+        (lookup.beforeToday && time < today) ||
+        (lookup.afterToday && time > today)
       )
     },
-    isDateIncludedInDatesCollection(date, datesCollection) {
-      let today = new Date()
-      today.setHours(0, 0, 0, 0)
-      let dateObj = this.helpCalendar.getDateFromFormat(date)
+    isOutsideLimits(date) {
+      const range = this.limitTimes
+      if (!range) return false
 
-      return (
-        datesCollection.includes(date) ||
-        (datesCollection.includes('beforeToday') &&
-          dateObj.getTime() < today.getTime()) ||
-        (datesCollection.includes('afterToday') &&
-          dateObj.getTime() > today.getTime())
-      )
+      const time = this.helpCalendar.getDateFromFormat(date).getTime()
+      return time < range.min || time > range.max
+    },
+    isDateRuleBlocked(date) {
+      return this.isDisabledDate(date) || this.isOutsideLimits(date)
     },
     isDateBlocked(date) {
-      const dateObj = this.helpCalendar.getDateFromFormat(date)
-
-      if (
-        this.helpCalendar.isDayNameDisabled(
-          dateObj,
-          this.fConfigs.disabledDayNames
-        ) ||
-        this.isDisabledDate(date)
-      ) {
-        return true
-      }
-
-      const { limits } = this.fConfigs
-      if (!limits) return false
-
-      const time = dateObj.getTime()
       return (
-        time < this.helpCalendar.getDateFromFormat(limits.min).getTime() ||
-        time > this.helpCalendar.getDateFromFormat(limits.max).getTime()
+        this.helpCalendar.isDayNameDisabled(
+          this.helpCalendar.getDateFromFormat(date),
+          this.fConfigs.disabledDayNames
+        ) || this.isDateRuleBlocked(date)
       )
     },
     isDateSelected(date) {
