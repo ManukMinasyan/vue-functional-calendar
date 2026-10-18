@@ -360,6 +360,12 @@ export default {
     WeekNumbers
   },
   mixins: [propsAndData],
+  inject: {
+    globalOptions: {
+      from: 'functionalCalendarOptions',
+      default: () => ({})
+    }
+  },
   provide() {
     return { [CALENDAR_KEY]: this }
   },
@@ -782,14 +788,11 @@ export default {
         if (typeof value !== 'undefined') explicit.add(key)
       }
 
-      if (typeof this.$getOptions !== 'undefined') {
-        const globalOptions = this.$getOptions()
-        Object.keys(globalOptions).forEach(objectKey => {
-          if (typeof this.fConfigs[objectKey] !== 'undefined') {
-            apply(objectKey, globalOptions[objectKey])
-          }
-        })
-      }
+      Object.keys(this.globalOptions).forEach(objectKey => {
+        if (typeof this.fConfigs[objectKey] !== 'undefined') {
+          apply(objectKey, this.globalOptions[objectKey])
+        }
+      })
 
       if (typeof this.configs !== 'undefined') {
         Object.keys(this.fConfigs).forEach(objectKey => {
@@ -853,12 +856,8 @@ export default {
     },
     applyReactiveKey(key, fallback) {
       const value = this.configSource(key)
-      const globalValue =
-        typeof this.$getOptions !== 'undefined'
-          ? this.$getOptions()[key]
-          : undefined
 
-      this.fConfigs[key] = value ?? globalValue ?? fallback
+      this.fConfigs[key] = value ?? this.globalOptions[key] ?? fallback
 
       if (rebuildKeys.includes(key)) {
         this.initCalendar(this.fConfigs.isSeparately)
