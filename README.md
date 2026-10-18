@@ -10,8 +10,18 @@
 
 <h2 align="center">Sponsors</h2>
 <p align="center">
+<a href="https://relaticle.com">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/3.x/public/sponsors/relaticle-dark.svg" />
+<img src="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/3.x/public/sponsors/relaticle.svg" height="56" alt="Relaticle" />
+</picture>
+</a>
+&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="https://getcopy.ai">
-<img src="https://www.getcopy.ai/logo-light.svg" width="240" alt="GetCopy" />
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/3.x/public/sponsors/getcopy-dark.svg" />
+<img src="https://raw.githubusercontent.com/ManukMinasyan/vue-functional-calendar/3.x/public/sponsors/getcopy.svg" height="56" alt="GetCopy" />
+</picture>
 </a>
 </p>
 
