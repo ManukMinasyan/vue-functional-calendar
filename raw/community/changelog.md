@@ -9,7 +9,7 @@ canonical_url: "https://manukminasyan.github.io/vue-functional-calendar/communit
 
 All notable changes to this project are documented here.
 
-## 3.1.0 (unreleased) - 2026-10-18
+## 3.1.0 - 2026-10-18
 
 The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. Vue 2 apps stay on `^2.10.0`. See [MIGRATION.md](https://manukminasyan.github.io/vue-functional-calendar/getting-started/migration).
 
