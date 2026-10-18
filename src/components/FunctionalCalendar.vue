@@ -1822,9 +1822,7 @@ export default {
     removeRangeAt(date) {
       const ranges = this.calendar.multipleDateRange
       const index = ranges.findIndex(range =>
-        range.end
-          ? this.isDateInRange(date, range.start, range.end)
-          : this.dateOnly(range.start) === date
+        this.isDateInRange(date, range.start, range.end)
       )
       if (index !== -1) ranges.splice(index, 1)
     },
