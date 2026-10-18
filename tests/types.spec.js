@@ -87,4 +87,11 @@ describe('type declarations', () => {
       ].sort()
     )
   })
+
+  it('lets jsDelivr serve the UMD build and exposes package.json', () => {
+    const { jsdelivr, exports } = JSON.parse(read('../package.json'))
+
+    expect(jsdelivr).toBe('./dist/vue-functional-calendar.umd.js')
+    expect(exports['./package.json']).toBe('./package.json')
+  })
 })

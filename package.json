@@ -54,6 +54,7 @@
   "module": "./dist/vue-functional-calendar.js",
   "types": "./index.d.ts",
   "unpkg": "./dist/vue-functional-calendar.umd.js",
+  "jsdelivr": "./dist/vue-functional-calendar.umd.js",
   "exports": {
     ".": {
       "import": {
@@ -65,7 +66,8 @@
         "default": "./dist/vue-functional-calendar.cjs"
       }
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
