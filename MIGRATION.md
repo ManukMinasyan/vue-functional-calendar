@@ -47,6 +47,8 @@ import 'vue-functional-calendar/style.css'
 
 Your 2.x CSS overrides keep working, because the `vfc-*` class names are unchanged. The default look changed, so check your overrides against it.
 
+Vue 3 renamed the transition class `-enter` to `-enter-from`. An override of `.vfc-calendar-slide-left-enter`, `-right-enter`, `-up-enter` or `-down-enter` must now target `.vfc-calendar-slide-left-enter-from` and so on. The `-enter-active`, `-leave-active` and `-leave-to` classes keep their names.
+
 ## Registration
 
 Vue 2 used `Vue.use`. Vue 3 uses `app.use`, and the options still become global defaults.

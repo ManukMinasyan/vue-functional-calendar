@@ -25,6 +25,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - The SCSS `!default` variables are replaced by `--vfc-*` tokens.
 - The default look is redesigned. The `vfc-*` class names are unchanged.
 - Deep imports from `src/` no longer resolve. Import from `vue-functional-calendar`.
+- The slide transition classes follow Vue 3: `.vfc-calendar-slide-*-enter` is now `-enter-from`. See [MIGRATION.md](MIGRATION.md).
 
 ### Fixed
 
