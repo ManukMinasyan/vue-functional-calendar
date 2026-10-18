@@ -53,7 +53,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - A modal that loses focus with the time picker open reopens on the day grid instead of the time picker.
 - With `isMultipleDateRange` and `minSelDays`, starting the next range no longer rewrites the range that was just finished.
 - `withTimePicker` with `isMultipleDateRange` no longer opens a time picker that edited the empty `dateRange`. The combination is unsupported and the ranges hold plain dates.
-- An invalid initial `multipleDateRange` model is reported through the error handler, and the calendar still renders and follows later valid models.
+- An invalid initial `multipleDateRange` model raises `Invalid Data Range` through the app error handler, which Vue rethrows in development when none is set. With a handler, or in production, the calendar still renders and follows later valid models.
 - Picking a month or year with several calendars keeps them consecutive, updates `currentDate`, emits the model and re-checks `limits`. It emits `changedYear` once, and the dates of `changedMonth` and `changedYear` are the first of the month.
 - Every navigation move stays inside `limits`: the year arrows, `changeMonthStep`, `changeYearStep`, the month and year pickers and `ChooseDate` no longer overshoot, and the right arrow of a multi-calendar picker disables before a month past `max` shows. `ChooseDate` returns `false` when the month is outside `limits`.
 - A multi-calendar picker no longer shows a month after `limits.max`. The view starts early enough that the last calendar is the `max` month, and keeps all `calendarsCount` calendars unless the limits span fewer months (#114).
