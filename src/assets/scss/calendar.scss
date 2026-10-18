@@ -1245,6 +1245,14 @@
       border: 1px solid CanvasText;
     }
 
+    &-tags-input-remove::before,
+    &-tags-input-remove::after,
+    &-close::before,
+    &-close::after {
+      forced-color-adjust: none;
+      background: ButtonText;
+    }
+
     &-week .vfc-day {
       .vfc-base-start,
       .vfc-base-end {
@@ -1256,6 +1264,11 @@
           text-decoration: underline;
           text-decoration-thickness: 2px;
           text-underline-offset: 4px;
+        }
+
+        &.vfc-today.vfc-disabled,
+        &.vfc-today.vfc-cursor-not-allowed {
+          text-decoration-line: underline line-through;
         }
 
         &.vfc-marked::before {

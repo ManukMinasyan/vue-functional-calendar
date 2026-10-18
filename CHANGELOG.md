@@ -76,6 +76,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - `placeholder: true` no longer throws while rendering the inputs. A placeholder that is not a string falls back to the `dateFormat`.
 - In forced colors modes (Windows high contrast) the selected days, range ends, days inside a range, today, the selected preset, month, year and time, and the range badges stay visible. They were drawn with a background colour only and disappeared.
 - With `isSeparately`, a calendar added when `calendarsCount` grows stays inside `limits` instead of showing a month after `limits.max`.
+- In forced colors modes the close and remove crosses stay visible, and a disabled today keeps its line-through next to the underline.
 
 ## 2.10.0 - 2026-10-17
 
