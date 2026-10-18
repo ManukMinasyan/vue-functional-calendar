@@ -1640,6 +1640,25 @@ describe('multiple date ranges', () => {
     ])
   })
 
+  it('removes an open range whose start is written with a leading zero', async () => {
+    const { wrapper } = await mountCalendarReady(
+      { isDateRange: true, isMultipleDateRange: true },
+      {}
+    )
+    wrapper.vm.calendar.multipleDateRange = [
+      { start: '06/10/2026', end: '' },
+      { start: '10/10/2026', end: '12/10/2026' }
+    ]
+    await nextTick()
+
+    expect(findDay(wrapper, 6).getAttribute('aria-keyshortcuts')).toBe('Delete')
+    await press(focusDay(wrapper, 6), 'Delete')
+
+    expect(wrapper.vm.calendar.multipleDateRange).toEqual([
+      { start: '10/10/2026', end: '12/10/2026' }
+    ])
+  })
+
   it('ignores Delete on a calendar without multiple ranges', async () => {
     const { wrapper } = await mountCalendarReady({ isDateRange: true })
     const event = keyEvent('Delete')

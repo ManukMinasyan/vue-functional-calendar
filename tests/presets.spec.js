@@ -1342,6 +1342,30 @@ describe('pressed state', () => {
     expect(pressed(wrapper)).toEqual(['Last 7 days'])
   })
 
+  it('presses the preset that matches a range written with leading zeros', async () => {
+    setToday(2026, 9, 15, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDateRange: true,
+      presets: true,
+      modelValue: {
+        dateRange: { start: '09/10/2026', end: '15/10/2026' }
+      }
+    })
+
+    expect(pressed(wrapper)).toEqual(['Last 7 days'])
+  })
+
+  it('presses the preset that matches a date written with a leading zero', async () => {
+    setToday(2026, 9, 5, 10)
+    const { wrapper } = await mountCalendarReady({
+      isDatePicker: true,
+      presets: ['today'],
+      modelValue: { selectedDate: '05/10/2026' }
+    })
+
+    expect(pressed(wrapper)).toEqual(['Today'])
+  })
+
   it('moves the pressed state when another preset is chosen', async () => {
     setToday(2026, 9, 15, 10)
     const { wrapper } = await mountCalendarReady({

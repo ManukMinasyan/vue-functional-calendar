@@ -534,6 +534,22 @@ describe('limits after picking a month', () => {
     expect(eventsNamed(events, 'changedYear')).toEqual([new Date(2027, 9, 1)])
   })
 
+  it('emits changedMonth and no changedYear when a picked year is clamped inside the same year', async () => {
+    const { wrapper, events } = mountCalendar({
+      isMultiple: true,
+      calendarsCount: 3,
+      newCurrentDate: new Date(2026, 0, 1),
+      limits: { min: '1/1/2026', max: '31/1/2027' }
+    })
+
+    wrapper.vm.pickYear(2027, 0)
+    await wrapper.vm.$nextTick()
+
+    expect(calendarTitle(wrapper, 0)).toBe('November 2026')
+    expect(eventsNamed(events, 'changedMonth')).toEqual([new Date(2026, 10, 1)])
+    expect(eventsNamed(events, 'changedYear')).toEqual([])
+  })
+
   it('emits nothing when the clamped view stays where it was', async () => {
     const { wrapper, events } = mountCalendar({
       isMultiple: true,

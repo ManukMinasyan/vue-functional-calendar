@@ -1223,11 +1223,13 @@ export default {
       const { calendar } = this
       const start = this.helpCalendar.formatDate(preset.start)
 
-      if (!this.isRangePreset()) return calendar.selectedDate === start
+      if (!this.isRangePreset()) {
+        return this.helpCalendar.normalizeDate(calendar.selectedDate) === start
+      }
 
       const end = this.helpCalendar.formatDate(preset.end)
       const matches = range =>
-        range.start.split(' ')[0] === start && range.end.split(' ')[0] === end
+        this.dateOnly(range.start) === start && this.dateOnly(range.end) === end
       return this.fConfigs.isMultipleDateRange
         ? calendar.multipleDateRange.some(matches)
         : matches(calendar.dateRange)
@@ -1743,29 +1745,26 @@ export default {
     pickMonth(key, calendarKey) {
       this.showMonthPicker = false
       const { date } = this.pickerGrid(calendarKey)
-      const shown = this.showPicked(
-        calendarKey,
-        new Date(date.getFullYear(), key, 1)
-      )
-      if (shown) this.$emit('changedMonth', shown)
+      this.showPicked(calendarKey, new Date(date.getFullYear(), key, 1))
     },
     pickYear(year, calendarKey) {
       this.showYearPicker = false
       const { date } = this.pickerGrid(calendarKey)
-      const shown = this.showPicked(
-        calendarKey,
-        new Date(year, date.getMonth(), 1)
-      )
-      if (shown) this.$emit('changedYear', shown)
+      this.showPicked(calendarKey, new Date(year, date.getMonth(), 1))
     },
     showPicked(calendarKey, target) {
-      if (!this.isMonthAllowed(target)) return null
+      if (!this.isMonthAllowed(target)) return
 
       const { date: previous } = this.pickerGrid(calendarKey)
       this.showMonth(this.pickerGrid(calendarKey), target)
       const { date } = this.pickerGrid(calendarKey)
 
-      return monthIndex(date) === monthIndex(previous) ? null : new Date(date)
+      if (date.getMonth() !== previous.getMonth()) {
+        this.$emit('changedMonth', new Date(date))
+      }
+      if (date.getFullYear() !== previous.getFullYear()) {
+        this.$emit('changedYear', new Date(date))
+      }
     },
     pickerGrid(calendarKey) {
       return this.listCalendars[this.fConfigs.isSeparately ? calendarKey : 0]
@@ -1928,7 +1927,7 @@ export default {
       const index = ranges.findIndex(range =>
         range.end
           ? this.isDateInRange(date, range.start, range.end)
-          : range.start.split(' ')[0] === date
+          : this.dateOnly(range.start) === date
       )
       if (index !== -1) ranges.splice(index, 1)
     },

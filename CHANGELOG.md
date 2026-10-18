@@ -42,6 +42,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - `disabledDates`, `enabledDates` and `markedDates` accept dates with a leading zero, such as `05/10/2026` or `2026-10-05`. They were ignored (#153, #40).
 - A `dateRange` in the model and a `markedDateRange` written with leading zeros, such as `08/10/2026`, mark their start, end and days. They were ignored.
 - A `multipleDateRange` written with leading zeros, such as `06/10/2026`, marks its start, end and days and shows its end button. A parent that sets `dateRange.start` or `dateRange.end` to `null` no longer makes the calendar throw.
+- Delete removes a multiple date range whose open start is written with a leading zero, and a preset shows as pressed when the selected date or range is written with leading zeros.
 - In a `isMultipleDateRange` calendar the range band no longer covers the numbers of the days inside a range.
 - The `minSelDays` and `maxSelDays` hover preview counts whole calendar days, so it no longer shows one day too many or too few when the range crosses a daylight saving change.
 - An empty `{}` v-model receives typed dates, time picker changes and cleared values.
@@ -57,7 +58,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - With `isMultipleDateRange` and `minSelDays`, starting the next range no longer rewrites the range that was just finished.
 - `withTimePicker` with `isMultipleDateRange` no longer opens a time picker that edited the empty `dateRange`. The combination is unsupported and the ranges hold plain dates.
 - An invalid initial `multipleDateRange` model raises `Invalid Data Range` through the app error handler, which Vue rethrows in development when none is set. With a handler, or in production, the calendar still renders and follows later valid models.
-- Picking a month or year with several calendars keeps them consecutive, updates `currentDate`, emits the model and re-checks `limits`. It emits `changedYear` once, and the dates of `changedMonth` and `changedYear` are the first of the month. Both events carry the first visible month after `limits` move the view, and the pickers emit nothing when the view did not move.
+- Picking a month or year with several calendars keeps them consecutive, updates `currentDate`, emits the model and re-checks `limits`. It emits `changedMonth` when the month of the first visible calendar changes and `changedYear` when its year changes, each with the first visible month as its date, so a view that `limits` clamp reports what is on screen and an unchanged view reports nothing.
 - Every navigation move stays inside `limits`: the year arrows, `changeMonthStep`, `changeYearStep`, the month and year pickers and `ChooseDate` no longer overshoot, and the right arrow of a multi-calendar picker disables before a month past `max` shows. `ChooseDate` returns `false` when the month is outside `limits`.
 - A multi-calendar picker no longer shows a month after `limits.max`. The view starts early enough that the last calendar is the `max` month, and keeps all `calendarsCount` calendars unless the limits span fewer months (#114).
 - With `isSeparately`, each calendar disables its own arrows at `limits` by its own month. They followed the first calendar before.
