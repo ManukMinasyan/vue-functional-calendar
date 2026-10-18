@@ -1012,6 +1012,11 @@
         }
       }
 
+      .vfc-base-start ~ span.vfc-span-day,
+      .vfc-base-end ~ span.vfc-span-day {
+        z-index: 1;
+      }
+
       &:last-child span.vfc-span-day.vfc-marked::before {
         border-radius: 0 var(--_vfc-radius) var(--_vfc-radius) 0;
       }

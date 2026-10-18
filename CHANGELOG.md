@@ -39,6 +39,7 @@ The `3.0.0` release on npm was a Vue 2 build. 3.1.0 is the first Vue 3 release. 
 - A parent that binds a model holding only `multipleDateRange` can pick ranges without an `Invalid Data Range` error. That model is read, never written to.
 - A preloaded `v-model` survives `newCurrentDate`, and a server render shows the bound selection.
 - `disabledDates`, `enabledDates` and `markedDates` accept dates with a leading zero, such as `05/10/2026` or `2026-10-05`. They were ignored (#153, #40).
+- In a `isMultipleDateRange` calendar the range band no longer covers the numbers of the days inside a range.
 - The `minSelDays` and `maxSelDays` hover preview counts whole calendar days, so it no longer shows one day too many or too few when the range crosses a daylight saving change.
 - An empty `{}` v-model receives typed dates, time picker changes and cleared values.
 - The calendar no longer adds `inRange` to `String.prototype` or `getWeekNumber` to `Date.prototype`, and two multi-range calendars with different `dateFormat` values on one page each draw their ranges with their own format.
