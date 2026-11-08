@@ -32,6 +32,6 @@
         "mdast-util-to-markdown": "2.1.2",
         "minimatch": "^11.0.1",
         "sharp": "^0.35.4",
-        "zod@<4.6.6": "$zod"
+        "zod": "$zod"
     }
 }
