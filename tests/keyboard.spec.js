@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { describe, it, expect, vi, afterEach } from 'vitest'
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest'
 import { nextTick, reactive } from 'vue'
 import {
   mountCalendarReady,
@@ -14,6 +14,11 @@ const fullDate = (year, month, day) =>
   new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format(
     new Date(year, month, day)
   )
+
+const keepTodayOffTheGrids = () => {
+  vi.useFakeTimers({ toFake: ['Date'] })
+  vi.setSystemTime(new Date(2030, 5, 15, 12))
+}
 
 const press = async (element, key, init = {}) => {
   element.dispatchEvent(
@@ -56,6 +61,8 @@ afterEach(() => {
 })
 
 describe('grid semantics', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   it('exposes each month as a named grid of rows', async () => {
     const { wrapper } = await mountCalendarReady({ isDatePicker: true })
 
@@ -310,6 +317,8 @@ describe('roving tabindex', () => {
 })
 
 describe('keys', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   const start = async (props = {}) => {
     const mounted = await mountCalendarReady({ isDatePicker: true, ...props })
     const origin = focusDay(mounted.wrapper, 15)
@@ -565,6 +574,8 @@ describe('keys', () => {
 })
 
 describe('crossing months', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   it('moves into the next month from the last day', async () => {
     const { wrapper, events } = await mountCalendarReady({ isDatePicker: true })
 
@@ -625,6 +636,8 @@ describe('crossing months', () => {
 })
 
 describe('multiple calendars', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   const mountThree = props =>
     mountCalendarReady({
       isMultiple: true,
@@ -1248,6 +1261,7 @@ describe('focus retention', () => {
   })
 
   it('does not close the modal when a removed focused node fires focusout', async () => {
+    keepTodayOffTheGrids()
     const original = Node.prototype.removeChild
     const spy = vi
       .spyOn(Node.prototype, 'removeChild')
@@ -1597,6 +1611,8 @@ describe('picker titles', () => {
 })
 
 describe('day labels with custom month names', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   const monthNames = Array.from({ length: 12 }, (_, i) => `Mes${i + 1}`)
 
   it('names the grid and the days with the same month', async () => {
@@ -1625,6 +1641,8 @@ describe('day labels with custom month names', () => {
 })
 
 describe('multiple date ranges', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   const mountRanges = async () => {
     const mounted = await mountCalendarReady({
       isDateRange: true,
@@ -1841,6 +1859,8 @@ describe('removing a pending range', () => {
 })
 
 describe('weekday in day labels', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   const dayNames = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
   it('uses the custom day name when no locale is set', async () => {
@@ -1880,6 +1900,8 @@ describe('weekday in day labels', () => {
 })
 
 describe('day state labels', () => {
+  beforeEach(keepTodayOffTheGrids)
+
   const label = (wrapper, day) =>
     findDay(wrapper, day).getAttribute('aria-label')
 
