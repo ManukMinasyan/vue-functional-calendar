@@ -21,14 +21,17 @@
     },
     "devDependencies": {
         "sass": "^1.105.2",
-        "zod": "^4.6.5",
+        "zod": "^4.6.6",
         "zod-to-json-schema": "^3.25.1"
     },
     "overrides": {
         "@tiptap/core": "^3.30.5",
         "esbuild": "^0.28.1",
+        "glob": "^14.0.2",
         "js-yaml": "^4.3.2",
         "mdast-util-to-markdown": "2.1.2",
-        "sharp": "^0.35.4"
+        "minimatch": "^11.0.1",
+        "sharp": "^0.35.4",
+        "zod": "$zod"
     }
 }
