@@ -1084,7 +1084,7 @@ export default {
     resolvePreset(entry, now) {
       const isKey = typeof entry === 'string'
       const label = isKey ? this.fConfigs.labels.presets[entry] : entry?.label
-      let range = null
+      let range
       try {
         range = isKey
           ? builtInRange(entry, now)
