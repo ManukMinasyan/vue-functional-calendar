@@ -4,6 +4,14 @@
 
 All notable changes to this project are documented here.
 
+## 3.1.3 - 2026-11-08
+
+The package code is the same as 3.1.2. This release moves the dev and docs tooling off releases with known advisories.
+
+### Security
+
+- minimatch 11.0.1, glob 14.0.2 and zod 4.6.6 replace the copies affected by GHSA-g3hv-75wg-m249, GHSA-3g3m-2fjr-6pw4 and GHSA-mrhx-c7xc-m3w5. None of them ships in the package.
+
 ## 3.1.2 - 2026-11-08
 
 ### Changed
