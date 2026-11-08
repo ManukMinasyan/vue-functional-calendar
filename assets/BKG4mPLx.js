@@ -1,0 +1,1 @@
+import{o as e}from"./AezCYQa2.js";var t=globalThis.requestIdleCallback||(e=>{let t=Date.now(),n={didTimeout:!1,timeRemaining:()=>Math.max(0,50-(Date.now()-t))};return setTimeout(()=>{e(n)},1)}),n=globalThis.cancelIdleCallback||(e=>{clearTimeout(e)}),r=n=>{let r=e();r.isHydrating?r.hooks.hookOnce(`app:suspense:resolve`,()=>{t(()=>n())}):t(()=>n())};export{n,t as r,r as t};

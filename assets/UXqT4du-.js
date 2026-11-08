@@ -1,0 +1,1 @@
+import{h as e,q as t}from"./DnWnQTY6.js";import{k as n}from"#entry";var r={};function i(n,r){return t(),e(`div`)}var a=Object.assign(n(r,[[`render`,i]]),{__name:`AssistantChat`});export{a as default};
