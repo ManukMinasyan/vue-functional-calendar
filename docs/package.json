@@ -21,7 +21,7 @@
     },
     "devDependencies": {
         "sass": "^1.105.2",
-        "zod": "^4.6.5",
+        "zod": "^4.6.6",
         "zod-to-json-schema": "^3.25.1"
     },
     "overrides": {
@@ -31,6 +31,7 @@
         "js-yaml": "^4.3.2",
         "mdast-util-to-markdown": "2.1.2",
         "minimatch@>=7.0.0 <11.0.1": "^11.0.1",
-        "sharp": "^0.35.4"
+        "sharp": "^0.35.4",
+        "zod@<4.6.6": "$zod"
     }
 }
